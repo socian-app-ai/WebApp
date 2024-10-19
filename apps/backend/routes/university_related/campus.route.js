@@ -1,0 +1,64 @@
+const express = require('express');
+const router = express.Router();
+
+const University = require('../../models/university/university.register.model');
+const Campus = require('../../models/university/campus.university.model');
+
+
+//  Routes
+router.post('/register', async (req, res) => {
+
+    const { universityId, ...campusData } = req.body
+
+    try {
+        if (!universityId) {
+            return res.status(400).json({ message: 'University ID is required' });
+        }
+
+
+        const university = await University.findById(universityId);
+
+        if (!university) {
+            return res.status(404).json('University not found');
+        }
+
+        const newCampus = new Campus({
+            ...campusData,
+            universityOrigin: universityId
+        });
+        await newCampus.save();
+
+        // Update the university's campuses array
+        university.campuses.push(newCampus._id);
+        await university.save();
+
+        // console.log('Campus created successfully:', newCampus);
+        res.status(201).json(newCampus);
+
+    } catch (error) {
+        console.error('Error creating campus:', error);
+        res.status(500).json({ message: error.message }); // Unable to create campus. Please try again.
+
+    }
+});
+
+
+
+router.get('/', async (req, res) => {
+    try {
+        const campus = await Campus.find();
+
+        res.status(200).json(campus);
+    } catch (error) {
+        console.error('Error creating campus:', error);
+        res.status(500).json({ message: error.message }); // Unable to create campus. Please try again.
+
+    }
+})
+
+
+
+module.exports = router;
+
+
+

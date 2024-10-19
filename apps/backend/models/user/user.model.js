@@ -128,7 +128,7 @@ const userSchema = new mongoose.Schema({
     // ## Expiration
     universityEmailExpirationDate: {
         type: Date,
-        default: () => this.role.student ? this.profile.graduationYear : undefined
+        default: function () { return this.role == 'student' ? this.profile.graduationYear : undefined }
     },
 
 

@@ -53,7 +53,7 @@ app.use(sessionData);
 
 
 app.use(cors({
-    origin: ["http://localhost:3000", "https://comsian.vercel.app", "https://comsian.bilalellahi.com"],
+    origin: ["http://localhost:3000"],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE"]
 }))
@@ -73,12 +73,13 @@ app.use(bodyParser.urlencoded({ extended: true }))
 
 
 
-const authRouter = require("./routes/auth.route")
+const authRouter = require("./routes/auth.route.js")
 // const oAuthRouter = require('./routes/oauth');
 // const requestRoute = require('./routes/request');
 // const emailRoute = require('./routes/email.route.js');
 
-
+const universityRouter = require('./routes/university_related/university.route.js')
+const campusRouter = require('./routes/university_related/campus.route.js')
 
 
 
@@ -86,6 +87,8 @@ app.use("/api/auth", authRouter)
 // app.use('/api/oauth', oAuthRouter);
 // app.use('/api/request', requestRoute);
 // app.use('/email', emailRoute);
+app.use("/api/university", universityRouter)
+app.use("/api/campus", campusRouter)
 
 
 
