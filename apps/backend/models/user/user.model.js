@@ -4,6 +4,70 @@ const userSchema = new mongoose.Schema({
     name: {
         type: String,
     },
+    username: {
+        type: String,
+        unique: true
+    },
+    password: {
+        type: String,
+        required: true,
+    },
+    role: {
+        type: String,
+        enum: ['student', 'alumni', 'teacher', 'ext_org'],
+        required: true
+    },
+    super_role: {
+        type: String,
+        enum: ['super', 'admin', 'mod'],
+    },
+
+
+    profile: {
+        // update default picture url 
+        picture: { type: String, default: 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg' },
+        bio: { type: String, default: '' },
+        location: {
+            type: String,
+            //enum is not needed to hardcode here so ref is used
+            // enum: [{ type: mongoose.Schema.Types.ObjeectId, ref: 'Campus' }]
+        },
+        website: { type: String, default: '' }, // ## for showcase on profile
+        socialLinks: [String], // 
+        gender: {
+            type: String,
+            enum: ["male", "female", "other"],
+        },
+        respect: {
+            postRespect: { type: Number, default: 0 },
+            commentRespect: { type: Number, default: 0 }
+        },
+        graduationYear: {
+            type: Date,
+            required: () => { return this.role === 'student'; }
+        },
+        department: {
+            type: String,
+        }
+    },
+
+    university: {
+        slug: String,
+        name: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'University'
+        },
+        campusLocation: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Campus'
+        }
+    },
+
+
+
+
+
+    // ##  EMAIL
     universityEmail: {
         type: String,
         required: function () {
@@ -38,6 +102,9 @@ const userSchema = new mongoose.Schema({
         match: [/^\d{10,15}$/, "Please fill a valid phone number"],
     },
 
+
+    // ## Verified?
+
     universityEmailVerified: {
         type: Boolean,
         default: false,
@@ -50,36 +117,34 @@ const userSchema = new mongoose.Schema({
         type: Boolean,
         default: false,
     },
-
-    universityEmailExpirationDate: {
-        type: Date,
-    },
-
     google_EmailVerified: {
         type: Boolean,
         default: false,
     },
-    graduationYear: {
-        type: Number,
-        default: 3000
+    phoneNumberVerified: {
+        type: Boolean,
+        default: false,
+    },
+    // ## Expiration
+    universityEmailExpirationDate: {
+        type: Date,
+        default: () => this.role.student ? this.profile.graduationYear : undefined
     },
 
 
 
-    username: {
-        type: String,
-        unique: true
+
+
+    // ## Restrictions
+
+    blocking: {
+        isBlocked: { type: Boolean, default: false },
+        blockedBy: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User'
+        }
     },
-    password: {
-        type: String,
-        required: true,
-    },
-    role: {
-        type: String,
-        enum: ['student', 'alumni', 'teacher', 'ext_org'],
-        required: true
-    },
-    isBlocked: { type: Boolean, default: false },
+
 
     // Additional field for ext_org approval:
     approval: {
@@ -91,6 +156,7 @@ const userSchema = new mongoose.Schema({
     },
 
 
+    // ## tokens
     //    if using jwt token
     tokens: {
         token: {
@@ -107,6 +173,8 @@ const userSchema = new mongoose.Schema({
         },
     },
 
+
+    // ## Query Updates
     createdAt: {
         type: Date,
         default: Date.now,
@@ -118,37 +186,20 @@ const userSchema = new mongoose.Schema({
 
 
 
-    profile: {
-        // update default picture url 
-        picture: { type: String, default: 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg' },
-        bio: { type: String, default: '' },
-        avatar: { type: String, default: '' },
-        location: {
-            type: String,
-            //enum is not needed to hardcode here so ref is used
-            // enum: [{ type: mongoose.Schema.Types.ObjeectId, ref: 'Campus' }]
-        },
-        website: { type: String, default: '' },
-        urls: [String],
-        gender: {
-            type: String,
-            enum: ["male", "female", "other"],
-        },
-        respect: {
-            postRespect: { type: Number, default: 0 },
-            commentRespect: { type: Number, default: 0 }
-        },
-    },
-
     // savedPosts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Post' }],
     // subscribedCommunities: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Community' }],
     // subscribedSubCommunities: [{ type: mongoose.Schema.Types.ObjectId, ref: 'SubCommunity' }],               
 });
 
 
+
+
+
+
 // Methods for handling graduation checks and notifications
 userSchema.methods.checkGraduation = function () {
-    if (this.role === 'student' && this.graduationYear < new Date().getFullYear()) {
+    const today = new Date();
+    if (this.role === 'student' && this.profile.graduationYear < today) {
         if (!this.phoneNumber) {
             this.isBlocked = true;  // Block account if phone number isn't present
         } else {
@@ -157,11 +208,19 @@ userSchema.methods.checkGraduation = function () {
     }
 };
 
+
+
+
+
+// Applied > today , not >= to save user from incomplete work they have in student section
 userSchema.methods.convertToAlumni = function () {
-    if (this.role === 'student' && this.graduationYear >= new Date().getFullYear()) {
-        this.role = 'alumni';  // Automatically convert to alumni
+    if (this.role === 'student' && this.profile.graduationYear > today) {
+        this.role = 'alumni';
     }
 };
+
+
+
 
 userSchema.pre("save", async function (next) {
     // For student or alumni: graduation year logic
@@ -177,6 +236,8 @@ userSchema.pre("save", async function (next) {
     this.updatedAt = Date.now();
     next();
 });
+
+
 
 const User = mongoose.model("User", userSchema);
 
