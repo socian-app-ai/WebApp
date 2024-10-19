@@ -6,9 +6,19 @@ const universitySchema = new Schema({
         type: String,
         required: true,
     },
+    mainLocationAddress: { //lahore,islamabad etc
+        type: String,
+        required: true,
+    },
+    telephone: {
+        type: String,
+    },
+    adminEmails: [{ type: String }],
+
+
     campuses: [{
         name: String,
-        location: String,
+        location: String,//lahore,islamabad etc
         type: Schema.ObjectId,
         ref: 'Campus'
     }],

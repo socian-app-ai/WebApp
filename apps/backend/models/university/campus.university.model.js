@@ -2,25 +2,24 @@ const mongoose = require('mongoose')
 const Schema = mongoose.Schema;
 
 const campusSchema = new Schema({
+    universityOrigin: {
+        type: Schema.ObjectId,
+        ref: 'University'
+    },
     name: {
         type: String,
         required: true,
     },
-    mainLocation: {
+    location: { //lahore,islamabad etc
         type: String,
         required: true,
     },
-    telephone: {
-        type: String,
-    },
-    adminEmails: [{ type: String }],
 
     emailPatterns: {
         teacherPatterns: [String],
         studentPatterns: [String],
         // RollNumberFormat: [String]
     },
-
 
 
     departments: [{

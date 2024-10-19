@@ -220,6 +220,17 @@ userSchema.methods.convertToAlumni = function () {
 };
 
 
+userSchema.methods.generateSlug = async function () {
+    const university = await mongoose.model('University').findById(this.university.name);
+    const campus = await mongoose.model('Campus').findById(this.university.campusLocation);
+
+    if (university && campus) {
+        const universityName = university.name.toLowerCase().replace(/\s+/g, '-');
+        const campusLocation = campus.location.toLowerCase().replace(/\s+/g, '-');
+        this.university.slug = `${universityName}-${campusLocation}`;
+    }
+};
+
 
 
 userSchema.pre("save", async function (next) {

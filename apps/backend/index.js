@@ -73,7 +73,7 @@ app.use(bodyParser.urlencoded({ extended: true }))
 
 
 
-// const authRouter = require("./routes/authRoute")
+const authRouter = require("./routes/auth.route")
 // const oAuthRouter = require('./routes/oauth');
 // const requestRoute = require('./routes/request');
 // const emailRoute = require('./routes/email.route.js');
@@ -82,7 +82,7 @@ app.use(bodyParser.urlencoded({ extended: true }))
 
 
 
-// app.use("/api/auth", authRouter)
+app.use("/api/auth", authRouter)
 // app.use('/api/oauth', oAuthRouter);
 // app.use('/api/request', requestRoute);
 // app.use('/email', emailRoute);
