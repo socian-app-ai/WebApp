@@ -1,2 +1,80 @@
 apps/backend/.env
+apps/backend/node_modules
 
+# Logs
+apps/web/beyond-the-class/logs
+apps/web/beyond-the-class/*.log
+apps/web/beyond-the-class/npm-debug.log*
+apps/web/beyond-the-class/yarn-debug.log*
+apps/web/beyond-the-class/yarn-error.log*
+apps/web/beyond-the-class/pnpm-debug.log*
+apps/web/beyond-the-class/lerna-debug.log*
+
+apps/web/beyond-the-class/node_modules
+apps/web/beyond-the-class/dist
+apps/web/beyond-the-class/dist-ssr
+apps/web/beyond-the-class/*.local
+
+apps/web/beyond-the-class/.env
+apps/web/beyond-the-class/.env.production
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+
+
+
+
+
+
+# Miscellaneous
+apps/mobile/*.class
+apps/mobile/*.log
+apps/mobile/*.pyc
+apps/mobile/*.swp
+apps/mobile/.DS_Store
+apps/mobile/.atom/
+apps/mobile/.buildlog/
+apps/mobile/.history
+apps/mobile/.svn/
+apps/mobile/migrate_working_dir/
+
+# IntelliJ related
+apps/mobile/*.iml
+apps/mobile/*.ipr
+apps/mobile/*.iws
+apps/mobile/.idea/
+
+# The .vscode folder contains launch configuration and tasks you configure in
+# VS Code which you may wish to be included in version control, so this line
+# is commented out by default.
+#.vscode/
+
+# Flutter/Dart/Pub related
+apps/mobile/**/doc/api/
+apps/mobile/**/ios/Flutter/.last_build_id
+apps/mobile/.dart_tool/
+apps/mobile/.flutter-plugins
+apps/mobile/.flutter-plugins-dependencies
+apps/mobile/.pub-cache/
+apps/mobile/.pub/
+apps/mobile/build/
+
+# Symbolication related
+apps/mobile/app.*.symbols
+
+# Obfuscation related
+apps/mobile/app.*.map.json
+
+# Android Studio will place build artifacts here
+apps/mobile/android/app/debug
+apps/mobile/android/app/profile
+apps/mobile/android/app/release
