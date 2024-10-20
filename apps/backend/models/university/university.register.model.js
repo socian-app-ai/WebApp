@@ -14,6 +14,10 @@ const universitySchema = new Schema({
         type: String,
     },
     adminEmails: [{ type: String }],
+    picture: {
+        type: String,
+        default: ''
+    },
 
 
     campuses: [{

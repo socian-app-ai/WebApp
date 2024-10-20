@@ -20,6 +20,10 @@ const campusSchema = new Schema({
         studentPatterns: [String],
         // RollNumberFormat: [String]
     },
+    picture: {
+        type: String,
+        default: ''
+    },
 
 
     departments: [{

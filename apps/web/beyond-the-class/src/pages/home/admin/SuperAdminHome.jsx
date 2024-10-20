@@ -2,7 +2,7 @@
 import CustomAutocomplete from '../../../components/FilterOption/CustomAutocomplete';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import { createFilterOptions } from '@mui/material';
+import { Avatar, createFilterOptions } from '@mui/material';
 
 export default function SuperAdminHome() {
 
@@ -32,7 +32,8 @@ export default function SuperAdminHome() {
 
     const handleUniversityChange = (event, value) => {
         console.log("value", value)
-        setCurrentUniversity(value.name)
+        setCurrentUniversity(value)
+
         if (value) {
             const courseList = value.campuses.map(subject => subject);
             setCampus(courseList);
@@ -59,17 +60,45 @@ export default function SuperAdminHome() {
                 isOptionEqualToValue={(option, value) => option._id === value._id}
             />
 
-            <h6>
-                {currentUniversity}
-            </h6>
-            <div>
-                {
-                    campus.map(
-                        campus => (<p key={campus._id}>{campus.name}</p>)
-                    )
-                }
-            </div>
+            {
+                currentUniversity.length !== 0 ?
+                    <div className='space-y-5 mt-5 pr-10'>
+                        <div>
 
+                            <h1 className='text-2xl'>University</h1>
+
+                            <div className='w-full flex flex-row my-2'>
+                                <Avatar src={currentUniversity.picture} />
+                                <h6 className='ml-2 text-2xl'>{currentUniversity.name}</h6>
+                            </div>
+
+                        </div>
+
+                        <div>
+                            <h1 className='text-2xl'>Campus</h1>
+                            <div>
+                                {
+                                    campus.map(
+                                        campus => (<div
+                                            className='flex flex-row justify-between items-center w-full border-2 rounded-md p-2 my-3 bg-slate-100 dark:bg-black'
+                                            key={campus._id}>
+                                            <div className='flex flex-row items-center'>
+                                                {/* <span style={{ color: campus.registered.isRegistered ? 'red' : '' }} >●</span> */}
+                                                <div className={`w-2 h-2 rounded-full mr-2 ${campus.registered.isRegistered ? 'bg-green-300' : 'bg-red-500'}`}></div>
+
+                                                <p className='text-lg'>{campus.name}</p>
+                                            </div>
+
+                                            <button className='border px-1 bg-gray-100 hover:bg-gray-300 rounded-lg text-sm'>view all</button>
+                                        </div>)
+                                    )
+                                }
+                            </div>
+                        </div>
+
+                    </div> :
+                    <></>
+            }
 
         </div>
     )
@@ -77,7 +106,7 @@ export default function SuperAdminHome() {
 const filterOptionsUniversites = createFilterOptions({
     matchFrom: 'start',
     stringify: (option) => {
-        // console.log("Options: ", option.subjects)
+        // console.log("Options: ", option.name)
         return option.name
     },
 });
