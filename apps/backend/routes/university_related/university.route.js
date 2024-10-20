@@ -28,7 +28,7 @@ router.post('/register', async (req, res) => {
 
 router.get('/', async (req, res) => {
     try {
-        const university = await University.find();
+        const university = await University.find().populate('campuses');
 
         res.status(200).json(university);
     } catch (error) {

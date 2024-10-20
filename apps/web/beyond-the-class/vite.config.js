@@ -9,7 +9,7 @@ export default defineConfig({
     port: "3000",
     proxy: {
       '/api': {
-        target: 'https://url-here-of-backend-in-production',
+        target: 'http://localhost:8080',
         changeOrigin: true,
         secure: true,
         rewrite: (path) => path
