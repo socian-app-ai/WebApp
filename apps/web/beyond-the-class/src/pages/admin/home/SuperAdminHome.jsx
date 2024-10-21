@@ -3,6 +3,7 @@ import CustomAutocomplete from '../../../components/FilterOption/CustomAutocompl
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Avatar, createFilterOptions } from '@mui/material';
+import { Link } from 'react-router-dom';
 
 export default function SuperAdminHome() {
 
@@ -51,14 +52,25 @@ export default function SuperAdminHome() {
     return (
         <div className='min-h-screen w-full '>
 
+            <div className='flex flex-col md:flex-row justify-between'>
 
-            <CustomAutocomplete
-                options={universities}
-                label={"Universities"}
-                onChange={handleUniversityChange}
-                filterOptions={filterOptionsUniversites}
-                isOptionEqualToValue={(option, value) => option._id === value._id}
-            />
+                <CustomAutocomplete
+                    options={universities}
+                    label={"Universities"}
+                    onChange={handleUniversityChange}
+                    filterOptions={filterOptionsUniversites}
+                    isOptionEqualToValue={(option, value) => option._id === value._id}
+                />
+
+                <div className='flex flex-col md:flex-row justify-between'>
+                    <Link className='border p-1 mx-1 bg-gray-100 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-900 rounded-lg text-sm '> Add another University</Link>
+
+                    <Link className='border p-1 mx-1 bg-gray-100 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-900 rounded-lg text-sm '> Add another Campus</Link>
+
+                </div>
+
+            </div>
+
 
             {
                 currentUniversity.length !== 0 ?
@@ -80,7 +92,7 @@ export default function SuperAdminHome() {
                                 {
                                     campus.map(
                                         campus => (<div
-                                            className='flex flex-row justify-between items-center w-full border-2 rounded-md p-2 my-3 bg-slate-100 dark:bg-black'
+                                            className='flex flex-col justify-start md:flex-row  md:justify-between items-center w-full border-2 rounded-md p-2 my-3 bg-slate-100 dark:bg-black'
                                             key={campus._id}>
                                             <div className='flex flex-row items-center'>
                                                 {/* <span style={{ color: campus.registered.isRegistered ? 'red' : '' }} >●</span> */}
@@ -89,7 +101,10 @@ export default function SuperAdminHome() {
                                                 <p className='text-lg'>{campus.name}</p>
                                             </div>
 
-                                            <button className='border px-1 bg-gray-100 hover:bg-gray-300 rounded-lg text-sm'>view all</button>
+                                            <div>
+                                                <button className='border px-1 mx-1 bg-gray-100 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-900 rounded-lg text-sm '>view all</button>
+                                                <button className='border px-1 mx-1 bg-gray-100 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-900 rounded-lg text-sm '>del : move to accordian to protect admin from del</button>
+                                            </div>
                                         </div>)
                                     )
                                 }
@@ -110,3 +125,14 @@ const filterOptionsUniversites = createFilterOptions({
         return option.name
     },
 });
+
+
+
+
+
+
+
+
+
+
+

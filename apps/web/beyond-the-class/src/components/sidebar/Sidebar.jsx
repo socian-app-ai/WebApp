@@ -20,7 +20,7 @@ function Sidebar() {
 
 
     return (
-        <div className={`${sideBarState ? 'left-0' : '-left-[100rem]'}   z-20 w-64 bg-white dark:bg-[#191919] dark:text-white h-screen p-4 fixed border-right-half`}>
+        <div className={`${sideBarState ? 'left-0' : '-left-[100rem]'} sidebar-custom-css  z-20 w-64 bg-white dark:bg-[#191919] dark:text-white h-screen p-4 fixed border-right-half`}>
 
             <nav className="mt-12 ">
                 <ul className="border-b flex flex-col">

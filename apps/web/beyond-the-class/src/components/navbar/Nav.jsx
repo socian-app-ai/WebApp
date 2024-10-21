@@ -46,7 +46,7 @@ const Navbar = () => {
 
 
     return (
-        <Box className="border-bottom-half  fixed w-full z-20 h-15   bg-white dark:bg-[#191919]  dark:text-white px-4 py-2 flex justify-between items-center">
+        <Box className="navbar-custom-css border-bottom-half  fixed w-full z-20 h-15   bg-white dark:bg-[#191919]  dark:text-white px-4 py-2 flex justify-between items-center">
             <div className="flex justify-center items-center ">
                 <div className='flex items-center md:items-end justify-end '>
                     {(width < 768) && <RxHamburgerMenu className='mx-2' size={22} onClick={toggleSideBar} />}

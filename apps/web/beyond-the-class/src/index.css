@@ -1,3 +1,49 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.dark body {
+  background-color: #121212f5;
+  @apply transition-colors duration-1000 ease-in-out;
+}
+
+body {
+  background-color: #dbd2d2f5;
+  @apply transition-colors duration-1000 ease-in-out;
+}
+
+.dark h1,
+.dark h2,
+.dark h3,
+.dark h4,
+.dark h5,
+.dark h6,
+.dark p {
+  color: white;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+  color: black;
+}
+
+.navbar-custom-css {
+  background-color: hsl(0, 0%, 77%) !important;
+}
+
+.sidebar-custom-css {
+  background-color: hsl(0, 0%, 74%) !important;
+}
+
+.dark .navbar-custom-css {
+  background-color: hsl(0, 0%, 15%) !important;
+}
+
+.dark .sidebar-custom-css {
+  background-color: hsl(0, 0%, 20%) !important;
+}

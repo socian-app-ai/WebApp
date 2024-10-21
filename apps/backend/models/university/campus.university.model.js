@@ -18,6 +18,10 @@ const campusSchema = new Schema({
     emailPatterns: {
         teacherPatterns: [String],
         studentPatterns: [String],
+        convertedRegEx: {
+            teacherPatterns: [String],
+            studentPatterns: [String],
+        }
         // RollNumberFormat: [String]
     },
     picture: {
