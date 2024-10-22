@@ -33,7 +33,7 @@ p {
 }
 
 .navbar-custom-css {
-  background-color: hsl(0, 0%, 90%) !important;
+  background-color: hsl(192, 71%, 43%) !important;
 }
 
 .sidebar-custom-css {
@@ -51,4 +51,23 @@ p {
 .sidebar-custom-css,
 .navbar-custom-css {
   background: url(https://arc.net/noise-light.png) #456378;
+}
+
+::-webkit-file-upload-button,
+::file-selector-button {
+  display: none;
+}
+input::placeholder {
+  color: rgb(46, 46, 46);
+}
+input,
+label {
+  color: black;
+}
+.dark input,
+label {
+  color: white;
+}
+.dark input::placeholder {
+  color: rgb(160, 160, 160);
 }

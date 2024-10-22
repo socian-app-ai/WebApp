@@ -27,7 +27,7 @@ const Layout = ({ children }) => {
             {sideBarState && <div onClick={() => setSideBarState(false)} className="absolute md:hidden bg-[#121212] w-full z-[3] h-svh">
             </div>}
             <Navbar />
-            <div className={`flex-1 pt-20 p-1 ${sideBarState && width > 768 ? "ml-64" : ""}`}>
+            <div className={`flex-1 pt-20 p-4 ${sideBarState && width > 768 ? "ml-64" : ""}`}>
                 {children}
             </div>
         </div>

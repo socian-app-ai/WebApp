@@ -3,8 +3,11 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import useUniversityData from '../hooks/useUniversityData';
+import LabelFileInputCustomizable from '../../../components/Upload/LabelFileInputCustomizable';
+import { LabelInputUnderLineCustomizable } from '../../../components/TextField/LabelInputCustomizable';
+import DepartmentsManager, { AcademicFormat, CreateCampusComponent, Departments } from '../components/CreateCampusComponent';
 
-
+//Only super admin can create or select uni, admin can create campus [!important]
 
 export default function AddUniversityPage() {
     const [universities, setUniversities] = useState([]);
@@ -46,24 +49,105 @@ export default function AddUniversityPage() {
         // }
         // fetchUniversities()
     }, [])
+
+
     return (
-        <div>
-            {UniversitySelector}
-            <div>
-                {(
-                    <>
-                        <p>Name: {currentUniversity.length != 0 && currentUniversity.name}</p>
-                        <p>Main Address: {currentUniversity.length != 0 && currentUniversity.mainLocationAddress}</p>
-                        <p>Telephone: {currentUniversity.length != 0 && currentUniversity.telephone}</p>
-                        <p>Admin emails: {currentUniversity.length != 0 && currentUniversity.adminEmails}</p>
-                    </>
-                )
-                }
+        <div className='space-y-2'>
+            <div className='relative'>
+                <button className='absolute top-1 right-1 border p-1 mx-1 bg-gray-100 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-900 rounded-lg text-sm '> Save this</button>
+                {UniversitySelector}
+                <div>
+                    <h1 className='text-2xl font-bold mb-4'>University Details </h1>
+                    <hr />
+                    <div className='flex flex-row items-baseline space-x-2'>
+                        <p>Name: </p>
+                        <LabelInputUnderLineCustomizable
+                            type="university-name"
+                            name="university-name"
+                            className="m-0"
+                            placeholder="cuilahore"
+                            onChange={(e) => setCurrentUniversity({ ...currentUniversity, name: e.target.value })}
+
+                            value={currentUniversity.length != 0 ? currentUniversity.name : ''}
+                        />
+                    </div>
+
+                    <div className='flex flex-row items-baseline space-x-2'>
+                        <p>Address: </p>
+                        <LabelInputUnderLineCustomizable
+                            type="mainLocation-address"
+                            name="mainLocation-address"
+                            className="my-2"
+                            placeholder="lahore"
+                            onChange={(e) => setCurrentUniversity({ ...currentUniversity, mainLocationAddress: e.target.value })}
+
+                            value={currentUniversity.length != 0 ? currentUniversity.mainLocationAddress : ''}
+                        />
+                    </div>
+
+                    <div className='flex flex-row items-baseline space-x-2'>
+                        <p>Telephone: </p>
+                        <LabelInputUnderLineCustomizable
+                            type="telephone"
+                            name="telephone"
+                            className="my-2"
+                            placeholder="042 XXXXX"
+                            onChange={(e) => setCurrentUniversity({ ...currentUniversity, telephone: e.target.value })}
+
+                            value={currentUniversity.length != 0 ? currentUniversity.telephone : ''}
+                        />
+                    </div>
+
+
+                    <div className='flex flex-row items-baseline space-x-2'>
+                        <p>Admin emails: </p>
+                        <LabelInputUnderLineCustomizable
+                            type="admin-email"
+                            name="admin-email"
+                            className="my-2"
+                            placeholder="admin-emailcuilahore.pk"
+                            onChange={(e) => setCurrentUniversity({ ...currentUniversity, adminEmails: e.target.value })}
+
+                            value={currentUniversity.length != 0 ? currentUniversity.adminEmails : ''}
+                        />
+                    </div>
+
+
+
+                    <LabelFileInputCustomizable
+                        divClassName="flex space-x-2 flex-row align-baseline items-start text-black"
+                        label="Upload Campus Picture"
+                        labelClassName="dark:text-white text-black"
+                        className="h-fit"
+                    />
+
+                </div>
+
             </div>
+
+
+            <CreateCampusComponent />
+
+
+            <AcademicFormat />
+            <Departments />
+
+            <DepartmentsManager />
+
+
+
+
 
         </div>
     )
 }
+
+
+
+
+
+
+
 
 // db data
 // name
