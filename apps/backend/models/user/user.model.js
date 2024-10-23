@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+
 // Remmeber: Apply logic in prioirity on frontend then backend and then model. 
 const userSchema = new mongoose.Schema({
     name: {
@@ -19,9 +20,13 @@ const userSchema = new mongoose.Schema({
     },
     super_role: {
         type: String,
-        enum: ['super', 'admin', 'mod'],
+        enum: ['super', 'admin', 'mod', 'none'],
     },
 
+    moderatorTo: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Community'
+    }],
 
     profile: {
         // update default picture url 

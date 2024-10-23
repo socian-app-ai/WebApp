@@ -5,7 +5,22 @@ const subjectSchema = new Schema({
     name: {
         type: String,
         required: true,
+    },
+    references: {
+        departmentId: {
+            type: Schema.Types.ObjectId,
+            ref: 'Department'
+        },
+        universityOrigin: {
+            type: Schema.Types.ObjectId,
+            ref: 'University'
+        },
+        campusOrigin: {
+            type: Schema.Types.ObjectId,
+            ref: 'Campus'
+        },
     }
+
 })
 
 

@@ -38,4 +38,24 @@ router.get('/', async (req, res) => {
     }
 })
 
+
+
+
+
+
+
+router.get('/:universityOrigin', async (req, res) => {
+    const { universityOrigin } = req.params;
+    console.log(req.query, "and", req.params)
+    try {
+        const university = await University.findOne({ _id: universityOrigin }).populate('campuses');
+
+        res.status(200).json(university);
+    } catch (error) {
+        console.error('Error creating campus:', error);
+        res.status(500).json({ message: error.message }); // Unable to create campus. Please try again.
+
+    }
+})
+
 module.exports = router;

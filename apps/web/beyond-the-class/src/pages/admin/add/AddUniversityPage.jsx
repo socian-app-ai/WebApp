@@ -12,7 +12,7 @@ import DepartmentsManager, { AcademicFormat, CreateCampusComponent, Departments 
 export default function AddUniversityPage() {
     const [universities, setUniversities] = useState([]);
     const [universityData, setUniversityData] = useState([])
-    const [universityId, setUniversityId] = useState(null)
+    // const [universityId, setUniversityId] = useState(null)
 
 
 
@@ -20,17 +20,17 @@ export default function AddUniversityPage() {
     console.log(urlParams)
 
     const { UniversitySelector, campus, currentUniversity, setCurrentUniversity } = useUniversityData()
-    if (universityId) {
-        universityData.length != 0 && setCurrentUniversity(universityData)
-    }
+    // if (currentUniversity) {
+    //     universityData.length != 0 && setCurrentUniversity(universityData)
+    // }
 
     useEffect(() => {
         // DID CODE FOR CAMPUS , MOVE THIS TO CAMPUS
         const fetch = async () => {
-            const res = await axios.get(`/api/university?universityId=${universityId}`)
-            setUniversityData(universityData)
+            const res = await axios.get(`/api/university/${currentUniversity._id}`)
+            setUniversityData(res.data)
         }
-        universityId && fetch(universityId)
+        currentUniversity && fetch()
 
 
 
@@ -127,7 +127,15 @@ export default function AddUniversityPage() {
 
 
             <CreateCampusComponent />
-
+            {/* {console.log("Cam", currentUniversity)}
+            {
+                currentUniversity.length != 0
+                && (
+                    <ShowPreviousCampusComponent
+                        universityOrigin={currentUniversity._id}
+                    />
+                )
+            } */}
 
             <AcademicFormat />
             <Departments />

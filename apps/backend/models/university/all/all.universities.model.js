@@ -13,6 +13,16 @@ const allUniversitySchema = new Schema({
         ref: 'University'
     }],
 
+    allCommunities: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Community'
+    }],
+    allSubCommunities: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'SubCommunity'
+    }]
+
+
 
 })
 

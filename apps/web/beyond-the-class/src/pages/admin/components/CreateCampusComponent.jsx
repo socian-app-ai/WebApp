@@ -204,6 +204,254 @@ export function CreateCampusComponent() {
     );
 }
 
+
+
+
+
+// export function ShowPreviousCampusComponent({ universityOrigin }) {
+//     const [campusData, setCampusData] = useState([]);
+//     const [patternData, setPatternData] = useState([]);
+
+//     const [studentInput, setStudentInput] = useState(campusData.emailPatterns?.studentPatterns[0] || []);
+//     const [teacherInput, setTeacherInput] = useState(campusData.emailPatterns?.teacherPatterns[0] || []);
+//     const [editStudentIndex, setEditStudentIndex] = useState(null);
+//     const [editTeacherIndex, setEditTeacherIndex] = useState(null);
+
+
+
+
+//     useEffect(() => {
+//         const fetchCampusData = async () => {
+//             try {
+//                 const response = await axios.get(`/api/university/${universityOrigin}`);
+//                 setCampusData(response.data.campuses);
+
+//                 // response.data.campuses.emailPatterns
+
+//                 // setPatternData(response.data.campuses.map(v => v.emailPatterns))
+//                 console.log("HEY", response.data.campuses)
+//             } catch (error) {
+//                 console.error('Error fetching campus data:', error.message);
+//             }
+//         };
+//         fetchCampusData();
+//     }, [universityOrigin]);
+
+
+//     console.log(patternData)
+
+//     // Student Pattern Handlers
+//     // const handleStudentInputChange = (e) => setStudentInput(e.target.value);
+
+//     // const handleAddStudentPattern = () => {
+//     //     if (studentInput.trim()) {
+//     //         setCampusData((prevData) => ({
+//     //             ...prevData,
+//     //             emailPatterns: {
+//     //                 ...prevData.emailPatterns,
+//     //                 studentPatterns: [...prevData.emailPatterns.studentPatterns, studentInput.trim()],
+//     //             },
+//     //         }));
+//     //         setStudentInput('');
+//     //     }
+//     // };
+
+//     // const handleEditStudentPattern = (index) => {
+//     //     setEditStudentIndex(index);
+//     //     setStudentInput(campusData.emailPatterns.studentPatterns[index]);
+//     // };
+
+//     // const handleSaveStudentEdit = () => {
+//     //     if (editStudentIndex !== null && studentInput.trim()) {
+//     //         const updatedPatterns = [...campusData.emailPatterns.studentPatterns];
+//     //         updatedPatterns[editStudentIndex] = studentInput.trim();
+//     //         setCampusData((prevData) => ({
+//     //             ...prevData,
+//     //             emailPatterns: {
+//     //                 ...prevData.emailPatterns,
+//     //                 studentPatterns: updatedPatterns,
+//     //             },
+//     //         }));
+//     //         setEditStudentIndex(null);
+//     //         setStudentInput('');
+//     //     }
+//     // };
+
+//     // // Teacher Pattern Handlers
+//     // const handleTeacherInputChange = (e) => setTeacherInput(e.target.value);
+
+//     // const handleAddTeacherPattern = () => {
+//     //     if (teacherInput.trim()) {
+//     //         setCampusData((prevData) => ({
+//     //             ...prevData,
+//     //             emailPatterns: {
+//     //                 ...prevData.emailPatterns,
+//     //                 teacherPatterns: [...prevData.emailPatterns.teacherPatterns, teacherInput.trim()],
+//     //             },
+//     //         }));
+//     //         setTeacherInput('');
+//     //     }
+//     // };
+
+//     // const handleEditTeacherPattern = (index) => {
+//     //     setEditTeacherIndex(index);
+//     //     setTeacherInput(campusData.emailPatterns.teacherPatterns[index]);
+//     // };
+
+//     // const handleSaveTeacherEdit = () => {
+//     //     if (editTeacherIndex !== null && teacherInput.trim()) {
+//     //         const updatedPatterns = [...campusData.emailPatterns.teacherPatterns];
+//     //         updatedPatterns[editTeacherIndex] = teacherInput.trim();
+//     //         setCampusData((prevData) => ({
+//     //             ...prevData,
+//     //             emailPatterns: {
+//     //                 ...prevData.emailPatterns,
+//     //                 teacherPatterns: updatedPatterns,
+//     //             },
+//     //         }));
+//     //         setEditTeacherIndex(null);
+//     //         setTeacherInput('');
+//     //     }
+//     // };
+
+//     const handleSubmit = (e) => {
+//         e.preventDefault();
+//         if (campusData.name.trim() && campusData.location.trim()) {
+//             console.log('Submitted campus data:', campusData);
+//         } else {
+//             console.error('Campus name and location must be filled out.');
+//         }
+//     };
+
+//     return (
+//         campusData.length !== 0 && (
+//             <>
+//                 <h1 className='text-2xl font-bold mb-4'>Previous Campus</h1>
+//                 <hr />
+
+//                 <form onSubmit={handleSubmit} className='relative'>
+//                     <button
+//                         type="submit"
+//                         className='absolute top-1 right-1 border p-1 mx-1 bg-gray-100 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-900 rounded-lg text-sm'>
+//                         Save this
+//                     </button>
+
+//                     {/* Campus Name and Location */}
+//                     <div className='p-1'>
+//                         <div className='flex flex-row items-baseline space-x-2'>
+//                             <p>Campus Name: </p>
+//                             <LabelInputUnderLineCustomizable
+//                                 type="text"
+//                                 name="campus-name"
+//                                 className="my-2"
+//                                 placeholder="comsats lahore campus"
+//                                 onChange={(e) => setCampusData({ ...campusData, name: e.target.value })}
+//                                 value={campusData.name}
+//                             />
+//                         </div>
+
+//                         <div className='flex flex-row items-baseline space-x-2'>
+//                             <p>Location: </p>
+//                             <LabelInputUnderLineCustomizable
+//                                 type="text"
+//                                 name="location"
+//                                 className="my-2"
+//                                 placeholder="Lahore"
+//                                 onChange={(e) => setCampusData({ ...campusData, location: e.target.value })}
+//                                 value={campusData.location}
+//                             />
+//                         </div>
+
+//                         {/* Student Patterns */}
+//                         <div className='flex flex-row items-baseline space-x-2'>
+//                             <p>Student Pattern: </p>
+//                             <LabelInputUnderLineCustomizable
+//                                 type="text"
+//                                 name="student-pattern"
+//                                 className="my-2"
+//                                 placeholder="fa21-bcs-000@cuilahore.edu.pk"
+//                                 // onChange={handleStudentInputChange}
+//                                 value={studentInput}
+//                             // onKeyPress={(e) => {
+//                             //     if (e.key === 'Enter') {
+//                             //         e.preventDefault();
+//                             //         if (editStudentIndex === null) handleAddStudentPattern();
+//                             //     }
+//                             // }}
+//                             />
+//                             {/* {editStudentIndex !== null ? (
+//                                 <button className="p-1 bg-green-500 text-white rounded" type="button" onClick={handleSaveStudentEdit}>
+//                                     Save
+//                                 </button>
+//                             ) : (
+//                                 <button className="p-1 bg-green-400 text-white rounded" type="button" onClick={handleAddStudentPattern}>
+//                                     +
+//                                 </button>
+//                             )} */}
+//                         </div>
+
+//                         {/* Display Student Patterns */}
+//                         <div className='flex flex-col mt-2 space-y-1'>
+//                             {patternData.studentPatterns &&
+//                                 patternData.studentPatterns.map((pattern, index) => (
+//                                     <div key={index} className="flex items-center space-x-2">
+//                                         <span>{pattern}</span>
+//                                         {/* <button className="text-sm text-blue-600 underline" type="button" onClick={() => handleEditStudentPattern(index)}>
+//                                             Edit
+//                                         </button> */}
+//                                     </div>
+//                                 ))}
+//                         </div>
+
+//                         {/* Teacher Patterns */}
+//                         <div className='flex flex-row items-baseline space-x-2'>
+//                             <p>Teacher Pattern: </p>
+//                             <LabelInputUnderLineCustomizable
+//                                 type="text"
+//                                 name="teacher-pattern"
+//                                 className="my-2"
+//                                 placeholder="teacher@cuilahore.edu.pk"
+//                                 // onChange={handleTeacherInputChange}
+//                                 value={teacherInput}
+//                             // onKeyPress={(e) => {
+//                             //     if (e.key === 'Enter') {
+//                             //         e.preventDefault();
+//                             //         if (editTeacherIndex === null) handleAddTeacherPattern();
+//                             //     }
+//                             // }}
+//                             />
+//                             {/* {editTeacherIndex !== null ? (
+//                                 <button className="p-1 bg-green-500 text-white rounded" type="button" onClick={handleSaveTeacherEdit}>
+//                                     Save
+//                                 </button>
+//                             ) : (
+//                                 <button className="p-1 bg-green-400 text-white rounded" type="button" onClick={handleAddTeacherPattern}>
+//                                     +
+//                                 </button>
+//                             )} */}
+//                         </div>
+
+//                         {/* Display Teacher Patterns */}
+//                         <div className='flex flex-col mt-2 space-y-1'>
+//                             {patternData.teacherPatterns &&
+//                                 patternData.teacherPatterns.map((pattern, index) => (
+//                                     <div key={index} className="flex items-center space-x-2">
+//                                         <span>{pattern}</span>
+//                                         {/* <button className="text-sm text-blue-600 underline" type="button" onClick={() => handleEditTeacherPattern(index)}>
+//                                             Edit
+//                                         </button> */}
+//                                     </div>
+//                                 ))}
+//                         </div>
+//                     </div>
+//                 </form>
+//             </>
+//         )
+//     );
+// }
+
+
+
 export function AcademicFormat() {
     const [selectedFormat, setSelectedFormat] = useState('');
     const [format, setFormat] = useState('');

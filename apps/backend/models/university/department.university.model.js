@@ -11,7 +11,19 @@ const departmentSchema = new Schema({
             type: Schema.Types.ObjectId,
             ref: 'Subject'
         }
-    ]
+    ],
+
+
+    references: {
+        universityOrigin: {
+            type: Schema.Types.ObjectId,
+            ref: 'University'
+        },
+        campusOrigin: {
+            type: Schema.Types.ObjectId,
+            ref: 'Campus'
+        },
+    }
 })
 
 
