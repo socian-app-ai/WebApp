@@ -50,6 +50,11 @@ const campusSchema = new Schema({
     users: [{
         type: Schema.ObjectId,
         ref: 'User'
+    }],
+
+    teachers: [{
+        type: Schema.ObjectId,
+        ref: 'Teacher'
     }]
 })
 

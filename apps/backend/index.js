@@ -78,9 +78,16 @@ const authRouter = require("./routes/auth.route.js")
 // const requestRoute = require('./routes/request');
 // const emailRoute = require('./routes/email.route.js');
 
+const protectRoute = require("./middlewares/protect.route.js");
+
 const universityRouter = require('./routes/university_related/university.route.js')
 const campusRouter = require('./routes/university_related/campus.route.js');
-const protectRoute = require("./middlewares/protect.route.js");
+
+const departmentRouter = require('./routes/university_related/department/department.route.js');
+const subjectRouter = require('./routes/university_related/subject/subject.route.js');
+const teacherRouter = require('./routes/university_related/teacher/teacher.route.js');
+
+
 
 
 
@@ -90,6 +97,10 @@ app.use("/api/auth", authRouter)
 // app.use('/email', emailRoute);
 app.use("/api/university", protectRoute, universityRouter)
 app.use("/api/campus", protectRoute, campusRouter)
+
+app.use("/api/teacher", protectRoute, teacherRouter)
+app.use("/api/department", protectRoute, departmentRouter)
+app.use("/api/subject", protectRoute, subjectRouter)
 
 
 

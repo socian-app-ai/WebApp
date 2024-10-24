@@ -73,7 +73,8 @@ function Sidebar() {
     // Define different menus for different roles
     const studentMenu = [
         { name: "Home", path: `/student/`, icon: <IoMdHome className="w-5" /> },
-        { name: "Past Papers", path: `/student//past-papers`, icon: <FaMedapps className="w-5" /> },
+        { name: "Past Papers", path: `/student/past-papers`, icon: <FaMedapps className="w-5" /> },
+        { name: "Teachers Review", path: `/student/review/teachers`, icon: <FaMedapps className="w-5" /> },
         // Add more student-specific links
     ];
 
