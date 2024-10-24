@@ -15,11 +15,12 @@ export default function LabelInputCustomizable({required=true, hideShowPass=fals
             <input
                 type={hideShowPass ? showPassword :type}
                 id={label}
-                className={`${inputClassName} bg-gray-50 border  border-gray-300 text-gray-100 
-                    text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block 
-                     ${width ? width : "w-[20rem]"}  p-2.5 dark:bg-gray-700 dark:border-gray-600
-                      dark:placeholder-gray-400  dark:text-white dark:focus:ring-blue-500
-                       dark:focus:border-blue-500`}
+                className={`${inputClassName} [&&]:text-gray-900  [&&]:dark:text-white  text-sm
+                     [&&]:bg-gray-100 dark:[&&]:bg-gray-700 border 
+                     border-gray-300   dark:border-gray-600
+                     focus:ring-blue-500 focus:border-blue-500 block 
+                     ${width ? width : "w-[20rem]"} p-2.5  rounded-lg   
+                      [&&]:placeholder-gray-600   [&&]:dark:placeholder-gray-400   dark:focus:ring-blue-500 dark:focus:border-blue-500`}
                 placeholder={placeholder}
                 value={value}
                 onChange= {onChange}

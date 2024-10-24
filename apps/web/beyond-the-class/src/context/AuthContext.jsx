@@ -55,7 +55,7 @@ export const AuthContextProvider = ({ children }) => {
 
         fetchSessionData();
 
-    }, [authUser]);
+    }, []);
 
 
 

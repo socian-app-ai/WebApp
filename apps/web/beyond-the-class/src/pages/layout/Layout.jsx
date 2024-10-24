@@ -19,27 +19,28 @@ const Layout = ({ children }) => {
     const { authUser } = useAuthContext();
 
 
-    const renderContent = () => {
-        if (authUser) {
-            if (authUser.role === 'student') {
-                return <StudentDashboard campusData={authUser.university.campusLocation} />;
-            } else if (authUser.role === 'alumni') {
-                return <AlumniDashboard campusData={authUser.university.campusLocation} />;
-            } else if (authUser.role === 'teacher') {
-                return <TeacherDashboard />;
-            } else if (authUser.role === 'external_org') {
-                return <ExternalOrgDashboard />;
-            }
-        }
-    };
+    // const renderContent = () => {
+    //     if (authUser) {
+    //         if (authUser.role === 'student') {
+    //             return <StudentDashboard />;
+    //         } else if (authUser.role === 'alumni') {
+    //             return <AlumniDashboard />;
+    //         } else if (authUser.role === 'teacher') {
+    //             return <TeacherDashboard />;
+    //         } else if (authUser.role === 'external_org') {
+    //             return <ExternalOrgDashboard />;
+    //         }
+    //     }
+    // };
 
     return (
-        <div className="text-black dark:placeholder-white dark:text-white">
+        <div className="text-black placeholder-black dark:placeholder-white dark:text-white">
             <Sidebar />
             {sideBarState && <div onClick={() => setSideBarState(false)} className="absolute md:hidden bg-[#121212] w-full z-[3] h-svh"></div>}
             <Navbar />
             <div className={`flex-1 pt-20 p-4 ${sideBarState && width > 768 ? "ml-64" : ""}`}>
-                {renderContent()}
+                {/* {renderContent()} */}
+                {children}
             </div>
         </div>
     );

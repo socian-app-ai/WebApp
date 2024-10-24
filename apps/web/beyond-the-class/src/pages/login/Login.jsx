@@ -79,7 +79,7 @@ export default function Login() {
         />
 
         <div>
-          <Link to="/register/student-type">Don&apos;t Have an Account?</Link>
+          <Link className="[&&]:dark:text-[#c4c3c3] [&&]:text-black" to="/register/student-type">Don&apos;t Have an Account?</Link>
         </div>
 
         <DarkButton className="my-5 " text="Login"
@@ -87,7 +87,7 @@ export default function Login() {
         />
         <div className="flex justify-center items-center m-4 w-full">
           <hr className="w-full " />
-          <p className="flex flex-nowrap w-full text-[#c4c3c3]  whitespace-nowrap mx-2">or continue with</p>
+          <p className="flex flex-nowrap w-full [&&]dark:text-[#c4c3c3]   whitespace-nowrap mx-2">or continue with</p>
           <hr className="w-full " />
         </div>
 

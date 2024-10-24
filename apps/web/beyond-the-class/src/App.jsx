@@ -7,6 +7,9 @@ import AddUniversityPage from "./pages/admin/add/AddUniversityPage";
 import AddCampusPage from './pages/admin/add/AddCampusPage';
 import Login from "./pages/login/Login";
 import { useAuthContext } from "./context/AuthContext";
+import RoleBasedRoute, { SuperRoleBasedRoute } from "./config/RoleBasedRoute";
+import AllHome from "./pages/home/AllHome";
+import Unauthorized from "./pages/Unauthorized";
 
 function App() {
   const { authUser } = useAuthContext()
@@ -14,13 +17,51 @@ function App() {
   return (
     <>
       <Routes>
-
-
-        <Route path="/" element={<Layout><StudentDashboard /></Layout>} />
-        <Route path="/administrator-in" element={<Layout><SuperAdminHome /> </Layout>} />
         <Route path="/login" element={authUser ? <Navigate to="/" /> : <Login />} />
-        <Route path="/create-university" element={<Layout><AddUniversityPage /> </Layout>} />
-        <Route path="/create-campus" element={<Layout><AddCampusPage /> </Layout>} />
+
+
+        {authUser && (
+          <>
+
+            <Route element={<RoleBasedRoute allowedRoles={['student', 'alumni', 'external_org', 'teacher']} />}>
+              <Route path="/" element={<Layout><AllHome /></Layout>} />
+            </Route>
+
+
+            <Route element={<SuperRoleBasedRoute allowedRoles={['super']} />} >
+              {/* <Route path="/administrator-in" element={<USE DIFFERENT LAYOUT HERE><SuperAdminHome /> </Layout>} /> */}
+              <Route path="/create-university" element={<Layout><AddUniversityPage /> </Layout>} />
+              <Route path="/create-campus" element={<Layout><AddCampusPage /> </Layout>} />
+            </Route>
+
+
+            {/* Routes for Student */}
+            <Route element={<RoleBasedRoute allowedRoles={['student']} />}>
+              {/* <Route path="/pastpapers" element={<StudentPastPapers />} /> */}
+
+            </Route>
+
+            {/* Routes for Alumni */}
+            <Route element={<RoleBasedRoute allowedRoles={['alumni']} />}>
+
+            </Route>
+
+            {/* Routes for External Organizations */}
+            <Route element={<RoleBasedRoute allowedRoles={['external_org']} />}>
+
+            </Route>
+
+            {/* Routes for Teachers */}
+            <Route element={<RoleBasedRoute allowedRoles={['teacher']} />}>
+
+            </Route>
+
+
+            {/* Default fallback for unauthorized access */}
+            <Route path="/unauthorized" element={<Unauthorized />} />
+          </>
+        )}
+
 
       </Routes>
       <Toaster />
@@ -29,3 +70,4 @@ function App() {
 }
 
 export default App
+
