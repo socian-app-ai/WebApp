@@ -1,5 +1,8 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import axiosInstance from "../config/users/axios.instance";
+// import useUserData from "../state_management/zustand/useUserData";
+
+// import Cookies from 'js-cookie'
 
 
 export const AuthContext = createContext();
@@ -12,7 +15,7 @@ export const useAuthContext = () => {
 export const AuthContextProvider = ({ children }) => {
 
 
-    const [authUser, setAuthUser] = useState(false);
+    const [authUser, setAuthUser] = useState(null);
     // const { setUserData } = useUserData()
     const [isLoading, setIsLoading] = useState(true);
 
@@ -25,17 +28,20 @@ export const AuthContextProvider = ({ children }) => {
                 const res = await axiosInstance.get('/api/auth/session', { credentials: 'include' });
                 if (res.status === 200) {
                     // setUserData(res.data);
-                    setAuthUser(true)
-                    // console.log("data:", res.data)
+                    // const data = res.data
+                    // Cookies.set('name', JSON.stringify(res.data))
+                    setAuthUser(res.data)
+                    console.log("data:", res.data)
+                    // console.log("HMM", Cookies.get())
                 } else {
-                    setAuthUser(false);
+                    setAuthUser(null);
                     if (window.location.pathname !== '/login' && res.status === 401) {
                         window.location.href = '/login'
                     }
                     // console.log(window.location.pathname)
                 }
             } catch (error) {
-                setAuthUser(false)
+                setAuthUser(null)
                 console.error("Failed to fetch session data", error);
                 if (window.location.pathname !== '/login') {
                     window.location.href = '/login'

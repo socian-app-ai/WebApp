@@ -1,5 +1,5 @@
 import { Routes, Route, Navigate } from "react-router-dom";
-import StudentHome from "./pages/home/student/StudentHome";
+import StudentDashboard from "./pages/home/student/StudentDashboard";
 import SuperAdminHome from "./pages/admin/home/SuperAdminHome";
 import { Toaster } from "react-hot-toast";
 import Layout from "./pages/layout/Layout";
@@ -16,7 +16,7 @@ function App() {
       <Routes>
 
 
-        <Route path="/" element={<StudentHome />} />
+        <Route path="/" element={<Layout><StudentDashboard /></Layout>} />
         <Route path="/administrator-in" element={<Layout><SuperAdminHome /> </Layout>} />
         <Route path="/login" element={authUser ? <Navigate to="/" /> : <Login />} />
         <Route path="/create-university" element={<Layout><AddUniversityPage /> </Layout>} />

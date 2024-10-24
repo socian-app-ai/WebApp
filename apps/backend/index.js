@@ -18,7 +18,6 @@ const path = require('path');
 // const RedisStore = require('connect-redis').default;
 // const redisClient = require("./db/reddis.js")
 // const Redis = require('ioredis');
-const { renderToString } = require('react-dom/server');
 
 dotenv.config()
 
@@ -49,7 +48,6 @@ const sessionData = session({
         ttl: 14 * 24 * 60 * 60 // 14 days
     })
 });
-app.use(express.static('public'));
 
 app.use(sessionData);
 
@@ -82,7 +80,7 @@ const authRouter = require("./routes/auth.route.js")
 
 const universityRouter = require('./routes/university_related/university.route.js')
 const campusRouter = require('./routes/university_related/campus.route.js');
-const { default: Login } = require("../web/beyond-the-class/src/pages/login/Login.jsx");
+const protectRoute = require("./middlewares/protect.route.js");
 
 
 
@@ -90,38 +88,10 @@ app.use("/api/auth", authRouter)
 // app.use('/api/oauth', oAuthRouter);
 // app.use('/api/request', requestRoute);
 // app.use('/email', emailRoute);
-app.use("/api/university", universityRouter)
-app.use("/api/campus", campusRouter)
+app.use("/api/university", protectRoute, universityRouter)
+app.use("/api/campus", protectRoute, campusRouter)
 
 
-app.get('/', (req, res) => {
-    const reactApp = renderToString(<Login />);
-
-    const html = `
-      <!DOCTYPE html>
-      <html lang="en">
-        <head>
-          <meta charset="UTF-8">
-          <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <title>Login Page</title>
-          <style>
-            body {
-              font-family: Arial, sans-serif;
-              background-color: #f4f4f4;
-              margin: 0;
-              padding: 0;
-            }
-          </style>
-        </head>
-        <body>
-          <div id="root">${reactApp}</div>
-          <script src="/bundle.js"></script>
-        </body>
-      </html>
-    `;
-
-    res.send(html);
-});
 
 // Start Server
 const startServer = () => {

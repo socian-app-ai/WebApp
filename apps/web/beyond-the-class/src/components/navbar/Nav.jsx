@@ -19,18 +19,31 @@ import useLogout from '../../hooks/useLogout';
 
 import useWindowDimensions from '../../hooks/useWindowDimensions';
 import { useSetSideBarState } from '../../state_management/zustand/useSideBar';
+import useUserData from '../../state_management/zustand/useUserData';
+import { useEffect } from 'react';
+import { useAuthContext } from '../../context/AuthContext';
 // import useUserData from '../../zustand/useUserData';
 
 
 
 const Navbar = () => {
-    // const { userData } = useUserData()
-    const userData = undefined
+    const { userData } = useUserData()
     const { width } = useWindowDimensions();
     const { toggleSideBar } = useSetSideBarState()
 
     const { logout } = useLogout()
+    const { authUser } = useAuthContext();
 
+    // const [campusData, setCampusData] = useState(null);
+
+    // useEffect(() => {
+    //     if (userData.role === 'student'  ) {
+
+    //         getCampusData(userData.university.campusLocation.name)
+    //             .then(data => setCampusData(data))
+    //             .catch(error => console.error(error));
+    //     }
+    // }, [userData.campus]);
 
 
 
@@ -45,14 +58,20 @@ const Navbar = () => {
 
 
 
+
+
     return (
         <Box className="navbar-custom-css border-bottom-half  fixed w-full z-20 h-15   bg-white dark:bg-[#191919]  dark:text-white px-4 py-2 flex justify-between items-center">
             <div className="flex justify-center items-center ">
                 <div className='flex items-center md:items-end justify-end '>
                     {(width < 768) && <RxHamburgerMenu className='mx-2' size={22} onClick={toggleSideBar} />}
-                    <img className='h-9 w-9 lg:h-10 lg:w-10 ' src="/comsats_logo_only_circle.png" />
-
-                    <h5 className=' font-semibold hidden md:block text-lg md:text-2xl ml-2'>Beyond The Class</h5>
+                    <img className='h-9 w-9 lg:h-10 lg:w-10 ' src={authUser && authUser.university && authUser.university.campusLocation.picture} />
+                    {/* <img className='h-9 w-9 lg:h-10 lg:w-10 ' src="/comsats_logo_only_circle.png" /> */}
+                    {/* {authUser && authUser.university && authUser.university.campusLocation.name} */}
+                    <div className='flex flex-col ml-2 -space-y-1'>
+                        <h5 className='font-semibold hidden md:block text-lg md:text-2xl '> {authUser && authUser.university && authUser.university.campusLocation.name}</h5>
+                        <p className="text-xs font-light">Beyond The Class</p>
+                    </div>
                 </div>
 
             </div>

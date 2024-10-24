@@ -104,8 +104,8 @@ router.post('/login/student', async (req, res) => {
         const universityFromUser = await User
             .findOne({ universityEmail: email })
             .populate([
-                { path: 'university.name', select: 'name _id' },
-                { path: 'university.campusLocation', select: 'name _id' },
+                { path: 'university.name', select: '-users _id' },
+                { path: 'university.campusLocation', select: '-users _id' },
 
             ])
 
