@@ -7,8 +7,27 @@ const Teacher = require('../../../models/university/teacher/teacher.model');
 const router = express.Router()
 
 
-router.get("/", async (req, res) => {
+router.get("/teachers-by-campus", async (req, res) => {
     try {
+        const user = req.session.user;
+
+        const campusLocation = user.university.campusLocation;
+        if (!campusLocation) return;
+        // console.log("campusLocation", campusLocation)
+        const findCampus = await Campus.findOne({ _id: campusLocation })
+        if (!findCampus) return res.status(404).json({ error: "Error finding campus" });
+        // console.log("findCampus", findCampus)
+        const userInfo = await findCampus.populate('teachers')
+        // console.log("teachers", userInfo)
+        const teachers = userInfo.teachers;
+
+        // const teacherFullInfo = await teachers.populate([
+        //     { path: 'department', select: 'name' },
+        //     { path: 'campusOrigin', select: 'name' },
+        //     { path: 'universityOrigin', select: 'name' },
+        // ])
+        res.status(200).json(teachers)
+
 
     } catch (error) {
         console.error('Error in teacher:', error);

@@ -1,8 +1,8 @@
 import { useAuthContext } from '../../context/AuthContext'
-import StudentDashboard from './student/StudentDashboard';
 import AlumniHome from './alumni/AlumniDashboard';
 import TeacherDashboard from './teacher/TeacherDashboard';
 import ExternalOrgDashboard from './externalOrgranization/ExternalOrgDashboard';
+import StudentDashboard from './student/StudentDashboard';
 
 export default function AllHome() {
 
@@ -24,7 +24,7 @@ export default function AllHome() {
 
     return (
         <div>
-            {renderContent}
+            {renderContent()}
         </div>
     )
 }

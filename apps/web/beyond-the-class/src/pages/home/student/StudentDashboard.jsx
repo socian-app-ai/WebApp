@@ -3,9 +3,11 @@ import { useAuthContext } from '../../../context/AuthContext'
 
 export default function StudentDashboard() {
     const { authUser } = useAuthContext()
+    console.log("here")
 
     return (
         <div className="min-h-screen">
+
             {authUser && authUser.university && authUser.university.campusLocation ? (
                 typeof authUser.university.campusLocation === 'string' ? (
                     <p>{authUser.university.campusLocation}</p>
