@@ -49,12 +49,34 @@ export default function ReviewPage() {
     };
     // console.log(teachers && teachers)
 
+    const [backgroundColor, setBackgroundColor] = useState('')
+
+    useEffect(() => {
+
+        window.addEventListener('scroll', changeNavBg);
+        return () => {
+            window.removeEventListener('scroll', changeNavBg);
+        }
+
+
+    }, [])
+
+    const changeNavBg = () => {
+        console.log("hi")
+        if (window.scrollY > 10) {
+            setBackgroundColor(' bg-[#dbd2d2f5] dark:bg-[#121212f5]')
+        } else {
+            setBackgroundColor('')
+        }
+
+
+    }
 
     return (
         <div className="min-h-screen    relative text-black dark:text-white ">
-            <div className="container mx-auto  ">
+            <div className="container ">
 
-                <div className="scroll w-full  z-[5] fixed  flex flex-col md:flex-row ">
+                <div className={`scroll w-full  z-[5] p-1 -m-4 fixed   flex flex-col md:flex-row ${backgroundColor}  `}>
 
                     <div className='flex w-full relative  '>
                         <Search className='absolute top-[0.6rem] bottom-0 left-3' />
