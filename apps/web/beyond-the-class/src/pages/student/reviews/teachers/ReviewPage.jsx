@@ -2,8 +2,8 @@
 import { CircularProgress } from "@mui/material";
 import { useEffect, useState } from "react";
 import { Search } from "@mui/icons-material";
-import axiosInstance from "../../../config/users/axios.instance";
 import TeacherCard from './TeacherCard';
+import axiosInstance from "../../../../config/users/axios.instance";
 
 export default function ReviewPage() {
     const [teachers, setTeachers] = useState([]);
@@ -103,7 +103,7 @@ export default function ReviewPage() {
                             <CircularProgress color="inherit" />
                         </div>
                     ) : (
-                        <div className="grid grid-cols-1  md:grid-cols-2 md: lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4  gap-1 sm:gap-2 lg:min-w-[55rem] lg:gap-2">
+                        <div className="grid grid-cols-1  md:grid-cols-2  lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4  gap-1 sm:gap-2 lg:min-w-[55rem] lg:gap-2">
                             {filteredTeachers.slice(0, visibleTeachers).map(teacher => (
                                 <TeacherCard key={teacher.name} teacher={teacher} />
                             ))}

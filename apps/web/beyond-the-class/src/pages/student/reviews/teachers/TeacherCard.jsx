@@ -16,7 +16,7 @@ export default function TeacherCard({ teacher }) {
                 </div>
                 <div className="ml-3">
                     <h2 className="text-md font-semibold dark:text-white">{teacher.name}</h2>
-                    <p className="text-gray-600 dark:text-gray-400">{teacher?.designation || ''}</p>
+                    <p className="text-gray-600 dark:text-gray-400">{teacher?.designation || 'designation'}</p>
                 </div>
 
             </div>
@@ -43,7 +43,9 @@ export default function TeacherCard({ teacher }) {
                     className="dark:text-white dark:border-white"
                 />
                 }
-                <p><strong>Designation:</strong> {teacher?.designation || ''}</p>
+                <div className="w-full min-h-10 max-h-20 bg-gray-400 rounded-md p-1">
+                    <p className="line-clamp-3">Most voted review here. Most voted review here. Most voted review here. Most voted review here. Most voted review here.</p>
+                </div>
             </div>
 
 

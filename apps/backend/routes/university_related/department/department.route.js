@@ -9,11 +9,11 @@ router.get("/by-university", async (req, res) => {
     const { universityId } = req.body;
     try {
 
-        const departments = await Department.find()
+        // const departments = await Department.find().lean()
 
-        const department = await Department.findOne({
+        const departments = await Department.findOne({
             'references.universityOrigin': universityId
-        })
+        }).lean()
 
         if (!departments) return res.status(300).json({ message: "Error fetching Department" })
 
@@ -33,7 +33,7 @@ router.get("/by-campus", async (req, res) => {
 
         const departments = await Department.findOne({
             'references.campusOrigin': campusId
-        })
+        }).lean()
 
         if (!departments) return res.status(300).json({ message: "Error fetching Department" })
 
@@ -44,6 +44,47 @@ router.get("/by-campus", async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 })
+
+
+
+
+router.get("/with-subjects-by-campus", async (req, res) => {
+    const { campusId } = req.body;
+    const ifAvailableCampusIdFromUser = req.session.user.university.campusLocation._id;
+
+    try {
+
+
+        const campus = await Campus.find({ _id: ifAvailableCampusIdFromUser ? ifAvailableCampusIdFromUser : campusId })
+            .select('departments')
+            .populate({
+                path: 'departments', select: 'name _id',
+                populate: {
+                    path: 'subjects',
+                    select: 'name _id',
+                    options: { lean: true }
+                }
+
+
+            }).lean()
+
+        if (!campus) return res.status(300).json({ message: "Error fetching campus" })
+        // console.log("Departments: ", JSON.stringify(campus))
+        res.status(200).json(campus)
+
+    } catch (error) {
+        console.error('Error in department:', error);
+        res.status(500).json({ message: error.message });
+    }
+})
+
+
+
+
+
+
+
+
 
 
 

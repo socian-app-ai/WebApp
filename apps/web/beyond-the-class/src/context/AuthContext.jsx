@@ -31,7 +31,7 @@ export const AuthContextProvider = ({ children }) => {
                     // const data = res.data
                     // Cookies.set('name', JSON.stringify(res.data))
                     setAuthUser(res.data)
-                    console.log("data:", res.data)
+                    // console.log("data:", res.data)
                     // console.log("HMM", Cookies.get())
                 } else {
                     setAuthUser(null);

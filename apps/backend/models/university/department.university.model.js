@@ -5,11 +5,13 @@ const departmentSchema = new Schema({
     name: {
         type: String,
         required: true,
+        index: true,
     },
     subjects: [
         {
             type: Schema.Types.ObjectId,
-            ref: 'Subject'
+            ref: 'Subject',
+            index: true,
         }
     ],
     teachers: [{
@@ -21,15 +23,17 @@ const departmentSchema = new Schema({
         universityOrigin: {
             type: Schema.Types.ObjectId,
             ref: 'University',
-            required: true
+            required: true,
+            index: true,
         },
         campusOrigin: {
             type: Schema.Types.ObjectId,
             ref: 'Campus',
-            required: true
+            required: true,
+            index: true,
         },
     }
-})
+}, { timestamps: true })
 
 
 const Department = mongoose.model("Department", departmentSchema);

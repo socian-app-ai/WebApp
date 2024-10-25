@@ -40,7 +40,12 @@ const universitySchema = new Schema({
     users: [{
         type: Schema.ObjectId,
         ref: 'User'
-    }]
+    }],
+    academicFormat: {
+        type: Schema.ObjectId,
+        ref: 'AcademicFormat',
+        index: true,
+    },
 
 })
 

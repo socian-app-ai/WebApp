@@ -4,7 +4,8 @@ const Schema = mongoose.Schema;
 const campusSchema = new Schema({
     universityOrigin: {
         type: Schema.ObjectId,
-        ref: 'University'
+        ref: 'University',
+        index: true,
     },
     name: {
         type: String,
@@ -13,6 +14,7 @@ const campusSchema = new Schema({
     location: { //lahore,islamabad etc
         type: String,
         required: true,
+        index: true,
     },
 
     emailPatterns: {
@@ -32,7 +34,8 @@ const campusSchema = new Schema({
 
     departments: [{
         type: Schema.ObjectId,
-        ref: 'Department'
+        ref: 'Department',
+        index: true,
     }],
 
     registered: {
@@ -49,14 +52,21 @@ const campusSchema = new Schema({
 
     users: [{
         type: Schema.ObjectId,
-        ref: 'User'
+        ref: 'User',
+        index: true,
     }],
 
     teachers: [{
         type: Schema.ObjectId,
         ref: 'Teacher'
-    }]
-})
+    }],
+
+    academicFormat: {
+        type: Schema.ObjectId,
+        ref: 'AcademicFormat',
+        index: true,
+    },
+}, { timestamps: true })
 
 
 const Campus = mongoose.model("Campus", campusSchema);

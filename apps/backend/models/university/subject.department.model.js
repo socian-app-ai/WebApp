@@ -5,24 +5,28 @@ const subjectSchema = new Schema({
     name: {
         type: String,
         required: true,
+        index: true,
     },
     references: {
         departmentId: {
             type: Schema.Types.ObjectId,
-            ref: 'Department'
+            ref: 'Department',
+            index: true,
         },
         universityOrigin: {
             type: Schema.Types.ObjectId,
-            ref: 'University'
+            ref: 'University',
+            index: true,
         },
         campusOrigin: {
             type: Schema.Types.ObjectId,
-            ref: 'Campus'
+            ref: 'Campus',
+            index: true,
         },
     }
 
 
-})
+}, { timestamps: true })
 
 
 const Subject = mongoose.model("Subject", subjectSchema);

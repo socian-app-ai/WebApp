@@ -5,7 +5,7 @@ import { useAuthContext } from '../context/AuthContext';
 const RoleBasedRoute = ({ allowedRoles }) => {
     const { authUser } = useAuthContext();
 
-    console.log("Auth User in RoleBasedRoute:", authUser);
+    // console.log("Auth User in RoleBasedRoute:", authUser);
     return (
         authUser && allowedRoles.includes(authUser.role)
             ? <Outlet />
@@ -20,7 +20,7 @@ export default RoleBasedRoute;
 export const SuperRoleBasedRoute = ({ allowedRoles }) => {
     const { authUser } = useAuthContext();
 
-    console.log("Auth User in SuperRoleBasedRoute:", authUser);
+    // console.log("Auth User in SuperRoleBasedRoute:", authUser);
     return (
         authUser && allowedRoles.includes(authUser.super_role)
             ? <Outlet />

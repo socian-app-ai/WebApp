@@ -10,7 +10,8 @@ import { useAuthContext } from "./context/AuthContext";
 import RoleBasedRoute, { SuperRoleBasedRoute } from "./config/RoleBasedRoute";
 import AllHome from "./pages/home/AllHome";
 import Unauthorized from "./pages/Unauthorized";
-import ReviewPage from "./pages/reviews/teachers/ReviewPage";
+import ReviewPage from './pages/student/reviews/teachers/ReviewPage';
+import ProgramNameAndCourses from "./pages/student/pastpapers/ProgramNameAndCourses";
 
 function App() {
   const { authUser } = useAuthContext()
@@ -40,6 +41,7 @@ function App() {
             <Route element={<RoleBasedRoute allowedRoles={['student']} />}>
               {/* <Route path="/pastpapers" element={<StudentPastPapers />} /> */}
               <Route path="/student/reviews/teachers" element={<Layout><ReviewPage /></Layout>} />
+              <Route path="/student/search-pastpapers" element={<Layout><ProgramNameAndCourses /></Layout>} />
 
             </Route>
 
