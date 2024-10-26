@@ -87,6 +87,9 @@ const departmentRouter = require('./routes/university_related/department/departm
 const subjectRouter = require('./routes/university_related/subject/subject.route.js');
 const teacherRouter = require('./routes/university_related/teacher/teacher.route.js');
 
+const pastpaperRouter = require('./routes/university_related/pastpapers/pastpaper.route.js');
+const academicRouter = require('./routes/university_related/pastpapers/academic.format.route.js');
+
 
 
 
@@ -101,6 +104,9 @@ app.use("/api/campus", protectRoute, campusRouter)
 app.use("/api/teacher", protectRoute, teacherRouter)
 app.use("/api/department", protectRoute, departmentRouter)
 app.use("/api/subject", protectRoute, subjectRouter)
+
+app.use("/api/pastpaper", protectRoute, pastpaperRouter)
+app.use("/api/academic", protectRoute, academicRouter)
 
 
 

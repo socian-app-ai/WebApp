@@ -1,141 +1,87 @@
 const express = require('express');
-const Department = require('../../../models/university/department.university.model');
+const Subject = require('../../../models/university/subject.department.model');
 const University = require('../../../models/university/university.register.model');
 const Campus = require('../../../models/university/campus.university.model');
+const Department = require('../../../models/university/department.university.model');
+const AcademicFormat = require('../../../models/university/academic.format.model');
 const router = express.Router()
 
 
-// router.get("/by-university", async (req, res) => {
-//     const { universityId } = req.body;
-//     try {
-
-//         // const departments = await Department.find().lean()
-
-//         const departments = await Department.findOne({
-//             'references.universityOrigin': universityId
-//         }).lean()
-
-//         if (!departments) return res.status(300).json({ message: "Error fetching Department" })
-
-//         res.status(200).json({ departments })
-
-//     } catch (error) {
-//         console.error('Error in department:', error);
-//         res.status(500).json({ message: error.message });
-//     }
-// })
 
 
-// router.get("/by-campus", async (req, res) => {
-//     const { campusId } = req.body;
-//     try {
+// Use when format not created by default
+router.post("/create-new-format", async (req, res) => {
+    const { formatType } = req.body;
+
+    try {
+
+        const findAcademicFormatType =
+            await AcademicFormat.findOne({ formatType })
+        if (findAcademicFormatType) return res.status(404).json({ message: "Format Already Created" })
+
+        const createAcademicFormat =
+            await AcademicFormat.create({ formatType })
 
 
-//         const departments = await Department.findOne({
-//             'references.campusOrigin': campusId
-//         }).lean()
-
-//         if (!departments) return res.status(300).json({ message: "Error fetching Department" })
-
-//         res.status(200).json({ departments })
-
-//     } catch (error) {
-//         console.error('Error in department:', error);
-//         res.status(500).json({ message: error.message });
-//     }
-// })
+        if (!createAcademicFormat) return res.status(404).json({ message: "Error in Academic Format" })
 
 
+        res.status(200).json(createAcademicFormat)
 
 
-// router.get("/with-subjects-by-campus", async (req, res) => {
-//     const { campusId } = req.body;
-//     const ifAvailableCampusIdFromUser = req.session.user.university.campusLocation._id;
-
-//     try {
-
-
-//         const campus = await Campus.find({ _id: ifAvailableCampusIdFromUser ? ifAvailableCampusIdFromUser : campusId })
-//             .select('departments')
-//             .populate({
-//                 path: 'departments', select: 'name _id',
-//                 populate: {
-//                     path: 'subjects',
-//                     select: 'name _id',
-//                     options: { lean: true }
-//                 }
-
-
-//             }).lean()
-
-//         if (!campus) return res.status(300).json({ message: "Error fetching campus" })
-//         // console.log("Departments: ", JSON.stringify(campus))
-//         res.status(200).json(campus)
-
-//     } catch (error) {
-//         console.error('Error in department:', error);
-//         res.status(500).json({ message: error.message });
-//     }
-// })
-
-
-
-
-
-
-
-
-
+    } catch (error) {
+        console.error('Error in subject:', error);
+        res.status(500).json({ message: error.message });
+    }
+})
 
 
 router.post("/add-format-to-campus", async (req, res) => {
-    const { formatType, universityId, campusId } = req.body;
-    try {
-        if (!name || !universityId || !campusId) return res.status(400).json({ message: "name, universityId, campusId  are required" })
-        if (name === "" || universityId === "" || campusId === "") return res.status(400).json({ message: "name, universityId, campusId  are required" })
+    const { RequestedFormatEnum,
+        universityOrigin,
+        campusOrigin } = req.body;
 
-        const findUni = await University.findOne({ _id: universityId })
+    try {
+
+        const findAcademicFormatType =
+            await AcademicFormat.findOne({
+                'formatType': RequestedFormatEnum
+            })
+        if (!findAcademicFormatType) return res.status(404).json({ message: "Format Already Found" })
+
+        const findUni = await University.findOne({ _id: universityOrigin })
         if (!findUni) return res.status(404).json({ message: "no such University found" })
 
-        const findCampus = await Campus.findOne({ _id: campusId, "universityOrigin": universityId })
+        const findCampus = await Campus.findOne({ _id: campusOrigin, "universityOrigin": universityOrigin })
         if (!findCampus) return res.status(404).json({ message: "no such Campus found" })
 
+        findCampus.academic.FormatId = findAcademicFormatType._id
+        findCampus.academic.FormatType = findAcademicFormatType.formatType
 
+        if (!findAcademicFormatType.references.some(ref => ref.campusOrigin.equals(campusOrigin))) {
+            findAcademicFormatType.references.push({
+                universityOrigin: findUni._id,
+                campusOrigin: findCampus._id,
+            });
+        }
+        // findAcademicFormatType.references.push({
+        //     universityOrigin: findUni._id,
+        //     campusOrigin: findCampus._id
+        // })
 
-        const department = await Department.findOne({
-            name: name, 'references.universityOrigin': universityId,
-            'references.campusOrigin': campusId
-        })
-        if (department) return res.status(300).json({ message: "Department already exists" })
+        await findCampus.save()
+        await findAcademicFormatType.save()
 
-
-
-        const departmentCreated = await Department.create({
-            name: name,
-            'references.universityOrigin': universityId,
-            'references.campusOrigin': campusId
-        })
-
-        departmentCreated.save()
-
-        findCampus.departments.push(departmentCreated)
-        findCampus.save()
-        res.status(200).json({ message: departmentCreated })
+        res.status(200).json({ updatedCampus: findCampus, updatedFormat: findAcademicFormatType });
 
 
     } catch (error) {
-        console.error('Error in department:', error);
+        console.error('Error in subject:', error);
         res.status(500).json({ message: error.message });
     }
 })
-router.post("/departments", async (req, res) => {
-    try {
 
-    } catch (error) {
-        console.error('Error in department:', error);
-        res.status(500).json({ message: error.message });
-    }
-})
+
 
 
 

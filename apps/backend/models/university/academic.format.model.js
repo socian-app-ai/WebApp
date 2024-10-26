@@ -5,13 +5,13 @@ const academicFormatSchema = new Schema({
 
     formatType: {
         type: String,
-        enum: [
-            {
-                'MIDTERM': "Quiz, assignments, mid term, final term",
-            },
-            {
-                '2_SESSIONAL': "Quiz, assignments, sessional 1, sessional 2, final term"
-            }
+        enum: ['MIDTERM', '2_SESSIONAL'
+            // {
+            //     'MIDTERM': "Quiz, assignments, mid term, final term",
+            // },
+            // {
+            //     '2_SESSIONAL': "Quiz, assignments, sessional 1, sessional 2, final term"
+            // }
             // "Other"
         ],
         required: true

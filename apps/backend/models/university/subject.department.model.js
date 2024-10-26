@@ -7,9 +7,10 @@ const subjectSchema = new Schema({
         required: true,
         index: true,
     },
-    pastpapersCollection: {
+    pastpapersCollectionByYear: {
         type: Schema.Types.ObjectId,
-        ref: 'PastPaper'
+        ref: 'PastpapersCollectionByYear',
+        // required: true
     },
     references: {
         departmentId: {

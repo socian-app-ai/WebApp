@@ -3,22 +3,15 @@ const Subject = require('../../../models/university/subject.department.model');
 const University = require('../../../models/university/university.register.model');
 const Campus = require('../../../models/university/campus.university.model');
 const Department = require('../../../models/university/department.university.model');
+const { PastPaper, PastpapersCollectionByYear } = require('../../../models/university/papers/pastpaper.subject.model');
 const router = express.Router()
 
 
-router.get("/", async (req, res) => {
-    try {
-
-    } catch (error) {
-        console.error('Error in subject:', error);
-        res.status(500).json({ message: error.message });
-    }
-})
-
-
-router.post("/", async (req, res) => {
+// creates a subject then create a pastpaper id and attach to subject [default]
+router.post("/create", async (req, res) => {
     const { name, departmentId, universityOrigin, campusOrigin } = req.body;
     try {
+
 
         const findUni = await University.findOne({ _id: universityOrigin })
         if (!findUni) return res.status(404).json({ message: "no such University found" })
@@ -26,6 +19,7 @@ router.post("/", async (req, res) => {
         const findCampus = await Campus.findOne({ _id: campusOrigin, "universityOrigin": universityOrigin })
         if (!findCampus) return res.status(404).json({ message: "no such Campus found" })
 
+        if (!(findCampus.academic?.FormatType)) return res.status(302).json({ message: "Please Complete university Academic Format to continue" })
 
         const findDepartment = await Department.findOne({ _id: departmentId, 'references.campusOrigin': campusOrigin, "references.universityOrigin": universityOrigin })
         if (!findDepartment) return res.status(404).json({ message: "no such Department found" })
@@ -38,7 +32,19 @@ router.post("/", async (req, res) => {
             'references.campusOrigin': campusOrigin,
         })
 
-        subject.save()
+        const createPastpaperCollectionByYear = await PastpapersCollectionByYear.create({
+            type: findCampus.academic.FormatType,
+            references: {
+                universityOrigin: findUni._id,
+                subjectId: subject._id,
+                campusOrigin: findCampus._id
+            }
+        })
+
+        subject.pastpapersCollectionByYear = createPastpaperCollectionByYear._id
+
+
+        await subject.save()
 
         findDepartment.subjects.push(subject)
 
@@ -55,22 +61,6 @@ router.post("/", async (req, res) => {
     }
 })
 
-router.post("/add-subject", async (req, res) => {
-    try {
-
-    } catch (error) {
-        console.error('Error in subject:', error);
-        res.status(500).json({ message: error.message });
-    }
-})
-router.post("/add-subjects", async (req, res) => {
-    try {
-
-    } catch (error) {
-        console.error('Error in subject:', error);
-        res.status(500).json({ message: error.message });
-    }
-})
 
 
 
