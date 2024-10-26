@@ -6,13 +6,17 @@ const academicFormatSchema = new Schema({
     formatType: {
         type: String,
         enum: [
-            "Quiz, assignments, mid term, final term",
-            "Quiz, assignments, sessional 1, sessional 2, final term",
+            {
+                'MIDTERM': "Quiz, assignments, mid term, final term",
+            },
+            {
+                '2_SESSIONAL': "Quiz, assignments, sessional 1, sessional 2, final term"
+            }
             // "Other"
         ],
         required: true
     },
-    references: {
+    references: [{
         universityOrigin: {
             type: Schema.Types.ObjectId,
             ref: 'University',
@@ -25,7 +29,7 @@ const academicFormatSchema = new Schema({
             required: true,
             index: true,
         },
-    }
+    }]
 
     // otherFormat: { 
     //     type: String,

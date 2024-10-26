@@ -61,11 +61,33 @@ const campusSchema = new Schema({
         ref: 'Teacher'
     }],
 
-    academicFormat: {
-        type: Schema.ObjectId,
-        ref: 'AcademicFormat',
-        index: true,
-    },
+
+    academic: {
+        FormatId: {
+            type: Schema.ObjectId,
+            ref: 'AcademicFormat',
+            index: true,
+        },
+        FormatType: {
+            type: String,
+            enum: [
+                'MIDTERM', '2_SESSIONAL'
+            ],
+            default: 'MIDTERM',
+            validate: {
+                validator: function () {
+                    return (
+                        this.FormatId &&
+                            this.FormatId.formatType ===
+                            "MIDTERM"
+                            ? this.default = 'MIDTERM'
+                            : this.default = '2_SESSIONAL'
+                    );
+                },
+                message: "Selected Defaulty",
+            },
+        },
+    }
 }, { timestamps: true })
 
 
