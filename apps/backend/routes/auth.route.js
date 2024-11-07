@@ -127,6 +127,23 @@ router.post('/login/student', async (req, res) => {
             role: universityFromUser.role
 
         };
+        // console.log(req.session.user)
+        req.references = {
+            university: {
+                name: universityFromUser.university.name,
+                id: universityFromUser.university._id
+            }, 
+            campus: {
+                name: universityFromUser.university.campusLocation.name,
+                id: universityFromUser.university.campusLocation._id
+            }
+        }
+        // req.references.save((err) => {
+        //     if (err) {
+        //         console.error('Refferences save error:', err);
+        //         return res.status(500).json({ error: "Internal Server Error" });
+        //     }}
+        // )
 
         req.session.save((err) => {
             if (err) {
@@ -134,8 +151,10 @@ router.post('/login/student', async (req, res) => {
                 return res.status(500).json({ error: "Internal Server Error" });
             }
             // console.log("Session user in Longin Controller : ", req.session.user)
-            return res.status(201).json(req.session.user);
         });
+
+        console.log(req.references)
+        return res.status(201).json(req.session.user);
 
     } catch (error) {
         console.error("Error in ", error.message);

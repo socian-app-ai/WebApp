@@ -12,9 +12,14 @@ import AllHome from "./pages/home/AllHome";
 import Unauthorized from "./pages/Unauthorized";
 import ReviewPage from './pages/student/reviews/teachers/ReviewPage';
 import ProgramNameAndCourses from "./pages/student/pastpapers/ProgramNameAndCourses";
+import CourseInfo from "./pages/student/pastpapers/CourseInfo";
 
 function App() {
-  const { authUser } = useAuthContext()
+  const { authUser, isLoading} = useAuthContext()
+  // console.log("A", authUser)
+  if (isLoading) {
+    return <div>Loading...</div>; 
+  }
 
   return (
     <>
@@ -22,7 +27,7 @@ function App() {
         <Route path="/login" element={authUser ? <Navigate to="/" /> : <Login />} />
 
 
-        {authUser && (
+        {authUser ? (
           <>
 
             <Route element={<RoleBasedRoute allowedRoles={['student', 'alumni', 'external_org', 'teacher']} />}>
@@ -41,7 +46,8 @@ function App() {
             <Route element={<RoleBasedRoute allowedRoles={['student']} />}>
               {/* <Route path="/pastpapers" element={<StudentPastPapers />} /> */}
               <Route path="/student/reviews/teachers" element={<Layout><ReviewPage /></Layout>} />
-              <Route path="/student/search-pastpapers" element={<Layout><ProgramNameAndCourses /></Layout>} />
+              <Route path="/student/search-courses" element={<Layout><ProgramNameAndCourses /></Layout>} />
+              <Route path="/student/course-info/:id" element={<Layout><CourseInfo /></Layout>} />
 
             </Route>
 
@@ -64,7 +70,12 @@ function App() {
             {/* Default fallback for unauthorized access */}
             <Route path="/unauthorized" element={<Unauthorized />} />
           </>
-        )}
+        )
+        : (
+          // Redirect to login if not authenticated
+          <Route path="*" element={<Navigate to="/login" />} />
+        )
+        }
 
 
       </Routes>

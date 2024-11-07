@@ -238,7 +238,7 @@ export default function ProgramNameAndCourses() {
                     <Grid container spacing={3}>
                         {filteredCourses && filteredCourses.map((course, index) => (
                             <Grid item xs={12} sm={6} md={4} lg={3} key={index} >
-                                <Link key={course._id} to={`/pastpapers/course?name=${course.name}&id=${course._id}&dep=${currentDepartment}`}
+                                <Link key={course._id} to={`/student/course-info/${course._id}`}
                                     className="flex text-sm bg-gray-50 border border-gray-300 text-gray-900 rounded-lg p-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                                     {course.name}
                                     {/* <PastPaper

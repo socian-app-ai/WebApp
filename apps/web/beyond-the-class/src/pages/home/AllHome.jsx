@@ -6,7 +6,11 @@ import StudentDashboard from './student/StudentDashboard';
 
 export default function AllHome() {
 
-    const { authUser } = useAuthContext()
+    const { authUser,isLoading } = useAuthContext()
+
+    if (isLoading) {
+        return <div>Loading...</div>; 
+      }
 
     const renderContent = () => {
         if (authUser) {
@@ -21,6 +25,7 @@ export default function AllHome() {
             }
         }
     };
+    
 
     return (
         <div>

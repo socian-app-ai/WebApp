@@ -82,6 +82,14 @@ router.post("/add-format-to-campus", async (req, res) => {
 })
 
 
+router.get('/academic-pattern', async (req,res)=> {
+    try {
+        
+    } catch (error) {
+        
+    }
+})
+
 
 
 

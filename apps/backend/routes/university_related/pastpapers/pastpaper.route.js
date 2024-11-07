@@ -48,7 +48,7 @@ router.get("/all-pastpapers-in-subject", async (req, res) => {
         await findSubject.save()
         res.status(200).json({
             message: "Past Paper created successfully",
-            createdPastPaper: createPastpaper,
+            createdPastPaper: findpastpapers,
             updatedSubject: findSubject
         });
 

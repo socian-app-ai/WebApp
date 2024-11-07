@@ -3,8 +3,11 @@ import { useAuthContext } from '../context/AuthContext';
 
 // A function to restrict access based on user role
 const RoleBasedRoute = ({ allowedRoles }) => {
-    const { authUser } = useAuthContext();
+    const { authUser, isLoading } = useAuthContext();
 
+    if (isLoading) {
+        return <div>Loading...</div>; 
+      }
     // console.log("Auth User in RoleBasedRoute:", authUser);
     return (
         authUser && allowedRoles.includes(authUser.role)
@@ -18,8 +21,10 @@ export default RoleBasedRoute;
 
 
 export const SuperRoleBasedRoute = ({ allowedRoles }) => {
-    const { authUser } = useAuthContext();
-
+    const { authUser, isLoading } = useAuthContext();
+    if (isLoading) {
+        return <div>Loading...</div>; 
+      }
     // console.log("Auth User in SuperRoleBasedRoute:", authUser);
     return (
         authUser && allowedRoles.includes(authUser.super_role)
