@@ -2,6 +2,7 @@ import { useState } from "react"
 import toast from "react-hot-toast"
 import axiosInstance from "../config/users/axios.instance"
 import { useAuthContext } from "../context/AuthContext"
+import { redirect } from "react-router-dom"
 // import secureLocalStorage from "react-secure-storage"
 
 
@@ -26,13 +27,14 @@ const useLogin = () => {
 
             const data = res.data;
 
-            // console.log(data)
+            console.log(data)
             if (res.status >= 400) {
                 throw new Error(data.error)
             }
 
             // secureLocalStorage.setItem("object", JSON.stringify(data))
-            setAuthUser(true)
+            setAuthUser(res.data)
+            redirect('/')
         } catch (error) {
             const errorMessage = error.response?.data?.error || "Unexpected error occurred";
             toast.error(errorMessage)

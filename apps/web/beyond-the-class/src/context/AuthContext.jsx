@@ -19,29 +19,34 @@ export const AuthContextProvider = ({ children }) => {
     // const { setUserData } = useUserData()
     const [isLoading, setIsLoading] = useState(true);
 
+    console.log("HEre4")
 
 
     useEffect(() => {
+        console.log("HEre in auth context useEffect")
 
         const fetchSessionData = async () => {
             try {
+                console.log("here in fetchsession data")
                 const res = await axiosInstance.get('/api/auth/session', { credentials: 'include' });
-                if (res.status === 200) {
+                if (res.status === 200 || res.status === 201 || res.status === 202) {
                     // setUserData(res.data);
                     // const data = res.data
                     // Cookies.set('name', JSON.stringify(res.data))
                     setAuthUser(res.data)
-                    // console.log("data:", res.data)
+                    console.log("data in if fetch:", res.data)
                     // console.log("HMM", Cookies.get())
                 } else {
                     setAuthUser(null);
                     if (window.location.pathname !== '/login' && res.status === 401) {
                         window.location.href = '/login'
                     }
-                    // console.log(window.location.pathname)
+                    console.log(window.location.pathname)
                 }
             } catch (error) {
                 setAuthUser(null)
+                console.log("HEre in  authcontext error ")
+
                 console.error("Failed to fetch session data", error);
                 if (window.location.pathname !== '/login') {
                     window.location.href = '/login'

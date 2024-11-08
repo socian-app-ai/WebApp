@@ -7,6 +7,7 @@ import StudentDashboard from './student/StudentDashboard';
 export default function AllHome() {
 
     const { authUser,isLoading } = useAuthContext()
+    console.log('here3')
 
     if (isLoading) {
         return <div>Loading...</div>; 

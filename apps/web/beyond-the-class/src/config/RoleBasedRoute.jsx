@@ -8,11 +8,11 @@ const RoleBasedRoute = ({ allowedRoles }) => {
     if (isLoading) {
         return <div>Loading...</div>; 
       }
-    // console.log("Auth User in RoleBasedRoute:", authUser);
+    console.log("Auth User in RoleBasedRoute:", authUser);
     return (
         authUser && allowedRoles.includes(authUser.role)
             ? <Outlet />
-            : <Navigate to="/unauthorized" />
+            : <Navigate to="/" />
     );
 };
 
@@ -25,11 +25,11 @@ export const SuperRoleBasedRoute = ({ allowedRoles }) => {
     if (isLoading) {
         return <div>Loading...</div>; 
       }
-    // console.log("Auth User in SuperRoleBasedRoute:", authUser);
+    console.log("Auth User in SuperRoleBasedRoute:", authUser);
     return (
         authUser && allowedRoles.includes(authUser.super_role)
             ? <Outlet />
-            : <Navigate to="/unauthorized" />
+            : <Navigate to="/" />
     );
 };
 

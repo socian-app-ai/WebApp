@@ -5,13 +5,18 @@ import axiosInstance from "../../config/users/axios.instance";
 import LabelInputCustomizable from '../../components/TextField/LabelInputCustomizable';
 import DarkButton from '../../components/Buttons/DarkButton';
 import GoogleButton from '../../components/Buttons/GoogleButton';
+import { useAuthContext } from "../../context/AuthContext";
+import { redirect } from "react-router-dom";
 
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
+  console.log('in login')
   const { loading, login } = useLogin();
+  const {authUser}= useAuthContext()
+
+  if(authUser)  redirect('/')
 
   const handleSubmit = async (e) => {
     e.preventDefault();
