@@ -43,7 +43,7 @@ export default function OneDiscussion() {
         <div className="flex flex-col p-4 sm:p-6">
             <div className="m-2 w-full h-[60vh] overflow-auto border border-gray-200 dark:border-gray-600 rounded-lg" key={`${term}-${examType}`}>
                 {/* <PdfReact pdf={pdfItem.file} /> */}
-                <iframe className="w-100 h-100" src={t.file}></iframe> 
+                <iframe className="w-100 h-100" src={t.file.pdf}></iframe> 
 
             </div>
             <div className="p-2 text-center text-xs sm:text-sm text-white">
@@ -52,37 +52,57 @@ export default function OneDiscussion() {
         </div>
     );
 
+    // const generateSlides = () => {
+    //     const slides = [];
+    //     const yearsArray = Array.isArray(years) ? years : Object.keys(years).map(year => ({ year, ...years[year] }));
+
+    //     console.log("year", years)
+    //     if (Array.isArray(yearsArray)) {
+    //         yearsArray.forEach(yearData => {
+    //             if (yearData.fall) {
+    //                 slides.push(...yearData.fall.final.theory.map(pdfItem => renderPdfSlide(pdfItem, yearData.year, 'Fall', 'Final')));
+    //                 slides.push(...yearData.fall.mid.theory.map(pdfItem => renderPdfSlide(pdfItem, yearData.year, 'Fall', 'Mid')));
+    //                 slides.push(...yearData.fall.final.lab.map(pdfItem => renderPdfSlide(pdfItem, yearData.year, 'Fall', 'Final')));
+    //                 slides.push(...yearData.fall.mid.lab.map(pdfItem => renderPdfSlide(pdfItem, yearData.year, 'Fall', 'Mid')));
+    //             }
+    //             if (yearData.spring) {
+    //                 slides.push(...yearData.spring.final.theory.map(pdfItem => renderPdfSlide(pdfItem, yearData.year, 'Spring', 'Final')));
+    //                 slides.push(...yearData.spring.mid.theory.map(pdfItem => renderPdfSlide(pdfItem, yearData.year, 'Spring', 'Mid')));
+    //                 slides.push(...yearData.spring.final.lab.map(pdfItem => renderPdfSlide(pdfItem, yearData.year, 'Spring', 'Final')));
+    //                 slides.push(...yearData.spring.mid.lab.map(pdfItem => renderPdfSlide(pdfItem, yearData.year, 'Spring', 'Mid')));
+    //             }
+    //             if (yearData.assignments) {
+    //                 slides.push(...yearData.assignments.map(pdfItem => renderPdfSlide(pdfItem, yearData.year, 'Assignments', 'General')));
+    //             }
+    //         });
+    //     }
+    //      else {
+    //         console.warn("Expected 'years' to be an array but received:", years);
+    //     }
+    //     return slides;
+    // };
+    
     const generateSlides = () => {
         const slides = [];
-        const yearsArray = Array.isArray(years) ? years : Object.keys(years).map(year => ({ year, ...years[year] }));
-
-        console.log("year", years)
-        if (Array.isArray(yearsArray)) {
-            yearsArray.forEach(yearData => {
-                if (yearData.fall) {
-                    slides.push(...yearData.fall.final.theory.map(pdfItem => renderPdfSlide(pdfItem, yearData.year, 'Fall', 'Final')));
-                    slides.push(...yearData.fall.mid.theory.map(pdfItem => renderPdfSlide(pdfItem, yearData.year, 'Fall', 'Mid')));
-                    slides.push(...yearData.fall.final.lab.map(pdfItem => renderPdfSlide(pdfItem, yearData.year, 'Fall', 'Final')));
-                    slides.push(...yearData.fall.mid.lab.map(pdfItem => renderPdfSlide(pdfItem, yearData.year, 'Fall', 'Mid')));
-                }
-                if (yearData.spring) {
-                    slides.push(...yearData.spring.final.theory.map(pdfItem => renderPdfSlide(pdfItem, yearData.year, 'Spring', 'Final')));
-                    slides.push(...yearData.spring.mid.theory.map(pdfItem => renderPdfSlide(pdfItem, yearData.year, 'Spring', 'Mid')));
-                    slides.push(...yearData.spring.final.lab.map(pdfItem => renderPdfSlide(pdfItem, yearData.year, 'Spring', 'Final')));
-                    slides.push(...yearData.spring.mid.lab.map(pdfItem => renderPdfSlide(pdfItem, yearData.year, 'Spring', 'Mid')));
-                }
-                if (yearData.assignments) {
-                    slides.push(...yearData.assignments.map(pdfItem => renderPdfSlide(pdfItem, yearData.year, 'Assignments', 'General')));
-                }
+    
+        // Ensure `years` is an object
+        if (typeof years === 'object') {
+            Object.keys(years).forEach(yearKey => {
+                const yearDocuments = years[yearKey];
+                
+                yearDocuments.forEach(doc => {
+                    if (doc.file && doc.file.pdf) {
+                        slides.push(renderPdfSlide(doc.file, yearKey, doc.name, 'General'));
+                    }
+                });
             });
+        } else {
+            console.warn("Expected 'years' to be an object but received:", years);
         }
-         else {
-            console.warn("Expected 'years' to be an array but received:", years);
-        }
+    
         return slides;
     };
     
-
     return (
         <div className="min-h-screen w-full p-2 dark:bg-[#1b1b1bb8]">
 
@@ -98,8 +118,8 @@ export default function OneDiscussion() {
                         <div key={t._id} className="flex flex-col p-4 sm:p-6">
                             <div className="m-2 w-full h-[60vh] overflow-auto border border-gray-200 dark:border-gray-600">
                                 {/* <PdfReact pdf={t.file} /> */}
-                                <iframe className="w-100 h-100" src={t.file}></iframe> 
-                                {t.file}
+                                <iframe className="w-100 h-100" src={t.file.pdf}></iframe> 
+                                {/* {t.file} */}
                             </div>
                             <div className="p-2 text-center text-xs sm:text-sm">
                                 <p className="dark:text-white">Requested PDF</p>

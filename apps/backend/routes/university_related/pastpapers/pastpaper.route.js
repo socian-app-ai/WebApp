@@ -146,9 +146,27 @@ router.get("/all-pastpapers-in-subject/:id", async (req, res) => {
 
 // this is to upload one assignment [testing phase]
 router.post("/upload-single-assignment", async (req, res) => {
-    const { year, assignment, subjectId, departmentId, campusOrigin, universityOrigin } = req.body;
+    const { 
+        year, 
+        assignment,
+        file,
+         subjectId,
+         departmentId, 
+        // campusOrigin=req.session.references.campus._id,
+        //  universityOrigin=req.session.references.university._id
+         } = req.body;
+
+        const campusOrigin= req.session.references.campus._id
+        const universityOrigin= req.session.references.university._id
 
     try {
+        console.log("Here",year,
+            assignment,
+            file,
+            subjectId,
+            departmentId,
+            campusOrigin,
+            universityOrigin)
         // Find the subject based on the provided references
         const findSubject = await Subject.findOne({
             _id: subjectId,
@@ -194,7 +212,7 @@ router.post("/upload-single-assignment", async (req, res) => {
         }
 
         // Add the assignment to the pastpaper's assignments array
-        pastpaper.assignments.push({ name: assignment });
+        pastpaper.assignments.push({ name: assignment, 'file.pdf': file });
         await pastpaper.save(); // Save changes to the pastpaper
 
         await findPastpapersCollection.save(); // Save the collection updates

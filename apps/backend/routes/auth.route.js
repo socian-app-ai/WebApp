@@ -154,7 +154,7 @@ router.post('/login/student', async (req, res) => {
         });
 
         console.log(req.session.references)
-        return res.status(201).json(req.session.user);
+        return res.status(200).json(req.session.user);
 
     } catch (error) {
         console.error("Error in ", error.message);

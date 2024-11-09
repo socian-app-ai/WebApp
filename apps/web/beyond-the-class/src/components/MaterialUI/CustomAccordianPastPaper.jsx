@@ -45,7 +45,7 @@ export default function CustomAccordianPastPaper({ t, years, subject }) {
             <Button className="ml-2">
               {/* {console.log(`Test url ${import.meta.env.VITE_API_URL}/api${t.pdf}`)} */}
               <a
-                href={`${t.file}`}
+                href={`${t.file.pdf}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-blue-500 dark:text-blue-400"
@@ -59,7 +59,7 @@ export default function CustomAccordianPastPaper({ t, years, subject }) {
       <AccordionDetails className="p-2">
         <div className="h-96 overflow-auto border border-gray-200 dark:border-gray-600 rounded-lg">
           {/* <PdfReact pdf={t.pdf} /> */}
-          <iframe src={t.file}></iframe>
+          <iframe src={t.file.pdf}></iframe>
         </div>
       </AccordionDetails>
       {/* <AccordionActions className="p-2 bg-gray-50 dark:bg-gray-700">
