@@ -89,6 +89,7 @@ const teacherRouter = require('./routes/university_related/teacher/teacher.route
 
 const pastpaperRouter = require('./routes/university_related/pastpapers/pastpaper.route.js');
 const academicRouter = require('./routes/university_related/pastpapers/academic.format.route.js');
+const discussionRouter = require('./routes/university_related/discussion.route.js');
 
 
 
@@ -107,7 +108,7 @@ app.use("/api/subject", protectRoute, subjectRouter)
 
 app.use("/api/pastpaper", protectRoute, pastpaperRouter)
 app.use("/api/academic", protectRoute, academicRouter)
-
+app.use('/api/discussion', discussionRouter)
 
 
 // Start Server

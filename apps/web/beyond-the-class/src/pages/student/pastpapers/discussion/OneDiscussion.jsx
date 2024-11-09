@@ -4,19 +4,21 @@
 
 import { useLocation } from "react-router-dom";
 import Slider from "react-slick";
-import PdfReact from "../../../components/PDFreact/PdfReact";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { useRef } from "react";
 import Discussions from "./Discussions";
 import { useNavigate } from "react-router-dom";
 import { ArrowBack } from "@mui/icons-material";
+import PdfReact from "../../../../components/pdf/PdfReact";
 
 export default function OneDiscussion() {
     const location = useLocation();
     const { years, subject, t } = location.state || {};
     const sliderRef = useRef(null);
     const navigate = useNavigate();
+
+    console.log(years,subject,t)
 
     const settings = {
         // dots: true,
@@ -40,7 +42,7 @@ export default function OneDiscussion() {
     const renderPdfSlide = (pdfItem, year, term, examType) => (
         <div className="flex flex-col p-4 sm:p-6">
             <div className="m-2 w-full h-[60vh] overflow-auto border border-gray-200 dark:border-gray-600 rounded-lg" key={`${term}-${examType}`}>
-                <PdfReact pdf={pdfItem.pdf} />
+                <PdfReact pdf={pdfItem.file} />
             </div>
             <div className="p-2 text-center text-xs sm:text-sm text-white">
                 <p className="text-black dark:text-white">{year} - {term} - {examType}</p>
@@ -50,8 +52,11 @@ export default function OneDiscussion() {
 
     const generateSlides = () => {
         const slides = [];
-        if (years) {
-            years.forEach(yearData => {
+        const yearsArray = Array.isArray(years) ? years : Object.keys(years).map(year => ({ year, ...years[year] }));
+
+        console.log("year", years)
+        if (Array.isArray(yearsArray)) {
+            yearsArray.forEach(yearData => {
                 if (yearData.fall) {
                     slides.push(...yearData.fall.final.theory.map(pdfItem => renderPdfSlide(pdfItem, yearData.year, 'Fall', 'Final')));
                     slides.push(...yearData.fall.mid.theory.map(pdfItem => renderPdfSlide(pdfItem, yearData.year, 'Fall', 'Mid')));
@@ -64,13 +69,20 @@ export default function OneDiscussion() {
                     slides.push(...yearData.spring.final.lab.map(pdfItem => renderPdfSlide(pdfItem, yearData.year, 'Spring', 'Final')));
                     slides.push(...yearData.spring.mid.lab.map(pdfItem => renderPdfSlide(pdfItem, yearData.year, 'Spring', 'Mid')));
                 }
+                if (yearData.assignments) {
+                    slides.push(...yearData.assignments.map(pdfItem => renderPdfSlide(pdfItem, yearData.year, 'Assignments', 'General')));
+                }
             });
+        }
+         else {
+            console.warn("Expected 'years' to be an array but received:", years);
         }
         return slides;
     };
+    
 
     return (
-        <div className="min-h-screen w-full pt-20 p-2 dark:bg-[#1b1b1bb8]">
+        <div className="min-h-screen w-full p-2 dark:bg-[#1b1b1bb8]">
 
             <div className="flex items-center mb-2">
                 <ArrowBack onClick={() => { navigate(-1); }} />
@@ -83,7 +95,8 @@ export default function OneDiscussion() {
                     {t && (
                         <div key={t._id} className="flex flex-col p-4 sm:p-6">
                             <div className="m-2 w-full h-[60vh] overflow-auto border border-gray-200 dark:border-gray-600">
-                                <PdfReact pdf={t.pdf} />
+                                <PdfReact pdf={t.file} />
+                                {t.file}
                             </div>
                             <div className="p-2 text-center text-xs sm:text-sm">
                                 <p className="dark:text-white">Requested PDF</p>

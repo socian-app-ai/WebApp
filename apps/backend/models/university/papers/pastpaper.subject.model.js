@@ -45,6 +45,7 @@ const PastpapersCollectionByYear = mongoose.model("PastpapersCollectionByYear", 
 // File Schema
 const fileSchema = new Schema({
     pdf: String,
+    // required: true
 }, { timestamps: true });
 
 // Assignment and Quiz Schema

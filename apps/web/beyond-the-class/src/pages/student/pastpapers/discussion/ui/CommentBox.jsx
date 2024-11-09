@@ -1,12 +1,12 @@
 
 import { useEffect, useRef, useState } from "react";
-import useUserData from "../../../../zustand/useUserData";
 import toast from "react-hot-toast";
-import axiosInstance from "../../../../config/axios.instance";
+import { useAuthContext } from "../../../../../context/AuthContext";
+import axiosInstance from "../../../../../config/users/axios.instance";
 
 // eslint-disable-next-line react/prop-types
 export default function CommentBox({ discussionId, onComment }) {
-    const { userData } = useUserData();
+  const {authUser} = useAuthContext()
     const [comment, setComment] = useState('');
 
 
@@ -30,7 +30,7 @@ export default function CommentBox({ discussionId, onComment }) {
             try {
                 const response = await axiosInstance.post('/api/comment/add-comment', {
                     toBeDiscussedId: discussionId,
-                    userId: userData._id,
+                    userId: authUser._id,
                     commentContent: comment,
                 });
                 onComment(response.data);
@@ -58,7 +58,7 @@ export default function CommentBox({ discussionId, onComment }) {
         <form onSubmit={handleSubmit} className="my-1">
             <div className="bg-gray-100 dark:bg-[#151515] mb-5 rounded-3xl shadow-md p-4">
                 <div className="flex  items-start">
-                    <img className="mt-3 w-10 h-10 rounded-full" src={userData.picture} alt={userData.name} />
+                    <img className="mt-3 w-10 h-10 rounded-full" src={authUser.picture} alt={authUser.name} />
                     <div className="ml-4 w-full">
                         <textarea
                             onClick={() => { setShowCommentBox(true) }}

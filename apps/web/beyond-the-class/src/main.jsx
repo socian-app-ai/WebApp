@@ -18,6 +18,9 @@ import ReviewPage from './pages/student/reviews/teachers/ReviewPage';
 import ProgramNameAndCourses from "./pages/student/pastpapers/ProgramNameAndCourses";
 import CourseInfo from "./pages/student/pastpapers/CourseInfo";
 import ProtectedLayout from './context/ProtectedLayout.jsx';
+import TypeCourse from './pages/student/pastpapers/type/TypeCourse.jsx';
+import UploadForm from './pages/admin/upload/UploadForm.jsx';
+import OneDiscussion from './pages/student/pastpapers/discussion/OneDiscussion.jsx';
 
 const router = createBrowserRouter([
   
@@ -38,17 +41,23 @@ const router = createBrowserRouter([
       },
       {
         element: <SuperRoleBasedRoute allowedRoles={['super']} />,
+        path: 'super',
         children: [
           { path: "create-university", element:<Layout> <AddUniversityPage /></Layout> },
           { path: "create-campus", element:<Layout> <AddCampusPage /></Layout> },
+          { path: "upload-pastpapers", element:<Layout> <UploadForm /></Layout> },
         ],
       },
       {
         element: <RoleBasedRoute allowedRoles={['student']} />,
+        path: "student",
         children: [
-          { path: "student/reviews/teachers", element:<Layout> <ReviewPage /></Layout> },
-          { path: "student/search-courses", element:<Layout> <ProgramNameAndCourses /></Layout> },
-          { path: "student/course-info/:id", element:<Layout> <CourseInfo /></Layout> },
+          { path: "reviews/teachers", element:<Layout> <ReviewPage /></Layout> },
+          { path: "search-courses", element:<Layout> <ProgramNameAndCourses /></Layout> },
+          { path: "course-info/:id", element:<Layout> <CourseInfo /></Layout> },
+          { path: ":courseType/:subjectId", element:<Layout> <TypeCourse /></Layout> },
+          { path: "discussion/:toBeDisccusedId", element:<Layout> <OneDiscussion /></Layout> },
+          
         ],
       },
       { path: "unauthorized", element: <Unauthorized /> },

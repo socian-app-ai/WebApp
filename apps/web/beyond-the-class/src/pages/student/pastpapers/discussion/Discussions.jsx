@@ -2,16 +2,18 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import CommentBox from "./ui/CommentBox";
 import Comment from "./ui/Comment";
-import useUserData from '../../../zustand/useUserData';
 import ChatBox from "./chatbox/ChatBox";
-import axiosInstance from "../../../config/axios.instance";
+import axiosInstance from "../../../../config/users/axios.instance";
+import { useAuthContext } from "../../../../context/AuthContext";
 
 // eslint-disable-next-line react/prop-types
 export default function Discussions({ toBeDisccusedId }) {
     const [discussionId, setDiscussionId] = useState('');
     const [comments, setComments] = useState([]);
-    const { userData } = useUserData()
     const [sortMethod, setSortMethod] = useState('votes');
+    const {authUser}= useAuthContext()
+
+    
 
     useEffect(() => {
         const fetchDiscussion = async () => {
@@ -37,7 +39,7 @@ export default function Discussions({ toBeDisccusedId }) {
         try {
             const response = await axiosInstance.post('/api/comment/reply-to-comment', {
                 commentId,
-                userId: userData.mUserId,
+                userId: authUser.name,
                 replyContent: replyContent,
             });
             const updatedComments = comments.map(comment => {
@@ -54,10 +56,6 @@ export default function Discussions({ toBeDisccusedId }) {
 
 
 
-
-
-
-    // const handleDownVote = () => { }
     const sortComments = (comments, method) => {
         if (method === 'votes') {
             return [...comments].sort((a, b) => (b.upvotes.length - b.downvotes.length) - (a.upvotes.length - a.downvotes.length));

@@ -4,9 +4,9 @@ import { ArrowUpward, ArrowDownward } from "@mui/icons-material";
 import toast from "react-hot-toast";
 import { CiCircleMinus, CiCirclePlus } from "react-icons/ci";
 import { FaRegMessage } from "react-icons/fa6";
-import useUserData from "../../../../zustand/useUserData";
-import axiosInstance from "../../../../config/axios.instance";
 import { Avatar, Skeleton } from "@mui/material";
+import { useAuthContext } from "../../../../../context/AuthContext";
+import axiosInstance from "../../../../../config/users/axios.instance";
 
 function Comment({ comment, onReply, }) {
     const [reply, setReply] = useState('');
@@ -16,10 +16,10 @@ function Comment({ comment, onReply, }) {
     const [downvote, setDownvote] = useState(comment.downvotes.length)
 
 
-    const { userData } = useUserData()
+    const { authUser } = useAuthContext()
 
-    const [hasUpvoted, setHasUpvoted] = useState(comment.upvotes.includes(userData._id));
-    const [hasDownvoted, setHasDownvoted] = useState(comment.downvotes.includes(userData._id));
+    const [hasUpvoted, setHasUpvoted] = useState(comment.upvotes.includes(authUser._id));
+    const [hasDownvoted, setHasDownvoted] = useState(comment.downvotes.includes(authUser._id));
 
     const handleReplySubmit = (event) => {
         event.preventDefault();
@@ -51,7 +51,7 @@ function Comment({ comment, onReply, }) {
         try {
             // console.log("here", commentId)
             const response = await axiosInstance.post('/api/comment/up-vote', {
-                userId: userData._id,
+                userId: authUser._id,
                 commentId: commentId._id
             });
             const { downVoteCount, upVoteCount, downVoteBool, upVoteBool } = response.data;
@@ -72,7 +72,7 @@ function Comment({ comment, onReply, }) {
         try {
             // console.log("here", commentId)
             const response = await axiosInstance.post('/api/comment/down-vote', {
-                userId: userData._id,
+                userId: authUser._id,
                 commentId: commentId._id
             });
             const { downVoteCount, upVoteCount, downVoteBool, upVoteBool } = response.data;

@@ -128,14 +128,14 @@ router.post('/login/student', async (req, res) => {
 
         };
         // console.log(req.session.user)
-        req.references = {
+        req.session.references = {
             university: {
-                name: universityFromUser.university.name,
-                id: universityFromUser.university._id
+                name: universityFromUser.university.name.name,
+                _id: universityFromUser.university.name._id
             }, 
             campus: {
                 name: universityFromUser.university.campusLocation.name,
-                id: universityFromUser.university.campusLocation._id
+                _id: universityFromUser.university.campusLocation._id
             }
         }
         // req.references.save((err) => {
@@ -153,7 +153,7 @@ router.post('/login/student', async (req, res) => {
             // console.log("Session user in Longin Controller : ", req.session.user)
         });
 
-        console.log(req.references)
+        console.log(req.session.references)
         return res.status(201).json(req.session.user);
 
     } catch (error) {
