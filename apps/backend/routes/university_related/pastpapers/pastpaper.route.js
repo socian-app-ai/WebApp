@@ -84,7 +84,6 @@ const router = express.Router()
 
 
 router.get("/all-pastpapers-in-subject/:id", async (req, res) => {
-    const {  departmentId } = req.body;
     const subjectId = req.params.id
     console.log("Refernces: ",req.session.references, subjectId)
     try {
@@ -133,7 +132,7 @@ router.get("/all-pastpapers-in-subject/:id", async (req, res) => {
         console.log("findPastpapersCollection",findpastpapers)
         console.log("findPastpapersCollection",findpastpapers.map(past => past.pastpapers))
         const listOfPastPapers = findpastpapers.map(past => past.pastpapers)
-        res.status(200).json({pastPapers: listOfPastPapers});
+        res.status(200).json({pastPapers: listOfPastPapers, subjectName: findSubject.name});
 
 
 

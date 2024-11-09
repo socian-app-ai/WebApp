@@ -42,7 +42,9 @@ export default function OneDiscussion() {
     const renderPdfSlide = (pdfItem, year, term, examType) => (
         <div className="flex flex-col p-4 sm:p-6">
             <div className="m-2 w-full h-[60vh] overflow-auto border border-gray-200 dark:border-gray-600 rounded-lg" key={`${term}-${examType}`}>
-                <PdfReact pdf={pdfItem.file} />
+                {/* <PdfReact pdf={pdfItem.file} /> */}
+                <iframe className="w-100 h-100" src={t.file}></iframe> 
+
             </div>
             <div className="p-2 text-center text-xs sm:text-sm text-white">
                 <p className="text-black dark:text-white">{year} - {term} - {examType}</p>
@@ -95,7 +97,8 @@ export default function OneDiscussion() {
                     {t && (
                         <div key={t._id} className="flex flex-col p-4 sm:p-6">
                             <div className="m-2 w-full h-[60vh] overflow-auto border border-gray-200 dark:border-gray-600">
-                                <PdfReact pdf={t.file} />
+                                {/* <PdfReact pdf={t.file} /> */}
+                                <iframe className="w-100 h-100" src={t.file}></iframe> 
                                 {t.file}
                             </div>
                             <div className="p-2 text-center text-xs sm:text-sm">

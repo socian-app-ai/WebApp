@@ -33,15 +33,14 @@ router.post("/create-get",  async (req, res) => {
                 path: 'user',
                 select: 'name profilePic universityEmail personalEmail universityEmailVerified updatedAt personalEmailVerified '
             },
-
+            
             populateReplies("replies", 10)]
         })
     
         if (discussion) return res.status(200).json({ discussion })
-            console.log(discussion)
+console.log(discussion)
         const createDiscussion = await Discussion.create({
-            discussion_of: toBeDisccusedId,
-            discussioncomments: 
+            discussion_of: toBeDisccusedId
         })
         console.log(createDiscussion)
 
