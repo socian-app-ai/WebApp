@@ -1,5 +1,7 @@
 import { FaBuilding, FaChalkboardTeacher, FaMedapps } from "react-icons/fa";
 import { IoMdHome } from "react-icons/io";
+import { MdWorkOutline } from "react-icons/md";
+
 // import { AllOut, Explore } from "@mui/icons-material";
 import { Link } from "react-router-dom";
 import useWindowDimensions from "../../hooks/useWindowDimensions";
@@ -19,11 +21,17 @@ function Sidebar() {
     // Define different menus for different roles
     const studentMenu = [
         { name: "Home", path: `/`, icon: <IoMdHome className="w-5" /> },
+        { name: "All Uni", path: `/student/all`, icon: <FaMedapps className="w-5" /> },
+        { name: "Inter Campus", path: `/student/inter`, icon: <FaMedapps className="w-5" /> },
+
+        
+        { name: "Job Posting", path: `/student/job`, icon: <MdWorkOutline className="w-5" /> },
         { name: "Past Papers", path: `/student/search-courses`, icon: <FaMedapps className="w-5" /> },
-        { name: "Teachers Review", path: `/student/reviews/teachers`, icon: <FaMedapps className="w-5" /> },
+        { name: "Teachers Review", path: `/student/reviews/teachers`, icon: <FaChalkboardTeacher className="w-5" /> },
+
         { name: "Navigation Tracker", path: `/student/navigation`, icon: <FaMedapps className="w-5" /> },
         { name: "Cafe Info", path: `/student/cafe`, icon: <FaMedapps className="w-5" /> },
-
+        
     ];
 
     const alumniMenu = [

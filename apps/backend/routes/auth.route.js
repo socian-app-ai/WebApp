@@ -74,6 +74,9 @@ router.post('/register/student', async (req, res) => {
                 name: universityId,
                 campusLocation: campusId
             },
+            profile: {
+            username: universityEmail,
+            },
 
             role: 'student',
             super_role: 'none'

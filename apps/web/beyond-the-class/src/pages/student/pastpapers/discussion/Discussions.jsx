@@ -22,7 +22,7 @@ export default function Discussions({ toBeDisccusedId }) {
                 setDiscussionId(response.data.discussion._id);
                 // console.log(response)
                 // console.log("DI", discussionId)
-                setComments(response.data.discussion.comments);
+                setComments(response.data.discussion.discussioncomments);
             } catch (error) {
                 toast.error('Failed to fetch discussion');
             }
@@ -37,9 +37,9 @@ export default function Discussions({ toBeDisccusedId }) {
 
     const handleReply = async (commentId, replyContent) => {
         try {
-            const response = await axiosInstance.post('/api/comment/reply-to-comment', {
+            const response = await axiosInstance.post('/api/discussion/comment/reply-to-comment', {
                 commentId,
-                userId: authUser.name,
+                userId: authUser._id,
                 replyContent: replyContent,
             });
             const updatedComments = comments.map(comment => {
@@ -72,7 +72,7 @@ export default function Discussions({ toBeDisccusedId }) {
                 <ChatBox discussionId={discussionId} />
             </div>
 
-            <CommentBox discussionId={discussionId} onComment={handleNewComment} />
+            <CommentBox discussionId={toBeDisccusedId} onComment={handleNewComment} />
             <div className="flex justify-between">
                 <h6 className="text-md font-semibold m-2">The Discussions</h6>
 

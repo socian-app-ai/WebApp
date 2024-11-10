@@ -29,6 +29,13 @@ const userSchema = new mongoose.Schema({
     }],
 
     profile: {
+        // name: {
+        //     type: String,
+        // },
+        // username: {
+        //     type: String,
+        //     unique: true
+        // },
         // update default picture url 
         picture: { type: String, default: 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg' },
         bio: { type: String, default: '' },

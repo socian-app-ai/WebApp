@@ -24,11 +24,11 @@ export default function CommentBox({ discussionId, onComment }) {
     };
 
     const handleSubmit = async (event) => {
-
+        console.log("here", authUser._id)
         event.preventDefault();
         if (comment.trim()) {
             try {
-                const response = await axiosInstance.post('/api/comment/add-comment', {
+                const response = await axiosInstance.post('/api/discussion/comment/add-comment', {
                     toBeDiscussedId: discussionId,
                     userId: authUser._id,
                     commentContent: comment,
