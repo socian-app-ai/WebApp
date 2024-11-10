@@ -19,15 +19,11 @@ import useLogout from '../../hooks/useLogout';
 
 import useWindowDimensions from '../../hooks/useWindowDimensions';
 import { useSetSideBarState } from '../../state_management/zustand/useSideBar';
-import useUserData from '../../state_management/zustand/useUserData';
-import { useEffect } from 'react';
 import { useAuthContext } from '../../context/AuthContext';
-// import useUserData from '../../zustand/useUserData';
 
 
 
 const Navbar = () => {
-    const { userData } = useUserData()
     const { width } = useWindowDimensions();
     const { toggleSideBar } = useSetSideBarState()
 
@@ -37,13 +33,13 @@ const Navbar = () => {
     // const [campusData, setCampusData] = useState(null);
 
     // useEffect(() => {
-    //     if (userData.role === 'student'  ) {
+    //     if (authUser.role === 'student'  ) {
 
-    //         getCampusData(userData.university.campusLocation.name)
+    //         getCampusData(authUser.university.campusLocation.name)
     //             .then(data => setCampusData(data))
     //             .catch(error => console.error(error));
     //     }
-    // }, [userData.campus]);
+    // }, [authUser.campus]);
 
 
 
@@ -109,8 +105,8 @@ const Navbar = () => {
                     <FiBell className="h-6 w-6 cursor-pointer" />
                 </Badge>
 
-                {/* {console.log(userData)} */}
-                {/* <Avatar src={userData ? userData.picture : ''} /> */}
+                {/* {console.log(authUser)} */}
+                {/* <Avatar src={authUser ? authUser.picture : ''} /> */}
 
 
 
@@ -123,7 +119,7 @@ const Navbar = () => {
                     aria-haspopup="true"
                     aria-expanded={open ? 'true' : undefined}
                 >
-                    <Avatar src={userData ? userData.picture : ''} />
+                    <Avatar src={authUser ? authUser.profile.picture : ''} />
                 </IconButton>
                 <Menu
                     anchorEl={anchorEl}

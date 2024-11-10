@@ -21,6 +21,7 @@ import ProtectedLayout from './context/ProtectedLayout.jsx';
 import TypeCourse from './pages/student/pastpapers/type/TypeCourse.jsx';
 import UploadForm from './pages/admin/upload/UploadForm.jsx';
 import OneDiscussion from './pages/student/pastpapers/discussion/OneDiscussion.jsx';
+import TeacherReviewPage from './pages/student/reviews/comments/TeacherReviewPage.jsx';
 
 const router = createBrowserRouter([
   
@@ -53,6 +54,8 @@ const router = createBrowserRouter([
         path: "student",
         children: [
           { path: "reviews/teachers", element:<Layout> <ReviewPage /></Layout> },
+          { path: "teacher/comments/:id", element:<Layout> <TeacherReviewPage /></Layout> },
+
           { path: "search-courses", element:<Layout> <ProgramNameAndCourses /></Layout> },
           { path: "course-info/:id", element:<Layout> <CourseInfo /></Layout> },
           { path: ":courseType/:subjectId", element:<Layout> <TypeCourse /></Layout> },

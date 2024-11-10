@@ -4,8 +4,9 @@ import { Link } from 'react-router-dom';
 
 /* eslint-disable react/prop-types */
 export default function TeacherCard({ teacher }) {
+    console.log("teacher", teacher)
     return (
-        <Link to={`/teacher/reviews?id=${teacher._id}`} className="bg-gray-100 dark:bg-[#222222] rounded-lg shadow-xl p-4 mt-5 mx-2">
+        <Link to={`/student/teacher/comments/${teacher._id}`} className="bg-gray-100 dark:bg-[#222222] rounded-lg shadow-xl p-4 mt-5 mx-2">
             <div className="flex items-center mb-4">
                 <div className="w-10 h-10 overflow-hidden rounded-full">
                     <img
