@@ -26,6 +26,10 @@ const subCommunitySchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: "User"
     }],
+    isPromoted: {
+        promoted: { type: Boolean , default: false},
+        byUsers: [{type: Schema.Types.ObjectId, ref: 'User'}]
+    },
     rules: [
         {
             title: { type: String },
@@ -57,6 +61,18 @@ const subCommunitySchema = new Schema({
         ref: "Community",
 
     },
+    references: {
+        universityOrigin: {
+            type: Schema.ObjectId,
+            ref: 'University',
+            index: true,
+        },
+        campusOrigin:{     
+            type: Schema.Types.ObjectId,
+            ref: 'Campus',
+            required: true
+        }
+    }
 
 });
 

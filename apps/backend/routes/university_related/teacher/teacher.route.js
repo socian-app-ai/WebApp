@@ -307,7 +307,47 @@ router.post('/reviews/comments/vote',async (req, res) => {
     }
 })
 
-// const get_a_TeacherReviews = 
+router.delete('/reviews/comments/delete', async (req, res) => {
+        const { teacherId, userId } = req.body;
+    
+        if (!teacherId || !userId) {
+            return res.status(400).send("Missing required fields");
+        }
+    
+        try {
+            const review = await TeacherRating.findOneAndDelete({ teacherId, userId });
+    
+            if (!review) {
+                return res.status(404).send("Review not found");
+            }
+    
+            const teacher = await Teacher.findById(teacherId);
+            if (teacher) {
+                const reviewRating = review.rating;
+                const totalRatings = teacher.ratingsByStudents.length;
+    
+    
+                if (totalRatings > 1) {
+                    const newRating = ((teacher.rating * totalRatings) - reviewRating) / (totalRatings - 1);
+                    teacher.ratingsByStudents = teacher.ratingsByStudents.filter(rating => !rating.equals(review._id));
+                    teacher.rating = newRating;
+                } else {
+    
+                    teacher.rating = 0;
+                    teacher.ratingsByStudents = [];
+                }
+    
+    
+                await teacher.save();
+            }
+    
+            res.status(200).send("Review deleted successfully");
+        } catch (error) {
+            console.error("Error deleting review:", error);
+            res.status(500).json({ error: "Server error" });
+        }
+    })
+
 
 const getTeacherReviews = async (req, res) => {
     const { id } = req.query;
@@ -333,47 +373,6 @@ const getTeacherReviews = async (req, res) => {
 
 
 
-
-const deleteReview = async (req, res) => {
-    const { teacherId, userId } = req.body;
-
-    if (!teacherId || !userId) {
-        return res.status(400).send("Missing required fields");
-    }
-
-    try {
-        const review = await TeacherRating.findOneAndDelete({ teacherId, userId });
-
-        if (!review) {
-            return res.status(404).send("Review not found");
-        }
-
-        const teacher = await Teacher.findById(teacherId);
-        if (teacher) {
-            const reviewRating = review.rating;
-            const totalRatings = teacher.ratings.length;
-
-
-            if (totalRatings > 1) {
-                const newRating = ((teacher.rating * totalRatings) - reviewRating) / (totalRatings - 1);
-                teacher.ratings = teacher.ratings.filter(rating => !rating.equals(review._id));
-                teacher.rating = newRating;
-            } else {
-
-                teacher.rating = 0;
-                teacher.ratings = [];
-            }
-
-
-            await teacher.save();
-        }
-
-        res.status(200).send("Review deleted successfully");
-    } catch (error) {
-        console.error("Error deleting review:", error);
-        res.status(500).json({ error: "Server error" });
-    }
-}
 
 
 

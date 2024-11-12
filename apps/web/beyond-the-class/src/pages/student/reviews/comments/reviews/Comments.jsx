@@ -91,7 +91,7 @@ export default function Reviews() {
     const handleDeleteComment = async () => {
         try {
 
-            await axiosInstance.delete(`/api/teachers/teacher/reviews/comments/delete`, {
+            await axiosInstance.delete(`/api/teacher/reviews/comments/delete`, {
                 data: { teacherId: teacherId, userId: authUser._id }
             });
 
@@ -120,7 +120,7 @@ export default function Reviews() {
 
         const displayEmail = t.hideUser
             ? maskEmail(t.userId?.personalEmail || t.userId?.universityEmail)
-            : (t.userId?.personalEmail || t.userId?.universityEmail || '[deleted]');
+            : (t.userId?.personalEmail || t.userId?.universityEmail|| t.userId?.email || '[deleted]');
 
 
         return <Card key={t._id} className="bg-gray-100 dark:bg-[#222222] md:mx-2 mb-2">
@@ -157,7 +157,7 @@ export default function Reviews() {
                     </div>
                 }
                 title={<p className="mt-2 text-xs md:text-md lg:text-md-lg font-semibold dark:text-white">
-                    {t.userId?.name ? (t.hideUser ? maskName(t.userId?.name) : t.userId?.name) : '[deleted]'} <span className='font-thin'>{t.__v > 0 ? '(Edited)' : ''}</span>
+                    {t.userId?.name ? (t.hideUser ? maskName(t.userId?.name) : t.userId?.name)  : '[deleted]'} <span className='font-thin'>{t.__v > 0 ? '(Edited)' : ''}</span>
                 </p>}
                 subheader={<p className="text-xs md:text-md lg:text-md-lg text-gray-600 dark:text-gray-400">
                     {displayEmail}
