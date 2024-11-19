@@ -5,7 +5,7 @@ const postsCollectionSchema = new Schema(
   {
     _id: {
       type: Schema.Types.ObjectId,
-      ref: "Community",
+      ref: "Society",
       // , required: true, unique: true //is already required and unique
     },
 

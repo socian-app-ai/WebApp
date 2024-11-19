@@ -6,19 +6,19 @@ const postSchema = new Schema(
     title: { type: String, required: true },
     body: { type: String },
     author: { type: Schema.Types.ObjectId, ref: "User", required: true },
-    community: {
+    society: {
       type: Schema.Types.ObjectId,
-      ref: "Community",
+      ref: "Society",
       required: function () {
-        return !this.subCommunity;
+        return !this.subSociety;
       },
       index: true,
     },
-    subCommunity: {
+    subSociety: {
       type: Schema.Types.ObjectId,
-      ref: "SubCommunity",
+      ref: "SubSociety",
       required: function () {
-        return !this.community;
+        return !this.society;
       },
       index: true,
     },
@@ -28,7 +28,7 @@ const postSchema = new Schema(
     downvotes: { type: Number, default: 0 },
     vote: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "CommunityPostAndCommentVote",
+      ref: "SocietyPostAndCommentVote",
     },
     commentsCount: { type: Number, default: 0 },
     media: [
@@ -79,9 +79,9 @@ const postSchema = new Schema(
   {
     validate: {
       validator: function () {
-        return !(this.community && this.subCommunity);
+        return !(this.society && this.subSociety);
       },
-      message: "You cannot set both community and subCommunity. Choose one.",
+      message: "You cannot set both Society and subSociety. Choose one.",
     },
   }
 );

@@ -1,16 +1,12 @@
 const mongoose = require("mongoose");
 const { Schema, model } = mongoose;
 
-const communitySchema = new Schema({
+const subSocietySchema = new Schema({
   name: {
     type: String,
     required: true,
     unique: true,
     trim: true,
-  },
-  category: {
-    type: String,
-    default: "default",
   },
   description: {
     type: String,
@@ -31,12 +27,10 @@ const communitySchema = new Schema({
       ref: "User",
     },
   ],
-  previousModerators: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: "User",
-    },
-  ],
+  isPromoted: {
+    promoted: { type: Boolean, default: false },
+    byUsers: [{ type: Schema.Types.ObjectId, ref: "User" }],
+  },
   rules: [
     {
       title: { type: String },
@@ -46,9 +40,9 @@ const communitySchema = new Schema({
   banner: { type: String },
   icon: { type: String },
   topics: [{ type: String }],
-  communityType: {
+  societyType: {
     type: Schema.Types.ObjectId,
-    ref: "CommunityType",
+    ref: "SocietyType",
     required: true,
   },
   totalMembers: {
@@ -64,17 +58,10 @@ const communitySchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: "PostsCollection",
   },
-  isPromoted: {
-    promoted: { type: Boolean, default: false },
-    byUsers: [{ type: Schema.Types.ObjectId, ref: "User" }],
+  parent: {
+    type: Schema.Types.ObjectId,
+    ref: "Society",
   },
-  subCommunities: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: "SubCommunity",
-      index: true,
-    },
-  ],
   references: {
     universityOrigin: {
       type: Schema.ObjectId,
@@ -89,5 +76,19 @@ const communitySchema = new Schema({
   },
 });
 
-const Community = mongoose.model("Community", communitySchema);
-module.exports = Community;
+const SubSociety = mongoose.model("SubSociety", subSocietySchema);
+module.exports = SubSociety;
+
+// validate: {
+//     validator: function (value) {
+//         return !(value && value.length > 0 && this.parent)
+//     },
+//     message: "A society with sub-societies cannot have a parent."
+// }
+
+// validate: {
+//     validator: function (value) {
+//         return !(value && this.subsocieties && this.subsocieties.length > 0)
+//     },
+//     message: "A society with a parent cannot have sub-societies."
+// }
