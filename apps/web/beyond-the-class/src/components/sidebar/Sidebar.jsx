@@ -8,68 +8,97 @@ import useWindowDimensions from "../../hooks/useWindowDimensions";
 import { useSetSideBarState } from "../../state_management/zustand/useSideBar";
 import { useAuthContext } from "../../context/AuthContext";
 
-
-
-
-
 function Sidebar() {
-    const { sideBarState, setSideBarState } = useSetSideBarState();
-    const { width } = useWindowDimensions();
-    // const { userData } = useUserData();
-    const { authUser } = useAuthContext();
+  const { sideBarState, setSideBarState } = useSetSideBarState();
+  const { width } = useWindowDimensions();
+  // const { userData } = useUserData();
+  const { authUser } = useAuthContext();
 
-    // Define different menus for different roles
-    const studentMenu = [
-        { name: "Home", path: `/`, icon: <IoMdHome className="w-5" /> },
-        { name: "All Uni", path: `/student/all`, icon: <FaMedapps className="w-5" /> },
-        { name: "Inter Campus", path: `/student/inter`, icon: <FaMedapps className="w-5" /> },
+  // Define different menus for different roles
+  const studentMenu = [
+    { name: "Home", path: `/`, icon: <IoMdHome className="w-5" /> },
+    {
+      name: "All Uni",
+      path: `/student/all`,
+      icon: <FaMedapps className="w-5" />,
+    },
+    {
+      name: "Inter Campus",
+      path: `/student/inter`,
+      icon: <FaMedapps className="w-5" />,
+    },
 
-        
-        { name: "Job Posting", path: `/student/job`, icon: <MdWorkOutline className="w-5" /> },
-        { name: "Past Papers", path: `/student/search-courses`, icon: <FaMedapps className="w-5" /> },
-        { name: "Teachers Review", path: `/student/reviews/teachers`, icon: <FaChalkboardTeacher className="w-5" /> },
+    {
+      name: "Alumni",
+      path: `/student/alumni`,
+      icon: <MdWorkOutline className="w-5" />,
+    },
+    {
+      name: "Past Papers",
+      path: `/student/search-courses`,
+      icon: <FaMedapps className="w-5" />,
+    },
+    {
+      name: "Teachers Review",
+      path: `/student/reviews/teachers`,
+      icon: <FaChalkboardTeacher className="w-5" />,
+    },
 
-        { name: "Navigation Tracker", path: `/student/navigation`, icon: <FaMedapps className="w-5" /> },
-        { name: "Cafe Info", path: `/student/cafe`, icon: <FaMedapps className="w-5" /> },
-        
-    ];
+    {
+      name: "Navigation Tracker",
+      path: `/student/navigation`,
+      icon: <FaMedapps className="w-5" />,
+    },
+    {
+      name: "Cafe Info",
+      path: `/student/cafe`,
+      icon: <FaMedapps className="w-5" />,
+    },
+  ];
 
-    const alumniMenu = [
-        { name: "Alumni Home", path: `/`, icon: <IoMdHome className="w-5" /> },
-        // Add more alumni-specific links
-    ];
+  const alumniMenu = [
+    { name: "Alumni Home", path: `/`, icon: <IoMdHome className="w-5" /> },
+    // Add more alumni-specific links
+  ];
 
-    const externalOrgMenu = [
-        { name: "Organizations", path: "/", icon: <FaBuilding className="w-5" /> },
-        // Add more external organization links
-    ];
+  const externalOrgMenu = [
+    { name: "Organizations", path: "/", icon: <FaBuilding className="w-5" /> },
+    // Add more external organization links
+  ];
 
-    const processMenu = [];
-    // Select menu based on user role
-    const menuItems = authUser ? (authUser.role === 'student' ? studentMenu
-        : authUser.role === 'alumni' ? alumniMenu
-            : externalOrgMenu)
-        : processMenu;
+  const processMenu = [];
+  // Select menu based on user role
+  const menuItems = authUser
+    ? authUser.role === "student"
+      ? studentMenu
+      : authUser.role === "alumni"
+      ? alumniMenu
+      : externalOrgMenu
+    : processMenu;
 
-    return (
-        <div className={`${sideBarState ? 'left-0' : '-left-[100rem]'} sidebar-custom-css z-20 w-64 bg-white dark:bg-[#191919] dark:text-white h-screen p-4 fixed`}>
-            <nav className="mt-12">
-                <ul className="border-b flex flex-col">
-                    {menuItems.map((item) => (
-                        <Link
-                            to={item.path}
-                            key={item.name}
-                            className="flex justify-start items-center p-2 rounded hover:bg-slate-100 dark:hover:bg-[#2B3236]"
-                            onClick={() => width < 768 && setSideBarState(false)}
-                        >
-                            {item.icon}
-                            <p className="ml-2">{item.name}</p>
-                        </Link>
-                    ))}
-                </ul>
-            </nav>
-        </div>
-    );
+  return (
+    <div
+      className={`${
+        sideBarState ? "left-0" : "-left-[100rem]"
+      } sidebar-custom-css z-20 w-64 bg-white dark:bg-[#191919] dark:text-white h-screen p-4 fixed`}
+    >
+      <nav className="mt-12">
+        <ul className="border-b flex flex-col">
+          {menuItems.map((item) => (
+            <Link
+              to={item.path}
+              key={item.name}
+              className="flex justify-start items-center p-2 rounded hover:bg-slate-100 dark:hover:bg-[#2B3236]"
+              onClick={() => width < 768 && setSideBarState(false)}
+            >
+              {item.icon}
+              <p className="ml-2">{item.name}</p>
+            </Link>
+          ))}
+        </ul>
+      </nav>
+    </div>
+  );
 }
 export default Sidebar;
 
@@ -94,8 +123,6 @@ export default Sidebar;
 //         }
 //     }
 
-
-
 //     return (
 //         <div className={`${sideBarState ? 'left-0' : '-left-[100rem]'} sidebar-custom-css  z-20 w-64 bg-white dark:bg-[#191919] dark:text-white h-screen p-4 fixed border-right-half`}>
 
@@ -119,9 +146,6 @@ export default Sidebar;
 //                     ))}
 //                 </ul>
 //             </nav>
-
-
-
 
 //         </div>
 //     );
