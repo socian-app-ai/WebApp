@@ -1,24 +1,33 @@
-
-import Sidebar from '../../components/sidebar/Sidebar';
+import Sidebar from "../../components/sidebar/Sidebar";
 import Navbar from "../../components/navbar/Nav";
 import useWindowDimensions from "../../hooks/useWindowDimensions";
 import { useSetSideBarState } from "../../state_management/zustand/useSideBar";
-
+import InfoBar from "../../components/infoBar/InfoBar";
 
 const Layout = ({ children }) => {
-    const { width } = useWindowDimensions();
-    const { sideBarState, setSideBarState } = useSetSideBarState();
+  const { width } = useWindowDimensions();
+  const { sideBarState, setSideBarState } = useSetSideBarState();
 
-    return (
-        <div className="text-black placeholder-black dark:placeholder-white dark:text-white">
-            <Sidebar />
-            {sideBarState && <div onClick={() => setSideBarState(false)} className="absolute md:hidden bg-[#121212] w-full z-[3] h-svh"></div>}
-            <Navbar />
-            <div className={`flex-1 pt-20 p-4 ${sideBarState && width > 768 ? "ml-64" : ""}`}>
-                {children}
-            </div>
-        </div>
-    );
+  return (
+    <div className="text-black placeholder-black dark:placeholder-white dark:text-white">
+      <Sidebar />
+      {sideBarState && (
+        <div
+          onClick={() => setSideBarState(false)}
+          className="absolute md:hidden bg-[#121212] w-full z-[3] h-svh"
+        ></div>
+      )}
+      <Navbar />
+      <InfoBar />
+      <div
+        className={`flex-1 pt-20 p-4 ${
+          sideBarState && width > 768 ? "ml-64" : ""
+        }`}
+      >
+        {children}
+      </div>
+    </div>
+  );
 };
 
 // eslint-disable-next-line react/prop-types

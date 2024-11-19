@@ -11,7 +11,11 @@ body {
   background-color: #dbd2d2f5;
   @apply transition-colors duration-1000 ease-in-out;
 }
-
+:root{
+  --var-btn-primary: #121212;
+  --var-btn-secondary: #535353;
+  --var-text-primary: #565656;
+}
 /* .dark h1,
 .dark h2,
 .dark h3,
