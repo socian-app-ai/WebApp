@@ -6,6 +6,7 @@ export default function StudentDashboard() {
 
   return (
     <div className="min-h-screen ">
+      <p className="p-10 m-10 font-extrabold text-4xl">CREATE UI FIRST</p>
       <div className="flex overflow-x-auto space-x-4 flex-row ">
         <button className="px-2 py-1 border rounded-md whitespace-nowrap">
           Latest Feed
@@ -56,7 +57,6 @@ export default function StudentDashboard() {
           Polls
         </button>
       </div>
-
       {authUser && authUser.university && authUser.university.campusLocation ? (
         typeof authUser.university.campusLocation === "string" ? (
           <p>{authUser.university.campusLocation}</p>
@@ -74,7 +74,6 @@ export default function StudentDashboard() {
       ) : (
         <p>No campus data available</p>
       )}
-
       <div className="p-4">
         {authUser ? (
           <div>

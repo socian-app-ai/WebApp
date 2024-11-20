@@ -80,7 +80,7 @@ function Sidebar() {
     <div
       className={`${
         sideBarState ? "left-0" : "-left-[100rem]"
-      } sidebar-custom-css z-20 w-64 bg-white dark:bg-[#191919] dark:text-white h-screen p-4 fixed`}
+      }  z-20 w-64 bg-sidebar-pattern bg-bg-var-sidebar dark:bg-bg-var-sidebar-dark  dark:text-white h-screen p-4 fixed`}
     >
       <nav className="mt-12">
         <ul className="border-b flex flex-col">

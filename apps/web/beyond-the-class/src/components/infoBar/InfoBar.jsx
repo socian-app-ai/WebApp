@@ -15,7 +15,7 @@ function InfoBar() {
     <div
       className={`${
         infoBarState ? "right-0" : "-right-[100rem]"
-      } sidebar-custom-css z-10 w-64 bg-white dark:bg-[#191919] dark:text-white h-screen p-4 fixed`}
+      }  z-10 w-64 bg-sidebar-pattern bg-bg-var-sidebar dark:bg-bg-var-sidebar-dark dark:text-white h-screen p-4 fixed`}
     >
       <nav className="mt-14">
         <div>

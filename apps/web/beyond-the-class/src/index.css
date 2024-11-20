@@ -11,10 +11,28 @@ body {
   background-color: #dbd2d2f5;
   @apply transition-colors duration-1000 ease-in-out;
 }
-:root{
+:root {
+  
+  --var-bg-sidebar-dark: #383838;
+  --var-bg-sidebar: #456378;
+
+  --var-bg-navbar-dark: #383838;
+  --var-bg-navbar: #456378;
+
+  /* --var-bg-sidebar-url-dark: url(https://arc.net/noise-light.png) #383838;
+  --var-bg-sidebar-url-light: url(https://arc.net/noise-light.png) #456378;
+
+  --var-bg-navbar-url-dark: url(https://arc.net/noise-light.png) #383838;
+  --var-bg-navbar-url-light: url(https://arc.net/noise-light.png) #456378; */
+  /* end */
+  --var-bg-primary-color: #3b90eb;
+  --var-bg-secondary-color: #dddddd;
+
   --var-btn-primary: #121212;
   --var-btn-secondary: #535353;
   --var-text-primary: #565656;
+
+  --var-bg-dark: #1b1b1b;
 }
 /* .dark h1,
 .dark h2,
@@ -36,11 +54,11 @@ p {
   color: black;
 } */
 
-.navbar-custom-css {
+/* .navbar-custom-css {
   background-color: hsl(192, 71%, 43%) !important;
-}
+} */
 
-.sidebar-custom-css {
+/* .sidebar-custom-css {
   background-color: hsl(192, 71%, 30%) !important;
 }
 
@@ -55,14 +73,14 @@ p {
 .sidebar-custom-css,
 .navbar-custom-css {
   background: url(https://arc.net/noise-light.png) #456378;
-}
+} */
 
 ::-webkit-file-upload-button,
 ::file-selector-button {
   display: none;
 }
 
-::-webkit-scrollbar{
+::-webkit-scrollbar {
   display: none;
 }
 
