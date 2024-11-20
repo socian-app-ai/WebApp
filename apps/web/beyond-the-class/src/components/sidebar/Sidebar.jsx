@@ -7,12 +7,23 @@ import { Link } from "react-router-dom";
 import useWindowDimensions from "../../hooks/useWindowDimensions";
 import { useSetSideBarState } from "../../state_management/zustand/useSideBar";
 import { useAuthContext } from "../../context/AuthContext";
+import { useEffect } from "react";
 
 function Sidebar() {
   const { sideBarState, setSideBarState } = useSetSideBarState();
   const { width } = useWindowDimensions();
   // const { userData } = useUserData();
   const { authUser } = useAuthContext();
+
+  useEffect(() => {
+    if (width < 768) {
+      setSideBarState(false);
+    }
+    if (width > 768) {
+      setSideBarState(true);
+    }
+    console.log("useEffect");
+  }, [width, setSideBarState]);
 
   // Define different menus for different roles
   const studentMenu = [

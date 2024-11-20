@@ -1,13 +1,23 @@
 import { Link } from "react-router-dom";
 import useWindowDimensions from "../../hooks/useWindowDimensions";
-import { useSetSideBarState } from "../../state_management/zustand/useSideBar";
 import { useAuthContext } from "../../context/AuthContext";
 import { useSetInfoBarState } from "../../state_management/zustand/useInfoBar";
+import { useEffect } from "react";
 
 function InfoBar() {
   const { infoBarState, setInfoBarState } = useSetInfoBarState();
   const { width } = useWindowDimensions();
   const { authUser } = useAuthContext();
+
+  useEffect(() => {
+    if (width < 1028) {
+      setInfoBarState(false);
+    }
+    if (width > 1028) {
+      setInfoBarState(true);
+    }
+    // console.log("useEffect");
+  }, [width, setInfoBarState]);
 
   if (authUser.role !== "student") return;
 

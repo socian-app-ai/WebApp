@@ -18,12 +18,18 @@ export default {
         // "bg-var-navbar-url": "var(--var-bg-navbar-url-light)",
         // "bg-var-navbar-url-dark": "var(--var-bg-navbar-url-dark)",
 
-        //end
         "bg-primary-color": "var(--var-bg-primary-color)",
         "bg-secondary-color": "var(--var-bg-secondary-color)",
+
+        "bg-primary-color-dark": "var(--var-bg-primary-color-dark)",
+        "bg-secondary-color-dark": "var(--var-bg-secondary-color-dark)",
+
+        "text-primary": "var(--var-text-primary)",
+        "text-primary-dark": "var(--var-text-primary-dark)",
+
+        //end
         "btn-primary": "var(--var-btn-primary)",
         "btn-secondary": "var(--var-btn-secondary)",
-        "text-primary": "var(--var-text-primary)",
         "bg-var-dark": "var(--var-bg-dark)",
       },
       backgroundImage: {

@@ -140,6 +140,11 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+
+  connections: {
+    friend: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+    blocked: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+  },
   // ## Expiration
   universityEmailExpirationDate: {
     type: Date,

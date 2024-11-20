@@ -2,6 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 .dark body {
   background-color: #121212f5;
   @apply transition-colors duration-1000 ease-in-out;
@@ -24,9 +29,20 @@ body {
 
   --var-bg-navbar-url-dark: url(https://arc.net/noise-light.png) #383838;
   --var-bg-navbar-url-light: url(https://arc.net/noise-light.png) #456378; */
-  /* end */
+
   --var-bg-primary-color: #3b90eb;
   --var-bg-secondary-color: #dddddd;
+
+  --var-bg-primary-color-dark: #121212;
+--var-bg-secondary-color-dark: #1f1f2c;
+
+
+--var-text-primary: #121212;
+--var-text-primary-dark: #9d9d9d;
+
+
+  /* end */
+  
 
   --var-btn-primary: #121212;
   --var-btn-secondary: #535353;
