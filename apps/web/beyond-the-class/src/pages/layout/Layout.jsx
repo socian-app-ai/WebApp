@@ -3,10 +3,12 @@ import Navbar from "../../components/navbar/Nav";
 import useWindowDimensions from "../../hooks/useWindowDimensions";
 import { useSetSideBarState } from "../../state_management/zustand/useSideBar";
 import InfoBar from "../../components/infoBar/InfoBar";
+import { useSetInfoBarState } from "../../state_management/zustand/useInfoBar";
 
 const Layout = ({ children }) => {
   const { width } = useWindowDimensions();
   const { sideBarState, setSideBarState } = useSetSideBarState();
+  const { infoBarState, setInfoBarState } = useSetInfoBarState();
 
   return (
     <div className="text-black placeholder-black dark:placeholder-white dark:text-white">
@@ -18,11 +20,12 @@ const Layout = ({ children }) => {
         ></div>
       )}
       <Navbar />
+
       <InfoBar />
       <div
         className={`flex-1 pt-20 p-4 ${
           sideBarState && width > 768 ? "ml-64" : ""
-        }`}
+        } ${infoBarState && width > 768 ? "mr-64" : ""}`}
       >
         {children}
       </div>

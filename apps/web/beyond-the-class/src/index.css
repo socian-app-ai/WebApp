@@ -62,6 +62,10 @@ p {
   display: none;
 }
 
+::-webkit-scrollbar{
+  display: none;
+}
+
 /* 
 input::placeholder {
   color: rgb(46, 46, 46);
