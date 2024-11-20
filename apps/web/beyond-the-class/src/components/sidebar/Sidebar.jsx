@@ -65,15 +65,33 @@ function Sidebar() {
       path: `/student/cafe`,
       icon: <FaMedapps className="w-5" />,
     },
+    {
+      name: "Societies",
+      path: `/student/societies`,
+      icon: <FaMedapps className="w-5" />,
+    },
   ];
 
   const alumniMenu = [
-    { name: "Alumni Home", path: `/`, icon: <IoMdHome className="w-5" /> },
+    {
+      name: "Alumni Home",
+      path: `/alumni`,
+      icon: <IoMdHome className="w-5" />,
+    },
+    {
+      name: "Societies",
+      path: `/student/societies`,
+      icon: <FaMedapps className="w-5" />,
+    },
     // Add more alumni-specific links
   ];
 
   const externalOrgMenu = [
-    { name: "Organizations", path: "/", icon: <FaBuilding className="w-5" /> },
+    {
+      name: "Organizations",
+      path: "/ext-org",
+      icon: <FaBuilding className="w-5" />,
+    },
     // Add more external organization links
   ];
 
@@ -107,6 +125,30 @@ function Sidebar() {
             </Link>
           ))}
         </ul>
+
+        <div>
+          <h5>Subscribed Socieites</h5>
+          <ul className="border-b flex flex-col">
+            {authUser &&
+              authUser?.subscribedSocities?.map((society) => (
+                <Link
+                  to={`${
+                    authUser.role === "student"
+                      ? "/student"
+                      : authUser.role === "alumni"
+                      ? "/alumni"
+                      : "/ext-org"
+                  }/${society._id}`}
+                  key={society._id}
+                  className="flex justify-start items-center p-2 rounded hover:bg-slate-100 dark:hover:bg-[#2B3236]"
+                  onClick={() => width < 768 && setSideBarState(false)}
+                >
+                  {society.icon}
+                  <p className="ml-2">{society.name}</p>
+                </Link>
+              ))}
+          </ul>
+        </div>
       </nav>
     </div>
   );

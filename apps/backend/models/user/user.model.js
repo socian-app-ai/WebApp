@@ -200,8 +200,12 @@ const userSchema = new mongoose.Schema({
   },
 
   // savedPosts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Post' }],
-  // subscribedSocities: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Society' }],
-  // subscribedSubSocities: [{ type: mongoose.Schema.Types.ObjectId, ref: 'SubSociety' }],
+  subscribedSocities: [
+    { type: mongoose.Schema.Types.ObjectId, ref: "Society" },
+  ],
+  subscribedSubSocities: [
+    { type: mongoose.Schema.Types.ObjectId, ref: "SubSociety" },
+  ],
 });
 
 // Methods for handling graduation checks and notifications

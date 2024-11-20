@@ -17,7 +17,7 @@ export default function PostComponent() {
   };
 
   return (
-    <div className="bg-bg-primary-color dark:bg-bg-primary-color-dark border border-gray-200 rounded-sm shadow-md min-w-[10rem] max-w-[30rem] w-full min-h-[15rem] max-h-[35rem] h-full">
+    <div className="my-4 bg-bg-primary-color dark:bg-bg-primary-color-dark border border-gray-200 dark:border-gray-800 rounded-sm shadow-md min-w-[10rem] max-w-[30rem] w-full min-h-[15rem] max-h-[35rem] h-full">
       {/* Header */}
       <div className="flex flex-row justify-between p-2 ">
         <div className="flex flex-row ">

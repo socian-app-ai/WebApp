@@ -10,24 +10,39 @@ export default function StudentDashboard() {
     { filterName: "Ongoing" },
     { filterName: "Lost & Found" },
     { filterName: "Polls" },
+    { filterName: "Latest Feed" },
+    { filterName: "QnA" },
+    { filterName: "Ongoing" },
+    { filterName: "Lost & Found" },
+    { filterName: "Polls" },
+    { filterName: "Latest Feed" },
+    { filterName: "QnA" },
+    { filterName: "Ongoing" },
+    { filterName: "Lost & Found" },
+    { filterName: "Polls" },
   ];
   console.log("here");
 
   return (
     <div className="min-h-screen ">
       {/* <p className="p-10 m-10 font-extrabold text-4xl">CREATE UI FIRST</p> */}
-      <div className="flex overflow-x-auto space-x-4 flex-row ">
-        {filters.map((filter, idx) => (
-          <button
-            key={idx}
-            className="px-2 py-1 border rounded-md whitespace-nowrap"
-          >
-            {filter.filterName}
-          </button>
-        ))}
+      <div className="sticky w-full">
+        <div className="flex overflow-x-auto space-x-4 flex-row ">
+          {filters.map((filter, idx) => (
+            <button
+              key={idx}
+              className="px-2 py-1 border rounded-md whitespace-nowrap"
+            >
+              {filter.filterName}
+            </button>
+          ))}
+        </div>
       </div>
 
-      <div className="pt-5 pl-5">
+      <div className="pt-5 pl-5 ">
+        <PostComponent />
+        <PostComponent />
+        <PostComponent />
         <PostComponent />
       </div>
     </div>
