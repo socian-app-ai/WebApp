@@ -6,9 +6,14 @@ const RoleBasedRoute = ({ allowedRoles }) => {
     const { authUser, isLoading } = useAuthContext();
 
     if (isLoading) {
-        return <div>Loading...</div>; 
-      }
+        return <div>Loading...</div>;
+    }
     console.log("Auth User in RoleBasedRoute:", authUser);
+
+    // If hits / and is 'super' then redirect to /super
+    if (authUser && authUser.super_role === 'super') {
+        return <Navigate to="/super" replace />;
+    }
     return (
         authUser && allowedRoles.includes(authUser.role)
             ? <Outlet />
@@ -23,8 +28,8 @@ export default RoleBasedRoute;
 export const SuperRoleBasedRoute = ({ allowedRoles }) => {
     const { authUser, isLoading } = useAuthContext();
     if (isLoading) {
-        return <div>Loading...</div>; 
-      }
+        return <div>Loading...</div>;
+    }
     console.log("Auth User in SuperRoleBasedRoute:", authUser);
     return (
         authUser && allowedRoles.includes(authUser.super_role)

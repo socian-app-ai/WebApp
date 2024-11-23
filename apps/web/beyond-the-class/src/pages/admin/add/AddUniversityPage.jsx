@@ -171,13 +171,13 @@ export default function AddUniversityPage() {
 
 
 // // PSeudo
-// <select university> 
+// <select university>
 
-// if already selected> 
+// if already selected>
 // university name
 // main location
 // telephone number
-// admin emails 
+// admin emails
 
 
 
@@ -185,8 +185,8 @@ export default function AddUniversityPage() {
 // campus Name
 // campus Location
 
-// patterns 
-// teahcer 
+// patterns
+// teahcer
 // student{
 //     domain: @cuilahore.edu.pk
 //     reg: fa21-bcs-058 or se,ai,etc
@@ -197,8 +197,8 @@ export default function AddUniversityPage() {
 // campus Name
 // campus Location
 
-// patterns 
-// teahcer 
+// patterns
+// teahcer
 // student{
 //     domain: @cuilahore.edu.pk
 //     reg: fa21-bcs-058 or se,ai,etc

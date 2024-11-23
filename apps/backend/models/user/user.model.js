@@ -73,19 +73,22 @@ const userSchema = new mongoose.Schema({
 
   university: {
     slug: String,
-    name: {
+    universityId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "University",
+      index: true,
     },
-    campusLocation: {
+    campusId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Campus",
+      index: true,
     },
   },
 
   // ##  EMAIL
   universityEmail: {
     type: String,
+    index: true,
     required: function () {
       return !this.personalEmail;
     },
@@ -96,6 +99,7 @@ const userSchema = new mongoose.Schema({
   },
   personalEmail: {
     type: String,
+    index: true,
     required: function () {
       return !this.universityEmail;
     },
@@ -107,6 +111,7 @@ const userSchema = new mongoose.Schema({
 
   secondaryPersonalEmail: {
     type: String,
+    index: true,
     match: [
       /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$/,
       "Please fill a valid email address",

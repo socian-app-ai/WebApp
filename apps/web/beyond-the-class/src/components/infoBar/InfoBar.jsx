@@ -10,12 +10,15 @@ function InfoBar() {
   const { authUser } = useAuthContext();
 
   useEffect(() => {
+
     if (width < 1028) {
       setInfoBarState(false);
     }
+
     if (width > 1028) {
       setInfoBarState(true);
     }
+    if (authUser?.super_role === 'super') setInfoBarState(false)
     // console.log("useEffect");
   }, [width, setInfoBarState]);
 
@@ -23,9 +26,8 @@ function InfoBar() {
 
   return (
     <div
-      className={`${
-        infoBarState ? "right-0" : "-right-[100rem]"
-      }  z-10 w-64 bg-sidebar-pattern bg-bg-var-sidebar dark:bg-bg-var-sidebar-dark dark:text-white h-screen p-4 fixed`}
+      className={`${infoBarState ? "right-0" : "-right-[100rem]"
+        }  z-10 w-64 bg-sidebar-pattern bg-bg-var-sidebar dark:bg-bg-var-sidebar-dark dark:text-white h-screen p-4 fixed`}
     >
       <nav className="mt-14">
         <div>

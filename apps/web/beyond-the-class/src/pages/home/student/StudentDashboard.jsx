@@ -2,9 +2,11 @@ import { useEffect } from "react";
 import PostComponent from "../../../components/postBox/PostComponent";
 import { useAuthContext } from "../../../context/AuthContext";
 import { useSetInfoBarState } from "../../../state_management/zustand/useInfoBar";
+import useWindowDimensions from "../../../hooks/useWindowDimensions";
 
 export default function StudentDashboard() {
   const { authUser } = useAuthContext();
+  const { width } = useWindowDimensions();
 
   const filters = [
     { filterName: "Latest Feed" },
@@ -28,7 +30,7 @@ export default function StudentDashboard() {
   const { infoBarState, setInfoBarState } = useSetInfoBarState();
 
   useEffect(() => {
-    if (infoBarState === false) {
+    if (infoBarState === false && width > 768) {
       setInfoBarState(true);
     }
   }, [setInfoBarState, infoBarState]);

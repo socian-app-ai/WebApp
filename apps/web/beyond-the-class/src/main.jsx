@@ -22,45 +22,49 @@ import TypeCourse from './pages/student/pastpapers/type/TypeCourse.jsx';
 import UploadForm from './pages/admin/upload/UploadForm.jsx';
 import OneDiscussion from './pages/student/pastpapers/discussion/OneDiscussion.jsx';
 import TeacherReviewPage from './pages/student/reviews/comments/TeacherReviewPage.jsx';
+import AlumniHome from './pages/home/alumni/AlumniDashboard.jsx';
 
 const router = createBrowserRouter([
-  
-  
+
+
   {
     path: "/",
     element: (
       <ProtectedLayout />
     ),
     children: [
-      
+
       {
         element: <RoleBasedRoute allowedRoles={['student', 'alumni', 'external_org', 'teacher']} />,
         children: [{ index: true, element: <Layout><AllHome /></Layout> }],
       },
-      { path: "login",
-        element: <Login /> 
+
+      {
+        path: "login",
+        element: <Login />
       },
       {
         element: <SuperRoleBasedRoute allowedRoles={['super']} />,
         path: 'super',
         children: [
-          { path: "create-university", element:<Layout> <AddUniversityPage /></Layout> },
-          { path: "create-campus", element:<Layout> <AddCampusPage /></Layout> },
-          { path: "upload-pastpapers", element:<Layout> <UploadForm /></Layout> },
+          { index: true, element: <Layout> <AlumniHome /></Layout> },
+          { path: "create-university", element: <Layout> <AddUniversityPage /></Layout> },
+          { path: "create-campus", element: <Layout> <AddCampusPage /></Layout> },
+          { path: "upload-pastpapers", element: <Layout> <UploadForm /></Layout> },
         ],
       },
       {
         element: <RoleBasedRoute allowedRoles={['student']} />,
         path: "student",
         children: [
-          { path: "reviews/teachers", element:<Layout> <ReviewPage /></Layout> },
-          { path: "teacher/comments/:id", element:<Layout> <TeacherReviewPage /></Layout> },
+          { path: "reviews/teachers", element: <Layout> <ReviewPage /></Layout> },
+          { path: "teacher/comments/:id", element: <Layout> <TeacherReviewPage /></Layout> },
 
-          { path: "search-courses", element:<Layout> <ProgramNameAndCourses /></Layout> },
-          { path: "course-info/:id", element:<Layout> <CourseInfo /></Layout> },
-          { path: ":courseType/:subjectId", element:<Layout> <TypeCourse /></Layout> },
-          { path: "discussion/:toBeDisccusedId", element:<Layout> <OneDiscussion /></Layout> },
-          
+          { path: "search-courses", element: <Layout> <ProgramNameAndCourses /></Layout> },
+          { path: "course-info/:id", element: <Layout> <CourseInfo /></Layout> },
+          { path: ":courseType/:subjectId", element: <Layout> <TypeCourse /></Layout> },
+          { path: "discussion/:toBeDisccusedId", element: <Layout> <OneDiscussion /></Layout> },
+
         ],
       },
       { path: "unauthorized", element: <Unauthorized /> },
@@ -74,10 +78,10 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-      <AuthContextProvider>
-          <RouterProvider router={router}/>
-          <Toaster />
-      </AuthContextProvider>
+    <AuthContextProvider>
+      <RouterProvider router={router} />
+      <Toaster />
+    </AuthContextProvider>
   </StrictMode>,
 )
 

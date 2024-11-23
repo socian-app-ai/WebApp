@@ -95,21 +95,52 @@ function Sidebar() {
     // Add more external organization links
   ];
 
+  const superMenu = [
+    {
+      name: "Organizations",
+      path: "/super/ext-org",
+      icon: <FaBuilding className="w-5" />,
+    },
+    {
+      name: "Universities",
+      path: "/super/uni",
+      icon: <FaBuilding className="w-5" />,
+    },
+    {
+      name: "Campuses",
+      path: "/super/campus",
+      icon: <FaBuilding className="w-5" />,
+    },
+    {
+      name: "Users",
+      path: "/super/users",
+      icon: <FaBuilding className="w-5" />,
+    },
+    {
+      name: "Societies",
+      path: `/super/societies`,
+      icon: <FaMedapps className="w-5" />,
+    },
+  ]
+
   const processMenu = [];
   // Select menu based on user role
   const menuItems = authUser
-    ? authUser.role === "student"
-      ? studentMenu
-      : authUser.role === "alumni"
-      ? alumniMenu
-      : externalOrgMenu
+    ?
+    authUser.super_role === 'super'
+      ? superMenu
+      :
+      (authUser.role === "student"
+        ? studentMenu
+        : authUser.role === "alumni"
+          ? alumniMenu
+          : externalOrgMenu)
     : processMenu;
 
   return (
     <div
-      className={`${
-        sideBarState ? "left-0" : "-left-[100rem]"
-      }  z-20 w-64 bg-sidebar-pattern bg-bg-var-sidebar dark:bg-bg-var-sidebar-dark  dark:text-white h-screen p-4 fixed`}
+      className={`${sideBarState ? "left-0" : "-left-[100rem]"
+        }  z-20 w-64 bg-sidebar-pattern bg-bg-var-sidebar dark:bg-bg-var-sidebar-dark  dark:text-white h-screen p-4 fixed`}
     >
       <nav className="mt-12">
         <ul className="border-b flex flex-col">
@@ -132,13 +163,12 @@ function Sidebar() {
             {authUser &&
               authUser?.subscribedSocities?.map((society) => (
                 <Link
-                  to={`${
-                    authUser.role === "student"
-                      ? "/student"
-                      : authUser.role === "alumni"
+                  to={`${authUser.role === "student"
+                    ? "/student"
+                    : authUser.role === "alumni"
                       ? "/alumni"
                       : "/ext-org"
-                  }/${society._id}`}
+                    }/${society._id}`}
                   key={society._id}
                   className="flex justify-start items-center p-2 rounded hover:bg-slate-100 dark:hover:bg-[#2B3236]"
                   onClick={() => width < 768 && setSideBarState(false)}
