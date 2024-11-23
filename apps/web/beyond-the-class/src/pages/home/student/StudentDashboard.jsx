@@ -1,5 +1,7 @@
+import { useEffect } from "react";
 import PostComponent from "../../../components/postBox/PostComponent";
 import { useAuthContext } from "../../../context/AuthContext";
+import { useSetInfoBarState } from "../../../state_management/zustand/useInfoBar";
 
 export default function StudentDashboard() {
   const { authUser } = useAuthContext();
@@ -22,6 +24,14 @@ export default function StudentDashboard() {
     { filterName: "Polls" },
   ];
   console.log("here");
+
+  const { infoBarState, setInfoBarState } = useSetInfoBarState();
+
+  useEffect(() => {
+    if (infoBarState === false) {
+      setInfoBarState(true);
+    }
+  }, [setInfoBarState, infoBarState]);
 
   return (
     <div className="min-h-screen ">
