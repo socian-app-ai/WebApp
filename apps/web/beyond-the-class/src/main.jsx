@@ -23,6 +23,9 @@ import UploadForm from './pages/admin/upload/UploadForm.jsx';
 import OneDiscussion from './pages/student/pastpapers/discussion/OneDiscussion.jsx';
 import TeacherReviewPage from './pages/student/reviews/comments/TeacherReviewPage.jsx';
 import AlumniHome from './pages/home/alumni/AlumniDashboard.jsx';
+import UsersView from './pages/admin/pages/users/UsersView.jsx';
+import CampusView from './pages/admin/pages/campus/CampusView.jsx';
+import UniversityView from './pages/admin/pages/university/UniversityView.jsx';
 
 const router = createBrowserRouter([
 
@@ -48,9 +51,19 @@ const router = createBrowserRouter([
         path: 'super',
         children: [
           { index: true, element: <Layout> <AlumniHome /></Layout> },
-          { path: "create-university", element: <Layout> <AddUniversityPage /></Layout> },
-          { path: "create-campus", element: <Layout> <AddCampusPage /></Layout> },
-          { path: "upload-pastpapers", element: <Layout> <UploadForm /></Layout> },
+          { path: 'users', element: <Layout><UsersView /></Layout> },
+
+          { path: 'universities', element: <Layout><UniversityView /></Layout> },
+          { path: "university/create", element: <Layout> <AddUniversityPage /></Layout> },
+          { path: "university/edit/:universityId", element: <Layout> <AddUniversityPage /></Layout> },
+
+
+          { path: 'campuses', element: <Layout><CampusView /></Layout> },
+          { path: "campus/create", element: <Layout> <AddCampusPage /></Layout> },
+          { path: "campus/edit/:campusId", element: <Layout> <AddCampusPage /></Layout> },
+
+
+          { path: "pastpapers/upload", element: <Layout> <UploadForm /></Layout> },
         ],
       },
       {

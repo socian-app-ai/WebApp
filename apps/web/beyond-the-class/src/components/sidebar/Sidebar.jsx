@@ -103,12 +103,12 @@ function Sidebar() {
     },
     {
       name: "Universities",
-      path: "/super/uni",
+      path: "/super/universities",
       icon: <FaBuilding className="w-5" />,
     },
     {
       name: "Campuses",
-      path: "/super/campus",
+      path: "/super/campuses",
       icon: <FaBuilding className="w-5" />,
     },
     {

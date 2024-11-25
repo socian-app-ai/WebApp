@@ -65,7 +65,7 @@ export  function LabelInputUnderLineCustomizable({required=true, hideShowPass=fa
             <input
                 type={hideShowPass ? showPassword :type}
                 id={label}
-                className={`${inputClassName} ${width ? width : "w-[20rem]"}  border-b-2  border-black bg-transparent`}
+                className={`${inputClassName} ${width ? width : "w-[20rem]"}  border-b-2  border-black dark:border-white bg-transparent`}
                 placeholder={placeholder}
                 value={value}
                 onChange= {onChange}

@@ -9,7 +9,7 @@ export default function LabelFileInputCustomizable({ labelClassName, divClassNam
             <input
                 type="file"
                 id={`Upload Your ${label} `}
-                className={`${className} border border-black h-5 rounded-md`}
+                className={`${className} border border-black dark:border-white h-5 rounded-md`}
                 onChange={onChange}
                 {...inputProps}
 

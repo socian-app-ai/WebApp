@@ -72,6 +72,9 @@ const authRouter = require("./routes/auth.route.js");
 // const emailRoute = require('./routes/email.route.js');
 
 const protectRoute = require("./middlewares/protect.route.js");
+const superProtect = require("./middlewares/super.protect.js");
+
+const superRouter = require("./routes/super/super.route.js");
 
 const universityRouter = require("./routes/university_related/university.route.js");
 const campusRouter = require("./routes/university_related/campus.route.js");
@@ -83,6 +86,8 @@ const teacherRouter = require("./routes/university_related/teacher/teacher.route
 const pastpaperRouter = require("./routes/university_related/pastpapers/pastpaper.route.js");
 const academicRouter = require("./routes/university_related/pastpapers/academic.format.route.js");
 const discussionRouter = require("./routes/university_related/discussion.route.js");
+
+app.use("/api/super", superProtect, superRouter);
 
 app.use("/api/auth", authRouter);
 // app.use('/api/oauth', oAuthRouter);

@@ -61,12 +61,12 @@ const Navbar = () => {
             <div className="flex justify-center items-center ">
                 <div className='flex items-center md:items-end justify-end '>
                     {(width < 768) && <RxHamburgerMenu className='mx-2' size={22} onClick={toggleSideBar} />}
-                    <img className='h-9 w-9 lg:h-10 lg:w-10 ' src={authUser && authUser.university && authUser.university.campusId.picture} />
+                    <img className='h-9 w-9 lg:h-10 lg:w-10 ' src={authUser && authUser.university && authUser?.university?.campusId?.picture} />
                     {/* <img className='h-9 w-9 lg:h-10 lg:w-10 ' src="/comsats_logo_only_circle.png" /> */}
                     {/* {authUser && authUser.university && authUser.university.campusLocation.name} */}
                     <div className='flex flex-col ml-2 -space-y-1'>
                         <h5 className='font-semibold hidden md:block text-lg md:text-xl '>Beyond The Class.co  </h5>
-                        <p className="text-xs font-light">{authUser && authUser.university && authUser.university.campusId.name}</p>
+                        <p className="text-xs font-light">{authUser && authUser.university && authUser?.university?.campusId?.name}</p>
                     </div>
                 </div>
 
