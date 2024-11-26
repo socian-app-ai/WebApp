@@ -61,17 +61,17 @@ export default function StudentDashboard() {
   );
 }
 
-// {authUser && authUser.university && authUser.university.campusLocation ? (
-//   typeof authUser.university.campusLocation === "string" ? (
-//     <p>{authUser.university.campusLocation}</p>
+// {authUser && authUser.university && authUser.university.campusId ? (
+//   typeof authUser.university.campusId === "string" ? (
+//     <p>{authUser.university.campusId}</p>
 //   ) : (
 //     <div>
-//       {Array.isArray(authUser.university.campusLocation) ? (
-//         authUser.university.campusLocation.map((location, index) => (
+//       {Array.isArray(authUser.university.campusId) ? (
+//         authUser.university.campusId.map((location, index) => (
 //           <p key={index}>{location.name}</p>
 //         ))
 //       ) : (
-//         <p>{authUser.university.campusLocation.name}</p>
+//         <p>{authUser.university.campusId.name}</p>
 //       )}
 //     </div>
 //   )
@@ -105,20 +105,20 @@ export default function StudentDashboard() {
 
 //       <div className="campus-info mb-4">
 //         <h3 className="text-lg font-bold">Campus Information</h3>
-//         <p>Campus: {authUser.university.campusLocation.name}</p>
-//         <p>Location: {authUser.university.campusLocation.location}</p>
+//         <p>Campus: {authUser.university.campusId.name}</p>
+//         <p>Location: {authUser.university.campusId.location}</p>
 //         <img
-//           src={authUser.university.campusLocation.picture}
+//           src={authUser.university.campusId.picture}
 //           alt="Campus Logo"
 //           className="w-12 h-12"
 //         />
 
-//         {authUser.university.campusLocation.emailPatterns.studentPatterns
+//         {authUser.university.campusId.emailPatterns.studentPatterns
 //           .length > 0 && (
 //           <div className="email-patterns mt-2">
 //             <h4 className="font-bold">Allowed Student Email Patterns:</h4>
 //             <ul>
-//               {authUser.university.campusLocation.emailPatterns.studentPatterns.map(
+//               {authUser.university.campusId.emailPatterns.studentPatterns.map(
 //                 (pattern, index) => (
 //                   <li key={index}>{pattern}</li>
 //                 )
