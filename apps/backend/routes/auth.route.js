@@ -220,6 +220,17 @@ router.post("/login", async (req, res) => {
 
     console.log("User", req.session.user);
 
+    req.session.references = {
+      university: {
+        name: user.university.universityId.name,
+        _id: user.university.universityId._id,
+      },
+      campus: {
+        name: user.university.campusId.name,
+        _id: user.university.campusId._id,
+      },
+    };
+
     req.session.save((err) => {
       if (err) {
         console.error("Session save error:", err);
