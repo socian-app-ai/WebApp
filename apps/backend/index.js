@@ -32,9 +32,9 @@ const sessionData = session({
   name: "iidxi",
   secret: process.env.SESSION_SECRET || "default_secret",
   resave: process.env.RESAVE === "true",
-  saveUninitialized: process.env.SAVE_UNINTIALIZED === "true",
+  saveUninitialized: process.env.SAVE_UNINTIALIZED === "true", // should be false otherwise empty sessions wil be stored in database
   cookie: {
-    maxAge: 14 * 24 * 60 * 60 * 1000, // 14 days
+    maxAge: 140 * 24 * 60 * 60 * 1000, // 140 days
     httpOnly: true,
     secure: process.env.NODE_ENV === "production", // true if HTTPS in production
     sameSite: process.env.NODE_ENV === "production" && "lax",
