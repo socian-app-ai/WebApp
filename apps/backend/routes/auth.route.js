@@ -99,7 +99,7 @@ router.post("/register/student", async (req, res) => {
 //       universityEmail: email,
 //     }).populate([
 //       { path: "university.name", select: "-users _id" },
-//       { path: "university.campusLocation", select: "-users _id" },
+//       { path: "university.campusId", select: "-users _id" },
 //     ]);
 
 //     const isPassMatched = await bcryptjs.compare(
@@ -129,8 +129,8 @@ router.post("/register/student", async (req, res) => {
 //         _id: universityFromUser.university.name._id,
 //       },
 //       campus: {
-//         name: universityFromUser.university.campusLocation.name,
-//         _id: universityFromUser.university.campusLocation._id,
+//         name: universityFromUser.university.campusId.name,
+//         _id: universityFromUser.university.campusId._id,
 //       },
 //     };
 //     // req.references.save((err) => {

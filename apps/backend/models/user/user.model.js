@@ -238,7 +238,7 @@ userSchema.methods.generateSlug = async function () {
     .findById(this.university.name);
   const campus = await mongoose
     .model("Campus")
-    .findById(this.university.campusLocation);
+    .findById(this.university.campusId);
 
   if (university && campus) {
     const universityName = university.name.toLowerCase().replace(/\s+/g, "-");
