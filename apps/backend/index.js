@@ -66,10 +66,12 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // const crypto = require('crypto')
 // console.log(crypto.randomBytes(6).toString('hex'))
 
-const authRouter = require("./routes/auth.route.js");
+const authRouter = require("./routes/auth/auth.route.js");
 // const oAuthRouter = require('./routes/oauth');
 // const requestRoute = require('./routes/request');
 // const emailRoute = require('./routes/email.route.js');
+
+const mobAuthRouter = require("./routes/auth/mob.auth.route.js");
 
 const protectRoute = require("./middlewares/protect.route.js");
 const superProtect = require("./middlewares/super.protect.js");
@@ -90,6 +92,7 @@ const discussionRouter = require("./routes/university_related/discussion.route.j
 app.use("/api/super", superProtect, superRouter);
 
 app.use("/api/auth", authRouter);
+app.use("/api/mob/auth", mobAuthRouter);
 // app.use('/api/oauth', oAuthRouter);
 // app.use('/api/request', requestRoute);
 // app.use('/email', emailRoute);

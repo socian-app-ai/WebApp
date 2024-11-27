@@ -4,12 +4,12 @@
 const express = require("express");
 const router = express.Router();
 
-const { resendEmail } = require("../utils/email.util.js");
+const { resendEmail } = require("../../utils/email.util.js");
 const bcryptjs = require("bcryptjs");
 
-const User = require("../models/user/user.model.js");
-const Campus = require("../models/university/campus.university.model.js");
-const University = require("../models/university/university.register.model.js");
+const User = require("../../models/user/user.model.js");
+const Campus = require("../../models/university/campus.university.model.js");
+const University = require("../../models/university/university.register.model.js");
 
 router.post("/register/student", async (req, res) => {
   const { universityEmail, password, universityId, campusId } = req.body;
@@ -161,6 +161,8 @@ router.post("/login", async (req, res) => {
   let user;
   let userRoleBool = false;
   try {
+    const platform = req.headers["x-platform"];
+
     const query = {
       $or: [
         { universityEmail: email },
@@ -204,43 +206,79 @@ router.post("/login", async (req, res) => {
     }
 
     console.log("user populated", user.university, "role", userRoleBool);
-    req.session.user = {
-      _id: user._id,
-      name: user.name,
-      email:
-        user.universityEmail ||
-        user.personalEmail ||
-        user.secondaryPersonalEmail,
-      username: user.username,
-      profile: user.profile,
-      university: userRoleBool ? user.university : undefined,
-      super_role: user.super_role,
-      role: user.role,
-    };
 
-    console.log("User", req.session.user);
+    if (platform === "app") {
+      const payload = {
+        _id: user._id,
+        name: user.name,
+        email:
+          user.universityEmail ||
+          user.personalEmail ||
+          user.secondaryPersonalEmail,
+        username: user.username,
+        profile: user.profile,
+        university: userRoleBool ? user.university : undefined,
+        super_role: user.super_role,
+        role: user.role,
+        references: {
+          university: {
+            name: user.university.universityId.name,
+            _id: user.university.universityId._id,
+          },
+          campus: {
+            name: user.university.campusId.name,
+            _id: user.university.campusId._id,
+          },
+        },
+      };
 
-    req.session.references = {
-      university: {
-        name: user.university.universityId.name,
-        _id: user.university.universityId._id,
-      },
-      campus: {
-        name: user.university.campusId.name,
-        _id: user.university.campusId._id,
-      },
-    };
+      const token = jwt.sign(payload, JWT_SECRET, {
+        expiresIn: JWT_EXPIRY_TIME,
+      });
 
-    req.session.save((err) => {
-      if (err) {
-        console.error("Session save error:", err);
-        return res.status(500).json({ error: "Internal Server Error" });
-      }
-      // console.log("Session user in Longin Controller : ", req.session.user)
-    });
+      // Send JWT to the client
+      res.json({ token });
+    } else if (platform === "web") {
+      req.session.user = {
+        _id: user._id,
+        name: user.name,
+        email:
+          user.universityEmail ||
+          user.personalEmail ||
+          user.secondaryPersonalEmail,
+        username: user.username,
+        profile: user.profile,
+        university: userRoleBool ? user.university : undefined,
+        super_role: user.super_role,
+        role: user.role,
+      };
 
-    console.log(req.session.references);
-    return res.status(200).json(req.session.user);
+      console.log("User in WEB", req.session.user);
+
+      req.session.references = {
+        university: {
+          name: user.university.universityId.name,
+          _id: user.university.universityId._id,
+        },
+        campus: {
+          name: user.university.campusId.name,
+          _id: user.university.campusId._id,
+        },
+      };
+
+      req.session.save((err) => {
+        if (err) {
+          console.error("Session save error:", err);
+          return res.status(500).json({ error: "Internal Server Error" });
+        }
+        // console.log("Session user in Longin Controller : ", req.session.user)
+      });
+
+      console.log(req.session.references);
+      return res.status(200).json(req.session.user);
+    } else {
+      return res.status(400).json({ error: "Invalid platform" });
+    }
   } catch (error) {
     console.error("Error in ", error.message);
     res.status(500).json({ message: "Internal Server Error" });
