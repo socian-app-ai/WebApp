@@ -186,7 +186,6 @@ const userSchema = new mongoose.Schema({
     },
 
     // Additional field for ext_org approval and alumni
-
     approval: {
       isApproved: { type: Boolean, default: false },
       approvedBy: {
@@ -224,12 +223,14 @@ const userSchema = new mongoose.Schema({
   },
 });
 
+userSchema.index({ role: 1 });
+
 // Methods for handling graduation checks and notifications
 userSchema.methods.checkGraduation = function () {
   const today = new Date();
   if (this.role === "student" && this.profile.graduationYear < today) {
     if (!this.phoneNumber) {
-      this.isBlocked = true; // Block account if phone number isn't present
+      this.restrictions.blocking.isBlocked = true; // Block account if phone number isn't present
     } else {
       // Send notification but don't block the account
     }
@@ -250,8 +251,8 @@ userSchema.pre("save", async function (next) {
   }
   // For teacher or ext_org: apply approval status check
   else if (this.role === "teacher" || this.role === "ext_org") {
-    if (!this.approval.isApproved) {
-      this.isBlocked = true; // Block account if not approved
+    if (!this.restrictions.approval.isApproved) {
+      this.restrictions.blocking.isBlocked = true; // Block account if not approved
     }
   }
   this.updatedAt = Date.now();

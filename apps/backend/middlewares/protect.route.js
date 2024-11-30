@@ -1,18 +1,22 @@
 // const jwt = require("jsonwebtoken");
 const User = require("../models/user/user.model.js");
+const authenticateToken = require("./jwt.protect.js");
+const authenticateSession = require("./session.protect.js");
 // TODO need to change it to JWT + Session for mobile app
 
 const protectRoute = async (req, res, next) => {
   ///req res order is must
   try {
-    if (req.session.user) {
-      const _id = req.session.user._id;
-      const user = await User.findOne({ _id }).select("-password");
-      if (!user)
-        return res.status(404).json({ error: "User has no privilidges" });
-      next();
+    const platform = req.headers["x-platform"];
+
+    if (!platform)
+      return res.status(505).json({ error: "platform not authorized" });
+    if (platform === "app") {
+      authenticateToken(req, res, next);
+    } else if (platform === "web") {
+      authenticateSession(req, res, next);
     } else {
-      res.status(401).json({ error: "Not authenticated" });
+      res.status(502).json({ error: "This is Bad" });
     }
   } catch (error) {
     console.error("Error in- protect Route-middleware: ", error.message);
