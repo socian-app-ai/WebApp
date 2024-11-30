@@ -11,6 +11,85 @@ const User = require("../../models/user/user.model.js");
 const Campus = require("../../models/university/campus.university.model.js");
 const University = require("../../models/university/university.register.model.js");
 
+
+
+router.post("/register/student", async (req, res) => {
+  const { universityEmail, password, universityId, campusId } = req.body;
+
+  console.log(universityEmail, password, universityId, campusId);
+  try {
+    const isAlreadyRegistered = await User.findOne({
+      universityEmail: universityEmail,
+    });
+
+    if (isAlreadyRegistered) return res.status(400).json("Seems Odd"); // already registered
+
+    const uniExists = await University.findOne({ _id: universityId });
+
+    if (!uniExists)
+      return res.status(404).json("Hmm.. Seems Odd, this should not happen"); // already registered
+
+    const campus = await Campus.findOne({
+      _id: campusId,
+      universityOrigin: universityId,
+    });
+
+    console.log(campus);
+    if (!campus)
+      return res.status(404).json("Hmm.. Seems Odd, this should not happen"); // already registered
+
+    // const emailPatterns = campus.emailPatterns.studentPatterns;
+
+    const emailPatterns = campus.emailPatterns.studentPatterns.map((pattern) =>
+      pattern.replace(/\d+/g, "\\d+")
+    );
+
+    const combinedPattern = `^(${emailPatterns.join("|")})$`;
+    const regex = new RegExp(combinedPattern);
+
+    const isEmailValid = regex.test(universityEmail);
+
+    console.log(emailPatterns);
+    // const isEmailValid = emailPatterns.some(pattern => new RegExp(pattern).test(universityEmail));
+    console.log("Valid", isEmailValid);
+
+    if (!isEmailValid) {
+      // TODO Send report to moderator and superadmin
+      return res
+        .status(400)
+        .json("University email does not match the required format!");
+    }
+
+    const hashedPassword = await bcryptjs.hash(password, 10);
+
+    const newUser = new User({
+      username: universityEmail,
+      universityEmail,
+      password: hashedPassword,
+      university: {
+        name: universityId,
+        campusLocation: campusId,
+      },
+      profile: {
+        username: universityEmail,
+      },
+
+      role: "student",
+      super_role: "none",
+    });
+
+    await newUser.save();
+
+    campus.users.push(newUser._id);
+    uniExists.users.push(newUser._id);
+
+    return res.status(201).json({ message: "Registration successful!" });
+  } catch (error) {
+    console.error("Error in ", error.message);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
 router.post("/register/student", async (req, res) => {
   const { universityEmail, password, universityId, campusId } = req.body;
 
@@ -194,8 +273,17 @@ router.post("/login", async (req, res) => {
     if (!user || !isPassMatched)
       return res.status(400).json({ error: "Invalid email or password" });
 
-    if (user.blocking.isBlocked || !user.approval.isApproved) {
+    console.log(
+      user.restrictions.blocking.isBlocked,
+      user.restrictions.approval.isApproved
+    );
+    if (user.restrictions.blocking.isBlocked) {
       return res.status(400).json({ error: "User blocked or Up for Review" });
+    }
+    if (user.role === "alumni" || user.role === "ext_org") {
+      if (!user.restrictions.approval.isApproved) {
+        return res.status(400).json({ error: "User not approved yet" });
+      }
     }
 
     if (user.role === "student" || user.role === "alumni") {

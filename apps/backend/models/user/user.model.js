@@ -23,13 +23,6 @@ const userSchema = new mongoose.Schema({
     enum: ["super", "admin", "mod", "none"],
   },
 
-  moderatorTo: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Society",
-    },
-  ],
-
   profile: {
     // name: {
     //     type: String,
@@ -62,15 +55,39 @@ const userSchema = new mongoose.Schema({
     },
     graduationYear: {
       type: Date,
-      required: () => {
-        return this.role === "student";
+      validate: {
+        validator: function (v) {
+          return this.role !== "student" || v; // Require graduationYear if role is student
+        },
+        message: "Graduation year is required for students",
       },
     },
+
     department: {
       type: String,
     },
-  },
+    savedPosts: [{ type: mongoose.Schema.Types.ObjectId, ref: "Post" }],
+    posts: [{ type: mongoose.Schema.Types.ObjectId, ref: "Post" }],
+    connections: {
+      friend: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+      blocked: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+    },
 
+    moderatorTo: {
+      society: [
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Society",
+        },
+      ],
+      subsociety: [
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "SubSociety",
+        },
+      ],
+    },
+  },
   university: {
     slug: String,
     universityId: {
@@ -84,7 +101,12 @@ const userSchema = new mongoose.Schema({
       index: true,
     },
   },
-
+  subscribedSocities: [
+    { type: mongoose.Schema.Types.ObjectId, ref: "Society" },
+  ],
+  subscribedSubSocities: [
+    { type: mongoose.Schema.Types.ObjectId, ref: "SubSociety" },
+  ],
   // ##  EMAIL
   universityEmail: {
     type: String,
@@ -124,7 +146,6 @@ const userSchema = new mongoose.Schema({
   },
 
   // ## Verified?
-
   universityEmailVerified: {
     type: Boolean,
     default: false,
@@ -146,10 +167,6 @@ const userSchema = new mongoose.Schema({
     default: false,
   },
 
-  connections: {
-    friend: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
-    blocked: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
-  },
   // ## Expiration
   universityEmailExpirationDate: {
     type: Date,
@@ -159,22 +176,24 @@ const userSchema = new mongoose.Schema({
   },
 
   // ## Restrictions
-
-  blocking: {
-    isBlocked: { type: Boolean, default: false },
-    blockedBy: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+  restrictions: {
+    blocking: {
+      isBlocked: { type: Boolean, default: false },
+      blockedBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
     },
-  },
 
-  // Additional field for ext_org approval:
-  approval: {
-    isApproved: { type: Boolean, default: false },
-    approvedBy: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-    }, // This is  ref to a user(admin,mod,super admin)
+    // Additional field for ext_org approval and alumni
+
+    approval: {
+      isApproved: { type: Boolean, default: false },
+      approvedBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    }, // This is  ref to a user(admin,mod,super admin) or SELF for teacher,student
   },
 
   // ## tokens
@@ -203,14 +222,6 @@ const userSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-
-  // savedPosts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Post' }],
-  subscribedSocities: [
-    { type: mongoose.Schema.Types.ObjectId, ref: "Society" },
-  ],
-  subscribedSubSocities: [
-    { type: mongoose.Schema.Types.ObjectId, ref: "SubSociety" },
-  ],
 });
 
 // Methods for handling graduation checks and notifications
@@ -229,21 +240,6 @@ userSchema.methods.checkGraduation = function () {
 userSchema.methods.convertToAlumni = function () {
   if (this.role === "student" && this.profile.graduationYear > today) {
     this.role = "alumni";
-  }
-};
-
-userSchema.methods.generateSlug = async function () {
-  const university = await mongoose
-    .model("University")
-    .findById(this.university.name);
-  const campus = await mongoose
-    .model("Campus")
-    .findById(this.university.campusId);
-
-  if (university && campus) {
-    const universityName = university.name.toLowerCase().replace(/\s+/g, "-");
-    const campusLocation = campus.location.toLowerCase().replace(/\s+/g, "-");
-    this.university.slug = `${universityName}-${campusLocation}`;
   }
 };
 

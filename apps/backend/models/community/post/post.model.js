@@ -54,7 +54,11 @@ const postSchema = new Schema(
     ],
     flair: { type: String, default: "" },
     comments: { type: Schema.Types.ObjectId, ref: "PostCommentCollection" },
-    isDeleted: { type: Boolean, default: false },
+    status: {
+      isActive: { type: Boolean, default: true },
+      isDeleted: { type: Boolean, default: false },
+      isArchived: { type: Boolean, default: false },
+    },
     editedAt: { type: Date },
     isPromoted: {
       promoted: { type: Boolean, default: false },

@@ -71,7 +71,7 @@ const authRouter = require("./routes/auth/auth.route.js");
 // const requestRoute = require('./routes/request');
 // const emailRoute = require('./routes/email.route.js');
 
-const mobAuthRouter = require("./routes/auth/mob.auth.route.js");
+// const mobAuthRouter = require("./routes/auth/mob.auth.route.js"); // will not use maybe
 
 const protectRoute = require("./middlewares/protect.route.js");
 const superProtect = require("./middlewares/super.protect.js");
@@ -92,7 +92,7 @@ const discussionRouter = require("./routes/university_related/discussion.route.j
 app.use("/api/super", superProtect, superRouter);
 
 app.use("/api/auth", authRouter);
-app.use("/api/mob/auth", mobAuthRouter);
+// app.use("/api/mob/auth", mobAuthRouter); // will not use maybe
 // app.use('/api/oauth', oAuthRouter);
 // app.use('/api/request', requestRoute);
 // app.use('/email', emailRoute);
