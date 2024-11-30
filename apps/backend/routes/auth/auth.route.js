@@ -1,5 +1,5 @@
 // const generateToken = require("../utils/generate.token.js");
-// const jwt = require("jsonwebtoken");
+const jwt = require("jsonwebtoken");
 
 const express = require("express");
 const router = express.Router();
@@ -161,6 +161,7 @@ router.post("/login", async (req, res) => {
   let user;
   let userRoleBool = false;
   try {
+    // console.log("login log", universityId, campusId, email, password);
     const platform = req.headers["x-platform"];
 
     const query = {
@@ -231,13 +232,15 @@ router.post("/login", async (req, res) => {
           },
         },
       };
+      // console.log("in app type", typeof process.env.JWT_EXPIRY_TIME);
 
-      const token = jwt.sign(payload, JWT_SECRET, {
-        expiresIn: JWT_EXPIRY_TIME,
+      const token = jwt.sign(payload, process.env.JWT_SECRET, {
+        expiresIn: process.env.JWT_EXPIRY_TIME,
       });
+      // console.log("in app", token);
 
       // Send JWT to the client
-      res.json({ token });
+      res.status(200).json({ token });
     } else if (platform === "web") {
       req.session.user = {
         _id: user._id,
@@ -275,6 +278,8 @@ router.post("/login", async (req, res) => {
       });
 
       console.log(req.session.references);
+      // res.setHeader("Authorization", `Bearer ${token}`);
+
       return res.status(200).json(req.session.user);
     } else {
       return res.status(400).json({ error: "Invalid platform" });
