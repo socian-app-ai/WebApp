@@ -1,13 +1,17 @@
 const { OTP } = require("../models/otp/otp");
 const User = require("../models/user/user.model");
 const moment = require("moment");
-
+const otpGenerator = require("otp-generator");
 /**
  * Generates a 6-digit OTP.
  * @returns {string} - A 6-digit OTP as a string.
  */
 const generateOtp6Digit = () => {
-  return Math.floor(100000 + Math.random() * 900000).toString();
+  return otpGenerator.generate(6, {
+    upperCaseAlphabets: false,
+    specialChars: false,
+    lowerCaseAlphabets: false,
+  });
 };
 
 /**
