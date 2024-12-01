@@ -25,7 +25,7 @@ dotenv.config();
 // redis.on('error', (err) => {
 //     console.error('Redis error:', err);
 // });
-
+console.log("Always remember to pnpm install");
 // Will be using session for now
 app.set("trust proxy", 1);
 const sessionData = session({
