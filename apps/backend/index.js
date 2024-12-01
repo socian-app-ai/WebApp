@@ -89,6 +89,7 @@ const teacherRouter = require("./routes/university_related/teacher/teacher.route
 const pastpaperRouter = require("./routes/university_related/pastpapers/pastpaper.route.js");
 const academicRouter = require("./routes/university_related/pastpapers/academic.format.route.js");
 const discussionRouter = require("./routes/university_related/discussion.route.js");
+const User = require("./models/user/user.model.js");
 
 app.use("/api/super", superProtect, superRouter);
 

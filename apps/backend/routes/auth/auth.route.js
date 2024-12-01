@@ -4,157 +4,17 @@ const jwt = require("jsonwebtoken");
 const express = require("express");
 const router = express.Router();
 
-const { resendEmail } = require("../../utils/email.util.js");
+const {
+  resendEmail,
+  resendEmailForgotPassword,
+} = require("../../utils/email.util.js");
 const bcryptjs = require("bcryptjs");
+const { generateOtp6Digit } = require("../../utils/utils.js");
 
 const User = require("../../models/user/user.model.js");
 const Campus = require("../../models/university/campus.university.model.js");
 const University = require("../../models/university/university.register.model.js");
-
-// router.post("/register/student", async (req, res) => {
-//   const { universityEmail, password, universityId, campusId } = req.body;
-
-//   console.log(universityEmail, password, universityId, campusId);
-//   try {
-//     const isAlreadyRegistered = await User.findOne({
-//       universityEmail: universityEmail,
-//     });
-
-//     if (isAlreadyRegistered) return res.status(400).json("Seems Odd"); // already registered
-
-//     const uniExists = await University.findOne({ _id: universityId });
-
-//     if (!uniExists)
-//       return res.status(404).json("Hmm.. Seems Odd, this should not happen"); // already registered
-
-//     const campus = await Campus.findOne({
-//       _id: campusId,
-//       universityOrigin: universityId,
-//     });
-
-//     console.log(campus);
-//     if (!campus)
-//       return res.status(404).json("Hmm.. Seems Odd, this should not happen"); // already registered
-
-//     // const emailPatterns = campus.emailPatterns.studentPatterns;
-
-//     const emailPatterns = campus.emailPatterns.studentPatterns.map((pattern) =>
-//       pattern.replace(/\d+/g, "\\d+")
-//     );
-
-//     const combinedPattern = `^(${emailPatterns.join("|")})$`;
-//     const regex = new RegExp(combinedPattern);
-
-//     const isEmailValid = regex.test(universityEmail);
-
-//     console.log(emailPatterns);
-//     // const isEmailValid = emailPatterns.some(pattern => new RegExp(pattern).test(universityEmail));
-//     console.log("Valid", isEmailValid);
-
-//     if (!isEmailValid) {
-//       // TODO Send report to moderator and superadmin
-//       return res
-//         .status(400)
-//         .json("University email does not match the required format!");
-//     }
-
-//     const hashedPassword = await bcryptjs.hash(password, 10);
-
-//     const newUser = new User({
-//       username: universityEmail,
-//       universityEmail,
-//       password: hashedPassword,
-//       university: {
-//         name: universityId,
-//         campusLocation: campusId,
-//       },
-//       profile: {
-//         username: universityEmail,
-//       },
-
-//       role: "student",
-//       super_role: "none",
-//     });
-
-//     await newUser.save();
-
-//     campus.users.push(newUser._id);
-//     uniExists.users.push(newUser._id);
-
-//     return res.status(201).json({ message: "Registration successful!" });
-//   } catch (error) {
-//     console.error("Error in ", error.message);
-//     res.status(500).json({ message: "Internal Server Error" });
-//   }
-// });
-
-// router.post("/login/student", async (req, res) => {
-//   const { universityId, campusId, email, password } = req.body;
-//   try {
-//     // if (universityId && campusId) {
-
-//     // }
-
-//     const universityFromUser = await User.findOne({
-//       universityEmail: email,
-//     }).populate([
-//       { path: "university.name", select: "-users _id" },
-//       { path: "university.campusId", select: "-users _id" },
-//     ]);
-
-//     const isPassMatched = await bcryptjs.compare(
-//       password,
-//       universityFromUser?.password || ""
-//     );
-
-//     if (!universityFromUser || !isPassMatched)
-//       return res.status(400).json({ error: "Invalid email or password" });
-
-//     req.session.user = {
-//       _id: universityFromUser._id,
-//       name: universityFromUser.name,
-//       email: universityFromUser.universityEmail
-//         ? universityFromUser.universityEmail
-//         : universityFromUser.personalEmail,
-//       username: universityFromUser.username,
-//       profile: universityFromUser.profile,
-//       university: universityFromUser.university,
-//       super_role: universityFromUser.super_role,
-//       role: universityFromUser.role,
-//     };
-//     // console.log(req.session.user)
-//     req.session.references = {
-//       university: {
-//         name: universityFromUser.university.name.name,
-//         _id: universityFromUser.university.name._id,
-//       },
-//       campus: {
-//         name: universityFromUser.university.campusId.name,
-//         _id: universityFromUser.university.campusId._id,
-//       },
-//     };
-//     // req.references.save((err) => {
-//     //     if (err) {
-//     //         console.error('Refferences save error:', err);
-//     //         return res.status(500).json({ error: "Internal Server Error" });
-//     //     }}
-//     // )
-
-//     req.session.save((err) => {
-//       if (err) {
-//         console.error("Session save error:", err);
-//         return res.status(500).json({ error: "Internal Server Error" });
-//       }
-//       // console.log("Session user in Longin Controller : ", req.session.user)
-//     });
-
-//     console.log(req.session.references);
-//     return res.status(200).json(req.session.user);
-//   } catch (error) {
-//     console.error("Error in ", error.message);
-//     res.status(500).json({ message: "Internal Server Error" });
-//   }
-// });
+const generateToken = require("../../utils/generate.token.js");
 
 router.get("/session", async (req, res) => {
   // console.log("Req user:", req.session.user)
@@ -237,38 +97,22 @@ router.post("/login", async (req, res) => {
     console.log("user populated", user.university, "role", userRoleBool);
 
     if (platform === "app") {
-      const payload = {
-        _id: user._id,
-        name: user.name,
-        email:
-          user?.universityEmail ||
-          user?.personalEmail ||
-          user?.secondaryPersonalEmail,
-        username: user.username,
-        profile: user.profile,
-        university: userRoleBool ? user.university : undefined,
-        super_role: user.super_role,
-        role: user.role,
-        references: {
-          university: {
-            name: user.university.universityId.name,
-            _id: user.university.universityId._id,
-          },
-          campus: {
-            name: user.university.campusId.name,
-            _id: user.university.campusId._id,
-          },
-        },
-      };
       // console.log("in app type", typeof process.env.JWT_EXPIRY_TIME);
 
-      const token = jwt.sign(payload, process.env.JWT_SECRET, {
-        expiresIn: process.env.JWT_EXPIRY_TIME,
-      });
+      const { accessToken, refreshToken } = generateToken(user, userRoleBool);
+
+      user.tokens = {
+        access_token: accessToken,
+        refresh_token: refreshToken,
+      };
+      await user.save();
       // console.log("in app", token);
 
       // Send JWT to the client
-      res.status(200).json({ token });
+      res.status(200).json({
+        access_token: accessToken,
+        refresh_token: refreshToken,
+      });
     } else if (platform === "web") {
       req.session.user = {
         _id: user._id,
@@ -327,7 +171,7 @@ router.post("/register", async (req, res) => {
   try {
     const platform = req.headers["x-platform"];
 
-    if (email.includes(".edu")) {
+    if (isValidEduEmail(email)) {
       //make it check that .edu comes after @ and no two @ exists
       query = { universityEmail: email };
     } else {
@@ -346,6 +190,15 @@ router.post("/register", async (req, res) => {
           "university.campusId": campusId,
         },
       ];
+    }
+    if (
+      !universityId &&
+      !campusId &&
+      (user.role === "student" ||
+        user.role === "teacher" ||
+        user.role === "alumni")
+    ) {
+      return res.status(404).json("References not found");
     }
 
     console.log("later", query);
@@ -399,8 +252,8 @@ router.post("/register", async (req, res) => {
         username: email.split("@")[0] + email.split(".")[0],
         password: hashedPassword,
         university: {
-          name: universityId,
-          campusLocation: campusId,
+          universityId: universityId,
+          campusId: campusId,
         },
         role: role,
         super_role: "none",
@@ -545,8 +398,8 @@ router.post("/register-bulk", async (req, res) => {
           username: email.split("@")[0] + email.split(".")[0],
           password: hashedPassword,
           university: {
-            name: universityId,
-            campusLocation: campusId,
+            universityId: universityId,
+            campusId: campusId,
           },
           role: role,
           super_role: "none",
@@ -606,5 +459,189 @@ router.post("/register-bulk", async (req, res) => {
     errors,
   });
 });
+
+router.post("/reset-password", async (req, res) => {
+  const { oldPassword, newPassword, userId } = req.body;
+
+  let user;
+  try {
+    if (oldPassword === newPassword)
+      return res
+        .status(302)
+        .json({ mesage: "Old and New Passowrd Input can not be same" });
+
+    const platform = req.headers["x-platform"];
+
+    console.log(userId);
+    if (platform === "app") {
+      if (!userId)
+        return res.status(409).json({ error: "Error parsing token" });
+      user = await User.findById({ _id: userId });
+    } else if (platform === "web") {
+      user = await User.findById({ _id: req.session.user._id });
+    }
+
+    const isPassMatched = await bcryptjs.compare(
+      oldPassword,
+      user?.password || ""
+    );
+
+    if (!user) return res.status(400).json({ error: "No user exists" });
+    if (!isPassMatched)
+      return res.status(400).json({ error: "Old password wrong" });
+    if (isPassMatched && oldPassword === newPassword)
+      return res
+        .status(302)
+        .json({ mesage: "Old and New Passowrd can not be same" });
+
+    const hashedPassword = await bcryptjs.hash(newPassword, 10);
+    user.password = hashedPassword;
+    await user.save();
+
+    return res.status(200).json({ message: "Password Changed Successfully" });
+  } catch (error) {
+    console.error("Error in ", error.message);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+router.post("/forgot-password/email", async (req, res) => {
+  const { email } = req.body;
+  let user;
+  try {
+    if (isValidEduEmail(email)) {
+      query = { universityEmail: email };
+    } else {
+      query = {
+        $or: [{ personalEmail: email }, { secondaryPersonalEmail: email }],
+      };
+    }
+    console.log(query);
+
+    user = await User.findOne(query);
+
+    if (!user)
+      return res.status(200).json({
+        message: "Check your mail for OTP (if user exists)",
+      });
+
+    const otp = generateOtp6Digit();
+    const datas = {
+      name: user.name,
+      email,
+      otp,
+    };
+    resendEmailForgotPassword(datas, req, res);
+
+    return res.status(200).json({
+      message: "Check your mail for OTP (if user exists)",
+    });
+  } catch (error) {
+    console.error("Error in ", error.message);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+router.post("/logout", async (req, res) => {
+  const platform = req.headers["x-platform"];
+  const { userId } = req.body;
+
+  try {
+    if (platform === "web") {
+      req.session.destroy((err) => {
+        if (err) {
+          console.error("Failed to destroy session:", err);
+          return res.status(500).json({ message: "Logout failed" });
+        }
+        // Clear the cookie on the client side
+        res.clearCookie("iidxi");
+      });
+    } else if (platform === "app") {
+      let user = await User.findById({ _id: userId });
+
+      // also remove from client side
+      user.tokens = {
+        access_token: "",
+        refresh_token: "",
+      };
+      await user.save();
+    } else {
+      return res.status(500).json("Invalid Params");
+    }
+    return res.status(200).json({ message: "Logged out successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(401).json({ error: "Invalid or expired refresh token" });
+  }
+});
+
+// Refresh Token Route
+router.post("/refresh-token", async (req, res) => {
+  const { refreshToken } = req.body;
+
+  if (!refreshToken) {
+    return res.status(401).json({ error: "Refresh token required" });
+  }
+
+  try {
+    const platform = req.headers["x-platform"];
+
+    if (platform === "app") {
+      // Verify the refresh token
+      const decoded = jwt.verify(refreshToken, process.env.JWT_SECRET);
+
+      // Find user by the decoded ID
+      const user = await User.findById(decoded._id);
+      if (!user || user.refreshToken !== refreshToken) {
+        return res.status(403).json({ error: "Invalid refresh token" });
+      }
+
+      // Generate new access token
+      const { accessToken } = generateToken(user);
+
+      // Send the new access token
+      res.status(200).json({
+        accessToken,
+      });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(401).json({ error: "Invalid or expired refresh token" });
+  }
+});
+
+function isValidEduEmail(email) {
+  // Check for exactly one "@" and ".edu." after "@"
+  const atIndex = email.indexOf("@");
+  const lastAtIndex = email.lastIndexOf("@");
+
+  // Ensure only one '@' exists and it's followed by ".edu."
+  if (atIndex === -1 || atIndex !== lastAtIndex) {
+    return false; // More than one "@" or no "@" at all
+  }
+
+  // Check if ".edu." comes after the "@"
+  const domain = email.substring(atIndex + 1); // Extract the domain part after "@"
+  return domain.includes(".edu.") && domain.indexOf(".edu.") > 0;
+}
+
+async function newSession(req, res) {
+  // console.log("Req user:", req.session.user)
+  // console.log("The session data is in session ", req.session)
+  if (req.session.user) {
+    res.status(200).json({
+      _id: req.session.user._id,
+      name: req.session.user.name,
+      email: req.session.user.email,
+      username: req.session.user.username,
+      profile: req.session.user.profile,
+      university: req.session.user.university,
+      super_role: req.session.user.super_role,
+      role: req.session.user.role,
+    });
+  } else {
+    res.status(401).json({ error: "Not authenticated" });
+  }
+}
 
 module.exports = router;
