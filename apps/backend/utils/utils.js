@@ -1,4 +1,6 @@
+const { OTP } = require("../models/otp/otp");
 const User = require("../models/user/user.model");
+const moment = require("moment");
 
 /**
  * Generates a 6-digit OTP.
@@ -14,12 +16,8 @@ const generateOtp6Digit = () => {
  */
 function createDateTime() {
   // Create a Date object for November 12, 2021
-  const date = new Date("2021-11-12T00:00:00");
-
-  // Format the date to 'Fri Nov 12 2021'
-  const formattedDate = date.toDateString();
-
-  return formattedDate;
+  const date = moment().format("ddd MMM DD YYYY");
+  return date;
 }
 
 const generateUsername = (name) => {
@@ -51,4 +49,45 @@ const createUniqueUsername = async (name) => {
   return finalUsername;
 };
 
-module.exports = { generateOtp6Digit, createDateTime, createUniqueUsername };
+/**
+ * Sends an OTP to the provided phone number or email.
+ * @param {string} phoneNumber - Recipient's phone number.
+ * @param {string} email - Recipient's email address.
+ * @param {string} otp - The OTP to be sent.
+ * @returns {Promise<object>} - Result of OTP send operation.
+ */
+const sendOtp = async (phoneNumber, email, user, name) => {
+  if (email && phoneNumber) {
+    console.error("Cannot use both phone number and email.");
+    return { error: "Cannot use both phone number and email." };
+  }
+  if (!email && !phoneNumber) {
+    return { error: "Either phone number or email is required." };
+  }
+  const otp = generateOtp6Digit();
+  const query = phoneNumber ? { phone: phoneNumber } : { email: email };
+  const otpExpiration = moment().add(2, "minutes"); // 2 minutes expiry
+
+  console.log("this query", query);
+  const otpResponse = await OTP.findOneAndUpdate(
+    query,
+    {
+      otp,
+      otpExpiration,
+      used: false,
+      ref: user,
+      refName: name,
+      resendCount: 0,
+    },
+    { upsert: true, new: true, setDefaultsOnInsert: true }
+  );
+
+  return { otp, otpResponse };
+};
+
+module.exports = {
+  generateOtp6Digit,
+  createDateTime,
+  createUniqueUsername,
+  sendOtp,
+};

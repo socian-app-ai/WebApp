@@ -3,6 +3,7 @@ const jwt = require("jsonwebtoken");
 
 const express = require("express");
 const router = express.Router();
+const moment = require("moment");
 
 const {
   resendEmail,
@@ -12,12 +13,14 @@ const bcryptjs = require("bcryptjs");
 const {
   generateOtp6Digit,
   createUniqueUsername,
+  sendOtp,
 } = require("../../utils/utils.js");
 
 const User = require("../../models/user/user.model.js");
 const Campus = require("../../models/university/campus.university.model.js");
 const University = require("../../models/university/university.register.model.js");
 const generateToken = require("../../utils/generate.token.js");
+const { OTP } = require("../../models/otp/otp.js");
 
 router.get("/session", async (req, res) => {
   // console.log("Req user:", req.session.user)
@@ -383,15 +386,9 @@ router.put("/update/username", async (req, res) => {
 router.post("/register-bulk", async (req, res) => {
   const users = req.body.users; // Expecting an array of user data
 
-  const nowS = new Date();
-  const hoursS = String(nowS.getHours()).padStart(2, "0");
-  const minutesS = String(nowS.getMinutes()).padStart(2, "0");
-  const secondsS = String(nowS.getSeconds()).padStart(2, "0");
-  const millisecondsS = String(nowS.getMilliseconds()).padStart(3, "0");
-
-  console.log(
-    `START: ${hoursS}hr:${minutesS}min:${secondsS}sec:${millisecondsS}msec`
-  );
+  const now = moment();
+  const formattedTime = now.format("HH:mm:ss:SSS");
+  console.log("START ", formattedTime);
 
   if (!Array.isArray(users)) {
     return res.status(400).json({ message: "Invalid data format" });
@@ -534,15 +531,10 @@ router.post("/register-bulk", async (req, res) => {
     return res.status(400).json({ errors, createdUsers });
   }
 
-  const now = new Date();
-  const hours = String(now.getHours()).padStart(2, "0");
-  const minutes = String(now.getMinutes()).padStart(2, "0");
-  const seconds = String(now.getSeconds()).padStart(2, "0");
-  const milliseconds = String(now.getMilliseconds()).padStart(3, "0");
+  const now2 = moment();
+  const formattedTime2 = now2.format("HH:mm:ss:SSS");
+  console.log("END ", formattedTime2);
 
-  console.log(
-    `FINISH: ${hours}hr:${minutes}min:${seconds}sec:${milliseconds}msec`
-  );
   return res.status(201).json({
     message: "Bulk registration successful!",
     createdUsers,
@@ -595,7 +587,7 @@ router.put("/reset-password", async (req, res) => {
   }
 });
 
-router.put("/forgot-password/email", async (req, res) => {
+router.put("/forgot-password", async (req, res) => {
   const { email } = req.body;
   let user;
   try {
@@ -615,7 +607,16 @@ router.put("/forgot-password/email", async (req, res) => {
         message: "Check your mail for OTP (if user exists)",
       });
 
-    const otp = generateOtp6Digit();
+    const { otp, otpResponse } = await sendOtp(
+      null,
+      email,
+      user._id,
+      user.name
+    );
+    if (!otpResponse) {
+      return res.status(500).json({ message: "Failed to generate OTP" });
+    }
+    console.log("otp", otp, otpResponse);
     const datas = {
       name: user.name,
       email,
@@ -714,6 +715,133 @@ function isValidEduEmail(email) {
   const domain = email.substring(atIndex + 1); // Extract the domain part after "@"
   return domain.includes(".edu.") && domain.indexOf(".edu.") > 0;
 }
+
+/**
+ * Verifies the OTP sent to the user.
+ * @route POST /verify-otp
+ * @param {string} email - The email address of the user (optional if phone is provided).
+ * @param {string} phone - The phone number of the user (optional if email is provided).
+ * @param {string} otp - The OTP to be verified.
+ * @returns {Object} - A success or failure message.
+ */
+router.post("/verify-otp", async (req, res) => {
+  const { email, phoneNumber, otp } = req.body;
+
+  // Validate inputs
+  if ((!email && !phoneNumber) || !otp) {
+    return res
+      .status(400)
+      .json({ message: "Email or phoneNumber and OTP are required." });
+  }
+
+  try {
+    const query = email ? { email } : { phoneNumber };
+
+    // Find the OTP entry
+    const otpEntry = await OTP.findOne(query, { used: false });
+
+    if (!otpEntry) {
+      return res
+        .status(404)
+        .json({ message: "No OTP found for the provided details." });
+    }
+
+    if (otpEntry.otp !== otp) {
+      return res.status(401).json({ message: "Invalid OTP." });
+    }
+
+    if (moment().isAfter(moment(otpEntry.otpExpiration))) {
+      return res.status(401).json({ message: "OTP has expired." });
+    }
+
+    // OTP is valid
+
+    otpEntry.used = true;
+    await otpEntry.save();
+    res.status(200).json({ message: "OTP verified successfully." });
+  } catch (error) {
+    console.error("Error in verify-otp:", error.message);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+const OTP_RESEND_LIMIT = process.env.OTP_RESEND_LIMIT; // Max number of resends allowed
+const OTP_COOLDOWN_PERIOD = process.env.OTP_COOLDOWN_PERIOD; // 1 minutes in milliseconds
+router.post("/resend-otp", async (req, res) => {
+  const { email, phoneNumber } = req.body;
+
+  if (!email && !phoneNumber) {
+    return res
+      .status(400)
+      .json({ message: "Email or phoneNumber is required." });
+  }
+
+  try {
+    const query = email ? { email } : { phoneNumber };
+
+    // Find the existing OTP entry
+    const otpEntry = await OTP.findOne(query, { used: false });
+
+    if (!otpEntry) {
+      return res
+        .status(404)
+        .json({ message: "No OTP found for the provided details." });
+    }
+
+    // Check if the resend limit has been exceeded
+    if (otpEntry.resendCount >= OTP_RESEND_LIMIT) {
+      return res.status(403).json({
+        message:
+          "You have reached the maximum resend limit. Please request a new OTP.",
+      });
+    }
+
+    // Check if cooldown period has passed
+    const timeSinceLastResent = moment().diff(
+      moment(otpEntry.lastResentAt),
+      "seconds"
+    );
+    if (timeSinceLastResent < OTP_COOLDOWN_PERIOD / 1000) {
+      const secondsLeft = Math.ceil(
+        OTP_COOLDOWN_PERIOD / 1000 - timeSinceLastResent
+      );
+      return res.status(429).json({
+        message: `Please wait ${secondsLeft} seconds before resending OTP.`,
+      });
+    }
+
+    // Generate a new OTP
+    const newOtp = generateOtp6Digit(); // Replace with your OTP generation function
+
+    // Update the OTP entry
+    otpEntry.otp = newOtp;
+    otpEntry.otpExpiration = moment().add(2, "minutes"); // 2 minutes validity
+    otpEntry.resendCount += 1;
+    otpEntry.lastResentAt = moment();
+    await otpEntry.save();
+
+    const datas = {
+      name: otpEntry.refName,
+      email: otpEntry.email,
+      otp: otpEntry.otp,
+    };
+
+    // Send the OTP to the user
+    if (email) {
+      resendEmailForgotPassword(datas, req, res);
+    } else if (phoneNumber) {
+      // does not exists
+      // await sendOtpSMS(phoneNumber, newOtp);
+    }
+
+    res.status(200).json({ message: "OTP resent successfully." });
+  } catch (error) {
+    console.error("Error in resend-otp:", error.message);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+module.exports = router;
 
 async function newSession(req, res) {
   // console.log("Req user:", req.session.user)
