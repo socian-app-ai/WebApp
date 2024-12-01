@@ -234,12 +234,12 @@ const otpTemplate = (name, otp) => {
         <p style="margin: 0; margin-top: 8px; color: #434343;">
           DHA Lahore, Pakistan
         </p>
-        <div style="margin: 0; margin-top: 16px;">
+         <div style="margin: 0; margin-top: 16px;">
           <a href="" target="_blank" style="display: inline-block;">
             <img
               width="36px"
               alt="Facebook"
-              src=""
+              src="https://archisketch-resources.s3.ap-northeast-2.amazonaws.com/vrstyler/1661502815169_682499/email-template-icon-facebook"
             />
           </a>
           <a
@@ -250,7 +250,7 @@ const otpTemplate = (name, otp) => {
             <img
               width="36px"
               alt="Instagram"
-              src=""
+              src="https://archisketch-resources.s3.ap-northeast-2.amazonaws.com/vrstyler/1661504218208_684135/email-template-icon-instagram"
           /></a>
           <a
             href=""
@@ -260,7 +260,7 @@ const otpTemplate = (name, otp) => {
             <img
               width="36px"
               alt="Twitter"
-              src=""
+              src="https://archisketch-resources.s3.ap-northeast-2.amazonaws.com/vrstyler/1661503043040_372004/email-template-icon-twitter"
             />
           </a>
           <a
@@ -271,7 +271,7 @@ const otpTemplate = (name, otp) => {
             <img
               width="36px"
               alt="Youtube"
-              src=""
+              src="https://archisketch-resources.s3.ap-northeast-2.amazonaws.com/vrstyler/1661503195931_210869/email-template-icon-youtube"
           /></a>
         </div>
         <p style="margin: 0; margin-top: 16px; color: #434343;">

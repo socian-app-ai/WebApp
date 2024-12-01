@@ -9,7 +9,10 @@ const {
   resendEmailForgotPassword,
 } = require("../../utils/email.util.js");
 const bcryptjs = require("bcryptjs");
-const { generateOtp6Digit } = require("../../utils/utils.js");
+const {
+  generateOtp6Digit,
+  createUniqueUsername,
+} = require("../../utils/utils.js");
 
 const User = require("../../models/user/user.model.js");
 const Campus = require("../../models/university/campus.university.model.js");
@@ -163,13 +166,13 @@ router.post("/login", async (req, res) => {
 });
 
 router.post("/register", async (req, res) => {
-  const { email, password, universityId, campusId, role } = req.body;
+  const { name, email, password, universityId, campusId, role } = req.body;
   let user;
   let query;
 
   console.log(email, password, universityId, campusId, role);
   try {
-    const platform = req.headers["x-platform"];
+    if (!name) return res.status(302).json({ error: "name is required" });
 
     if (isValidEduEmail(email)) {
       //make it check that .edu comes after @ and no two @ exists
@@ -249,7 +252,8 @@ router.post("/register", async (req, res) => {
       const hashedPassword = await bcryptjs.hash(password, 10);
 
       const newUser = new User({
-        username: email.split("@")[0] + email.split(".")[0],
+        name: name,
+        username: createUniqueUsername(name),
         password: hashedPassword,
         university: {
           universityId: universityId,
@@ -273,7 +277,8 @@ router.post("/register", async (req, res) => {
       const hashedPassword = await bcryptjs.hash(password, 10);
       console.log("here2");
       const newUser = new User({
-        username: email.split("@")[0],
+        name: name,
+        username: createUniqueUsername(name),
         password: hashedPassword,
         personalEmail: email,
         role: role,
@@ -289,6 +294,91 @@ router.post("/register", async (req, res) => {
     res.status(500).json({ message: "Internal Server Error" });
   }
 });
+
+router.put("/update/name", async (req, res) => {
+  const { name, userId } = req.body;
+  let user;
+
+  try {
+    const platform = req.headers["x-platform"];
+    if (platform === "web") {
+      user = await User.findById({ _id: req.session.user._id });
+    } else if (platform === "app") {
+      user = await User.findById({ _id: userId });
+    } else {
+      return res.status(500).json("Platform not specificied");
+    }
+
+    user.name = name;
+    user.save();
+    return res.status(200).json({ message: "Name Change Successfully" });
+  } catch (error) {
+    console.error("Error in ", error.message);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+router.put("/update/username", async (req, res) => {
+  const { username, userId } = req.body;
+  let user;
+
+  try {
+    const platform = req.headers["x-platform"];
+    if (platform === "web") {
+      user = await User.findById({ _id: req.session.user._id });
+    } else if (platform === "app") {
+      user = await User.findById({ _id: userId });
+    } else {
+      return res.status(500).json("Platform not specificied");
+    }
+
+    const usernameExists = await User.findOne({ username: username });
+    if (usernameExists)
+      return res.status(302).json({ message: "Username already exists" });
+    user.username = username;
+    user.save();
+    return res.status(200).json({ message: "Username Change Successfully" });
+  } catch (error) {
+    console.error("Error in ", error.message);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+// router.put("/update/email", async (req, res) => {
+//   const { email, userId, emailType } = req.body;
+//   let user;
+
+//   try {
+//     if (
+//       !(
+//         emailType === "universityEmail" ||
+//         emailType === "personalEmail" ||
+//         emailType === "secondaryPersonalEmail"
+//       )
+//     )
+//       return res.status(302).json("email type is wrong");
+
+//     const platform = req.headers["x-platform"];
+//     if (platform === "web") {
+//       user = await User.findById({ _id: req.session.user._id });
+//     } else if (platform === "app") {
+//       user = await User.findById({ _id: userId });
+//     } else {
+//       return res.status(500).json("Platform not specificied");
+//     }
+
+//     // send otp
+//     // OTP SCHEMA
+
+//     //   user[emailType] = email;
+//     // await user.save();
+
+//     return res.status(200).json({ message: "Username Change Successfully" });
+//   } catch (error) {
+//     console.error("Error in ", error.message);
+//     res.status(500).json({ message: "Internal Server Error" });
+//   }
+// });
 
 router.post("/register-bulk", async (req, res) => {
   const users = req.body.users; // Expecting an array of user data
@@ -460,7 +550,7 @@ router.post("/register-bulk", async (req, res) => {
   });
 });
 
-router.post("/reset-password", async (req, res) => {
+router.put("/reset-password", async (req, res) => {
   const { oldPassword, newPassword, userId } = req.body;
 
   let user;
@@ -505,7 +595,7 @@ router.post("/reset-password", async (req, res) => {
   }
 });
 
-router.post("/forgot-password/email", async (req, res) => {
+router.put("/forgot-password/email", async (req, res) => {
   const { email } = req.body;
   let user;
   try {
@@ -576,7 +666,7 @@ router.post("/logout", async (req, res) => {
 });
 
 // Refresh Token Route
-router.post("/refresh-token", async (req, res) => {
+router.put("/refresh-token", async (req, res) => {
   const { refreshToken } = req.body;
 
   if (!refreshToken) {
