@@ -30,6 +30,16 @@ const campusSchema = new Schema({
         type: String,
         default: ''
     },
+    society: {
+        teachers: [{ type: Schema.ObjectId, ref: 'Society' }],
+        alumni: [{ type: Schema.ObjectId, ref: 'Society' }],
+        student: [{ type: Schema.ObjectId, ref: 'Society' }],
+    },
+    subSociety: {
+        teachers: [{ type: Schema.ObjectId, ref: 'Society' }],
+        alumni: [{ type: Schema.ObjectId, ref: 'Society' }],
+        student: [{ type: Schema.ObjectId, ref: 'Society' }],
+    },
 
 
     departments: [{

@@ -21,6 +21,7 @@ const Campus = require("../../models/university/campus.university.model.js");
 const University = require("../../models/university/university.register.model.js");
 const generateToken = require("../../utils/generate.token.js");
 const { OTP } = require("../../models/otp/otp.js");
+// const protectRoute = require("../../middlewares/protect.route.js");
 
 router.get("/session", async (req, res) => {
   // console.log("Req user:", req.session.user)
@@ -223,7 +224,7 @@ router.post("/register", async (req, res) => {
       const uniExists = await University.findOne({ _id: universityId });
 
       if (!uniExists)
-        return res.status(404).json("Hmm.. Seems Odd, this should not happen"); // already registered
+        return res.status(404).json("Hmm.. Seems Odd, this should not happen"); // not registered
 
       const campus = await Campus.findOne({
         _id: campusId,
@@ -232,7 +233,7 @@ router.post("/register", async (req, res) => {
 
       console.log(campus);
       if (!campus)
-        return res.status(404).json("Hmm.. Seems Odd, this should not happen"); // already registered
+        return res.status(404).json("Hmm.. Seems Odd, this should not happen"); // not registered
 
       const emailPatterns = campus.emailPatterns.studentPatterns.map(
         (pattern) => pattern.replace(/\d+/g, "\\d+")
@@ -256,7 +257,7 @@ router.post("/register", async (req, res) => {
 
       const newUser = new User({
         name: name,
-        username: createUniqueUsername(name),
+        username: await createUniqueUsername(name),
         password: hashedPassword,
         university: {
           universityId: universityId,
@@ -288,6 +289,7 @@ router.post("/register", async (req, res) => {
         super_role: "none",
       });
       await newUser.save();
+
       console.log("here3");
     }
 
@@ -347,41 +349,34 @@ router.put("/update/username", async (req, res) => {
   }
 });
 
-// router.put("/update/email", async (req, res) => {
-//   const { email, userId, emailType } = req.body;
-//   let user;
+router.put("/update/email", async (req, res) => {
+  const { email, userId, emailType } = req.body;
+  let user;
 
-//   try {
-//     if (
-//       !(
-//         emailType === "universityEmail" ||
-//         emailType === "personalEmail" ||
-//         emailType === "secondaryPersonalEmail"
-//       )
-//     )
-//       return res.status(302).json("email type is wrong");
+  try {
+    const platform = req.headers["x-platform"];
+    if (platform === "web") {
+      user = await User.findById({ _id: req.session.user._id });
+      await user.updateEmail(emailType, email);
+    } else if (platform === "app") {
+      user = await User.findById({ _id: userId });
+      await user.updateEmail(emailType, email);
+    } else {
+      return res.status(500).json("Platform not specificied");
+    }
 
-//     const platform = req.headers["x-platform"];
-//     if (platform === "web") {
-//       user = await User.findById({ _id: req.session.user._id });
-//     } else if (platform === "app") {
-//       user = await User.findById({ _id: userId });
-//     } else {
-//       return res.status(500).json("Platform not specificied");
-//     }
+    // send otp
+    // OTP SCHEMA
 
-//     // send otp
-//     // OTP SCHEMA
+    //   user[emailType] = email;
+    // await user.save();
 
-//     //   user[emailType] = email;
-//     // await user.save();
-
-//     return res.status(200).json({ message: "Username Change Successfully" });
-//   } catch (error) {
-//     console.error("Error in ", error.message);
-//     res.status(500).json({ message: "Internal Server Error" });
-//   }
-// });
+    return res.status(200).json({ message: "Username Change Successfully" });
+  } catch (error) {
+    console.error("Error in ", error.message);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
 
 router.post("/register-bulk", async (req, res) => {
   const users = req.body.users; // Expecting an array of user data
@@ -650,7 +645,7 @@ router.post("/logout", async (req, res) => {
     } else if (platform === "app") {
       let user = await User.findById({ _id: userId });
 
-      // also remove from client side
+      //TODO also remove from client side
       user.tokens = {
         access_token: "",
         refresh_token: "",

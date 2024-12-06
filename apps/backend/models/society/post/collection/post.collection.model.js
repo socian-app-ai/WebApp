@@ -28,6 +28,13 @@ const postsCollectionSchema = new Schema(
         required: true,
       },
     },
+    companyReference: {
+      isCompany: { type: Boolean, default: false },
+      companyOrigin: {
+        type: Schema.Types.ObjectId,
+        ref: "ExtOrg",
+      },
+    },
   },
   { _id: false, timestamps: true }
 );

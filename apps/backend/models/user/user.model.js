@@ -225,6 +225,64 @@ const userSchema = new mongoose.Schema({
 
 userSchema.index({ role: 1 });
 
+/**
+ * Updates the email of the user.
+ * @param {string} emailType - The type of email to update (e.g., universityEmail, personalEmail, secondaryPersonalEmail).
+ * @param {string} email - The new email address.
+ * @returns {Promise<User>} - The updated user document.
+ * @throws {Error} - If the emailType is invalid for the user's role or the update fails.
+ */
+userSchema.methods.updateEmail = async function (emailType, email) {
+  // Define role-based valid email types
+  const roleEmailTypes = {
+    student: ["personalEmail"],
+    teacher: ["personalEmail"],
+    alumni: ["personalEmail", "secondaryPersonalEmail"],
+  };
+
+  // Get the valid email types for the current user's role
+  const validEmailTypes = roleEmailTypes[this.role] || [];
+
+  // Validate the email type against the user's role
+  if (!validEmailTypes.includes(emailType)) {
+    throw new Error(
+      `Invalid email type for role "${
+        this.role
+      }". Allowed types: ${validEmailTypes.join(", ")}`
+    );
+  }
+  if (this[emailType] === email) {
+    return res.status(302).json({ message: "cannot update same email" });
+  }
+  if (
+    this.personalEmail === email ||
+    (this.role === "alumni" && this.secondaryPersonalEmail === email)
+  ) {
+    return res
+      .status(302)
+      .json({ message: "Email already used by your account" });
+  }
+  const emailExists = await this.constructor.findOne({
+    $or: [
+      { personalEmail: email },
+      { secondaryPersonalEmail: email },
+      { universityEmail: email },
+    ],
+    _id: { $ne: this._id }, // Exclude the current user
+  });
+
+  if (emailExists) {
+    return res
+      .status(302)
+      .json({ message: "Email already used by others user" });
+  }
+
+  // Update the email and save the user document
+  this[emailType] = email;
+  await this.save();
+  return this;
+};
+
 // Methods for handling graduation checks and notifications
 userSchema.methods.checkGraduation = function () {
   const today = new Date();

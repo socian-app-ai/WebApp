@@ -40,6 +40,7 @@ router.get("/by-campus", async (req, res) => {
   }
 });
 
+// TO FIX : req.session will always have campusId, if it doesnot then such user doesnot need it
 router.get("/with-subjects-by-campus", async (req, res) => {
   const { campusId } = req.body;
   const ifAvailableCampusIdFromUser = req.session.user.university.campusId._id;
@@ -61,7 +62,8 @@ router.get("/with-subjects-by-campus", async (req, res) => {
       .lean();
 
     if (!campus)
-      return res.status(300).json({ message: "Error fetching campus" });
+      return res.status(300).json({ message: "Dang! No subjects yet" });
+    // return res.status(300).json({ message: "Error fetching campus" });
     // console.log("Departments: ", JSON.stringify(campus))
     res.status(200).json(campus);
   } catch (error) {
@@ -70,6 +72,8 @@ router.get("/with-subjects-by-campus", async (req, res) => {
   }
 });
 
+// TO FIX : get ids from session or jwt
+// TO FIX: GET THESE ALL Functions into schema methods
 router.post("/", async (req, res) => {
   const { name, universityId, campusId } = req.body;
   try {
