@@ -3,6 +3,9 @@ const SocietyType = require("../../../models/society/society.type.model");
 const Society = require("../../../models/society/society.model");
 const Members = require('../../../models/society/members.collec.model');
 const VerificationRequest = require("../../../models/verification/society.verify.model");
+const SubSociety = require("../../../models/society/sub.society.model");
+const PostsCollection = require("../../../models/society/post/collection/post.collection.model");
+const User = require("../../../models/user/user.model");
 const router = express.Router();
 
 
@@ -268,6 +271,7 @@ router.post("/create", async (req, res) => {
         let userId;
         let universityId;
         let campusId;
+        let companyId;
         // get societyTypes from cache later on
         const { name, description, societyTypeId, category, icon, banner, } = req.body;
 
@@ -279,6 +283,9 @@ router.post("/create", async (req, res) => {
                 universityId = req.session.university.universityId._id,
                     campusId = req.session.university.campus._id
             }
+            // else{
+            //     companyId = null; 
+            // }
 
         }
         if (platform === 'app') {
@@ -321,13 +328,43 @@ router.post("/create", async (req, res) => {
             totalMembers: 1,
             societyType: societyTypeIdExists._id,
             ...(role === "ext_org"
-                ? { companyReference: { isCompany: true, companyOrigin: userId } }
+                ? {
+                    companyReference: {
+                        isCompany: true,
+                        // remove user id later
+                        companyOrigin: userId
+                    }
+                }
                 : { references: { role, universityOrigin: universityId, campusOrigin: campusId } }
             ),
             allows: [user.role]
         });
 
+
         await newSociety.save();
+
+        const postsCollectionRef = await PostsCollection.create({
+            societyId: newSociety._id,
+            ...(role === "ext_org"
+                ?
+                {
+                    companyReference: {
+                        isCompany: true,
+                        companyOrigin: companyId,
+                    }
+                } :
+                {
+                    references: {
+                        universityOrigin: universityId,
+                        campusOrigin: campusId,
+                    }
+                }),
+        })
+
+        await postsCollectionRef.save();
+
+        newSociety.postsCollectionRef = postsCollectionRef._id
+        await newSociety.save()
 
         return res.status(201).json({ message: "Society created successfully", society: newSociety });
     } catch (error) {
@@ -362,7 +399,27 @@ router.post("/request-verification", async (req, res) => {
     }
 });
 
+/**
+ * get all subsocieties on basis of parent society to show society mod
+ */
+/**
+ * @summary finds ALL SOCIETIES BASED ON  ROLE
+ * FOR 
+ */
+router.get("/sub-societies/:societyId", async (req, res) => {
 
+    const societyId = req.params.societyId
+    try {
+
+        const society = await SubSociety.find({ societyId: societyId })
+
+        if (!society) return res.status(404).json("no sub society found")
+        res.status(200).json(society)
+    } catch (error) {
+        console.error("Error in society.route.js ", error);
+        res.status(500).json("Internal Server Error");
+    }
+});
 
 
 /***
@@ -477,6 +534,13 @@ router.post("/join-society/:id", async (req, res) => {
             { upsert: true } // Create document if it doesn't exist
         );
 
+        await User.findByIdAndUpdate({ _id: userId }, {
+
+            $addToSet: {
+                subscribedSocities: updatedSociety._id,
+            }
+        })
+
         return res.status(200).json({ message: "Joined society successfully", society: updatedSociety });
     } catch (error) {
         console.error("Error in join-society route: ", error);
@@ -522,11 +586,17 @@ router.post("/leave-society/:id", async (req, res) => {
 
         if (!updatedSociety) return res.status(404).json("Failed to update society");
 
-        // Optional: Sync with Members collection if necessary
         await Members.updateOne(
             { societyId: id },
             { $pull: { members: userId } }
         );
+
+        await User.findByIdAndUpdate({ _id: userId }, {
+
+            $pull: {
+                subscribedSocities: updatedSociety._id,
+            }
+        })
 
         return res.status(200).json({ message: "Left society successfully", society: updatedSociety });
     } catch (error) {
@@ -537,6 +607,31 @@ router.post("/leave-society/:id", async (req, res) => {
 
 
 
+
+router.get("/user-subscribed", async (req, res) => {
+    let role;
+    let userId;
+
+    try {
+        const platform = req.headers['x-platform'];
+        if (platform === 'web') {
+            role = req.session.user.role;
+            userId = req.session.user._id;
+        } else if (platform === 'app') {
+
+            role = req.user.role;
+            userId = req.user._id;
+            return res.status(501).json("Platform not supported yet");
+        }
+
+        const subscribedSocities = await User.findById({ _id: userId }).select("-password").populate('subscribedSocities')
+
+        return res.status(200).json({ message: "Found", subscribedSocities });
+    } catch (error) {
+        console.error("Error in join-subSociety route: ", error);
+        res.status(500).json("Internal Server Error");
+    }
+});
 
 
 

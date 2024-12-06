@@ -1,94 +1,94 @@
 const express = require('express');
-const Subject = require('../../../models/university/subject.department.model');
+const Subject = require('../../../models/university/department/subject/subject.department.model');
 const University = require('../../../models/university/university.register.model');
 const Campus = require('../../../models/university/campus.university.model');
-const Department = require('../../../models/university/department.university.model');
+const Department = require('../../../models/university/department/department.university.model');
 const AcademicFormat = require('../../../models/university/academic.format.model');
 const { PastPaper, PastpapersCollectionByYear } = require('../../../models/university/papers/pastpaper.subject.model');
 const router = express.Router()
 
 
 
-  // Route to get all assignments for the given paperId by year
-  async function fetchPastPaperData(req, res, type) {
+// Route to get all assignments for the given paperId by year
+async function fetchPastPaperData(req, res, type) {
     try {
-      const { paperId } = req.params;
-      
-      const findSubject = await Subject.findOne({_id: paperId });
-    if (!findSubject) return res.status(404).json({ message: "No such subject found" });
+        const { paperId } = req.params;
+
+        const findSubject = await Subject.findOne({ _id: paperId });
+        if (!findSubject) return res.status(404).json({ message: "No such subject found" });
 
 
 
-      console.log("PAspt", paperId, req.params);
-      const papers = await PastPaper.find({ 'references.subjectId': paperId })
-        .populate('references.subjectId') // Optional: if you need details from the subject
-        .lean();
+        console.log("PAspt", paperId, req.params);
+        const papers = await PastPaper.find({ 'references.subjectId': paperId })
+            .populate('references.subjectId') // Optional: if you need details from the subject
+            .lean();
 
 
-  
-      console.log("PAspt2", papers);
-      if (!papers || papers.length === 0) {
-        return res.status(404).json({ message: 'Past paper not found' });
-      }
-  
-      // Filter papers by the requested type and organize by year
-      const result = papers.reduce((acc, paper) => {
-        const year = paper.year;
-        if (!acc[year]) {
-          acc[year] = [];
+
+        console.log("PAspt2", papers);
+        if (!papers || papers.length === 0) {
+            return res.status(404).json({ message: 'Past paper not found' });
         }
-  
-        // Handle different types of documents
-        if (type === 'assignments' && paper.assignments.length > 0) {
-          acc[year].push(...paper.assignments); // Push all assignments
-        } else if (type === 'quizzes' && paper.quizzes.length > 0) {
-          acc[year].push(...paper.quizzes); // Push all quizzes
-        } else if (type === 'midterm') {
-          // Push both fall and spring midterms
-          if (paper.fall.mid && paper.fall.mid.length > 0) acc[year].push({ term: 'fall', mid: paper.fall.mid });
-          if (paper.spring.mid && paper.spring.mid.length > 0) acc[year].push({ term: 'spring', mid: paper.spring.mid });
-        } else if (type === 'final') {
-          // Push both fall and spring finals
-          if (paper.fall.final && paper.fall.final.length > 0) acc[year].push({ term: 'fall', final: paper.fall.final });
-          if (paper.spring.final && paper.spring.final.length > 0) acc[year].push({ term: 'spring', final: paper.spring.final });
-        } else if (type === 'sessional') {
-          // Push both fall and spring sessionals
-          if (paper.fall.sessional && paper.fall.sessional.length > 0) acc[year].push({ term: 'fall', sessional: paper.fall.sessional });
-          if (paper.spring.sessional && paper.spring.sessional.length > 0) acc[year].push({ term: 'spring', sessional: paper.spring.sessional });
-        }
-  
-        return acc;
-      }, {});
-  
-      // If no data is found, return null instead of an empty object
-      const finalResult = Object.keys(result).length === 0 ? null : result;
-      res.status(200).json({finalResult,subjectName: findSubject.name});
+
+        // Filter papers by the requested type and organize by year
+        const result = papers.reduce((acc, paper) => {
+            const year = paper.year;
+            if (!acc[year]) {
+                acc[year] = [];
+            }
+
+            // Handle different types of documents
+            if (type === 'assignments' && paper.assignments.length > 0) {
+                acc[year].push(...paper.assignments); // Push all assignments
+            } else if (type === 'quizzes' && paper.quizzes.length > 0) {
+                acc[year].push(...paper.quizzes); // Push all quizzes
+            } else if (type === 'midterm') {
+                // Push both fall and spring midterms
+                if (paper.fall.mid && paper.fall.mid.length > 0) acc[year].push({ term: 'fall', mid: paper.fall.mid });
+                if (paper.spring.mid && paper.spring.mid.length > 0) acc[year].push({ term: 'spring', mid: paper.spring.mid });
+            } else if (type === 'final') {
+                // Push both fall and spring finals
+                if (paper.fall.final && paper.fall.final.length > 0) acc[year].push({ term: 'fall', final: paper.fall.final });
+                if (paper.spring.final && paper.spring.final.length > 0) acc[year].push({ term: 'spring', final: paper.spring.final });
+            } else if (type === 'sessional') {
+                // Push both fall and spring sessionals
+                if (paper.fall.sessional && paper.fall.sessional.length > 0) acc[year].push({ term: 'fall', sessional: paper.fall.sessional });
+                if (paper.spring.sessional && paper.spring.sessional.length > 0) acc[year].push({ term: 'spring', sessional: paper.spring.sessional });
+            }
+
+            return acc;
+        }, {});
+
+        // If no data is found, return null instead of an empty object
+        const finalResult = Object.keys(result).length === 0 ? null : result;
+        res.status(200).json({ finalResult, subjectName: findSubject.name });
     } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: 'Server error' });
+        console.error(error);
+        res.status(500).json({ message: 'Server error' });
     }
-  }
-  
+}
 
-  router.get('/assignments/:paperId', (req, res) => fetchPastPaperData(req, res, 'assignments')); 
-  // Route to get all quizzes for the given paperId by year
-  router.get('/quizzes/:paperId', (req, res) => fetchPastPaperData(req, res, 'quizzes'));
-  // Route to get all midterms for the given paperId by year
-  router.get('/midterms/:paperId', (req, res) => fetchPastPaperData(req, res, 'midterm'));
-  // Route to get all sessionals for the given paperId by year
-  router.get('/sessionals/:paperId', (req, res) => fetchPastPaperData(req, res, 'sessional'));
-  // Route to get all finals for the given paperId by year
-  router.get('/finals/:paperId', (req, res) => fetchPastPaperData(req, res, 'final'));
-  
+
+router.get('/assignments/:paperId', (req, res) => fetchPastPaperData(req, res, 'assignments'));
+// Route to get all quizzes for the given paperId by year
+router.get('/quizzes/:paperId', (req, res) => fetchPastPaperData(req, res, 'quizzes'));
+// Route to get all midterms for the given paperId by year
+router.get('/midterms/:paperId', (req, res) => fetchPastPaperData(req, res, 'midterm'));
+// Route to get all sessionals for the given paperId by year
+router.get('/sessionals/:paperId', (req, res) => fetchPastPaperData(req, res, 'sessional'));
+// Route to get all finals for the given paperId by year
+router.get('/finals/:paperId', (req, res) => fetchPastPaperData(req, res, 'final'));
+
 
 
 
 router.get("/all-pastpapers-in-subject/:id", async (req, res) => {
     const subjectId = req.params.id
-    console.log("Refernces: ",req.session.references, subjectId)
+    console.log("Refernces: ", req.session.references, subjectId)
     try {
-        const universityOrigin =  req.session.references.university._id;
-        const campusOrigin =req.session.references.campus._id
+        const universityOrigin = req.session.references.university._id;
+        const campusOrigin = req.session.references.campus._id
 
         // const findUni = await University.findOne({ _id: universityOrigin })
         // if (!findUni) return res.status(404).json({ message: "no such University found" })
@@ -107,16 +107,16 @@ router.get("/all-pastpapers-in-subject/:id", async (req, res) => {
         })
         if (!findSubject) return res.status(404).json({ message: "no such subject found" })
 
-            console.log(findSubject)
-            console.log(
-                // "findSubject.references.departmentId", findSubject.references.departmentId,
-                
-                "\ndepartmentId", findSubject.references.departmentId.toHexString(),
-                "\nuniversityOrigin",universityOrigin,
-                "\ncampusOrigin",campusOrigin,
-              "\npastcollection",  findSubject.pastpapersCollectionByYear.toHexString(),
-              "\nsubjectId: ",findSubject._id.toHexString(),"\n"
-            )
+        console.log(findSubject)
+        console.log(
+            // "findSubject.references.departmentId", findSubject.references.departmentId,
+
+            "\ndepartmentId", findSubject.references.departmentId.toHexString(),
+            "\nuniversityOrigin", universityOrigin,
+            "\ncampusOrigin", campusOrigin,
+            "\npastcollection", findSubject.pastpapersCollectionByYear.toHexString(),
+            "\nsubjectId: ", findSubject._id.toHexString(), "\n"
+        )
 
 
         const findpastpapers = await PastpapersCollectionByYear.find({
@@ -127,12 +127,12 @@ router.get("/all-pastpapers-in-subject/:id", async (req, res) => {
             //     campusOrigin,
             // }
         }).populate('pastpapers')
-        
 
-        console.log("findPastpapersCollection",findpastpapers)
-        console.log("findPastpapersCollection",findpastpapers.map(past => past.pastpapers))
+
+        console.log("findPastpapersCollection", findpastpapers)
+        console.log("findPastpapersCollection", findpastpapers.map(past => past.pastpapers))
         const listOfPastPapers = findpastpapers.map(past => past.pastpapers)
-        res.status(200).json({pastPapers: listOfPastPapers, subjectName: findSubject.name});
+        res.status(200).json({ pastPapers: listOfPastPapers, subjectName: findSubject.name });
 
 
 
@@ -146,21 +146,21 @@ router.get("/all-pastpapers-in-subject/:id", async (req, res) => {
 
 // this is to upload one assignment [testing phase]
 router.post("/upload-single-assignment", async (req, res) => {
-    const { 
-        year, 
+    const {
+        year,
         assignment,
         file,
-         subjectId,
-         departmentId, 
+        subjectId,
+        departmentId,
         // campusOrigin=req.session.references.campus._id,
         //  universityOrigin=req.session.references.university._id
-         } = req.body;
+    } = req.body;
 
-        const campusOrigin= req.session.references.campus._id
-        const universityOrigin= req.session.references.university._id
+    const campusOrigin = req.session.references.campus._id
+    const universityOrigin = req.session.references.university._id
 
     try {
-        console.log("Here",year,
+        console.log("Here", year,
             assignment,
             file,
             subjectId,

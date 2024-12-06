@@ -8,6 +8,12 @@ const membersSchema = new Schema({
     required: true,
   },
 
+  subSocietyId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "SubSociety",
+    required: true,
+  },
+
   members: [{ type: mongoose.Schema.Types.ObjectId, ref: "User", index: true }],
 });
 

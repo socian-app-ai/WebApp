@@ -1,6 +1,12 @@
 const mongoose = require("mongoose");
 const { Schema, model } = mongoose;
 
+/**
+ *
+ * @param {visibilityNone} Boolean sets visibility to None everywher, incase soc-mod doesnot want to
+ *  delete the group but wants it to remain their or could use it for sample purpose
+ * @param {societyType} SocietyType tells society to be either private, public or restricted
+ */
 const societySchema = new Schema({
   name: {
     type: String,
@@ -8,6 +14,7 @@ const societySchema = new Schema({
     unique: true,
     trim: true,
   },
+
   category: {
     type: String,
     default: "default",
@@ -15,6 +22,10 @@ const societySchema = new Schema({
   description: {
     type: String,
     required: true,
+  },
+  visibilityNone: {
+    type: Boolean,
+    default: false,
   },
   createdAt: {
     type: Date,

@@ -1,7 +1,7 @@
 const express = require("express");
-const Discussion = require("../../models/discussion/discussion");
-const User = require("../../models/user/user.model");
-const DiscussionComment = require("../../models/discussion/discussion.comment");
+const Discussion = require("../../../models/university/papers/discussion/discussion");
+const User = require("../../../models/user/user.model");
+const DiscussionComment = require("../../../models/university/papers/discussion/discussion.comment");
 const router = express.Router()
 
 
@@ -24,7 +24,7 @@ const populateReplies = (path, depth) => {
 };
 
 
-router.post("/create-get",  async (req, res) => {
+router.post("/create-get", async (req, res) => {
     const { toBeDisccusedId } = req.query
     console.log(toBeDisccusedId)
 
@@ -35,10 +35,10 @@ router.post("/create-get",  async (req, res) => {
                 path: 'user',
                 select: 'name profile username universityEmail personalEmail universityEmailVerified updatedAt personalEmailVerified '
             },
-            
+
             populateReplies("replies", 10)]
         })
-    
+
         if (discussion) return res.status(200).json({ discussion })
         console.log(discussion)
         const createDiscussion = await Discussion.create({
@@ -65,7 +65,7 @@ router.get("/", async (req, res) => {
         res.status(500).json({ error: error.message })
     }
 })
-router.post("/:id",  async (req, res) => {
+router.post("/:id", async (req, res) => {
     const { id } = req.params
     try {
         const discussion = await Discussion.findOne({ discussion_of: id })
@@ -78,7 +78,7 @@ router.post("/:id",  async (req, res) => {
     }
 })
 
-router.post('/comment/add-comment',async (req, res) => {
+router.post('/comment/add-comment', async (req, res) => {
     const { toBeDiscussedId, userId, commentContent } = req.body
 
     console.log(" toBeDiscussedId, userId, commentContent: ", toBeDiscussedId, userId, commentContent)
@@ -92,7 +92,7 @@ router.post('/comment/add-comment',async (req, res) => {
 
         const comment = new DiscussionComment({ content: commentContent, user: user._id });
         await comment.save();
-        const discussion = await Discussion.findOne({discussion_of:toBeDiscussedId});
+        const discussion = await Discussion.findOne({ discussion_of: toBeDiscussedId });
         console.log("Dis ", discussion)
         discussion.discussioncomments.push(comment._id);
         await discussion.save();
@@ -126,7 +126,7 @@ router.post('/comment/reply-to-comment', async (req, res) => {
 })
 
 
-router.post("/comment/up-vote",  async (req, res) => {
+router.post("/comment/up-vote", async (req, res) => {
     const { commentId, userId } = req.body;
     let downVoteBool = false;
     let upVoteBool = false;
@@ -164,7 +164,7 @@ router.post("/comment/up-vote",  async (req, res) => {
         res.status(500, error.message)
     }
 })
-router.post("/comment/down-vote",  async (req, res) => {
+router.post("/comment/down-vote", async (req, res) => {
     try {
         const { commentId, userId } = req.body;
         let downVoteBool = false;

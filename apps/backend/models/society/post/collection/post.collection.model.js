@@ -3,9 +3,15 @@ const { Schema, model } = mongoose;
 
 const postsCollectionSchema = new Schema(
   {
-    _id: {
+    societyId: {
       type: Schema.Types.ObjectId,
       ref: "Society",
+      // , required: true, unique: true //is already required and unique
+    },
+
+    subSocietyId: {
+      type: Schema.Types.ObjectId,
+      ref: "SubSociety",
       // , required: true, unique: true //is already required and unique
     },
 

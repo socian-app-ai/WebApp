@@ -1,8 +1,8 @@
 const express = require('express');
-const Subject = require('../../../models/university/subject.department.model');
+const Subject = require('../../../models/university/department/subject/subject.department.model');
 const University = require('../../../models/university/university.register.model');
 const Campus = require('../../../models/university/campus.university.model');
-const Department = require('../../../models/university/department.university.model');
+const Department = require('../../../models/university/department/department.university.model');
 const AcademicFormat = require('../../../models/university/academic.format.model');
 const router = express.Router()
 
@@ -82,11 +82,11 @@ router.post("/add-format-to-campus", async (req, res) => {
 })
 
 
-router.get('/academic-pattern', async (req,res)=> {
+router.get('/academic-pattern', async (req, res) => {
     try {
-        
+
     } catch (error) {
-        
+
     }
 })
 

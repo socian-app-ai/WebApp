@@ -1,5 +1,5 @@
 const express = require("express");
-const Department = require("../../../models/university/department.university.model");
+const Department = require("../../../models/university/department/department.university.model");
 const University = require("../../../models/university/university.register.model");
 const Campus = require("../../../models/university/campus.university.model");
 const router = express.Router();
