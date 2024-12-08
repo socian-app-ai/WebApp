@@ -36,6 +36,12 @@ const societySchema = new Schema({
     ref: "User",
     required: true,
   },
+  president:
+  {
+    type: Schema.Types.ObjectId,
+    ref: "User",
+  },
+
   moderators: [
     {
       type: Schema.Types.ObjectId,
@@ -66,11 +72,11 @@ const societySchema = new Schema({
     type: Number,
     default: 0,
   },
-  members: [{
+  members: {
     type: Schema.Types.ObjectId,
     ref: "Members",
     // required: true
-  }],
+  },
   postsCollectionRef: {
     type: Schema.Types.ObjectId,
     ref: "PostsCollection",

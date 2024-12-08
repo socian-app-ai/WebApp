@@ -5,6 +5,7 @@ const societyTypeSchema = new Schema({
   societyType: {
     type: String,
     enum: ["public", "private", "restricted"],
+    unique: true,
     required: true,
   },
   totalCount: {

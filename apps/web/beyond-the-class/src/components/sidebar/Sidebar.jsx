@@ -8,6 +8,7 @@ import useWindowDimensions from "../../hooks/useWindowDimensions";
 import { useSetSideBarState } from "../../state_management/zustand/useSideBar";
 import { useAuthContext } from "../../context/AuthContext";
 import { useEffect } from "react";
+import CreateSocietyButton from "../../pages/society/CreateSocietyButton";
 
 function Sidebar() {
   const { sideBarState, setSideBarState } = useSetSideBarState();
@@ -144,6 +145,7 @@ function Sidebar() {
     >
       <nav className="mt-12">
         <ul className="border-b flex flex-col">
+          <CreateSocietyButton />
           {menuItems.map((item) => (
             <Link
               to={item.path}

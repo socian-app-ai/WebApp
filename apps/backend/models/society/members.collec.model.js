@@ -5,13 +5,13 @@ const membersSchema = new Schema({
   societyId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Society",
-    required: true,
+    // required: true,
   },
 
   subSocietyId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "SubSociety",
-    required: true,
+    // required: true,
   },
 
   members: [{ type: mongoose.Schema.Types.ObjectId, ref: "User", index: true }],

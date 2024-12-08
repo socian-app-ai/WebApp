@@ -26,6 +26,9 @@ import AlumniHome from './pages/home/alumni/AlumniDashboard.jsx';
 import UsersView from './pages/admin/pages/users/UsersView.jsx';
 import CampusView from './pages/admin/pages/campus/CampusView.jsx';
 import UniversityView from './pages/admin/pages/university/UniversityView.jsx';
+import CreateEvent from './pages/society/mod/CreateEvent.jsx';
+import AllSocieties from './pages/society/AllSocieties.jsx';
+import Society from './pages/society/Society.jsx';
 
 const router = createBrowserRouter([
 
@@ -77,6 +80,12 @@ const router = createBrowserRouter([
           { path: "course-info/:id", element: <Layout> <CourseInfo /></Layout> },
           { path: ":courseType/:subjectId", element: <Layout> <TypeCourse /></Layout> },
           { path: "discussion/:toBeDisccusedId", element: <Layout> <OneDiscussion /></Layout> },
+
+
+
+          { path: "gps", element: <Layout> <CreateEvent /></Layout> },
+          { path: "societies", element: <Layout> <AllSocieties /></Layout> },
+          { path: "society/:id", element: <Layout> <Society /></Layout> },
 
         ],
       },

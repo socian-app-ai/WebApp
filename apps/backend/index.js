@@ -52,7 +52,7 @@ app.use(sessionData);
 
 app.use(
   cors({
-    origin: ["http://localhost:3000", "https://m.bilalellahi.com"],
+    origin: ["http://localhost:4352", "http://localhost:3000", "https://m.bilalellahi.com"],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE"],
   })
@@ -111,15 +111,17 @@ app.use("/api/discussion", discussionRouter);
 
 const societyRouter = require("./routes/university_related/society/society.route.js")
 const subSocietyRouter = require("./routes/university_related/subsociety/sub.society.route.js")
+const postsRouter = require('./routes/university_related/posts/post.route.js')
 
 app.use("/api/society", protectRoute, societyRouter);
 app.use("/api/sub-society", protectRoute, subSocietyRouter);
+app.use("/api/posts", protectRoute, postsRouter);
 
 
 // Start Server
 const startServer = () => {
   app.listen(PORT, () => {
-    mongoDB();
+    mongoDB(app);
     console.log(`Server Running on ${PORT}`);
   });
 };

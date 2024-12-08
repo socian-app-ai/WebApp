@@ -20,6 +20,7 @@ import useLogout from '../../hooks/useLogout';
 import useWindowDimensions from '../../hooks/useWindowDimensions';
 import { useSetSideBarState } from '../../state_management/zustand/useSideBar';
 import { useAuthContext } from '../../context/AuthContext';
+import CreatePostButton from '../../pages/society/post/CreatePostButton';
 
 
 
@@ -89,10 +90,11 @@ const Navbar = () => {
 
 
             <div className="flex items-center space-x-3 md:space-x-4 lg:space-x-6">
-                <Link to={"/create-post"} className='flex justify-center items-center p-1  rounded-full hover:bg-gray-200 dark:hover:bg-gray-700'>
+                {/* <Link to={"/create-post"} className='flex justify-center items-center p-1  rounded-full hover:bg-gray-200 dark:hover:bg-gray-700'>
                     <HiPlus className="h-5 w-5 cursor-pointer mx-1" />
-                    <p className='p-1 pr-1 hidden md:block '>Create</p>
-                </Link>
+                </Link> */}
+                <p className='p-1 pr-1 hidden md:block '><CreatePostButton /></p>
+
                 <div className='hidden lg:block'>
                     <ThemeSwitcher />
                 </div>

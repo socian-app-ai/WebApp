@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io';
 import io from 'socket.io-client';
 
-const socket = io(import.meta.env.VITE_API_URL, { transports: ['websocket'] });
+// const socket = io(import.meta.env.VITE_API_URL, { transports: ['websocket'] });
 
 // eslint-disable-next-line react/prop-types
 const ChatBox = ({ discussionId }) => {
@@ -11,31 +11,31 @@ const ChatBox = ({ discussionId }) => {
     const [showChatBox, setShowChatBox] = useState(false);
     const [usersCount, setUsersCount] = useState(0);
 
-    useEffect(() => {
-        if (discussionId) {
-            socket.emit('joinDiscussion', discussionId);
+    // useEffect(() => {
+    //     if (discussionId) {
+    //         // socket.emit('joinDiscussion', discussionId);
 
-            socket.on('message', (message) => {
-                setMessages((prevMessages) => [...prevMessages, message]);
-            });
+    //         socket.on('message', (message) => {
+    //             setMessages((prevMessages) => [...prevMessages, message]);
+    //         });
 
-            socket.on('users', (users) => {
-                // console.log(users)
-                // setUsersCount(users)
-            })
+    //         socket.on('users', (users) => {
+    //             // console.log(users)
+    //             // setUsersCount(users)
+    //         })
 
-            socket.on('usersCount', (usersCount) => {
-                // console.log(usersCount)
-                setUsersCount(usersCount)
-            })
+    //         socket.on('usersCount', (usersCount) => {
+    //             // console.log(usersCount)
+    //             setUsersCount(usersCount)
+    //         })
 
 
 
-            return () => {
-                socket.off('message');
-            };
-        }
-    }, [discussionId]);
+    //         return () => {
+    //             socket.off('message');
+    //         };
+    //     }
+    // }, [discussionId]);
 
     const sendMessage = () => {
         if (newMessage.trim()) {

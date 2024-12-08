@@ -8,14 +8,25 @@ const societyPostAndCommentVoteSchema = new Schema({
 
   commentId: { type: mongoose.Schema.Types.ObjectId, ref: "PostComment" }, // Use this if voting on a comment
 
-  upVotesCount: { type: this.upvotes.length, default: 0 },
+  upVotesCount: { type: Number, default: 0 },
   downVotesCount: { type: Number, default: 0 },
 
-  upvotes: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
-  downvotes: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+  // Object to store individual user votes
+  userVotes: {
+    type: Map,
+    of: String, // 'upvote' or 'downvote'
+    default: {},
+  },
+
+  // upvotes: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+  // downvotes: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
 
   createdAt: { type: Date, default: Date.now },
 });
+
+societyPostAndCommentVoteSchema.index({ postId: 1 }); // Index for faster queries by postId
+societyPostAndCommentVoteSchema.index({ commentId: 1 }); // Index for faster queries by commentId
+
 
 const SocietyPostAndCommentVote = mongoose.model(
   "SocietyPostAndCommentVote",

@@ -3,6 +3,9 @@ const { Schema, model } = mongoose;
 
 const postsCollectionSchema = new Schema(
   {
+    _id: {
+      type: Schema.Types.ObjectId
+    },
     societyId: {
       type: Schema.Types.ObjectId,
       ref: "Society",
