@@ -6,8 +6,9 @@
   "main": "index.js",
   "scripts": {
     "run": "node ./index.js",
+    "install": "npm install",
     "server": " nodemon ./apps/backend/index.js",
-    "railway": "nodemon ./apps/backend/index.js",
+    "railway": "npm install && nodemon ./apps/backend/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
