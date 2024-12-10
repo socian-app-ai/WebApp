@@ -1,3 +1,6 @@
+.env 
+/node_modules/
+
 apps/backend/.env
 apps/backend/node_modules
 

@@ -149,3 +149,10 @@ startServer();
 // } else {
 //     startServer();
 // }
+
+
+
+/**has left : teacher
+ * @param {hasLeft} Teacher 
+ * join teacher later
+ * */

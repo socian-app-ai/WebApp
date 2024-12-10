@@ -3,6 +3,8 @@ import PostComponent from "../../../components/postBox/PostComponent";
 import { useAuthContext } from "../../../context/AuthContext";
 import { useSetInfoBarState } from "../../../state_management/zustand/useInfoBar";
 import useWindowDimensions from "../../../hooks/useWindowDimensions";
+import axiosInstance from "../../../config/users/axios.instance";
+import { useState } from "react";
 
 export default function StudentDashboard() {
   const { authUser } = useAuthContext();
@@ -35,6 +37,27 @@ export default function StudentDashboard() {
     }
   }, [setInfoBarState, infoBarState]);
 
+
+  const [posts, setPosts] = useState([]);
+
+
+  useEffect(() => {
+    const fetch = async () => {
+      try {
+        const response = await axiosInstance.get(`/api/posts/university/all`);
+        console.log("POSTS,", response.data)
+        setPosts(response.data.postsCollectionRef.posts)
+        console.log("hie", response)
+      } catch (err) {
+        // setError("Error fetching society data.");
+        console.error("Error fetching society details:", err);
+      } finally {
+        // setLoading(false);
+      }
+    };
+    fetch();
+  }, []);
+
   return (
     <div className="min-h-screen ">
       {/* <p className="p-10 m-10 font-extrabold text-4xl">CREATE UI FIRST</p> */}
@@ -51,12 +74,20 @@ export default function StudentDashboard() {
         </div>
       </div>
 
-      <div className="pt-5 pl-5 ">
+
+      {
+        posts.length != 0 && posts.map((post) => {
+          console.log(":HERE", post)
+
+          return <PostDiv key={post.postId._id} postInfo={post.postId} society={society} />
+        })
+      }
+      {/* <div className="pt-5 pl-5 ">
         <PostComponent />
         <PostComponent />
         <PostComponent />
         <PostComponent />
-      </div>
+      </div> */}
     </div>
   );
 }

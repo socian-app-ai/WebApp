@@ -34,6 +34,50 @@ const getUserDetails = (req) => {
     return { userId, role, universityOrigin, campusOrigin };
 };
 
+
+
+
+
+
+
+
+/**
+ * get latest posts in a university section
+ */
+router.get("university/all", async (req, res) => {
+    try {
+        console.log("here")
+        const { role, universityOrigin } = getUserDetails(req)
+        const posts = await PostsCollection.find({
+            'references.role': role,
+            'references.role': universityOrigin
+        }).populate([  // 'postsCollectionRef',
+            {
+                path: 'postsCollectionRef',
+                populate: {
+                    path: 'posts.postId',
+                    model: 'Post',
+                    populate: {
+                        path: 'author',
+                        model: 'User',
+                    },
+                    populate: {
+                        path: 'voteId',
+                        model: 'SocietyPostAndCommentVote',
+                    },
+                },
+            },]);
+
+        if (!posts) return res.status(304).json("Posts Collection null");
+
+        res.status(200).json(posts);
+    } catch (error) {
+        console.log("Error in posts.route.js /all", error);
+        res.status(500).json("Internal Server Error");
+    }
+});
+
+
 /**
  * @function flows: posts in a society-> societyId needed
  * @ -> create a post on id of society -> attach post to collection inside postcollection of society
@@ -109,22 +153,6 @@ router.post("/create", async (req, res) => {
  */
 // router.post()
 
-/**
- * get latest posts in a society
- */
-router.get("posts/all", async (req, res) => {
-    const { societyId } = req.body;
-    try {
-        const posts = await PostsCollection.findById({ _id: societyId });
-
-        if (!posts) return res.status(304).json("Posts Collection null");
-
-        res.status(200).json(posts);
-    } catch (error) {
-        console.log("Error in posts.route.js /all", error);
-        res.status(500).json("Internal Server Error");
-    }
-});
 
 /***
  * VOTE IN A POST
