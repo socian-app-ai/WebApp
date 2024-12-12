@@ -1,10 +1,5 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState, useMemo } from "react";
 import axiosInstance from "../config/users/axios.instance";
-// import useUserData from "../state_management/zustand/useUserData";
-
-// import Cookies from 'js-cookie'
-
-
 export const AuthContext = createContext();
 
 export const useAuthContext = () => {
@@ -13,60 +8,63 @@ export const useAuthContext = () => {
 
 // eslint-disable-next-line react/prop-types
 export const AuthContextProvider = ({ children }) => {
-
-
     const [authUser, setAuthUser] = useState(null);
-    // const { setUserData } = useUserData()
     const [isLoading, setIsLoading] = useState(true);
 
-    console.log("HEre4")
-
-
     useEffect(() => {
-        console.log("HEre in auth context useEffect")
-
         const fetchSessionData = async () => {
             try {
-                console.log("here in fetchsession data")
                 const res = await axiosInstance.get('/api/auth/session', { credentials: 'include' });
-                if (res.status === 200 || res.status === 201 || res.status === 202) {
-                    // setUserData(res.data);
-                    // const data = res.data
-                    // Cookies.set('name', JSON.stringify(res.data))
-                    setAuthUser(res.data)
-                    console.log("data in if fetch:", res.data)
-                    // console.log("HMM", Cookies.get())
-                } else {
-                    setAuthUser(null);
-                    if (window.location.pathname !== '/login' && res.status === 401) {
-                        window.location.href = '/login'
+
+                if (res.status >= 200 && res.status < 300) {
+                    setAuthUser(res.data);
+                    console.log("Authenticated user data:", res.data);
+
+                    // Redirect to home if currently on the login page
+                    if (window.location.pathname === '/login') {
+                        window.location.href = '/';
                     }
-                    console.log(window.location.pathname)
+                } else {
+                    console.warn("Session fetch failed with status:", res.status);
+                    handleUnauthenticated();
                 }
             } catch (error) {
-                setAuthUser(null)
-                console.log("HEre in  authcontext error ")
-
-                console.error("Failed to fetch session data", error);
-                if (window.location.pathname !== '/login') {
-                    window.location.href = '/login'
+                console.error("Error fetching session data:", error);
+                // handleUnauthenticated();// dont use here otherwise routes wont work, had to solve this issue for hours
+                if (window.location.pathname === '/signup') {
+                    return
+                } else if (window.location.pathname !== '/login') {
+                    window.location.pathname = '/login'
                 }
-                // console.log(window.location.pathname)
-
             } finally {
                 setIsLoading(false);
             }
         };
 
+        const handleUnauthenticated = () => {
+            setAuthUser(null);
+
+
+            // if (window.location.pathname !== '/login') {
+            //     window.location.pathname = '/login'
+            // } else if (window.location.pathname === '/signup') {
+            //     window.location.pathname = '/signup'
+            // }
+
+
+            // // Redirect only if not already on the login page
+            if (window.location.pathname !== '/login') {
+                window.location.href = '/login';
+            }
+        };
+
         fetchSessionData();
+    }, [setAuthUser]);
 
-    }, []);
-
-
-
+    const value = useMemo(() => ({ authUser, setAuthUser, isLoading }), [authUser, setAuthUser, isLoading]);
 
     return (
-        <AuthContext.Provider value={{ authUser, setAuthUser, isLoading }}>
+        <AuthContext.Provider value={value}>
             {children}
         </AuthContext.Provider>
     );

@@ -1,38 +1,37 @@
-// import { Navigate, Outlet } from "react-router-dom";
-// import { useAuthContext } from "./AuthContext";
-
-
-// const ProtectedLayout = () => {
-//   const { authUser, isLoading } = useAuthContext();
-
-//   if (isLoading) return <p>Loading...</p>;
-
-//   return authUser ? <Outlet /> : <Navigate to="/login" replace />;
-// };
-
-// export default ProtectedLayout;
-import {  Outlet } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import { useAuthContext } from "./AuthContext";
-import { redirect } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+
 
 const ProtectedLayout = () => {
   const { authUser, isLoading } = useAuthContext();
-console.log("inprotected layout", authUser, !authUser)
+  const navigate = useNavigate()
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <p>Loading...</p>;
+
+  if (authUser) {
+    if (window.location.pathname === '/login') {
+      return navigate('/')
+    } else if (window.location.pathname === '/signup') {
+      return navigate('/')
+    }
+  }
 
   if (!authUser) {
-       redirect('/login');
+
+    if (window.location.pathname === '/signup') {
+      return <Outlet />
+    } else if (window.location.pathname === '/login') {
+      return <Outlet />
+    }
   }
-//   else if (window.location.href === '/'){
-//     window.location.href = '/'
-//   }else{
-//     window.location.reload()
-//   }
-  console.log("Out inprotected layout", authUser, !authUser)
+
+  if (authUser) return <Outlet />
 
 
-  return <Outlet />;
+  // console.log("THIS IS SIGNUP IN PROTECTED LAYOUT", authUser, "asnf", window.location.pathname)
+
+  return authUser && <Outlet />;
 };
 
 export default ProtectedLayout;

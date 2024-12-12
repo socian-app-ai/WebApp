@@ -7,6 +7,7 @@ import DarkButton from '../../components/Buttons/DarkButton';
 import GoogleButton from '../../components/Buttons/GoogleButton';
 import { useAuthContext } from "../../context/AuthContext";
 import { redirect } from "react-router-dom";
+import routesForLinks from "../../utils/routes/routesForLinks";
 
 
 export default function Login() {
@@ -14,9 +15,9 @@ export default function Login() {
   const [password, setPassword] = useState("");
   console.log('in login')
   const { loading, login } = useLogin();
-  const {authUser}= useAuthContext()
+  // const { authUser } = useAuthContext()
 
-  if(authUser)  redirect('/')
+  // if (authUser) redirect('/')
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -84,7 +85,7 @@ export default function Login() {
         />
 
         <div>
-          <Link className="[&&]:dark:text-[#c4c3c3] [&&]:text-black" to="/register/student-type">Don&apos;t Have an Account?</Link>
+          <Link className="[&&]:dark:text-[#c4c3c3] [&&]:text-black" to={routesForLinks.signup}>Don&apos;t Have an Account?</Link>
         </div>
 
         <DarkButton className="my-5 " text="Login"

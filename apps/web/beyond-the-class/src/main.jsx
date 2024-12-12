@@ -1,6 +1,5 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import { AuthContextProvider } from './context/AuthContext.jsx'
 import './index.css'
 
 
@@ -29,10 +28,10 @@ import UniversityView from './pages/admin/pages/university/UniversityView.jsx';
 import CreateEvent from './pages/society/mod/CreateEvent.jsx';
 import AllSocieties from './pages/society/AllSocieties.jsx';
 import Society from './pages/society/Society.jsx';
+import SignUp from './pages/signup/SignUp.jsx';
+import { AuthContextProvider } from './context/AuthContext.jsx';
 
 const router = createBrowserRouter([
-
-
   {
     path: "/",
     element: (
@@ -41,14 +40,19 @@ const router = createBrowserRouter([
     children: [
 
       {
-        element: <RoleBasedRoute allowedRoles={['student', 'alumni', 'external_org', 'teacher']} />,
-        children: [{ index: true, element: <Layout><AllHome /></Layout> }],
+        path: "signup",
+        element: <SignUp />
       },
-
       {
         path: "login",
         element: <Login />
       },
+
+      {
+        element: <RoleBasedRoute allowedRoles={['student', 'alumni', 'external_org', 'teacher']} />,
+        children: [{ index: true, element: <Layout><AllHome /></Layout> }],
+      },
+
       {
         element: <SuperRoleBasedRoute allowedRoles={['super']} />,
         path: 'super',
