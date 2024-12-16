@@ -5,6 +5,8 @@ import { useSetInfoBarState } from "../../../state_management/zustand/useInfoBar
 import useWindowDimensions from "../../../hooks/useWindowDimensions";
 import axiosInstance from "../../../config/users/axios.instance";
 import { useState } from "react";
+import PostDiv from "../../society/post/PostDiv";
+import { routesForApi } from "../../../utils/routes/routesForLinks";
 
 export default function StudentDashboard() {
   const { authUser } = useAuthContext();
@@ -44,9 +46,9 @@ export default function StudentDashboard() {
   useEffect(() => {
     const fetch = async () => {
       try {
-        const response = await axiosInstance.get(`/api/posts/university/all`);
+        const response = await axiosInstance.get(routesForApi.posts.campusAll);
         console.log("POSTS,", response.data)
-        setPosts(response.data.postsCollectionRef.posts)
+        setPosts(response.data)
         console.log("hie", response)
       } catch (err) {
         // setError("Error fetching society data.");
@@ -61,7 +63,7 @@ export default function StudentDashboard() {
   return (
     <div className="min-h-screen ">
       {/* <p className="p-10 m-10 font-extrabold text-4xl">CREATE UI FIRST</p> */}
-      <div className="sticky w-full">
+      <div className="sticky w-full pb-4">
         <div className="flex overflow-x-auto space-x-4 flex-row ">
           {filters.map((filter, idx) => (
             <button
@@ -75,13 +77,17 @@ export default function StudentDashboard() {
       </div>
 
 
-      {
-        posts.length != 0 && posts.map((post) => {
-          console.log(":HERE", post)
 
-          return <PostDiv key={post.postId._id} postInfo={post.postId} society={society} />
-        })
-      }
+
+      {posts.length > 0 && (
+        <div className="space-y-4 w-2/3">
+          {posts.map((post) => {
+            // console.log("POST-", post)
+            return (<PostDiv key={post._id} postInfo={post} society={post.society} />
+            )
+          })}
+        </div>
+      )}
       {/* <div className="pt-5 pl-5 ">
         <PostComponent />
         <PostComponent />

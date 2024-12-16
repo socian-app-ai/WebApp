@@ -8,21 +8,21 @@
   box-sizing: border-box;
 }
 .dark body {
-  background-color: #121212f5;
+  background-color: #80a1cd;
   @apply transition-colors duration-1000 ease-in-out;
 }
 
 body {
-  background-color: #dbd2d2f5;
+  background-color: var(--var-bg-primary-color);
   @apply transition-colors duration-1000 ease-in-out;
 }
 :root {
   
-  --var-bg-sidebar-dark: #383838;
-  --var-bg-sidebar: #456378;
+  --var-bg-sidebar-dark: hsl(214, 71%, 35%);
+  --var-bg-sidebar: hsl(214, 89%, 79%);
 
-  --var-bg-navbar-dark: #383838;
-  --var-bg-navbar: #456378;
+  --var-bg-navbar-dark: #9bc4f9;
+  --var-bg-navbar: #9bc4f9;
 
   /* --var-bg-sidebar-url-dark: url(https://arc.net/noise-light.png) #383838;
   --var-bg-sidebar-url-light: url(https://arc.net/noise-light.png) #456378;
@@ -30,7 +30,7 @@ body {
   --var-bg-navbar-url-dark: url(https://arc.net/noise-light.png) #383838;
   --var-bg-navbar-url-light: url(https://arc.net/noise-light.png) #456378; */
 
-  --var-bg-primary-color: #3b90eb;
+  --var-bg-primary-color: #CDE2FE;
   --var-bg-secondary-color: #dddddd;
 
   --var-bg-primary-color-dark: #121212;

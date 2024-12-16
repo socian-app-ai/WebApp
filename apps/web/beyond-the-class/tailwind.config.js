@@ -31,6 +31,7 @@ export default {
         "btn-primary": "var(--var-btn-primary)",
         "btn-secondary": "var(--var-btn-secondary)",
         "bg-var-dark": "var(--var-bg-dark)",
+        "bg-primary": "var(--var-bg-primary)"
       },
       backgroundImage: {
         "sidebar-pattern": "url('https://arc.net/noise-light.png')",

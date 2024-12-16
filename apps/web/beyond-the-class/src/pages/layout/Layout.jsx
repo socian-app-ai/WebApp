@@ -11,7 +11,7 @@ const Layout = ({ children }) => {
   const { infoBarState, setInfoBarState } = useSetInfoBarState();
 
   return (
-    <div className="text-black placeholder-black dark:placeholder-white dark:text-white">
+    <div className="text-black  placeholder-black dark:placeholder-white dark:text-white">
       <Sidebar />
       {sideBarState && (
         <div
@@ -23,9 +23,8 @@ const Layout = ({ children }) => {
 
       <InfoBar />
       <div
-        className={`flex-1 pt-20 p-4 ${
-          sideBarState && width > 768 ? "ml-64" : ""
-        } ${infoBarState && width > 768 ? "mr-64" : ""}`}
+        className={`flex-1 pt-20 p-4 dark:bg-gradient-to-br dark:from-blue-200 dark:to-blue-900 bg-gradient-to-br from-blue-200 to-blue-100 ${sideBarState && width > 768 ? "ml-64" : ""
+          } ${infoBarState && width > 768 ? "mr-64" : ""}`}
       >
         {children}
       </div>
@@ -33,7 +32,7 @@ const Layout = ({ children }) => {
   );
 };
 
-// eslint-disable-next-line react/prop-types
+
 // const Layout = ({ children }) => {
 
 //     const { width } = useWindowDimensions();

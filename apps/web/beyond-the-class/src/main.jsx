@@ -31,6 +31,8 @@ import Society from './pages/society/Society.jsx';
 import SignUp from './pages/signup/SignUp.jsx';
 import { AuthContextProvider } from './context/AuthContext.jsx';
 import OTPPage from './pages/otp/OTPPage.jsx';
+import UniPosts from './pages/student/universities/UniPosts.jsx';
+import CampusesPosts from './pages/student/campuses/CampusesPosts.jsx';
 
 const router = createBrowserRouter([
   {
@@ -54,7 +56,10 @@ const router = createBrowserRouter([
 
       {
         element: <RoleBasedRoute allowedRoles={['student', 'alumni', 'ext_org', 'teacher']} />,
-        children: [{ index: true, element: <Layout><AllHome /></Layout> }],
+        children: [
+          { index: true, element: <Layout><AllHome /></Layout> },
+
+        ],
       },
 
       {
@@ -81,6 +86,10 @@ const router = createBrowserRouter([
         element: <RoleBasedRoute allowedRoles={['student']} />,
         path: "student",
         children: [
+          { path: "all", element: <Layout> <UniPosts /></Layout> },
+          { path: "inter", element: <Layout> <CampusesPosts /></Layout> },
+
+
           { path: "reviews/teachers", element: <Layout> <ReviewPage /></Layout> },
           { path: "teacher/comments/:id", element: <Layout> <TeacherReviewPage /></Layout> },
 

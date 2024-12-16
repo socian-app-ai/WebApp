@@ -1,5 +1,4 @@
 /* eslint-disable react/prop-types */
-import { Loader2 } from 'lucide-react';
 
 const AestheticLoadingScreen = ({
     message = "Beyond The Class",

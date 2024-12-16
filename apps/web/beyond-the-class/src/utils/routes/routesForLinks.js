@@ -53,7 +53,19 @@ export const routesForApi = buildRoutes(baseUrl, {
     accessible: {
         universityGroupedCampus: "universities-grouped-campus",
         usernames: 'usernames',
+    },
+    posts: {
+        votePost: "vote-post",
+        campusAll: "campus/all",
+        campusesAll: "campuses/all",
+        uniAll: "universities/all"
+    },
+    society: {
+        campusesAll: "campuses/all",
+        campusAll: "campus/all",
+        universitiesAll: "universities/all"
     }
+
 });
 
 console.log("ROUTES", routesForApi);
