@@ -2,13 +2,14 @@ import { Outlet } from "react-router-dom";
 import { useAuthContext } from "./AuthContext";
 import { useNavigate } from "react-router-dom";
 import { bypassRoutes } from "../utils/routes/routesForLinks";
+import AestheticLoadingScreen from "../components/loading/LoadingScreen";
 
 
 const ProtectedLayout = () => {
   const { authUser, isLoading } = useAuthContext();
   const navigate = useNavigate()
 
-  if (isLoading) return <p>Loading...</p>;
+  if (isLoading) return <AestheticLoadingScreen />;
 
   if (authUser) {
     if (window.location.pathname === '/login') {
