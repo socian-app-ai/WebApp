@@ -30,6 +30,7 @@ import AllSocieties from './pages/society/AllSocieties.jsx';
 import Society from './pages/society/Society.jsx';
 import SignUp from './pages/signup/SignUp.jsx';
 import { AuthContextProvider } from './context/AuthContext.jsx';
+import OTPPage from './pages/otp/OTPPage.jsx';
 
 const router = createBrowserRouter([
   {
@@ -38,7 +39,10 @@ const router = createBrowserRouter([
       <ProtectedLayout />
     ),
     children: [
-
+      {
+        path: "otp/:id",
+        element: <OTPPage />
+      },
       {
         path: "signup",
         element: <SignUp />
@@ -49,7 +53,7 @@ const router = createBrowserRouter([
       },
 
       {
-        element: <RoleBasedRoute allowedRoles={['student', 'alumni', 'external_org', 'teacher']} />,
+        element: <RoleBasedRoute allowedRoles={['student', 'alumni', 'ext_org', 'teacher']} />,
         children: [{ index: true, element: <Layout><AllHome /></Layout> }],
       },
 

@@ -1,6 +1,7 @@
 import { Outlet } from "react-router-dom";
 import { useAuthContext } from "./AuthContext";
 import { useNavigate } from "react-router-dom";
+import { bypassRoutes } from "../utils/routes/routesForLinks";
 
 
 const ProtectedLayout = () => {
@@ -19,7 +20,7 @@ const ProtectedLayout = () => {
 
   if (!authUser) {
 
-    if (window.location.pathname === '/signup') {
+    if (window.location.pathname === '/signup' || bypassRoutes.some(route => route.test(window.location.pathname))) {
       return <Outlet />
     } else if (window.location.pathname === '/login') {
       return <Outlet />
@@ -33,5 +34,6 @@ const ProtectedLayout = () => {
 
   return authUser && <Outlet />;
 };
+
 
 export default ProtectedLayout;

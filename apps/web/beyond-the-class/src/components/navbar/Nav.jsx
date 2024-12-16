@@ -7,6 +7,7 @@ import { IoChatbubbleEllipsesOutline } from 'react-icons/io5';
 import { FiBell } from 'react-icons/fi';
 import { HiPlus } from 'react-icons/hi2';
 import { RxHamburgerMenu } from 'react-icons/rx';
+import { MdLogout } from "react-icons/md";
 
 import ThemeSwitcher from '../ThemeSwitcher';
 
@@ -14,9 +15,7 @@ import ThemeSwitcher from '../ThemeSwitcher';
 
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-
 import useLogout from '../../hooks/useLogout';
-
 import useWindowDimensions from '../../hooks/useWindowDimensions';
 import { useSetSideBarState } from '../../state_management/zustand/useSideBar';
 import { useAuthContext } from '../../context/AuthContext';
@@ -99,6 +98,7 @@ const Navbar = () => {
                     <ThemeSwitcher />
                 </div>
 
+                {/* <MdLogout size={23} onClick={logout} /> */}
                 <IoChatbubbleEllipsesOutline className="h-6 w-6 cursor-pointer" />
 
 

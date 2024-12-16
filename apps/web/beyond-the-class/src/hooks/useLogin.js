@@ -3,6 +3,7 @@ import toast from "react-hot-toast";
 import axiosInstance from "../config/users/axios.instance";
 import { useAuthContext } from "../context/AuthContext";
 import { redirect } from "react-router-dom";
+import { routesForApi } from "../utils/routes/routesForLinks";
 // import secureLocalStorage from "react-secure-storage"
 
 const useLogin = () => {
@@ -14,7 +15,8 @@ const useLogin = () => {
     if (!success) return;
     setLoading(true);
     try {
-      const res = await axiosInstance.post("/api/auth/login", {
+      // "/api/auth/login"
+      const res = await axiosInstance.post(routesForApi.auth.login, {
         email,
         password,
       });

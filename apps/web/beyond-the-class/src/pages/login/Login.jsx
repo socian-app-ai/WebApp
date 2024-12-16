@@ -7,7 +7,7 @@ import DarkButton from '../../components/Buttons/DarkButton';
 import GoogleButton from '../../components/Buttons/GoogleButton';
 import { useAuthContext } from "../../context/AuthContext";
 import { redirect } from "react-router-dom";
-import routesForLinks from "../../utils/routes/routesForLinks";
+import routesForLinks, { routesForApi } from "../../utils/routes/routesForLinks";
 
 
 export default function Login() {
@@ -30,7 +30,8 @@ export default function Login() {
   }
 
   async function auth() {
-    const response = await axiosInstance.post('/api/request');
+    const response = await axiosInstance.post(routesForApi.google.request);
+    // '/api/request'
 
     const data = response.data;
     // console.log("The data before secure: ", data);

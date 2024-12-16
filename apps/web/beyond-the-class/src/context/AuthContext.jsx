@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState, useMemo } from "react";
 import axiosInstance from "../config/users/axios.instance";
+import { bypassRoutes } from "../utils/routes/routesForLinks";
 export const AuthContext = createContext();
 
 export const useAuthContext = () => {
@@ -30,8 +31,9 @@ export const AuthContextProvider = ({ children }) => {
                 }
             } catch (error) {
                 console.error("Error fetching session data:", error);
+                console.log(window.location.pathname, "thiss", bypassRoutes.some(route => route.test(window.location.pathname)))
                 // handleUnauthenticated();// dont use here otherwise routes wont work, had to solve this issue for hours
-                if (window.location.pathname === '/signup') {
+                if (window.location.pathname === '/signup' || bypassRoutes.some(route => route.test(window.location.pathname))) {
                     return
                 } else if (window.location.pathname !== '/login') {
                     window.location.pathname = '/login'
@@ -69,3 +71,5 @@ export const AuthContextProvider = ({ children }) => {
         </AuthContext.Provider>
     );
 };
+
+

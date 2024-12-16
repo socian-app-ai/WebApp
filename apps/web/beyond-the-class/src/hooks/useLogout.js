@@ -1,18 +1,20 @@
 import { useState } from "react"
-// import { useAuthContext } from "../context/AuthContext";
 import toast from "react-hot-toast";
-import axios from "axios";
+import { useAuthContext } from "../context/AuthContext";
+import axiosInstance from "../config/users/axios.instance";
+import { routesForApi } from "../utils/routes/routesForLinks";
 
 const useLogout = () => {
     const [loading, setLoading] = useState(false);
 
-    // const { isLoading, setAuthUser } = useAuthContext()
+    const { isLoading, setAuthUser } = useAuthContext()
     const logout = async () => {
         setLoading(true)
 
 
         try {
-            const res = await axios.post("/api/auth/logout")
+            const res = await axiosInstance.post(routesForApi.auth.logout)
+            // "/api/auth/logout"
 
             // console.log(res)
             const data = res.data;
@@ -29,9 +31,8 @@ const useLogout = () => {
         }
         finally {
             setLoading(false)
-            localStorage.removeItem("useUta")
-
-            // setAuthUser(false)
+            // sessionStorage.clear('iidxi')
+            setAuthUser(null)
             window.location.href = '/login'
         }
     }
