@@ -12,6 +12,7 @@ import toast from "react-hot-toast";
 
 export default function SignUpR() {
     const [universityCampus, setUniversityPlusCampus] = useState("");
+    const [universityCampusDomain, setUniversityPlusCampusDomain] = useState("");
 
     const [universityEmail, setUniversityEmail] = useState("");
     const [name, setName] = useState("");
@@ -22,6 +23,8 @@ export default function SignUpR() {
     const [usernameError, setUsernameError] = useState(false)
     const { loading, signup } = useSignup();
 
+    const [roleError, setRoleError] = useState(false)
+
     const fetchUniversities = async () => {
         const response = await axiosInstance.get(routesForApi.accessible.universityGroupedCampus);
         // "/api/university/universities-grouped-campus"
@@ -31,12 +34,17 @@ export default function SignUpR() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         // setUniversityEmail(universityEmail);
+        if (!role) {
+            return setRoleError(true)
+        } else {
+            setRoleError(false)
+        }
 
         console.log("DATA", universityCampus)
         if (!usernameError) {
             await signup({
-                universityEmail: universityEmail,
-                personalEmail: personalEmail,
+                universityEmail: universityEmail.toLowerCase(),
+                personalEmail: personalEmail.toLowerCase(),
                 password: universityEmailPassword,
                 username: userName,
                 name: name,
@@ -92,11 +100,16 @@ export default function SignUpR() {
                     return toast.error("Username error")
                 })
         }
-        else {
+        else if (userName.length == 6) {
             toast.error('username must be greater than 6 characters', { duration: 1000 })
+
             return;
         }
+
     }
+
+
+
     return (
         <div className="min-h-screen w-full flex justify-center items-center ">
             <div className="flex flex-col justify-center items-center">
@@ -113,6 +126,7 @@ export default function SignUpR() {
                             handleRoleChange={handleRoleChange}
                             roleType={_role}
                             role={role}
+                            roleError={roleError}
                         />
                     ))}
                 </div>
@@ -128,6 +142,7 @@ export default function SignUpR() {
                         width="w-[100%]"
                         inputClassName="w-min-[10rem]"
                         onChange={(e) => setUniversityPlusCampus(e.target.value)}
+                        setUniversityPlusCampusDomain={setUniversityPlusCampusDomain}
                     />
 
                     <LabelInputCustomizable
@@ -167,7 +182,8 @@ export default function SignUpR() {
                         className="my-3 w-full"
                         value={universityEmail}
                         label="Your University Email"
-                        placeholder="FAXX-XXX-XXX@XXX.edu.pk"
+                        placeholder={universityCampusDomain ? universityCampusDomain : "FAXX-XXX-XXX@XXX.edu.pk"}
+                        // "FAXX-XXX-XXX@XXX.edu.pk"
                         width="w-[100%]"
                         inputClassName="w-min-[10rem]"
                         onChange={(e) => setUniversityEmail(e.target.value)}
@@ -200,7 +216,7 @@ export default function SignUpR() {
                         onChange={(e) => setUniversityEmailPassword(e.target.value)}
                     />
                     <DarkButton
-                        //  loading={loading}
+                        loading={loading}
                         type="submit"
                         className="flex my-4 justify-center items-center w-full"
                         text="Sign up with email"
@@ -237,7 +253,8 @@ export default function SignUpR() {
 const roleList = ["student", "teacher", "alumni"];
 
 // eslint-disable-next-line react/prop-types
-function RoleSelectionBox({ handleRoleChange, roleType, role }) {
+function RoleSelectionBox({ handleRoleChange, roleType, role, roleError }) {
+    console.log("Ero roler", roleError)
     return (
         // <button className={`${roleType === role ? 'bg-slate-500' : 'bg-red-300'} btn glass  p-2 max-h-14 max-w-20`} onClick={() => handleRoleChange(roleType)}>
         //     {roleType}
@@ -245,12 +262,12 @@ function RoleSelectionBox({ handleRoleChange, roleType, role }) {
         <button
             onClick={() => handleRoleChange(roleType)}
             className={`${roleType === role ? 'bg-stone-100' : 'bg-transparent'} relative inline-block px-6 py-3 font-medium text-text-primary 
-            dark:text-white  border-2 border-white rounded-lg overflow-hidden group hover:bg-opacity-30 
+            dark:text-white  border-2 border-white rounded-lg overflow-hidden group 
             focus:outline-none`}
         >
-            <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-grey-500 via-blue-500 to-purple-500 opacity-30"></span>
-            <span className="absolute inset-0 w-full h-full bg-white opacity-10 backdrop-blur-md"></span>
-            <span className="relative z-10">{roleType}</span>
+            <span className={`${roleError && 'border-red-500'} "absolute inset-0 w-full h-full bg-gradient-to-r from-grey-500 via-blue-500 to-purple-500 opacity-30" `}></span>
+            <span className={`${roleError && 'border-red-500'} absolute inset-0 w-full h-full bg-white opacity-10 backdrop-blur-md}`}></span>
+            <span className={`${roleError && 'border-red-500'} relative z-10}`}>{roleType}</span>
         </button>
 
     );

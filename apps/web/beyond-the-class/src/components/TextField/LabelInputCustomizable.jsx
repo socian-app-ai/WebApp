@@ -63,7 +63,7 @@ export default function LabelInputCustomizable({
             ) : (
                 <></>
             )}
-            <div>{errorMessage !== "" && errorMessage}</div>
+            <div className=" px-2 font-normal text-sm text-red-500">{errorMessage !== "" && errorMessage}</div>
 
         </div>
     );
@@ -252,6 +252,7 @@ export function LabelDropDownSearchableInputCustomizable({
     width,
     label,
     onChange,
+    setUniversityPlusCampusDomain,
     type = "text",
     fetchOptions,
     ...inputProps
@@ -289,8 +290,10 @@ export function LabelDropDownSearchableInputCustomizable({
 
     // Handle option selection
     const handleSelect = (selectedOption) => {
+        console.log("selected opyion", selectedOption)
         onChange({ target: { value: selectedOption._id } }); // Pass _id as value
         setSearchTerm(selectedOption.name); // Display name in input
+        setUniversityPlusCampusDomain(selectedOption.domain)
         setFilteredOptions(options); // Reset filtered options
         setShowDropDown(false)
     };
@@ -314,6 +317,10 @@ export function LabelDropDownSearchableInputCustomizable({
                 {...inputProps}
                 required={required}
                 onChange={handleSearch}
+                onFocus={() => setShowDropDown(true)}
+                // onBlur={() => setShowDropDown(false)}
+                onBlur={() => setTimeout(() => setShowDropDown(false), 200)}
+
             />
             {hideShowPass && (
                 <div className="absolute bottom-1 right-3">
