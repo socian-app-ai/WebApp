@@ -135,7 +135,7 @@ export default function Society() {
                         <div className="p-4 space-y-2">
                             <div className="flex items-center gap-2">
                                 <span className="font-medium">President:</span>
-                                <span>{society.president.username}</span>
+                                <span>{society?.president?.username ? society.president.username : '[/deleted]'}</span>
                             </div>
                             <div className="flex items-center gap-2">
                                 <span className="font-medium">Allows:</span>
