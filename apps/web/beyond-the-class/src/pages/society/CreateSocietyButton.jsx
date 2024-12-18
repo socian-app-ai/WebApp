@@ -287,10 +287,10 @@ const CreateSocietyButton = () => {
         <div>
             <button
                 onClick={toggleModal}
-                className="flex w-100 items-center bg-[#5298D6] text-white px-3 py-1 rounded-md hover:bg-[#222b3f] transition-colors"
+                className="flex justify-center  w-full items-center my-2 py-1 bg-[#1E2024] text-white  rounded-md hover:bg-[#222b3f] transition-colors"
             >
-                <Plus className="mr-1" size={18} />
-                Create Society
+                <Plus className="" size={18} />
+                <p>Create Society</p>
             </button>
 
             {showModal && (

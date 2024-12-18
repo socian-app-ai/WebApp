@@ -1,5 +1,8 @@
 import { useState, useEffect } from 'react';
 
+import { ToggleLeft } from 'lucide-react';
+import { ToggleRight } from 'lucide-react';
+
 const ThemeSwitcher = () => {
   const [theme, setTheme] = useState(() => {
     const savedTheme = localStorage.getItem('theme');
@@ -53,3 +56,53 @@ const ThemeSwitcher = () => {
 };
 
 export default ThemeSwitcher;
+
+
+
+
+
+
+export const ThemeSwitcher2 = () => {
+  const [theme, setTheme] = useState(() => {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+      return savedTheme;
+    }
+
+    const hour = new Date().getHours();
+    return hour >= 18 || hour < 6 ? 'dark' : 'light';
+  });
+
+
+  useEffect(() => {
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme(theme === 'light' ? 'dark' : 'light');
+  };
+
+  return (
+    <label className="cursor-pointer  w-full relative flex items-center justify-center  ">
+      <input
+        type="checkbox"
+        checked={theme === 'dark'}
+        onChange={toggleTheme}
+        className="hidden"
+      />
+      {/* {theme === 'dark' ? <ToggleRight size={22} /> : <ToggleLeft size={22} />} */}
+
+      <li className="px-4 py-2 w-full  z-50 hover:bg-gray-200 dark:hover:bg-[#2B3236] cursor-pointer">
+        Theme
+
+      </li>
+    </label>
+  );
+};
+

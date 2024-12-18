@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React from 'react';
 import { ExternalLink, Mail, MoreHorizontal } from 'lucide-react';
 import { useAuthContext } from '../context/AuthContext';
@@ -8,6 +9,7 @@ import { useState } from 'react';
 import { useEffect } from 'react';
 import axiosInstance from '../config/users/axios.instance';
 import toast from 'react-hot-toast';
+import PostDiv from './society/post/PostDiv';
 
 const ProfilePage = () => {
     const { id } = useParams()
@@ -76,31 +78,42 @@ const ProfileComponent = ({ user }) => {
             </div>
 
             {/* Banner and Profile Section */}
-            <div className="max-w-3xl mx-auto">
+            <div className="max-w-3xl mx-auto border bg-[#eaeaea] dark:bg-transparent dark:border-0">
                 {/* Profile Content */}
                 <div className=" rounded-b-lg p-6">
                     <div className="flex justify-between items-start">
                         <div className="-mt-20 flex flex-col items-start gap-4 z-10">
-                            {/* Profile Picture */}
-                            <div className="w-24 h-24 rounded-full bg-gray-700 overflow-hidden">
-                                {user?.profile?.picture ?
-                                    <img src={user.profile.picture} className="w-full h-full bg-gray-600" />
-                                    :
-                                    <div className="w-full h-full bg-gray-600"></div>
-                                }
+
+                            <div className='flex flex-row items-end justify-between w-full'>
+                                {/* Profile Picture */}
+                                <div className="w-24 h-24 rounded-full bg-gray-700 overflow-hidden">
+                                    {user?.profile?.picture ?
+                                        <img src={user.profile.picture} className="w-full h-full bg-gray-600" />
+                                        :
+                                        <div className="w-full h-full bg-gray-600"></div>
+                                    }
+
+
+                                </div>
+                                <div className='block md:hidden'>
+                                    <ConnectButton />
+                                </div>
+
                             </div>
 
                             {/* Name and Details */}
                             <div>
-                                <div className="flex items-center gap-2">
-                                    <h1 className="text-xl font-bold">{user.name}</h1>
-                                    <span className="text-blue-400">{user.verified && <BadgeCheck />}</span>
-                                    <span className="px-3 py-1 bg-gray-800 rounded-full text-sm flex items-center gap-1">
+                                <div className="flex flex-col md:flex-row  items-start gap-2">
+                                    <div className='flex flex-row items-center'>
+                                        <h1 className="text-lg md:text-xl font-bold">{user.name}</h1>
+                                        <span className="text-blue-400">{user.verified && <BadgeCheck />}</span>
+                                    </div>
+                                    <span className="px-3 py-1  bg-gray-300 text-black dark:bg-gray-800 dark:text-white rounded-full text-sm flex items-center gap-1">
                                         <span><Sparkle size={14} /></span> Credibility <span> {user?.profile?.credibility?.commentCredibility ? user.profile.credibility.commentCredibility : '0'}</span>
                                     </span>
                                 </div>
-                                <p className="text-gray-400">@{user.username}</p>
-                                <div className="flex items-center gap-2 text-sm text-gray-400 mt-2">
+                                <p className="text-black dark:text-gray-400">@{user.username}</p>
+                                <div className="flex items-center gap-2 text-sm text-black dark:text-gray-400 mt-2">
                                     <span>🌍 Global</span>
                                     <span>📅 Joined {user.joined}</span>
                                     <span>🟢 Open to Work</span>
@@ -109,14 +122,12 @@ const ProfileComponent = ({ user }) => {
                         </div>
 
                         {/* Action Buttons */}
-                        <div className="flex gap-2">
-                            <button className="px-4 py-1 bg-blue-500 hover:bg-blue-600 rounded-full text-white transition-colors">
-                                Connect
-                            </button>
-                            <button className="p-2 hover:bg-gray-800 rounded-full transition-colors">
+                        <div className="hidden md:flex gap-2">
+                            <ConnectButton />
+                            <button className="p-2 hover: bg-gray-300 text-black dark:bg-gray-800 dark:text-white rounded-full transition-colors">
                                 <Mail className="w-5 h-5" />
                             </button>
-                            <button className="p-2 hover:bg-gray-800 rounded-full transition-colors">
+                            <button className="p-2 hover: bg-gray-300 text-black dark:bg-gray-800 dark:text-white rounded-full transition-colors">
                                 <MoreHorizontal className="w-5 h-5" />
                             </button>
                         </div>
@@ -125,37 +136,37 @@ const ProfileComponent = ({ user }) => {
                     {/* Bio */}
                     <div className="mt-4">
                         <div className="flex items-center gap-2">
-                            <p className="text-gray-300">{user.role.charAt(0).toUpperCase() + user.role.slice(1).toLowerCase()}</p>
-                            <button className="text-gray-400 text-sm hover:text-gray-300">View Resume</button>
+                            <p className="text-black dark:text-gray-300">{user.role.charAt(0).toUpperCase() + user.role.slice(1).toLowerCase()}</p>
+                            <button className="text-black dark:text-gray-400 text-sm hover:text-gray-300">View Resume</button>
                         </div>
-                        <p className="text-gray-400 mt-1">Playing long term games with long term people</p>
+                        <p className="text-black dark:text-gray-400 mt-1">Playing long term games with long term people</p>
                     </div>
 
                     {/* Stats */}
 
-                    <div className="flex gap-4 mt-4 text-sm text-gray-400">
+                    <div className="flex gap-4 mt-4 text-sm text-black dark:text-gray-400">
                         <span><strong className="text-gray-200">{user?.connections?.friend?.length ? user.connections.friend.length : '0'}</strong> Connections</span>
                         <span><strong className="text-gray-200">0</strong> Circle Members</span>
                     </div>
 
                     {/* Tags */}
                     <div className="flex flex-wrap gap-2 mt-4">
-                        <span className="px-3 py-1 bg-gray-800 rounded-full text-sm flex items-center gap-1">
+                        <span className="px-3 py-1  bg-gray-300 text-black dark:bg-gray-800 dark:text-white rounded-full text-sm flex items-center gap-1">
                             <span>🖥</span> Software Engineering
                         </span>
-                        <span className="px-3 py-1 bg-gray-800 rounded-full text-sm flex items-center gap-1">
+                        <span className="px-3 py-1  bg-gray-300 text-black dark:bg-gray-800 dark:text-white rounded-full text-sm flex items-center gap-1">
                             <span>⭐</span> Founder
                         </span>
-                        <span className="px-3 py-1 bg-gray-800 rounded-full text-sm flex items-center gap-1">
+                        <span className="px-3 py-1  bg-gray-300 text-black dark:bg-gray-800 dark:text-white rounded-full text-sm flex items-center gap-1">
                             <span>₿</span> Crypto Enthusiast
                         </span>
-                        <span className="px-3 py-1 bg-gray-800 rounded-full text-sm flex items-center gap-1">
+                        <span className="px-3 py-1  bg-gray-300 text-black dark:bg-gray-800 dark:text-white rounded-full text-sm flex items-center gap-1">
                             <span>💻</span> Developer
                         </span>
-                        <span className="px-3 py-1 bg-gray-800 rounded-full text-sm flex items-center gap-1">
+                        <span className="px-3 py-1  bg-gray-300 text-black dark:bg-gray-800 dark:text-white rounded-full text-sm flex items-center gap-1">
                             <span>👨‍💻</span> Freelancer
                         </span>
-                        <span className="px-3 py-1 bg-gray-800 rounded-full text-sm flex items-center gap-1">
+                        <span className="px-3 py-1  bg-gray-300 text-black dark:bg-gray-800 dark:text-white rounded-full text-sm flex items-center gap-1">
                             <span>🔓</span> Open Source
                         </span>
                     </div>
@@ -165,22 +176,16 @@ const ProfileComponent = ({ user }) => {
                         {['linkedin', 'twitter', 'github', 'dev.to', 'medium', 'youtube', 'telegram'].map((platform) => (
                             <button
                                 key={platform}
-                                className="w-8 h-8 bg-gray-800 rounded-full hover:bg-gray-700 transition-colors"
+                                className="w-8 h-8  bg-gray-300 text-black dark:bg-gray-800 dark:text-white rounded-full hover:bg-gray-700 transition-colors"
                             />
                         ))}
                     </div>
 
-                    {/* Badges */}
-                    <div className="flex gap-2 mt-4">
-                        <div className="w-8 h-8 bg-blue-500 rounded-lg"></div>
-                        <div className="w-8 h-8 bg-orange-500 rounded-lg"></div>
-                    </div>
-
                     {/* Front Page Link */}
                     {user?.profile?.website.length > 0 &&
-                        <div className="mt-6 flex items-center justify-between bg-gray-800 p-4 rounded-lg">
+                        <div className="mt-6 flex items-center justify-between  bg-gray-300 text-black dark:bg-gray-800 dark:text-white p-4 rounded-lg">
                             <div>
-                                <p className="text-sm text-gray-400">My Front Page:</p>
+                                <p className="text-sm text-black dark:text-gray-400">My Front Page:</p>
                                 <p className="text-blue-400">{user.profile.website[0]}</p>
                             </div>
                             <button className="px-4 py-1 bg-blue-500 hover:bg-blue-600 rounded-full text-white flex items-center gap-2 transition-colors">
@@ -189,7 +194,20 @@ const ProfileComponent = ({ user }) => {
                         </div>}
                 </div>
 
+                <div className='w-full px-3 '>
+                    {user?.profile?.posts?.length > 0
+                        ? user.profile.posts.map(post => (<div key={post._id}
+                            className='w-full'>
+                            <PostDiv postInfo={post} />
+                        </div>))
+                        : <div>Hmm.. Empty Empty</div>
+                    }
+                </div>
+
             </div>
+
+
+
 
         </div>
     );
@@ -198,6 +216,13 @@ const ProfileComponent = ({ user }) => {
 
 
 
+const ConnectButton = () => {
+    return (
+        <button className="px-4 py-1 bg-blue-500 hover:bg-blue-600 rounded-full text-white transition-colors">
+            Connect
+        </button>
+    )
+}
 
 
 // import React from "react";
@@ -240,7 +265,7 @@ const ProfileComponent = ({ user }) => {
 //                 {/* Profile Info */}
 //                 <div className="ml-6">
 //                     <h1 className="text-2xl font-bold">Daniel Nelson</h1>
-//                     <p className="text-gray-400">@danielnelson</p>
+//                     <p className="text-black dark:text-gray-400">@danielnelson</p>
 //                     <div className="flex items-center gap-2 mt-2 text-sm text-gray-300">
 //                         <Globe size={16} /> <span>Global</span>
 //                         <span>•</span>
@@ -260,10 +285,10 @@ const ProfileComponent = ({ user }) => {
 //             {/* Bio Section */}
 //             <div className="mt-6 ml-4">
 //                 <p>Software Engineer, Showcase</p>
-//                 <p className="text-gray-400 mt-2">
+//                 <p className="text-black dark:text-gray-400 mt-2">
 //                     Playing long-term games with long-term people
 //                 </p>
-//                 <div className="flex items-center mt-2 gap-4 text-gray-400">
+//                 <div className="flex items-center mt-2 gap-4 text-black dark:text-gray-400">
 //                     <span>315 Followers</span>
 //                     <span>•</span>
 //                     <span>328 Following</span>
@@ -272,16 +297,16 @@ const ProfileComponent = ({ user }) => {
 
 //             {/* Tags and Badges */}
 //             <div className="flex flex-wrap gap-2 mt-4 ml-4">
-//                 <div className="flex items-center gap-1 bg-gray-800 px-2 py-1 rounded-full text-sm">
+//                 <div className="flex items-center gap-1  bg-gray-300 text-black dark:bg-gray-800 dark:text-white px-2 py-1 rounded-full text-sm">
 //                     <Code2 size={16} /> Software Engineering
 //                 </div>
-//                 <div className="flex items-center gap-1 bg-gray-800 px-2 py-1 rounded-full text-sm">
+//                 <div className="flex items-center gap-1  bg-gray-300 text-black dark:bg-gray-800 dark:text-white px-2 py-1 rounded-full text-sm">
 //                     <Star size={16} /> Founder
 //                 </div>
-//                 <div className="flex items-center gap-1 bg-gray-800 px-2 py-1 rounded-full text-sm">
+//                 <div className="flex items-center gap-1  bg-gray-300 text-black dark:bg-gray-800 dark:text-white px-2 py-1 rounded-full text-sm">
 //                     <Briefcase size={16} /> Crypto Enthusiast
 //                 </div>
-//                 <div className="flex items-center gap-1 bg-gray-800 px-2 py-1 rounded-full text-sm">
+//                 <div className="flex items-center gap-1  bg-gray-300 text-black dark:bg-gray-800 dark:text-white px-2 py-1 rounded-full text-sm">
 //                     <Settings size={16} /> Developer
 //                 </div>
 //             </div>

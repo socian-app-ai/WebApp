@@ -1,6 +1,13 @@
+/* eslint-disable react/prop-types */
 import { FaBuilding, FaChalkboardTeacher, FaMedapps } from "react-icons/fa";
 import { IoMdHome } from "react-icons/io";
 import { MdWorkOutline } from "react-icons/md";
+
+
+import { useState } from "react";
+import { ChevronRight } from "lucide-react";
+import { UserPlus } from "lucide-react";
+
 
 // import { AllOut, Explore } from "@mui/icons-material";
 import { Link } from "react-router-dom";
@@ -143,14 +150,15 @@ function Sidebar() {
            dark:bg-[#171718] dark:text-white 
            h-screen py-4 px-3 fixed
 
+           overflow-y-auto
+           overflow-x-hidden
            border-r dark:border-[#696969a4]
            
            `}
     >
       {/* bg-sidebar-pattern bg-bg-var-sidebar dark:bg-bg-var-sidebar-dark */}
-      <nav className="mt-16">
+      <nav className="mt-12">
         <ul className="border-b border-[#787878] flex flex-col">
-          <CreateSocietyButton />
 
           {menuItems.map((item, idx) => (
             <Link
@@ -166,17 +174,20 @@ function Sidebar() {
           ))}
         </ul>
 
-        <TopCommunitiesDropdown />
-        <TopCommunitiesDropdown isOpenParam={true} />
 
-        <div className=" absolute bottom-0 w-full">
-          <button className="rounded-md px-2 py-1 bg-[#2C2C2C] text-[#9F9F9F] font-bold ">
-            <p className="text-md flex flex-row justify-center items-center">
-              {" "}
-              <UserPlus size={15} /> Invite Friends
-            </p>
-          </button>
-        </div>
+        <CreateSocietyButton />
+
+        <TopCommunitiesDropdown title="Top Socities" />
+        <TopCommunitiesDropdown
+          title="My Socities"
+          isOpenParam={true}
+          data={
+            authUser.joinedSocieties
+          } />
+
+        <UpcomingEvents />
+
+
 
         {/* <div>
           <h5>Subscribed Socieites</h5>
@@ -201,23 +212,27 @@ function Sidebar() {
           </ul>
         </div> */}
       </nav>
+
+      <div className="flex flex-row justify-center w-full">
+        <button className="rounded-md px-2 py-1 bg-[#2C2C2C] text-[#9F9F9F] font-bold ">
+          <p className="text-md flex flex-row justify-center items-center">
+            {" "}
+            <UserPlus size={15} /> Invite Friends
+          </p>
+        </button>
+      </div>
     </div>
   );
 }
 export default Sidebar;
 
-import { useState } from "react";
-import { ChevronRight } from "lucide-react";
-import { UserPlus } from "lucide-react";
 
-function TopCommunitiesDropdown({ isOpenParam }) {
+function TopCommunitiesDropdown({ title, isOpenParam, data }) {
   const [isOpen, setIsOpen] = useState(isOpenParam ?? false);
 
-  const communities = [
-    { name: "DevHelp", icon: "📂", notification: true },
-    { name: "Learn Javascript", icon: "🟨", notification: false },
-    { name: "Aviyel", icon: "🟣", notification: false },
-  ];
+
+
+  console.log("HI", data)
 
   return (
     <div className="text-[#787878] px-2">
@@ -232,17 +247,17 @@ function TopCommunitiesDropdown({ isOpenParam }) {
         >
           <ChevronRight size={18} />
         </span>
-        <p className="text-sm">Top Societies</p>
+        <p className="text-sm">{title}</p>
       </div>
 
       {/* Dropdown Items */}
       {isOpen && (
         <ul className="px-1">
-          {communities.map((community, index) => (
+          {data?.length && (data.length > 0) && data.map((society, index) => (
             <li key={index} className="flex items-center p-2 cursor-pointer">
-              <span className="mr-1">{community.icon}</span>
-              <span className="text-sm">{community.name}</span>
-              {/* {community.notification && (
+              <span className="mr-1">{society?.icon ? society.icon : "🟣"}</span>
+              <span className="text-sm">{society.name}</span>
+              {/* {society.notification && (
                 <span className="w-2 h-2 bg-red-500 rounded-full ml-auto"></span>
               )} */}
             </li>
@@ -252,3 +267,69 @@ function TopCommunitiesDropdown({ isOpenParam }) {
     </div>
   );
 }
+
+
+
+
+
+const eventsData = [
+  {
+    date: "20",
+    month: "Dec",
+    title: "Product Designer...",
+    interested: "78K interested",
+    going: "7.7K going",
+  },
+  {
+    date: "28",
+    month: "Jan",
+    title: "Product Designer...",
+    interested: "31K interested",
+    going: "7.7K going",
+  },
+  {
+    date: "12",
+    month: "Feb",
+    title: "Indonesian Frontend...",
+    interested: "12K interested",
+    going: "3.2K going",
+  },
+];
+
+const UpcomingEvents = () => {
+  return (
+    <div className="px-2  font-sans">
+      {/* Header */}
+      <div className="flex text-[#787878] justify-between items-center mb-4">
+        <h2 className="text-sm  font-semibold">Upcoming event</h2>
+        <span className=" text-xs rounded-full">12</span>
+      </div>
+
+      {/* Events List */}
+      <div className="space-y-4">
+        {eventsData.map((event, index) => (
+          <div key={index} className="flex items-center space-x-3">
+            {/* Date */}
+            <div className="bg-gray-700 w-8 h-10 flex flex-col items-center justify-center rounded-md">
+              <p className="text-sm font-bold">{event.date}</p>
+              <p className="text-xs text-gray-300 uppercase">{event.month}</p>
+            </div>
+            {/* Event Details */}
+            <div>
+              <p className="text-sm font-medium truncate w-[200px]">
+                {event.title}
+              </p>
+              <p className="text-xs text-gray-400">
+                {event.interested} · {event.going}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+
+
+

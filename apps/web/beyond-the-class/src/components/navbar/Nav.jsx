@@ -105,7 +105,7 @@
 
 
 import { Bell, Search, ChevronDown, MenuIcon } from "lucide-react";
-import ThemeSwitcher from "../ThemeSwitcher";
+import ThemeSwitcher, { ThemeSwitcher2 } from "../ThemeSwitcher";
 import { useState } from "react";
 import { useAuthContext } from "../../context/AuthContext";
 import CreatePostButton from "../../pages/society/post/CreatePostButton";
@@ -126,15 +126,19 @@ function Navbar() {
     const [isDropdownOpen, setDropdownOpen] = useState(false);
 
     return (
-        <nav className="w-full fixed z-40 bg-[#101011] text-white flex items-center justify-between px-4 py-2 shadow-md">
+        <nav className="w-full fixed z-50 bg-white text-black dark:bg-[#101011] dark:text-white flex items-center justify-between px-4 py-2 shadow-md">
             {/* Left Section */}
+            {/* Mobile Menu Icon */}
+            {width < 768 && (
+                <MenuIcon className="mx-2" size={22} onClick={toggleSideBar} />
+            )}
             <div className="flex items-center gap-4">
-                <ThemeSwitcher />
+                {/* <ThemeSwitcher /> */}
 
                 <div className="flex justify-center items-center">
                     <div className="flex items-center md:items-end justify-end">
                         <img
-                            className="h-9 w-9 lg:h-10 lg:w-10"
+                            className="h-9 w-9 lg:h-10 lg:w-10 hidden md:block"
                             src={
                                 authUser &&
                                 authUser.university &&
@@ -143,10 +147,10 @@ function Navbar() {
                             alt="Campus Logo"
                         />
                         <div className="flex flex-col ml-2 -space-y-1">
-                            <h5 className="font-semibold hidden md:block text-lg md:text-xl">
+                            <h5 className="font-semibold text-md sm:text-lg md:text-xl">
                                 Beyond The Class.co
                             </h5>
-                            <p className="text-xs font-light">
+                            <p className="text-xs font-light  hidden md:block ">
                                 {authUser &&
                                     authUser.university &&
                                     authUser?.university?.campusId?.name}
@@ -157,7 +161,7 @@ function Navbar() {
             </div>
 
             {/* Search Input */}
-            <div className="flex-1 mx-4 relative max-w-[50%]">
+            <div className="hidden md:flex flex-1 mx-4 relative max-w-[50%]">
                 <Search
                     size={20}
                     className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
@@ -171,9 +175,15 @@ function Navbar() {
 
             <div className="h-8 border-l-2 w-0 mx-2 border-[#696969a4]"></div>
 
+            <div className="hidden md:block">
+                <ThemeSwitcher />
+            </div>
             {/* Right Section - User Profile */}
-            <div className="flex w-[25%] justify-start items-center relative">
-                <CreatePostButton />
+            <div className="flex w-min md:w-[25%] justify-start items-center relative">
+                <div className="hidden md:flex">
+                    <CreatePostButton />
+
+                </div>
                 <div
                     className="flex w-max items-center gap-2 cursor-pointer relative"
                     onClick={() => setDropdownOpen(!isDropdownOpen)}
@@ -191,15 +201,19 @@ function Navbar() {
                         {isDropdownOpen ? <ChevronUp /> : <ChevronDown />}
                     </span>
 
+
                     {/* Dropdown Menu */}
                     {isDropdownOpen && (
-                        <div className="absolute top-10 left-0  
+                        <div className="absolute top-10 right-0 md:left-0
+                        bg-white text-black border-[#4d4d4d]  
                         dark:bg-[#171718] dark:text-white dark:border-[#696969a4] border
-                         rounded-sm shadow-sm w-full">
+                         rounded-sm shadow-sm w-40 md:w-full">
                             <ul className="text-sm">
                                 <Link to={routesForLinks.user + "/" + authUser._id} className="block px-4 py-2 hover:bg-gray-200 dark:hover:bg-[#2B3236] cursor-pointer">
                                     Profile
                                 </Link>
+                                <ThemeSwitcher2 />
+
                                 <li className="px-4 py-2 hover:bg-gray-200 dark:hover:bg-[#2B3236] cursor-pointer">
                                     Settings
                                 </li>
@@ -217,10 +231,7 @@ function Navbar() {
 
             </div>
 
-            {/* Mobile Menu Icon */}
-            {width < 768 && (
-                <MenuIcon className="mx-2" size={22} onClick={toggleSideBar} />
-            )}
+
         </nav>
     );
 }

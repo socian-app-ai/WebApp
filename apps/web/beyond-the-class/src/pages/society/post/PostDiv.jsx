@@ -21,15 +21,17 @@ import { useNavigate } from 'react-router-dom';
 export default function PostDiv({ society, postInfo }) {
     const [showHoverCard, setShowHoverCard] = useState(false);
 
+    console.log("INFO", postInfo)
+
 
     const navigate = useNavigate()
 
     return (
         <Link
-            to={`${society.name}/comments/${postInfo._id}/${postInfo.title.toString().replace(/\s+/g, '-')}`}
-            className="block"
+            to={`${society?.name ?? "unknown"}/comments/${postInfo._id}/${postInfo.title.toString().replace(/\s+/g, '-')}`}
+            className="block max-w-2xl"
         >
-            <article className="bg-white dark:bg-gray-900 rounded-lg shadow-sm hover:shadow-md transition-shadow border border-gray-200 dark:border-gray-700">
+            <article className="bg-white dark:bg-[#1E1F24] rounded-lg shadow-sm hover:shadow-md transition-shadow border border-gray-200 dark:border-gray-700">
                 <div className="p-4">
                     {/* Header */}
                     <div className="flex items-center justify-between mb-3">
