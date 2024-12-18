@@ -122,35 +122,42 @@ function Sidebar() {
       path: `/super/societies`,
       icon: <FaMedapps className="w-5" />,
     },
-  ]
+  ];
 
   const processMenu = [];
   // Select menu based on user role
   const menuItems = authUser
-    ?
-    authUser.super_role === 'super'
+    ? authUser.super_role === "super"
       ? superMenu
-      :
-      (authUser.role === "student"
+      : authUser.role === "student"
         ? studentMenu
         : authUser.role === "alumni"
           ? alumniMenu
-          : externalOrgMenu)
+          : externalOrgMenu
     : processMenu;
 
   return (
     <div
-      className={`${sideBarState ? "left-0" : "-left-[100rem]"
-        }  z-20 w-64 bg-sidebar-pattern bg-bg-var-sidebar dark:bg-bg-var-sidebar-dark  dark:text-white h-screen p-4 fixed`}
+      className={`${sideBarState ? "left-0" : "-left-[100rem]"}  z-20 w-60
+         bg-[#171718] text-white
+           dark:bg-[#171718] dark:text-white 
+           h-screen py-4 px-3 fixed
+
+           border-r dark:border-[#696969a4]
+           
+           `}
     >
-      <nav className="mt-12">
-        <ul className="border-b flex flex-col">
+      {/* bg-sidebar-pattern bg-bg-var-sidebar dark:bg-bg-var-sidebar-dark */}
+      <nav className="mt-16">
+        <ul className="border-b border-[#787878] flex flex-col">
           <CreateSocietyButton />
-          {menuItems.map((item) => (
+
+          {menuItems.map((item, idx) => (
             <Link
               to={item.path}
               key={item.name}
-              className="flex justify-start items-center p-2 rounded hover:bg-slate-100 dark:hover:bg-[#2B3236]"
+              // ${idx === 5 && ' border-b-2'}
+              className={`text-sm text-[#787878] flex justify-start items-center p-2 rounded hover:bg-slate-100 dark:hover:bg-[#2B3236]`}
               onClick={() => width < 768 && setSideBarState(false)}
             >
               {item.icon}
@@ -159,7 +166,19 @@ function Sidebar() {
           ))}
         </ul>
 
-        <div>
+        <TopCommunitiesDropdown />
+        <TopCommunitiesDropdown isOpenParam={true} />
+
+        <div className=" absolute bottom-0 w-full">
+          <button className="rounded-md px-2 py-1 bg-[#2C2C2C] text-[#9F9F9F] font-bold ">
+            <p className="text-md flex flex-row justify-center items-center">
+              {" "}
+              <UserPlus size={15} /> Invite Friends
+            </p>
+          </button>
+        </div>
+
+        {/* <div>
           <h5>Subscribed Socieites</h5>
           <ul className="border-b flex flex-col">
             {authUser &&
@@ -180,58 +199,56 @@ function Sidebar() {
                 </Link>
               ))}
           </ul>
-        </div>
+        </div> */}
       </nav>
     </div>
   );
 }
 export default Sidebar;
 
-// function Sidebar() {
-//     const { sideBarState, setSideBarState } = useSetSideBarState();
-//     const { width } = useWindowDimensions();
+import { useState } from "react";
+import { ChevronRight } from "lucide-react";
+import { UserPlus } from "lucide-react";
 
-//     const { userData, setUserData } = useUserData()
-//     const menuItems = [
-//         { name: "Home", path: "/", icon: <IoMdHome className="w-5" /> },
-//         { name: "Teachers", path: "/teachers/reviews", icon: <FaChalkboardTeacher className="w-5" /> },
-//         { name: "Past Papers", path: "/pastpapers/program-name", icon: <FaMedapps className="w-5" /> },
-//         { name: "Explore", path: "/", icon: <Explore className="w-5" /> },
-//         { name: "All", path: "/", icon: <AllOut className="w-5" /> }
-//     ];
+function TopCommunitiesDropdown({ isOpenParam }) {
+  const [isOpen, setIsOpen] = useState(isOpenParam ?? false);
 
-//     if (userData) {
-//         if (userData.role === ' student') {
-//             menuItems.push(
-//                 { name: "Student", path: "/", icon: <IoMdHome className="w-5" /> },
-//             )
-//         }
-//     }
+  const communities = [
+    { name: "DevHelp", icon: "📂", notification: true },
+    { name: "Learn Javascript", icon: "🟨", notification: false },
+    { name: "Aviyel", icon: "🟣", notification: false },
+  ];
 
-//     return (
-//         <div className={`${sideBarState ? 'left-0' : '-left-[100rem]'} sidebar-custom-css  z-20 w-64 bg-white dark:bg-[#191919] dark:text-white h-screen p-4 fixed border-right-half`}>
+  return (
+    <div className="text-[#787878] px-2">
+      {/* Dropdown Header */}
+      <div
+        className="flex items-center  py-1  cursor-pointer"
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        <span
+          className={`transform  transition-transform ${isOpen ? "rotate-90" : "rotate-0"
+            }`}
+        >
+          <ChevronRight size={18} />
+        </span>
+        <p className="text-sm">Top Societies</p>
+      </div>
 
-//             <nav className="mt-12 ">
-//                 <ul className="border-b flex flex-col">
-//                     {menuItems.map((item) => (
-//                         <Link
-//                             to={item.path}
-//                             key={item.name}
-//                             className={`flex justify-start items-center p-2 rounded hover:bg-slate-100 dark:hover:bg-[#2B3236] cursor-pointer `}
-//                             onClick={() => {
-
-//                                 if (width < 768) {
-//                                     setSideBarState(false)
-//                                 }
-//                             }}
-//                         >
-//                             {item.icon}
-//                             <p className="ml-2">{item.name}</p>
-//                         </Link>
-//                     ))}
-//                 </ul>
-//             </nav>
-
-//         </div>
-//     );
-// }
+      {/* Dropdown Items */}
+      {isOpen && (
+        <ul className="px-1">
+          {communities.map((community, index) => (
+            <li key={index} className="flex items-center p-2 cursor-pointer">
+              <span className="mr-1">{community.icon}</span>
+              <span className="text-sm">{community.name}</span>
+              {/* {community.notification && (
+                <span className="w-2 h-2 bg-red-500 rounded-full ml-auto"></span>
+              )} */}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}

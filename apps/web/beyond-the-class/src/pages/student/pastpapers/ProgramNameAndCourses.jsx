@@ -156,7 +156,9 @@ export default function ProgramNameAndCourses() {
                 // console.log("Flattened Departments:", allDepartments);
 
                 setDepartments(allDepartments);
-                // console.log("Departments: ", departments)
+
+                // setCourses(allDepartments[3].subjects.map(v => v))
+                console.log("Departments: ", departments)
             } catch (error) {
                 console.error(error.message)
             }
@@ -193,7 +195,7 @@ export default function ProgramNameAndCourses() {
     };
 
     return (
-        <Box className='w-full min-h-svh relative '>
+        <Box className='w-full min-h-svh relative px-2 pt-8'>
             <div>
                 <div className="flex flex-col md:flex-row">
                     <Box className="flex flex-col lg:flex-row w-full lg:items-center">

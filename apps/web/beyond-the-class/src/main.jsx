@@ -33,6 +33,8 @@ import { AuthContextProvider } from './context/AuthContext.jsx';
 import OTPPage from './pages/otp/OTPPage.jsx';
 import UniPosts from './pages/student/universities/UniPosts.jsx';
 import CampusesPosts from './pages/student/campuses/CampusesPosts.jsx';
+import ProfilePage from './pages/ProfilePage.jsx';
+
 
 const router = createBrowserRouter([
   {
@@ -58,6 +60,7 @@ const router = createBrowserRouter([
         element: <RoleBasedRoute allowedRoles={['student', 'alumni', 'ext_org', 'teacher']} />,
         children: [
           { index: true, element: <Layout><AllHome /></Layout> },
+          { path: 'user/:id', element: <Layout><ProfilePage /></Layout> },
 
         ],
       },

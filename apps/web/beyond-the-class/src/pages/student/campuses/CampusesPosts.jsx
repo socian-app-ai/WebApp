@@ -42,7 +42,7 @@ export default function CampusesPosts() {
     }, []);
 
     return (
-        <div className="min-h-screen ">
+        <div className="min-h-screen px-2 pt-8">
             {/* <p className="p-10 m-10 font-extrabold text-4xl">CREATE UI FIRST</p> */}
 
 
@@ -59,6 +59,11 @@ export default function CampusesPosts() {
                 </div>
             )}
 
+
         </div>
+
     );
 }
+
+
+

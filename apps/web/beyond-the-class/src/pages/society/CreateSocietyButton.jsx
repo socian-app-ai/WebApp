@@ -207,6 +207,7 @@ import React, { useState } from "react";
 import { Layers, Users, Globe, Tag, PlusCircle, XCircle } from "lucide-react";
 import { useAuthContext } from "../../context/AuthContext";
 import axiosInstance from "../../config/users/axios.instance";
+import { Plus } from "lucide-react";
 
 const CreateSocietyButton = () => {
     const { authUser } = useAuthContext();
@@ -286,9 +287,9 @@ const CreateSocietyButton = () => {
         <div>
             <button
                 onClick={toggleModal}
-                className="flex items-center bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors"
+                className="flex w-100 items-center bg-[#5298D6] text-white px-3 py-1 rounded-md hover:bg-[#222b3f] transition-colors"
             >
-                <PlusCircle className="mr-2" size={20} />
+                <Plus className="mr-1" size={18} />
                 Create Society
             </button>
 

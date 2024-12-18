@@ -61,7 +61,7 @@ export default function StudentDashboard() {
   }, []);
 
   return (
-    <div className="min-h-screen ">
+    <div className="min-h-screen pt-8 px-2">
       {/* <p className="p-10 m-10 font-extrabold text-4xl">CREATE UI FIRST</p> */}
       <div className="sticky w-full pb-4">
         <div className="flex overflow-x-auto space-x-4 flex-row ">
@@ -80,7 +80,7 @@ export default function StudentDashboard() {
 
 
       {posts.length > 0 && (
-        <div className="space-y-4 w-2/3">
+        <div className="space-y-4 w-100 md:w-4/5 lg:w-2/3">
           {posts.map((post) => {
             // console.log("POST-", post)
             return (<PostDiv key={post._id} postInfo={post} society={post.society} />

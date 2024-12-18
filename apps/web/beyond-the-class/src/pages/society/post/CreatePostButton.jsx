@@ -111,7 +111,7 @@ const CreatePostButton = () => {
         <div className="relative">
             <button
                 onClick={toggleModal}
-                className="flex items-center justify-center w-10 h-10 bg-blue-500 text-white rounded-full shadow-lg hover:bg-blue-600 transition-colors duration-300"
+                className="flex items-center justify-center w-10 h-10 text-white rounded-full shadow-lg  transition-colors duration-300"
             >
                 <Plus size={24} />
             </button>

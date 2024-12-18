@@ -18,7 +18,7 @@ export default function OneDiscussion() {
     const sliderRef = useRef(null);
     const navigate = useNavigate();
 
-    console.log(years,subject,t)
+    console.log(years, subject, t)
 
     const settings = {
         // dots: true,
@@ -43,7 +43,11 @@ export default function OneDiscussion() {
         <div className="flex flex-col p-4 sm:p-6">
             <div className="m-2 w-full h-[60vh] overflow-auto border border-gray-200 dark:border-gray-600 rounded-lg" key={`${term}-${examType}`}>
                 {/* <PdfReact pdf={pdfItem.file} /> */}
-                <iframe className="w-100 h-100" src={t.file.pdf}></iframe> 
+                <iframe
+                    className="w-full h-full "
+                    src={`${t.file.pdf}#toolbar=0&navpanes=0&scrollbar=0`}
+                    style={{ border: "none" }}
+                ></iframe>
 
             </div>
             <div className="p-2 text-center text-xs sm:text-sm text-white">
@@ -81,15 +85,15 @@ export default function OneDiscussion() {
     //     }
     //     return slides;
     // };
-    
+
     const generateSlides = () => {
         const slides = [];
-    
+
         // Ensure `years` is an object
         if (typeof years === 'object') {
             Object.keys(years).forEach(yearKey => {
                 const yearDocuments = years[yearKey];
-                
+
                 yearDocuments.forEach(doc => {
                     if (doc.file && doc.file.pdf) {
                         slides.push(renderPdfSlide(doc.file, yearKey, doc.name, 'General'));
@@ -99,10 +103,10 @@ export default function OneDiscussion() {
         } else {
             console.warn("Expected 'years' to be an object but received:", years);
         }
-    
+
         return slides;
     };
-    
+
     return (
         <div className="min-h-screen w-full p-2 dark:bg-[#1b1b1bb8]">
 
@@ -111,14 +115,18 @@ export default function OneDiscussion() {
                 <h6 className="text-2xl font-bold p-2 text-gray-800 dark:text-gray-200">{subject}</h6>
             </div>
 
-            <div className="w-full mt-2 relative overflow-hidden">
+            <div className="w-full mt-2 relative overflow-hidden custom-scrollbar">
 
-                <Slider arrows={false} {...settings} ref={sliderRef} className="w-full max-w-full mt-5">
+                <Slider arrows={false} {...settings} ref={sliderRef} className="w-full custom-scrollbar max-w-full mt-5">
                     {t && (
                         <div key={t._id} className="flex flex-col p-4 sm:p-6">
                             <div className="m-2 w-full h-[60vh] overflow-auto border border-gray-200 dark:border-gray-600">
                                 {/* <PdfReact pdf={t.file} /> */}
-                                <iframe className="w-100 h-100" src={t.file.pdf}></iframe> 
+                                <iframe
+                                    className="w-full h-full "
+                                    src={`${t.file.pdf}#toolbar=0&navpanes=0&scrollbar=0`}
+                                    style={{ border: "none" }}
+                                ></iframe>
                                 {/* {t.file} */}
                             </div>
                             <div className="p-2 text-center text-xs sm:text-sm">

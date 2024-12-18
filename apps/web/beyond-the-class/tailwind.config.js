@@ -33,10 +33,10 @@ export default {
         "bg-var-dark": "var(--var-bg-dark)",
         "bg-primary": "var(--var-bg-primary)"
       },
-      backgroundImage: {
-        "sidebar-pattern": "url('https://arc.net/noise-light.png')",
-        "navbar-pattern": "url('https://arc.net/noise-light.png')",
-      },
+      // backgroundImage: {
+      //   "sidebar-pattern": "url('https://arc.net/noise-light.png')",
+      //   "navbar-pattern": "url('https://arc.net/noise-light.png')",
+      // },
     },
   },
   plugins: [],

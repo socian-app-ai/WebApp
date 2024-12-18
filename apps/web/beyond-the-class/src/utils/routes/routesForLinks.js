@@ -2,6 +2,7 @@ const routesForLinks = {
     signup: "/signup",
     login: "/login",
     home: "/",
+    user: '/user'
 };
 
 export default routesForLinks;

@@ -5,7 +5,7 @@ import axiosInstance from "../../../config/users/axios.instance";
 export default function CourseInfo() {
   const { id } = useParams();
   const [pastPapers, setPastPapers] = useState(null); // Hold past papers data
-  
+
   const [subjectName, setSubjectName] = useState(null);
   const [error, setError] = useState(null); // Track errors
   const navigate = useNavigate();
@@ -36,7 +36,7 @@ export default function CourseInfo() {
   };
 
   return (
-    <div className="min-h-screen w-full">
+    <div className="min-h-screen w-full pt-8 px-2">
       <p className="font-bold">{subjectName}</p>
       {pastPapers.map((paper, index) => (
         <div key={index} className="mb-4">

@@ -3,7 +3,7 @@ import React from 'react'
 export default function AlumniHome() {
 
     return (
-        <div className='min-h-screen w-full'>
+        <div className='min-h-screen w-full px-2 pt-8'>
             <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4  w-full'>
                 <div className=' border p-2 my-2 mx-2 md:mx-5'>All time user : <strong>19.2K</strong></div>
 

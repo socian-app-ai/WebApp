@@ -2,7 +2,7 @@
 
 export default function TeacherDashboard() {
     return (
-        <div>
+        <div className="px-2 pt-8">
 
         </div>
     )
