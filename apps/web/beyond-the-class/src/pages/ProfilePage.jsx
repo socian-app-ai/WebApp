@@ -62,8 +62,9 @@ export default ProfilePage;
 
 
 const ProfileComponent = ({ user }) => {
+    const { authUser } = useAuthContext()
 
-    console.log("THIS USER", user)
+    console.log("THIS USER", user, authUser, "\n", authUser._id === user._id)
 
     return (
         <div>
@@ -95,9 +96,9 @@ const ProfileComponent = ({ user }) => {
 
 
                                 </div>
-                                <div className='block md:hidden'>
+                                {!(authUser._id === user._id) && <div className='block md:hidden'>
                                     <ConnectButton />
-                                </div>
+                                </div>}
 
                             </div>
 
@@ -122,7 +123,7 @@ const ProfileComponent = ({ user }) => {
                         </div>
 
                         {/* Action Buttons */}
-                        <div className="hidden md:flex gap-2">
+                        {!(authUser._id === user._id) && <div className="hidden md:flex gap-2">
                             <ConnectButton />
                             <button className="p-2 hover: bg-gray-300 text-black dark:bg-gray-800 dark:text-white rounded-full transition-colors">
                                 <Mail className="w-5 h-5" />
@@ -130,7 +131,7 @@ const ProfileComponent = ({ user }) => {
                             <button className="p-2 hover: bg-gray-300 text-black dark:bg-gray-800 dark:text-white rounded-full transition-colors">
                                 <MoreHorizontal className="w-5 h-5" />
                             </button>
-                        </div>
+                        </div>}
                     </div>
 
                     {/* Bio */}
