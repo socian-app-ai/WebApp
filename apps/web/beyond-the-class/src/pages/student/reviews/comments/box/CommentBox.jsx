@@ -10,7 +10,7 @@ import { useParams } from "react-router-dom";
 
 
 export default function CommentBox() {
-    const { id} = useParams()
+    const { id } = useParams()
 
     const { authUser } = useAuthContext()
     const [rating, setRating] = useState(0);
@@ -56,7 +56,7 @@ export default function CommentBox() {
 
     return (
         <form onSubmit={handleSubmit} className="m-4 ">
-            <Card className="bg-gray-100 dark:bg-[#222222] " sx={{ borderRadius: '1rem' }}>
+            <Card className="bg-gray-100 dark:bg-[#222222] " sx={{ borderRadius: '0.5rem' }}>
 
                 {!authUser ? (
                     <div className="p-4 flex justify-between">

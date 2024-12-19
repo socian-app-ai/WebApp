@@ -1,4 +1,4 @@
-/* eslint-disable react/prop-types */
+
 import { CircularProgress } from "@mui/material";
 import { useEffect, useState } from "react";
 import { Search } from "@mui/icons-material";
@@ -77,7 +77,7 @@ export default function ReviewPage() {
   };
 
   return (
-    <div className="min-h-screen    relative text-black dark:text-white ">
+    <div className="min-h-screen  pt-8 px-4  relative text-black dark:text-white ">
       <div className="container ">
         <div
           className={`scroll w-full  z-[5] p-1 -m-4 fixed   flex flex-col md:flex-row ${backgroundColor}  `}

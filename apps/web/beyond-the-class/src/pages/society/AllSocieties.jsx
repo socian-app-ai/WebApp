@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 
 
 // import React, { useState, useEffect } from 'react';
@@ -140,6 +141,7 @@ import axiosInstance from '../../config/users/axios.instance';
 import { Building } from 'lucide-react';
 import { Building2Icon } from 'lucide-react';
 import { routesForApi } from '../../utils/routes/routesForLinks';
+import { useAuthContext } from '../../context/AuthContext';
 
 export default function AllSocieties() {
     const [activeTab, setActiveTab] = useState('universities');
@@ -152,6 +154,8 @@ export default function AllSocieties() {
     const [loadingUni, setLoadingUni] = useState(false);
     const [loadingCampuses, setLoadingCampuses] = useState(false);
     const [loadingCampus, setLoadingCampus] = useState(false);
+
+    const { authUser } = useAuthContext()
 
     useEffect(() => {
         const fetchUni = async () => {
@@ -200,7 +204,7 @@ export default function AllSocieties() {
     }, []);
 
     const SocietyCard = ({ society }) => (
-        <Link to={`/student/society/${society._id}`} className="block transition-transform duration-200 hover:scale-105">
+        <Link to={`/${authUser.role}/society/${society._id}`} className="block transition-transform duration-200 hover:scale-105">
             <div className="h-full bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-xl transition-shadow p-6">
                 <h3 className="text-xl font-semibold mb-2">{society.name}</h3>
                 <p className="text-gray-600 dark:text-gray-300 text-sm line-clamp-2">

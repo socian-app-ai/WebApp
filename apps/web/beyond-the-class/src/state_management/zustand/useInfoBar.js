@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
 export const useSetInfoBarState = create((set) => ({
-  infoBarState: true,
+  infoBarState: false,
   setInfoBarState: (infoBarState) => set({ infoBarState }),
   toggleInfoBar: () => set((state) => ({ infoBarState: !state.infoBarState })),
   unSetInfoBar: () => set({ infoBarState: true }),

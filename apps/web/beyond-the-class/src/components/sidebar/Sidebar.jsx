@@ -3,11 +3,9 @@ import { FaBuilding, FaChalkboardTeacher, FaMedapps } from "react-icons/fa";
 import { IoMdHome } from "react-icons/io";
 import { MdWorkOutline } from "react-icons/md";
 
-
 import { useState } from "react";
 import { ChevronRight } from "lucide-react";
 import { UserPlus } from "lucide-react";
-
 
 // import { AllOut, Explore } from "@mui/icons-material";
 import { Link } from "react-router-dom";
@@ -16,6 +14,7 @@ import { useSetSideBarState } from "../../state_management/zustand/useSideBar";
 import { useAuthContext } from "../../context/AuthContext";
 import { useEffect } from "react";
 import CreateSocietyButton from "../../pages/society/CreateSocietyButton";
+import { useNavigate } from "react-router-dom";
 
 function Sidebar() {
   const { sideBarState, setSideBarState } = useSetSideBarState();
@@ -34,6 +33,8 @@ function Sidebar() {
   }, [width, setSideBarState]);
 
   // Define different menus for different roles
+
+  // ==========Student
   const studentMenu = [
     { name: "Home", path: `/`, icon: <IoMdHome className="w-5" /> },
     {
@@ -80,6 +81,7 @@ function Sidebar() {
     },
   ];
 
+  // ===========Alumni
   const alumniMenu = [
     {
       name: "Alumni Home",
@@ -94,6 +96,50 @@ function Sidebar() {
     // Add more alumni-specific links
   ];
 
+  // ==========Teacher
+  const teacherMenu = [
+    { name: "Home", path: `/`, icon: <IoMdHome className="w-5" /> },
+    {
+      name: "All Uni",
+      path: `/teacher/all`,
+      icon: <FaMedapps className="w-5" />,
+    },
+    {
+      name: "Inter Campus",
+      path: `/teacher/inter`,
+      icon: <FaMedapps className="w-5" />,
+    },
+
+    {
+      name: "Alumni",
+      path: `/teacher/alumni`,
+      icon: <MdWorkOutline className="w-5" />,
+    },
+    // {
+    //   name: "Past Papers",
+    //   path: `/teacher/search-courses`,
+    //   icon: <FaMedapps className="w-5" />,
+    // },
+    {
+      name: "Teachers Review",
+      path: `/teacher/feedbacks`,
+      icon: <FaChalkboardTeacher className="w-5" />,
+    },
+
+
+    {
+      name: "Cafe Info",
+      path: `/teacher/cafe`,
+      icon: <FaMedapps className="w-5" />,
+    },
+    {
+      name: "Societies",
+      path: `/teacher/societies`,
+      icon: <FaMedapps className="w-5" />,
+    },
+  ];
+
+  // =========EXT_ORG
   const externalOrgMenu = [
     {
       name: "Organizations",
@@ -103,6 +149,7 @@ function Sidebar() {
     // Add more external organization links
   ];
 
+  //========= SUPER
   const superMenu = [
     {
       name: "Organizations",
@@ -133,15 +180,19 @@ function Sidebar() {
 
   const processMenu = [];
   // Select menu based on user role
-  const menuItems = authUser
-    ? authUser.super_role === "super"
-      ? superMenu
-      : authUser.role === "student"
-        ? studentMenu
-        : authUser.role === "alumni"
-          ? alumniMenu
-          : externalOrgMenu
-    : processMenu;
+  let menuItems = processMenu;
+
+  menuItems = authUser
+    ?
+    (
+      authUser.super_role === "super" ? superMenu
+        : authUser.role === "student" ? studentMenu
+          : authUser.role === "alumni" ? alumniMenu
+            : authUser.role === "teacher" ? teacherMenu
+              : authUser.role === "ext_org" ? externalOrgMenu
+                : processMenu
+    ) : processMenu
+
 
   return (
     <div
@@ -159,7 +210,6 @@ function Sidebar() {
       {/* bg-sidebar-pattern bg-bg-var-sidebar dark:bg-bg-var-sidebar-dark */}
       <nav className="mt-12">
         <ul className="border-b border-[#787878] flex flex-col">
-
           {menuItems.map((item, idx) => (
             <Link
               to={item.path}
@@ -174,20 +224,16 @@ function Sidebar() {
           ))}
         </ul>
 
-
         <CreateSocietyButton />
 
         <TopCommunitiesDropdown title="Top Socities" />
         <TopCommunitiesDropdown
           title="My Socities"
           isOpenParam={true}
-          data={
-            authUser.joinedSocieties
-          } />
+          data={authUser.joinedSocieties}
+        />
 
         <UpcomingEvents />
-
-
 
         {/* <div>
           <h5>Subscribed Socieites</h5>
@@ -226,13 +272,12 @@ function Sidebar() {
 }
 export default Sidebar;
 
-
 function TopCommunitiesDropdown({ title, isOpenParam, data }) {
   const [isOpen, setIsOpen] = useState(isOpenParam ?? false);
 
-
-
-  console.log("HI", data)
+  const { authUser } = useAuthContext()
+  const navigate = useNavigate()
+  console.log("HI", data);
 
   return (
     <div className="text-[#787878] px-2">
@@ -253,24 +298,25 @@ function TopCommunitiesDropdown({ title, isOpenParam, data }) {
       {/* Dropdown Items */}
       {isOpen && (
         <ul className="px-1">
-          {data?.length && (data.length > 0) && data.map((society, index) => (
-            <li key={index} className="flex items-center p-2 cursor-pointer">
-              <span className="mr-1">{society?.icon ? society.icon : "🟣"}</span>
-              <span className="text-sm">{society.name}</span>
-              {/* {society.notification && (
+          {data?.length &&
+            data.length > 0 &&
+            data.map((society, index) => (
+              <li onClick={() => navigate(`${authUser.role}/society/${society._id}`)}
+                key={index} className="flex items-center p-2 cursor-pointer">
+                <span className="mr-1">
+                  {society?.icon ? society.icon : "🟣"}
+                </span>
+                <span className="text-sm">{society.name}</span>
+                {/* {society.notification && (
                 <span className="w-2 h-2 bg-red-500 rounded-full ml-auto"></span>
               )} */}
-            </li>
-          ))}
+              </li>
+            ))}
         </ul>
       )}
     </div>
   );
 }
-
-
-
-
 
 const eventsData = [
   {
@@ -329,7 +375,3 @@ const UpcomingEvents = () => {
     </div>
   );
 };
-
-
-
-

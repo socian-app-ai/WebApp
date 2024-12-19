@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { Users, Award, Calendar, Eye, EyeOff, User, ChevronRight } from "lucide-react";
 import PostDiv from "./post/PostDiv";
 import axiosInstance from "../../config/users/axios.instance";
+import { useAuthContext } from "../../context/AuthContext";
 
 export default function Society() {
 
@@ -12,12 +13,19 @@ export default function Society() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
     const [joined, setJoined] = useState(false);
+    const { authUser } = useAuthContext()
 
     const handleJoinOrLeave = async (e) => {
         e.preventDefault();
         try {
-            const response = await axiosInstance.post(`/api/society/join-society/${society._id}`);
-            setJoined(response.data.joined);
+            if (joined) {
+                const response = await axiosInstance.post(`/api/society/leave-society/${society._id}`);
+                setJoined(response.data.joined);
+            } else {
+
+                const response = await axiosInstance.post(`/api/society/join-society/${society._id}`);
+                setJoined(response.data.joined);
+            }
         } catch (err) {
             setError("Failed to update membership status.");
             console.error("Error updating membership:", err);
@@ -28,8 +36,10 @@ export default function Society() {
         const fetchSociety = async () => {
             try {
                 const response = await axiosInstance.get(`/api/society/${id}`);
+                console.log("society", response.data)
                 setSociety(response.data);
                 setPosts(response.data.postsCollectionRef.posts);
+                setJoined(response.data.members.members.includes(authUser._id))
             } catch (err) {
                 setError("Error fetching society data.");
                 console.error("Error fetching society details:", err);

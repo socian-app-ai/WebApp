@@ -34,6 +34,7 @@ import OTPPage from './pages/otp/OTPPage.jsx';
 import UniPosts from './pages/student/universities/UniPosts.jsx';
 import CampusesPosts from './pages/student/campuses/CampusesPosts.jsx';
 import ProfilePage from './pages/ProfilePage.jsx';
+import Feedback from './pages/teacher/feedback/Feedback.jsx';
 
 
 const router = createBrowserRouter([
@@ -64,7 +65,7 @@ const router = createBrowserRouter([
 
         ],
       },
-
+      // SUPER
       {
         element: <SuperRoleBasedRoute allowedRoles={['super']} />,
         path: 'super',
@@ -85,6 +86,7 @@ const router = createBrowserRouter([
           { path: "pastpapers/upload", element: <Layout> <UploadForm /></Layout> },
         ],
       },
+      // Students
       {
         element: <RoleBasedRoute allowedRoles={['student']} />,
         path: "student",
@@ -109,6 +111,32 @@ const router = createBrowserRouter([
 
         ],
       },
+      // TEachers
+      {
+        element: <RoleBasedRoute allowedRoles={['teacher']} />,
+        path: "teacher",
+        children: [
+          // { path: "all", element: <Layout> <UniPosts /></Layout> },
+          // { path: "inter", element: <Layout> <CampusesPosts /></Layout> },
+
+
+          { path: "feedbacks", element: <Layout> <Feedback /></Layout> },
+          // { path: "teacher/comments/:id", element: <Layout> <TeacherReviewPage /></Layout> },
+
+          // { path: "search-courses", element: <Layout> <ProgramNameAndCourses /></Layout> },
+          // { path: "course-info/:id", element: <Layout> <CourseInfo /></Layout> },
+          // { path: ":courseType/:subjectId", element: <Layout> <TypeCourse /></Layout> },
+          // { path: "discussion/:toBeDisccusedId", element: <Layout> <OneDiscussion /></Layout> },
+
+
+
+          // { path: "gps", element: <Layout> <CreateEvent /></Layout> },
+          { path: "societies", element: <Layout> <AllSocieties /></Layout> },
+          { path: "society/:id", element: <Layout> <Society /></Layout> },
+
+        ],
+      },
+
       { path: "unauthorized", element: <Unauthorized /> },
       { path: "*", element: <Navigate to="/" replace /> },
     ],

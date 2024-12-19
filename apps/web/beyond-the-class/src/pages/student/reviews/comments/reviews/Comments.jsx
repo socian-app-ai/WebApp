@@ -6,10 +6,11 @@ import { useAuthContext } from '../../../../../context/AuthContext';
 import axiosInstance from '../../../../../config/users/axios.instance';
 import { useParams } from 'react-router-dom';
 import VoteReview from '../vote/VoteReview';
+import BpCheckbox from '../../../../../components/MaterialUI/BpCheckbox';
 
 export default function Reviews() {
 
-    const {id} = useParams()
+    const { id } = useParams()
     const teacherId = id
 
 
@@ -29,7 +30,7 @@ export default function Reviews() {
     const [editAnonymous, setEditAnonymous] = useState(false);
 
     useEffect(() => {
-       
+
         const fetchComments = async () => {
             try {
                 const { data } = await axiosInstance.get(`/api/teacher/reviews/comments?id=${teacherId}`);
@@ -120,8 +121,9 @@ export default function Reviews() {
 
         const displayEmail = t.hideUser
             ? maskEmail(t.userId?.personalEmail || t.userId?.universityEmail)
-            : (t.userId?.personalEmail || t.userId?.universityEmail|| t.userId?.email || '[deleted]');
+            : (t.userId?.personalEmail || t.userId?.universityEmail || t.userId?.email || '[deleted]');
 
+        console.log("user id", t.userId)
 
         return <Card key={t._id} className="bg-gray-100 dark:bg-[#222222] md:mx-2 mb-2">
             <CardHeader
@@ -130,7 +132,7 @@ export default function Reviews() {
                         <CardMedia
                             className='w-8 md:w-10'
                             component="img"
-                            image={t.hideUser ? `https://avatar.iran.liara.run/username?username=${t.userId?.name.toString().charAt(0)}` : (t.userId?.profilePic || '')}
+                            image={t.hideUser ? `https://avatar.iran.liara.run/username?username=${t.userId?.name.toString().charAt(0)}` : (t.userId?.profile || `https://avatar.iran.liara.run/username?username=${t.userId?.name.toString().charAt(0)}`)}
                             alt={t.userId?.name ? (t.hideUser ? maskName(t.userId?.name) : t.userId?.name) : '[deleted]'}
                         />
                     </Avatar>
@@ -157,7 +159,7 @@ export default function Reviews() {
                     </div>
                 }
                 title={<p className="mt-2 text-xs md:text-md lg:text-md-lg font-semibold dark:text-white">
-                    {t.userId?.name ? (t.hideUser ? maskName(t.userId?.name) : t.userId?.name)  : '[deleted]'} <span className='font-thin'>{t.__v > 0 ? '(Edited)' : ''}</span>
+                    {t.userId?.name ? (t.hideUser ? maskName(t.userId?.name) : t.userId?.name) : '[deleted]'} <span className='font-thin'>{t.__v > 0 ? '(Edited)' : ''}</span>
                 </p>}
                 subheader={<p className="text-xs md:text-md lg:text-md-lg text-gray-600 dark:text-gray-400">
                     {displayEmail}
