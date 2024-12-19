@@ -196,10 +196,13 @@ const ProfileComponent = ({ user }) => {
 
                 <div className='w-full px-3 '>
                     {user?.profile?.posts?.length > 0
-                        ? user.profile.posts.map(post => (<div key={post._id}
-                            className='w-full'>
-                            <PostDiv postInfo={post} />
-                        </div>))
+                        ? user.profile.posts.map(post => {
+
+                            return (<div key={post._id}
+                                className='w-full'>
+                                <PostDiv postInfo={post} />
+                            </div>)
+                        })
                         : <div>Hmm.. Empty Empty</div>
                     }
                 </div>

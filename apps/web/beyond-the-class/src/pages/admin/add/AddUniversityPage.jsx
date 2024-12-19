@@ -56,7 +56,7 @@ export default function AddUniversityPage() {
     };
 
     return (
-        <div className="space-y-2">
+        <div className="space-y-2 pt-8">
             {/* Save button */}
             <div className="relative">
                 <button

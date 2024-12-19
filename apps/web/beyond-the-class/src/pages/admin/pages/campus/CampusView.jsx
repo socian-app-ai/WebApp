@@ -41,7 +41,7 @@ export default function CampusView() {
     };
 
     return (
-        <div className="flex flex-col font-thin">
+        <div className="flex flex-col font-thin pt-8">
             <div className="flex flex-row justify-between mb-4">
                 <h1 className="text-2xl font-bold">All Campuses</h1>
                 {/* Button to Create a New Campus */}

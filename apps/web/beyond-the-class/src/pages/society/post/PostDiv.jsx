@@ -68,7 +68,7 @@ export default function PostDiv({ society, postInfo }) {
                                     }}
 
                                     className="text-sm font-medium text-gray-900 dark:text-white">
-                                    {postInfo?.author ? `u/${postInfo.author.name}` : 'u/[deleted-user]'}
+                                    {postInfo?.author ? `${postInfo.author.name}` : '[deleted-user]'}
                                 </p>
                                 <p className="text-xs text-gray-500 dark:text-gray-400">
                                     {formatTimeDifference(postInfo.createdAt)}

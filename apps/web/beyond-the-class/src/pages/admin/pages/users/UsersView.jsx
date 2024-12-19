@@ -19,7 +19,7 @@ export default function UsersView() {
         fetchAllUsers()
     }, [])
     return (
-        <div className='flex flex-col font-thin'>
+        <div className='flex flex-col font-thin pt-8'>
             {allUsers.map((user) => (
                 <div className='flex flex-row space-x-3 bg-gray-600 rounded-lg my-1' key={user._id}>
                     <div className='w-10 h-10 rounded-md overflow-hidden'>

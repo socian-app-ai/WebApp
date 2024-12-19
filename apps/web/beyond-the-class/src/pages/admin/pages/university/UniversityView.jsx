@@ -71,7 +71,7 @@ export default function UniversityView() {
     };
 
     return (
-        <div className="flex flex-col font-thin">
+        <div className="flex flex-col font-thin pt-8">
             <div className='flex flex-row justify-between'>
                 <h1 className="text-2xl font-bold mb-4">All Universities</h1>
                 {/* Button to Create a New University */}
