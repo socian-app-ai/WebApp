@@ -9,11 +9,17 @@ export default function TeacherCard({ teacher }) {
         <Link to={`/student/teacher/comments/${teacher._id}`} className="bg-gray-100 dark:bg-[#222222] rounded-lg shadow-xl p-4 mt-5 mx-2">
             <div className="flex items-center mb-4">
                 <div className="w-10 h-10 overflow-hidden rounded-full">
-                    <img
+                    {teacher.imageUrl !== '' ? <img
                         className="object-cover w-full h-full"
                         src={teacher.imageUrl}
                         alt={`${teacher.name}'s photo`}
                     />
+                        :
+                        <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
+                            <span className="text-white text-sm font-medium">
+                                {teacher.name.charAt(0).toUpperCase() || 'D'}
+                            </span>
+                        </div>}
                 </div>
                 <div className="ml-3">
                     <h2 className="text-md font-semibold dark:text-white">{teacher.name}</h2>
@@ -44,9 +50,9 @@ export default function TeacherCard({ teacher }) {
                     className="dark:text-white dark:border-white"
                 />
                 }
-                <div className="w-full min-h-10 max-h-20 bg-gray-400 rounded-md p-1">
-                    <p className="line-clamp-3">Most voted review here. Most voted review here. Most voted review here. Most voted review here. Most voted review here.</p>
-                </div>
+                {teacher?.topComment && <div className="w-full min-h-10 max-h-20 bg-[#222B3F] rounded-md p-1">
+                    <p className="line-clamp-3">{teacher.topComment}</p>
+                </div>}
             </div>
 
 
