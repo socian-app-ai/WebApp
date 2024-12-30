@@ -7,6 +7,7 @@ import { Avatar } from '@mui/material';
 import { Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import axiosInstance from "../../../config/users/axios.instance";
+import toast from "react-hot-toast";
 
 
 // eslint-disable-next-line react/prop-types
@@ -16,8 +17,9 @@ export function CreateCampusComponent({ universityId }) {
         universityOrigin: universityId,
         name: '',
         location: '',
-        studentPattern: [],
-        teacherPattern: [],
+        // studentPattern: [],
+        // teacherPattern: [],
+        regex: ''
     });
 
     useEffect(() => {
@@ -29,83 +31,92 @@ export function CreateCampusComponent({ universityId }) {
         }
     }, [universityId]);
 
-    // console.log("campusdata", campusData)
-    const [studentInput, setStudentInput] = useState('');
-    const [teacherInput, setTeacherInput] = useState('');
-    const [editStudentIndex, setEditStudentIndex] = useState(null);
-    const [editTeacherIndex, setEditTeacherIndex] = useState(null);
+    // // console.log("campusdata", campusData)
+    // const [studentInput, setStudentInput] = useState('');
+    // const [teacherInput, setTeacherInput] = useState('');
+    // const [editStudentIndex, setEditStudentIndex] = useState(null);
+    // const [editTeacherIndex, setEditTeacherIndex] = useState(null);
 
 
-    const handleStudentInputChange = (e) => setStudentInput(e.target.value);
+    // const handleStudentInputChange = (e) => setStudentInput(e.target.value);
 
-    const handleAddStudentPattern = () => {
-        if (studentInput.trim()) {
-            setCampusData(prevData => ({
-                ...prevData,
-                studentPattern: [...prevData.studentPattern, studentInput.trim()],
-            }));
-            setStudentInput('');
-        }
-    };
+    // const handleAddStudentPattern = () => {
+    //     if (studentInput.trim()) {
+    //         setCampusData(prevData => ({
+    //             ...prevData,
+    //             studentPattern: [...prevData.studentPattern, studentInput.trim()],
+    //         }));
+    //         setStudentInput('');
+    //     }
+    // };
 
-    const handleEditStudentPattern = (index) => {
-        setEditStudentIndex(index);
-        setStudentInput(campusData.studentPattern[index]);
-    };
+    // const handleEditStudentPattern = (index) => {
+    //     setEditStudentIndex(index);
+    //     setStudentInput(campusData.studentPattern[index]);
+    // };
 
-    const handleSaveStudentEdit = () => {
-        if (editStudentIndex !== null && studentInput.trim()) {
-            const updatedPatterns = [...campusData.studentPattern];
-            updatedPatterns[editStudentIndex] = studentInput.trim();
-            setCampusData(prevData => ({
-                ...prevData,
-                studentPattern: updatedPatterns,
-            }));
-            setEditStudentIndex(null);
-            setStudentInput('');
-        }
-    };
+    // const handleSaveStudentEdit = () => {
+    //     if (editStudentIndex !== null && studentInput.trim()) {
+    //         const updatedPatterns = [...campusData.studentPattern];
+    //         updatedPatterns[editStudentIndex] = studentInput.trim();
+    //         setCampusData(prevData => ({
+    //             ...prevData,
+    //             studentPattern: updatedPatterns,
+    //         }));
+    //         setEditStudentIndex(null);
+    //         setStudentInput('');
+    //     }
+    // };
 
 
-    const handleTeacherInputChange = (e) => setTeacherInput(e.target.value);
+    // const handleTeacherInputChange = (e) => setTeacherInput(e.target.value);
 
-    const handleAddTeacherPattern = () => {
-        if (teacherInput.trim()) {
-            setCampusData(prevData => ({
-                ...prevData,
-                teacherPattern: [...prevData.teacherPattern, teacherInput.trim()],
-            }));
-            setTeacherInput('');
-        }
-    };
+    // const handleAddTeacherPattern = () => {
+    //     if (teacherInput.trim()) {
+    //         setCampusData(prevData => ({
+    //             ...prevData,
+    //             teacherPattern: [...prevData.teacherPattern, teacherInput.trim()],
+    //         }));
+    //         setTeacherInput('');
+    //     }
+    // };
 
-    const handleEditTeacherPattern = (index) => {
-        setEditTeacherIndex(index);
-        setTeacherInput(campusData.teacherPattern[index]);
-    };
+    // const handleEditTeacherPattern = (index) => {
+    //     setEditTeacherIndex(index);
+    //     setTeacherInput(campusData.teacherPattern[index]);
+    // };
 
-    const handleSaveTeacherEdit = () => {
-        if (editTeacherIndex !== null && teacherInput.trim()) {
-            const updatedPatterns = [...campusData.teacherPattern];
-            updatedPatterns[editTeacherIndex] = teacherInput.trim();
-            setCampusData(prevData => ({
-                ...prevData,
-                teacherPattern: updatedPatterns,
-            }));
-            setEditTeacherIndex(null);
-            setTeacherInput('');
-        }
-    };
+    // const handleSaveTeacherEdit = () => {
+    //     if (editTeacherIndex !== null && teacherInput.trim()) {
+    //         const updatedPatterns = [...campusData.teacherPattern];
+    //         updatedPatterns[editTeacherIndex] = teacherInput.trim();
+    //         setCampusData(prevData => ({
+    //             ...prevData,
+    //             teacherPattern: updatedPatterns,
+    //         }));
+    //         setEditTeacherIndex(null);
+    //         setTeacherInput('');
+    //     }
+    // };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        // console.log(campusData);
+        console.log(campusData);
         createNewCampus(campusData)
     };
     const createNewCampus = async (campusData) => {
         try {
-            const res = axiosInstance.post('api/campus/register', campusData)
+            const res = await axiosInstance.post('api/campus/register', campusData)
             // console.log(res.data)
+            if (res.status === 201) {
+                setCampusData({
+                    universityOrigin: '',
+                    name: '',
+                    location: '',
+                    regex: ''
+                });
+                toast.success("Created Successfully")
+            }
         } catch (error) {
             console.error(error)
         }
@@ -148,8 +159,20 @@ export function CreateCampusComponent({ universityId }) {
                         />
                     </div>
 
-
                     <div className='flex flex-row items-baseline space-x-2'>
+                        <p>Regex: </p>
+                        <LabelInputUnderLineCustomizable
+                            type="text"
+                            name="regex"
+                            className="my-2"
+                            placeholder="^[a-zA-Z]{2}\d{2}"
+                            onChange={(e) => setCampusData({ ...campusData, regex: e.target.value })}
+                            value={campusData.regex}
+                        />
+                    </div>
+
+
+                    {/* <div className='flex flex-row items-baseline space-x-2'>
                         <p>Student Pattern: </p>
                         <LabelInputUnderLineCustomizable
                             required={false}
@@ -218,7 +241,7 @@ export function CreateCampusComponent({ universityId }) {
                                 </button>
                             </div>
                         ))}
-                    </div>
+                    </div> */}
                 </div>
 
 
@@ -315,7 +338,7 @@ export function Departments() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post('/api/departments/create-list?campusId=${}&universityId=${}', { departments });
+            const response = await axiosInstance.post('/api/departments/create-list?campusId=${}&universityId=${}', { departments });
             // console.log('Data submitted successfully:', response.data);
         } catch (error) {
             console.error('Error submitting data:', error);
@@ -387,7 +410,7 @@ export default function DepartmentsManager() {
         // Fetch departments with their subjects
         const fetchDepartments = async () => {
             try {
-                const response = await axios.get('/api/departments/');
+                const response = await axiosInstance.get('/api/departments/');
                 setDepartments(response.data);
 
                 // Initialize subject state for each department
@@ -419,7 +442,7 @@ export default function DepartmentsManager() {
 
     const handleSaveSubjects = async (deptId) => {
         try {
-            const response = await axios.post(`/api/departments/${deptId}/update-subjects`, {
+            const response = await axiosInstance.post(`/api/departments/${deptId}/update-subjects`, {
                 subjects: selectedSubjects[deptId],
             });
             // console.log('Subjects updated successfully:', response.data);

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Avatar, createFilterOptions } from '@mui/material';
 import CustomAutocomplete from '../../../components/FilterOption/CustomAutocomplete';
+import axiosInstance from '../../../config/users/axios.instance';
 
 
 export default function useUniversityData() {
@@ -16,7 +17,7 @@ export default function useUniversityData() {
         const fetch = async () => {
             try {
 
-                const response = await axios.get("/api/university/")
+                const response = await axiosInstance.get("/api/university/")
                 // console.log(response.data)
 
                 setUniversities(response.data);

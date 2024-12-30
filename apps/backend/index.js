@@ -110,6 +110,7 @@ const pastpaperRouter = require("./routes/university_related/pastpapers/pastpape
 const academicRouter = require("./routes/university_related/pastpapers/academic.format.route.js");
 const discussionRouter = require("./routes/university_related/pastpapers/discussion.route.js");
 
+
 app.use("/api/super", superProtect, superRouter);
 
 app.use("/api/auth", authRouter);
@@ -117,8 +118,8 @@ app.use("/api/auth", authRouter);
 // app.use('/api/oauth', oAuthRouter);
 // app.use('/api/request', requestRoute);
 // app.use('/email', emailRoute);
-app.use("/api/university", protectRoute, universityRouter);
-app.use("/api/campus", protectRoute, campusRouter);
+app.use("/api/university", superProtect, universityRouter);
+app.use("/api/campus", superProtect, campusRouter);
 
 app.use("/api/teacher", protectRoute, teacherRouter);
 app.use("/api/department", protectRoute, departmentRouter);

@@ -21,7 +21,7 @@ const Layout = ({ children }) => {
       )}
       <Navbar />
 
-      <InfoBar />
+      {infoBarState && <InfoBar />}
       <div
         // dark:bg-gradient-to-br dark:from-blue-200 dark:to-blue-900 bg-gradient-to-br from-blue-200 to-blue-100
         className={`flex-1 pt-10   ${sideBarState && width > 768 ? "ml-60" : ""}
