@@ -73,7 +73,7 @@ export const routesForApi = buildRoutes(baseUrl, {
 
 });
 
-console.log("ROUTES", routesForApi);
+// console.log("ROUTES", routesForApi);
 
 
 
