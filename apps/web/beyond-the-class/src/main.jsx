@@ -71,6 +71,9 @@ const router = createBrowserRouter([
         path: 'super',
         children: [
           { index: true, element: <Layout> <AlumniHome /></Layout> },
+          { path: 'user/:id', element: <Layout><ProfilePage /></Layout> },
+
+
           { path: 'users', element: <Layout><UsersView /></Layout> },
 
           { path: 'universities', element: <Layout><UniversityView /></Layout> },

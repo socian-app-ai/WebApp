@@ -41,9 +41,9 @@ export default function StudentDashboard() {
     const fetch = async () => {
       try {
         const response = await axiosInstance.get(routesForApi.posts.campusAll);
-        console.log("POSTS,", response.data)
+        // console.log("POSTS,", response.data)
         setPosts(response.data)
-        console.log("hie", response)
+        // console.log("hie", response)
       } catch (err) {
         // setError("Error fetching society data.");
         console.error("Error fetching society details:", err);
@@ -55,7 +55,7 @@ export default function StudentDashboard() {
   }, []);
 
   return (
-    <div className="min-h-screen pt-4 px-2 ">
+    <div className="min-h-screen pt-[0.1rem] sm:pt-1 md:pt-4 ">
       {/* <p className="p-10 m-10 font-extrabold text-4xl">CREATE UI FIRST</p> */}
       <div className="fixed bg-[#dcdada] dark:bg-[#171718] w-full p-2">
         <div className="flex overflow-x-auto space-x-4 flex-row ">
@@ -74,13 +74,13 @@ export default function StudentDashboard() {
 
       <div className="mt-10 flex flex-col justify-center items-center w-full lg:w-[90%]  ">
 
-        <div className=" w-full md:w-4/5 lg:w-2/3">
-          <Navbar />
+        <div className="px-2  w-full md:w-4/5 lg:w-2/3">
+          <PostBar authUser={authUser} />
 
         </div>
 
         {posts.length > 0 && (
-          <div className="space-y-4 w-full md:w-4/5 lg:w-2/3">
+          <div className=" w-full md:w-4/5 lg:w-2/3">
             {posts.map((post) => {
               // console.log("POST-", post)
               return (<PostDiv key={post._id} postInfo={post} society={post.society} />
@@ -91,17 +91,12 @@ export default function StudentDashboard() {
       </div>
 
 
-      {/* <div className="pt-5 pl-5 ">
-        <PostComponent />
-        <PostComponent />
-        <PostComponent />
-        <PostComponent />
-      </div> */}
+
     </div>
   );
 }
 
-const Navbar = () => {
+const PostBar = ({ authUser }) => {
   const [postContent, setPostContent] = useState("");
 
   const handleChange = (e) => {
@@ -120,12 +115,18 @@ const Navbar = () => {
   return (
     <div className="max-w-2xl w-full bg-white  dark:bg-[#1c1c1e] p-4  my-2 rounded-lg shadow-md">
       {/* Profile and Input */}
-      <div className="flex items-center border-b border-gray-600 pb-3">
-        <img
-          src="https://via.placeholder.com/40"
-          alt="Profile"
-          className="w-10 h-10 rounded-full mr-3"
-        />
+      <div className="flex flex-col items-start border-b border-gray-600 pb-3">
+        <div className="flex flex-row">
+          <img
+            src="https://via.placeholder.com/40"
+            alt="Profile"
+            className="w-10 h-10 rounded-full mr-3"
+          />
+          <div>
+            <h6>{authUser.name}</h6>
+            <p className="text-balance">public</p>
+          </div>
+        </div>
         <input
           type="text"
           placeholder="What's on your mind?"

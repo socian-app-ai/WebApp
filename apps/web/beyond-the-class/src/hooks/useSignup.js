@@ -11,12 +11,12 @@ const useSignup = () => {
 
     const signup = async ({ universityEmail, personalEmail, password, name, username, universityId, campusId, role,
     }) => {
-        console.log("\nuniversityEmail", universityEmail, "\npersonalEmail", personalEmail, "\npassword", password, "\nusername", username, "\nname", name, "\nuniversityId", universityId, "\ncampusId", campusId, "\nrole", role,)
+        // console.log("\nuniversityEmail", universityEmail, "\npersonalEmail", personalEmail, "\npassword", password, "\nusername", username, "\nname", name, "\nuniversityId", universityId, "\ncampusId", campusId, "\nrole", role,)
         const success = handleInputErrors({
             universityEmail, personalEmail, password, username, name, universityId, campusId, role,
         });
 
-        console.log("secuess? ", success)
+        // console.log("secuess? ", success)
         if (!success) return;
 
         // var  universityEmail = email;

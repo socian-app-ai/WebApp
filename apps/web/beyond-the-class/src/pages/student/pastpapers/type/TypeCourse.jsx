@@ -71,7 +71,7 @@ export default function TypeCourse() {
         );
         setData(res.data.finalResult);
         setSubjectName(res.data.subjectName);
-        console.log(res.data);
+        // console.log(res.data);
       } catch (error) {
         console.error("Error fetching data", error);
         setError("Error loading data.");

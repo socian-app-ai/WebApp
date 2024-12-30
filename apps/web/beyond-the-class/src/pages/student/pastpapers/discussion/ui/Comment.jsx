@@ -90,7 +90,7 @@ function Comment({ comment, onReply, }) {
     }
 
 
-    console.log("Comment", comment)
+    // console.log("Comment", comment)
 
     return (comment.length !== 0 &&
         <div className="w-full mb-4 bg-gray-100 dark:bg-[#151515] rounded-3xl shadow-sm  shadow-[#3f3f3fba] p-4">
@@ -107,7 +107,7 @@ function Comment({ comment, onReply, }) {
 
                 <div className="flex flex-col items-start w-full">
                     <div className="ml-2 mt-1 flex space-x-2">
-                        <p className=" text-sm font-semibold dark:text-white">{comment.user ?  comment.user.username  : '[deleted user]'}</p>
+                        <p className=" text-sm font-semibold dark:text-white">{comment.user ? comment.user.username : '[deleted user]'}</p>
                         <p className="text-sm text-gray-600 dark:text-gray-400">{new Date(comment.createdAt).toLocaleString()}</p>
                     </div>
                     <p className="text-md ml-2 mt-3 dark:text-white whitespace-pre-line">{comment.content}</p>

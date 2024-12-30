@@ -19,7 +19,7 @@ export const AuthContextProvider = ({ children }) => {
 
                 if (res.status >= 200 && res.status < 300) {
                     setAuthUser(res.data);
-                    console.log("Authenticated user data:", res.data);
+                    // console.log("Authenticated user data:", res.data);
 
                     // Redirect to home if currently on the login page
                     if (window.location.pathname === '/login') {
@@ -31,7 +31,7 @@ export const AuthContextProvider = ({ children }) => {
                 }
             } catch (error) {
                 console.error("Error fetching session data:", error);
-                console.log(window.location.pathname, "thiss", bypassRoutes.some(route => route.test(window.location.pathname)))
+                // console.log(window.location.pathname, "thiss", bypassRoutes.some(route => route.test(window.location.pathname)))
                 // handleUnauthenticated();// dont use here otherwise routes wont work, had to solve this issue for hours
                 if (window.location.pathname === '/signup' || bypassRoutes.some(route => route.test(window.location.pathname))) {
                     return

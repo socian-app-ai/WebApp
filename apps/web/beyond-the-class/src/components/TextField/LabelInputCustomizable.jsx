@@ -290,7 +290,7 @@ export function LabelDropDownSearchableInputCustomizable({
 
     // Handle option selection
     const handleSelect = (selectedOption) => {
-        console.log("selected opyion", selectedOption)
+        // console.log("selected opyion", selectedOption)
         onChange({ target: { value: selectedOption._id } }); // Pass _id as value
         setSearchTerm(selectedOption.name); // Display name in input
         setUniversityPlusCampusDomain(selectedOption.domain)

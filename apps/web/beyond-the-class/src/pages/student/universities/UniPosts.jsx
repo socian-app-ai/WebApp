@@ -28,9 +28,9 @@ export default function UniPosts() {
         const fetch = async () => {
             try {
                 const response = await axiosInstance.get(routesForApi.posts.uniAll);
-                console.log("POSTS,", response.data)
+                // console.log("POSTS,", response.data)
                 setPosts(response.data)
-                console.log("hie", response)
+                // console.log("hie", response)
             } catch (err) {
                 // setError("Error fetching society data.");
                 console.error("Error fetching society details:", err);
@@ -42,15 +42,15 @@ export default function UniPosts() {
     }, []);
 
     return (
-        <div className="min-h-screen px-2 pt-8">
-            {/* <p className="p-10 m-10 font-extrabold text-4xl">CREATE UI FIRST</p> */}
+        <div className="min-h-screen mt-10 flex flex-col justify-center items-center w-full lg:w-[90%] ">
+            <p className="m-2 font-extrabold text-2xl">See what is happening in all Pakistan Universities</p>
 
 
 
 
 
             {posts.length > 0 && (
-                <div className="space-y-4 w-2/3">
+                <div className="space-y-4 w-full md:w-4/5 lg:w-2/3">
                     {posts.map((post) => {
                         // console.log("POST-", post)
                         return (<PostDiv key={post._id} postInfo={post} society={post.society} />

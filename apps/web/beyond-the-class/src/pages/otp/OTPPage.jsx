@@ -110,7 +110,7 @@ export default function OTPPage() {
     const timerRef = useRef(null);
 
     const { id } = useParams();
-    console.log('OTP ID:', id);
+    // console.log('OTP ID:', id);
 
     // Start countdown timer for OTP resend
     useEffect(() => {
@@ -193,7 +193,7 @@ export default function OTPPage() {
                 });
                 if (response.status === 200) {
                     // Handle success (redirect or show success message)
-                    console.log('OTP verified successfully!', response);
+                    // console.log('OTP verified successfully!', response);
                     // setAuthUser(response.data)
                     window.location.href = '/'
                 }

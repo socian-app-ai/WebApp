@@ -1,3 +1,7 @@
+/**
+ * These are normal links (not used for api)
+ * used on button, links etc
+ */
 const routesForLinks = {
     signup: "/signup",
     login: "/login",
@@ -39,7 +43,7 @@ const buildRoutes = (base, paths) => {
     }
     return result;
 };
-
+// routesForApi.auth.forgotPassword => /api/auth/forgot-password
 export const routesForApi = buildRoutes(baseUrl, {
     auth: {
         logout: 'logout',

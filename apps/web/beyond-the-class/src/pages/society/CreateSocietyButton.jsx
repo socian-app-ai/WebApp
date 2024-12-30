@@ -210,7 +210,7 @@ import axiosInstance from "../../config/users/axios.instance";
 import { Plus } from "lucide-react";
 
 const CreateSocietyButton = () => {
-    const { authUser } = useAuthContext();
+    // const { authUser } = useAuthContext();
     const [showModal, setShowModal] = useState(false);
 
     const categories = ['Food', 'Technology', 'Arts', 'Sports', 'Academic'];
@@ -255,7 +255,7 @@ const CreateSocietyButton = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            console.log("formDAA", formData)
+            // console.log("formDAA", formData)
             const response = await axiosInstance.post("/api/society/create", formData);
             if (response.status === 201) {
                 setSuccess("Society created successfully!");
@@ -465,7 +465,7 @@ const SelectField = ({
         >
             <option value="" disabled>Select {label}</option>
             {options.map((option) => {
-                console.log("option", option)
+                // console.log("option", option)
                 return <option
                     key={option._id || option.allow || option}
                     value={option._id || option.allow || option}

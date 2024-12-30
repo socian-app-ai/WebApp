@@ -159,8 +159,11 @@
 import useWindowDimensions from "../../hooks/useWindowDimensions";
 import { useAuthContext } from "../../context/AuthContext";
 import { useSetInfoBarState } from "../../state_management/zustand/useInfoBar";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { ChevronDown } from "lucide-react";
+import axiosInstance from "../../config/users/axios.instance";
+import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 function InfoBar() {
   const { infoBarState, setInfoBarState } = useSetInfoBarState();
@@ -231,6 +234,28 @@ const trendingData = [
 ];
 
 const Trending = () => {
+
+  const [topSocities, setTopSocieties] = useState(null)
+
+  const { authUser } = useAuthContext();
+
+  useEffect(() => {
+    const fetchFriends = async () => {
+      try {
+        const res = await axiosInstance.get('/api/user/societies-top', {
+          params: { id: authUser._id }
+        });
+        setTopSocieties(res.data); // Adjusted to match the response structure
+        // console.log("topSocities", res);
+      } catch (error) {
+        console.error("Error fetching friends data:", error);
+      }
+    };
+    fetchFriends();
+  }, [authUser._id]);
+
+  const navigate = useNavigate()
+
   return (
     <div className="dark:bg-[#1E1F24] dark:border-gray-700  dark:text-white   
     bg-[#F9FAFB] border-gray-300 border text-gray-900
@@ -248,19 +273,19 @@ const Trending = () => {
 
       {/* Trending List */}
       <div className="space-y-2">
-        {trendingData.map((item, index) => (
-          <div
-            key={index}
+        {topSocities && topSocities.length != 0 && topSocities.map((society) => (
+          <Link
+            onClick={() => navigate(`${authUser.role}/society/${society._id}`)} key={society._id}
             className="flex justify-between items-center border-b border-gray-700 pb-2 last:border-b-0"
           >
             <div>
-              <p className="text-sm font-normal">{item.title}</p>
-              <p className="text-xs text-gray-400">{item.postsToday} posts today</p>
+              <p className="text-sm font-normal">{society.name}</p>
+              <p className="text-xs text-gray-400">{society.postsToday} posts today</p>
             </div>
             <span className="bg-gray-700 text-xs px-2 py-1 rounded-full">
-              {item.inHour}
+              {/* {item.inHour} */}
             </span>
-          </div>
+          </Link>
         ))}
       </div>
 
@@ -278,40 +303,27 @@ const Trending = () => {
 };
 
 
-
-const friendsData = [
-  {
-    name: "Bilal",
-    status: "Last active recently",
-    image: "https://i.pravatar.cc/40?img=1",
-    badge: 12,
-  },
-  {
-    name: "Ahmed Tariq",
-    status: "Last active recently",
-    image: "https://i.pravatar.cc/40?img=2",
-  },
-  {
-    name: "Hamza Javaid",
-    status: "Last active today",
-    image: "https://i.pravatar.cc/40?img=3",
-    badge: 12,
-  },
-  {
-    name: "Ali Rehman",
-    status: "Last active within a week",
-    image: "https://i.pravatar.cc/40?img=4",
-  },
-  {
-    name: "Haider",
-    status: "Last active today",
-    image: "https://i.pravatar.cc/40?img=5",
-  },
-];
-
 const ConnectionsList = () => {
+  const [friendsData, setFriendsData] = useState(null);
+  const { authUser } = useAuthContext();
+
+  useEffect(() => {
+    const fetchFriends = async () => {
+      try {
+        const res = await axiosInstance.get('/api/user/connections', {
+          params: { id: authUser._id }
+        });
+        setFriendsData(res.data.connections); // Adjusted to match the response structure
+        // console.log("CONNECTIONS", res);
+      } catch (error) {
+        console.error("Error fetching friends data:", error);
+      }
+    };
+    fetchFriends();
+  }, [authUser._id]);
+
   return (
-    <div className="dark:bg-[#1E1F24] dark:border-gray-700  dark:text-white   
+    <div className="dark:bg-[#1E1F24] dark:border-gray-700 dark:text-white
     bg-[#F9FAFB] border-gray-300 border text-gray-900
     max-w-xs p-2 rounded-md shadow-md font-sans">
       {/* Header */}
@@ -326,32 +338,39 @@ const ConnectionsList = () => {
 
       {/* Friends List */}
       <div className="space-y-4">
-        {friendsData.map((friend, index) => (
-          <div key={index} className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              {/* Avatar */}
-              <img
-                src={friend.image}
-                alt={friend.name}
-                className="w-8 h-8 rounded-full"
-              />
-              {/* Name and Status */}
-              <div>
-                <p className="text-sm font-medium">{friend.name}</p>
-                <p className="text-xs text-gray-400">{friend.status}</p>
+        {friendsData && friendsData.length !== 0 ? (
+          friendsData.map((friend, index) => (
+            <div key={index} className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                {/* Avatar */}
+                <img
+                  src={friend?.picture || "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg"}
+                  alt={friend.name}
+                  className="w-8 h-8 rounded-full"
+                />
+                {/* Name and Status */}
+                <div>
+                  <p className="text-sm font-medium">{friend.name}</p>
+                  {friend?.status && <p className="text-xs text-gray-400">{friend.status}</p>}
+                </div>
               </div>
+              {/* Badge */}
+              {friend?.badge && (
+                <span className="bg-gray-700 text-xs px-2 py-1 rounded-full">
+                  {friend.badge}
+                </span>
+              )}
             </div>
-            {/* Badge */}
-            {friend.badge && (
-              <span className="bg-gray-700 text-xs px-2 py-1 rounded-full">
-                {friend.badge}
-              </span>
-            )}
-          </div>
-        ))}
+          ))
+        ) : (
+          <p>No connections found.</p>
+        )}
       </div>
     </div>
   );
 };
+
+
+
 
 

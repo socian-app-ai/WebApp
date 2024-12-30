@@ -1,7 +1,5 @@
 import { useState, useEffect } from 'react';
 
-import { ToggleLeft } from 'lucide-react';
-import { ToggleRight } from 'lucide-react';
 
 const ThemeSwitcher = () => {
   const [theme, setTheme] = useState(() => {
@@ -62,16 +60,11 @@ export default ThemeSwitcher;
 
 
 
-export const ThemeSwitcher2 = () => {
-  const [theme, setTheme] = useState(() => {
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme) {
-      return savedTheme;
-    }
+export const ThemeSwitchers = () => {
 
-    const hour = new Date().getHours();
-    return hour >= 18 || hour < 6 ? 'dark' : 'light';
-  });
+  const [theme, setTheme] = useState(
+    localStorage.getItem('theme') || "light"
+  );
 
 
   useEffect(() => {
@@ -79,26 +72,30 @@ export const ThemeSwitcher2 = () => {
       document.documentElement.classList.add('dark');
     } else {
       document.documentElement.classList.remove('dark');
+      document.documentElement.classList.add('light');
+
     }
 
     localStorage.setItem('theme', theme);
-  }, [theme]);
+  }, [theme, setTheme]);
 
   const toggleTheme = () => {
     setTheme(theme === 'light' ? 'dark' : 'light');
   };
 
+  // console.log("TESTING")
+
   return (
-    <label className="cursor-pointer  w-full relative flex items-center justify-center  ">
-      <input
+    <label className="cursor-pointer   w-full relative flex items-center justify-center  ">
+      {/* <input
         type="checkbox"
         checked={theme === 'dark'}
         onChange={toggleTheme}
         className="hidden"
-      />
+      /> */}
       {/* {theme === 'dark' ? <ToggleRight size={22} /> : <ToggleLeft size={22} />} */}
 
-      <li className="px-4 py-2 w-full  z-50 hover:bg-gray-200 dark:hover:bg-[#2B3236] cursor-pointer">
+      <li onClick={toggleTheme} className="px-4 py-2 w-full  z-50 hover:bg-gray-200 dark:hover:bg-[#2B3236] cursor-pointer">
         Theme
 
       </li>

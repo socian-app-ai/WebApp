@@ -21,6 +21,8 @@ export default function SignUpR() {
     const [role, setRole] = useState("none");
     const [personalEmail, setPersonalEmail] = useState("")
     const [usernameError, setUsernameError] = useState(false)
+    const [usernameLess, setUsernameLess] = useState('')
+
     const { loading, signup } = useSignup();
 
     const [roleError, setRoleError] = useState(false)
@@ -40,7 +42,7 @@ export default function SignUpR() {
             setRoleError(false)
         }
 
-        console.log("DATA", universityCampus)
+        // console.log("DATA", universityCampus)
         if (!usernameError) {
             await signup({
                 universityEmail: universityEmail.toLowerCase(),
@@ -86,9 +88,10 @@ export default function SignUpR() {
 
     const handleUsernameFunction = async () => {
         if (userName.length > 6) {
+            setUsernameLess('')
             handleUsernameSearch(userName)
                 .then((data) => {
-                    console.log("Username exists: ", data)
+                    // console.log("Username exists: ", data)
                     if (data) {
                         setUsernameError(data)
                     } else {
@@ -97,12 +100,13 @@ export default function SignUpR() {
                     }
                 })
                 .catch(() => {
-                    return toast.error("Username error")
+                    // return toast.error("Username error")
                 })
         }
-        else if (userName.length == 6) {
-            toast.error('username must be greater than 6 characters', { duration: 1000 })
+        else if (userName.length <= 6) {
+            setUsernameLess('username must be greater than 6 characters')
 
+            // toast.error('username must be greater than 6 characters', { duration: 1000 })
             return;
         }
 
@@ -160,6 +164,7 @@ export default function SignUpR() {
 
                     <LabelInputCustomizable
                         type="text"
+                        autocomplete="username"
                         name="username"
                         className="my-3 w-full"
                         value={userName}
@@ -172,13 +177,17 @@ export default function SignUpR() {
                         placeholder="beyond_the._.class"
                         width="w-[100%]"
                         inputClassName="w-min-[10rem]"
-                        errorMessage={usernameError ? "Username Already Exists" : ""}
-                        onChange={(e) => setUserName(e.target.value)}
+                        errorMessage={usernameError && "Username Already Exists" || usernameLess !== '' && usernameLess}
+                        onChange={(e) => {
+                            const sanitizedValue = e.target.value.replace(/[^a-z0-9._]/g, "");
+                            setUserName(sanitizedValue)
+                        }}
                     />
 
                     <LabelInputCustomizable
                         type="email"
                         name="universityEmail"
+                        autocomplete="email"
                         className="my-3 w-full"
                         value={universityEmail}
                         label="Your University Email"
@@ -192,6 +201,7 @@ export default function SignUpR() {
 
                     {(role === 'alumni') && <LabelInputCustomizable
                         type="email"
+                        autocomplete="email"
                         name="personalEmail"
                         className="my-3 w-full"
                         value={personalEmail}
@@ -204,11 +214,12 @@ export default function SignUpR() {
 
                     <LabelInputCustomizable
                         type="password"
+                        autocomplete="new-password"
                         name="universityEmailPassword"
                         className="my-4 mb-5 w-full"
                         value={universityEmailPassword}
                         label="Password"
-                        autoComplete="on"
+                        // autoComplete="on"
                         placeholder="Must be 8 Characters long with any special ch"
                         width="w-[100%]"
                         hideShowPass={true}
@@ -254,15 +265,15 @@ const roleList = ["student", "teacher", "alumni"];
 
 // eslint-disable-next-line react/prop-types
 function RoleSelectionBox({ handleRoleChange, roleType, role, roleError }) {
-    console.log("Ero roler", roleError)
+    // console.log("Ero roler", roleError)
     return (
         // <button className={`${roleType === role ? 'bg-slate-500' : 'bg-red-300'} btn glass  p-2 max-h-14 max-w-20`} onClick={() => handleRoleChange(roleType)}>
         //     {roleType}
         // </button>
         <button
             onClick={() => handleRoleChange(roleType)}
-            className={`${roleType === role ? 'bg-stone-100' : 'bg-transparent'} relative inline-block px-6 py-3 font-medium text-text-primary 
-            dark:text-white  border-2 border-white rounded-lg overflow-hidden group 
+            className={`${roleType === role ? 'bg-stone-400 border-black dark:text-black  ' : 'bg-transparent border-white dark:text-white dark:text-text-primary-dark text-text-primary '} relative inline-block px-6 py-3 font-medium  
+             border-2 rounded-lg overflow-hidden group 
             focus:outline-none`}
         >
             <span className={`${roleError && 'border-red-500'} "absolute inset-0 w-full h-full bg-gradient-to-r from-grey-500 via-blue-500 to-purple-500 opacity-30" `}></span>

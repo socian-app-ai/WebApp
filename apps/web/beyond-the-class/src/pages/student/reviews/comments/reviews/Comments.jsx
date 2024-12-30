@@ -123,7 +123,7 @@ export default function Reviews() {
             ? maskEmail(t.userId?.personalEmail || t.userId?.universityEmail)
             : (t.userId?.personalEmail || t.userId?.universityEmail || t.userId?.email || '[deleted]');
 
-        console.log("user id", t.userId)
+        // console.log("user id", t.userId)
 
         return <Card key={t._id} className="bg-gray-100 dark:bg-[#222222] md:mx-2 mb-2">
             <CardHeader

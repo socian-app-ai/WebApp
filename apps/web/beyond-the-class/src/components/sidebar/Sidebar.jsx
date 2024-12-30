@@ -1,4 +1,4 @@
-/* eslint-disable react/prop-types */
+
 import { FaBuilding, FaChalkboardTeacher, FaMedapps } from "react-icons/fa";
 import { IoMdHome } from "react-icons/io";
 import { MdWorkOutline } from "react-icons/md";
@@ -15,6 +15,8 @@ import { useAuthContext } from "../../context/AuthContext";
 import { useEffect } from "react";
 import CreateSocietyButton from "../../pages/society/CreateSocietyButton";
 import { useNavigate } from "react-router-dom";
+import axiosInstance from "../../config/users/axios.instance";
+import SocitiesDropDown from "./sidebarComponents/SocitiesDropDown";
 
 function Sidebar() {
   const { sideBarState, setSideBarState } = useSetSideBarState();
@@ -29,7 +31,7 @@ function Sidebar() {
     if (width > 768) {
       setSideBarState(true);
     }
-    console.log("useEffect");
+    // console.log("useEffect");
   }, [width, setSideBarState]);
 
   // Define different menus for different roles
@@ -197,10 +199,9 @@ function Sidebar() {
   return (
     <div
       className={`${sideBarState ? "left-0" : "-left-[100rem]"}  z-20 w-60
-         bg-[#171718] text-white
+         bg-[#ffffff] text-black
            dark:bg-[#171718] dark:text-white 
            h-screen py-4 px-3 fixed
-
            overflow-y-auto
            overflow-x-hidden
            border-r dark:border-[#696969a4]
@@ -226,11 +227,10 @@ function Sidebar() {
 
         <CreateSocietyButton />
 
-        <TopCommunitiesDropdown title="Top Socities" />
-        <TopCommunitiesDropdown
+        {/* <SocitiesDropDown title="Top Socities" /> */}
+        <SocitiesDropDown
           title="My Socities"
           isOpenParam={true}
-          data={authUser.joinedSocieties}
         />
 
         <UpcomingEvents />
@@ -272,51 +272,6 @@ function Sidebar() {
 }
 export default Sidebar;
 
-function TopCommunitiesDropdown({ title, isOpenParam, data }) {
-  const [isOpen, setIsOpen] = useState(isOpenParam ?? false);
-
-  const { authUser } = useAuthContext()
-  const navigate = useNavigate()
-  console.log("HI", data);
-
-  return (
-    <div className="text-[#787878] px-2">
-      {/* Dropdown Header */}
-      <div
-        className="flex items-center  py-1  cursor-pointer"
-        onClick={() => setIsOpen(!isOpen)}
-      >
-        <span
-          className={`transform  transition-transform ${isOpen ? "rotate-90" : "rotate-0"
-            }`}
-        >
-          <ChevronRight size={18} />
-        </span>
-        <p className="text-sm">{title}</p>
-      </div>
-
-      {/* Dropdown Items */}
-      {isOpen && (
-        <ul className="px-1">
-          {data?.length &&
-            data.length > 0 &&
-            data.map((society, index) => (
-              <li onClick={() => navigate(`${authUser.role}/society/${society._id}`)}
-                key={index} className="flex items-center p-2 cursor-pointer">
-                <span className="mr-1">
-                  {society?.icon ? society.icon : "🟣"}
-                </span>
-                <span className="text-sm">{society.name}</span>
-                {/* {society.notification && (
-                <span className="w-2 h-2 bg-red-500 rounded-full ml-auto"></span>
-              )} */}
-              </li>
-            ))}
-        </ul>
-      )}
-    </div>
-  );
-}
 
 const eventsData = [
   {

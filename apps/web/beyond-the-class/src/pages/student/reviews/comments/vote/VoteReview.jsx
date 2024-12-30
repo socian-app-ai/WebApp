@@ -14,7 +14,7 @@ export default function VoteReview({ review, userData }) {
 
 
     const handleVote = async (voteType) => {
-        console.log("vote handle", voteType)
+        // console.log("vote handle", voteType)
         try {
             const response = await axiosInstance.post('/api/teacher/reviews/comments/vote', {
                 reviewId: review._id,
@@ -23,7 +23,7 @@ export default function VoteReview({ review, userData }) {
             });
 
             const { upvoteCount, downvoteCount } = response.data;
-            console.log(response.data)
+            // console.log(response.data)
 
             setUpvoted(voteType === 'upvote' && !upvoted);
             setDownvoted(voteType === 'downvote' && !downvoted);

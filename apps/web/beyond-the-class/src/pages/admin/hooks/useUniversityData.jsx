@@ -17,7 +17,7 @@ export default function useUniversityData() {
             try {
 
                 const response = await axios.get("/api/university/")
-                console.log(response.data)
+                // console.log(response.data)
 
                 setUniversities(response.data);
                 // console.log("universities: ", universities)
@@ -31,7 +31,7 @@ export default function useUniversityData() {
 
 
     const handleUniversityChange = (event, value) => {
-        console.log("value", value)
+        // console.log("value", value)
         setCurrentUniversity(value)
 
         if (value) {

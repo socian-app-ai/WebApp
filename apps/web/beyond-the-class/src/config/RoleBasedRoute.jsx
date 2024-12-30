@@ -8,7 +8,7 @@ const RoleBasedRoute = ({ allowedRoles }) => {
     if (isLoading) {
         return <div>Loading...</div>;
     }
-    console.log("Auth User in RoleBasedRoute:", authUser);
+    // console.log("Auth User in RoleBasedRoute:", authUser);
 
     // If hits / and is 'super' then redirect to /super
     if (authUser && authUser.super_role === 'super') {
@@ -30,7 +30,7 @@ export const SuperRoleBasedRoute = ({ allowedRoles }) => {
     if (isLoading) {
         return <div>Loading...</div>;
     }
-    console.log("Auth User in SuperRoleBasedRoute:", authUser);
+    // console.log("Auth User in SuperRoleBasedRoute:", authUser);
     return (
         authUser && allowedRoles.includes(authUser.super_role)
             ? <Outlet />

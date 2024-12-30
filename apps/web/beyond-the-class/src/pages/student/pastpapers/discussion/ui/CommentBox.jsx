@@ -6,7 +6,7 @@ import axiosInstance from "../../../../../config/users/axios.instance";
 
 // eslint-disable-next-line react/prop-types
 export default function CommentBox({ discussionId, onComment }) {
-  const {authUser} = useAuthContext()
+    const { authUser } = useAuthContext()
     const [comment, setComment] = useState('');
 
 
@@ -24,7 +24,7 @@ export default function CommentBox({ discussionId, onComment }) {
     };
 
     const handleSubmit = async (event) => {
-        console.log("here", authUser._id)
+        // console.log("here", authUser._id)
         event.preventDefault();
         if (comment.trim()) {
             try {

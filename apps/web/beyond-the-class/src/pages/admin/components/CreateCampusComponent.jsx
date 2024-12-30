@@ -11,7 +11,7 @@ import axiosInstance from "../../../config/users/axios.instance";
 
 // eslint-disable-next-line react/prop-types
 export function CreateCampusComponent({ universityId }) {
-    console.log("was here", universityId)
+    // console.log("was here", universityId)
     const [campusData, setCampusData] = useState({
         universityOrigin: universityId,
         name: '',
@@ -29,7 +29,7 @@ export function CreateCampusComponent({ universityId }) {
         }
     }, [universityId]);
 
-    console.log("campusdata", campusData)
+    // console.log("campusdata", campusData)
     const [studentInput, setStudentInput] = useState('');
     const [teacherInput, setTeacherInput] = useState('');
     const [editStudentIndex, setEditStudentIndex] = useState(null);
@@ -99,15 +99,15 @@ export function CreateCampusComponent({ universityId }) {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log(campusData);
+        // console.log(campusData);
         createNewCampus(campusData)
     };
     const createNewCampus = async (campusData) => {
         try {
             const res = axiosInstance.post('api/campus/register', campusData)
-            console.log(res.data)
+            // console.log(res.data)
         } catch (error) {
-            console.log(error)
+            console.error(error)
         }
     }
 
@@ -316,7 +316,7 @@ export function Departments() {
         e.preventDefault();
         try {
             const response = await axios.post('/api/departments/create-list?campusId=${}&universityId=${}', { departments });
-            console.log('Data submitted successfully:', response.data);
+            // console.log('Data submitted successfully:', response.data);
         } catch (error) {
             console.error('Error submitting data:', error);
         }
@@ -422,7 +422,7 @@ export default function DepartmentsManager() {
             const response = await axios.post(`/api/departments/${deptId}/update-subjects`, {
                 subjects: selectedSubjects[deptId],
             });
-            console.log('Subjects updated successfully:', response.data);
+            // console.log('Subjects updated successfully:', response.data);
         } catch (error) {
             console.error('Error updating subjects:', error);
         }

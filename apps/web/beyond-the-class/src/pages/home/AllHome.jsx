@@ -7,7 +7,7 @@ import AddUniversityPage from "../admin/add/AddUniversityPage";
 
 export default function AllHome() {
   const { authUser, isLoading } = useAuthContext();
-  console.log("here3");
+  // console.log("here3");
 
   if (isLoading) {
     return <div>Loading...</div>;

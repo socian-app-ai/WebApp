@@ -21,7 +21,7 @@ import { useNavigate } from 'react-router-dom';
 export default function PostDiv({ society, postInfo }) {
     const [showHoverCard, setShowHoverCard] = useState(false);
 
-    console.log("INFO", postInfo)
+    // console.log("INFO", postInfo)
 
 
     const navigate = useNavigate()
@@ -29,7 +29,7 @@ export default function PostDiv({ society, postInfo }) {
     return (
         <Link
             to={`${society?.name ?? "unknown"}/comments/${postInfo._id}/${postInfo.title.toString().replace(/\s+/g, '-')}`}
-            className="block max-w-2xl"
+            className="block max-w-2xl m-2"
         >
             <article className="bg-white dark:bg-[#1E1F24] rounded-lg shadow-sm hover:shadow-md transition-shadow border border-gray-200 dark:border-gray-700">
                 <div className="p-4">
@@ -176,7 +176,7 @@ export function ReVote({ postInfo }) {
             });
             const { upVotesCount, downVotesCount, noneSelected } = response.data;
             if (noneSelected) {
-                console.log("here", noneSelected)
+                // console.log("here", noneSelected)
                 setHasUpvoted(false);
                 setHasDownvoted(false);
             } else {
@@ -186,7 +186,7 @@ export function ReVote({ postInfo }) {
             }
             setUpvote(upVotesCount);
             setDownvote(downVotesCount);
-            console.log("HH", upVotesCount, downVotesCount)
+            // console.log("HH", upVotesCount, downVotesCount)
         } catch (error) {
             console.error("Error voting:", error.message);
         } finally {

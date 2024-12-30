@@ -33,14 +33,14 @@ const ProfilePage = () => {
             }
 
         }
-        console.log(id, authUser._id, "user------------")
-        if (id === authUser._id) {
-            setUser(authUser)
+        // console.log(id, authUser._id, "user------------")
+        // if (id === authUser._id) {
+        //     setUser(authUser)
 
-            setLoading(false);
-        } else {
-            fetchUser()
-        }
+        //     setLoading(false);
+        // } else {
+        fetchUser()
+        // }
     }, [id, authUser]);
 
 
@@ -64,7 +64,7 @@ export default ProfilePage;
 const ProfileComponent = ({ user }) => {
     const { authUser } = useAuthContext()
 
-    console.log("THIS USER", user, authUser, "\n", authUser._id === user._id)
+    // console.log("THIS USER", user, authUser, "\n", authUser._id === user._id)
 
     return (
         <div>
@@ -93,11 +93,9 @@ const ProfileComponent = ({ user }) => {
                                         :
                                         <div className="w-full h-full bg-gray-600"></div>
                                     }
-
-
                                 </div>
                                 {!(authUser._id === user._id) && <div className='block md:hidden'>
-                                    <ConnectButton />
+                                    <ConnectButton user={user} authUserId={authUser._id} />
                                 </div>}
 
                             </div>
@@ -124,7 +122,7 @@ const ProfileComponent = ({ user }) => {
 
                         {/* Action Buttons */}
                         {!(authUser._id === user._id) && <div className="hidden md:flex gap-2">
-                            <ConnectButton />
+                            <ConnectButton user={user} authUserId={authUser._id} />
                             <button className="p-2 hover: bg-gray-300 text-black dark:bg-gray-800 dark:text-white rounded-full transition-colors">
                                 <Mail className="w-5 h-5" />
                             </button>
@@ -220,13 +218,106 @@ const ProfileComponent = ({ user }) => {
 
 
 
-const ConnectButton = () => {
+// const ConnectButton = ({ user, authUserId }) => {
+
+//     console.log("useer", user, authUserId)
+//     const friendStatus = user.connections[authUserId]
+//     console.log("status", friendStatus)
+
+//     if (friendStatus === 'requested') {
+//         return <div>requested</div>;
+//     } else if (friendStatus === 'accepted') {
+//         return <div>connected</div>;
+//     }
+
+
+
+//     const requestOrCancelRequest = async () => {
+//         const res = await axiosInstance.post('/api/user/add-friend',
+//             {
+
+//                 toFriendUser: user._id
+//             }
+
+
+//         )
+//         console.log("connections", res)
+//         if (res.status === 200) return <div>requested</div>;
+
+//     }
+
+
+//     return (
+//         <button onClick={requestOrCancelRequest} className="px-4 py-1 bg-blue-500 hover:bg-blue-600 rounded-full text-white transition-colors">
+//             Connect
+//         </button>
+//     )
+// }
+
+
+const ConnectButton = ({ user, authUserId }) => {
+    const [friendStatus, setFriendStatus] = useState(user.connections[authUserId]);
+
+    const requestOrCancelRequest = async () => {
+        try {
+            const res = await axiosInstance.post('/api/user/add-friend', {
+                toFriendUser: user._id,
+            });
+
+            if (res.status === 200) {
+                setFriendStatus('requested'); // Update state dynamically
+            }
+        } catch (error) {
+            console.error("Error while sending friend request:", error);
+        }
+    };
+
+    const cancelRequest = async () => {
+        try {
+            const res = await axiosInstance.post('/api/user/cancel-friend-request', {
+                toFriendUser: user._id,
+            });
+
+            if (res.status === 200) {
+                setFriendStatus(null); // Reset status when canceled
+            }
+        } catch (error) {
+            console.error("Error while canceling friend request:", error);
+        }
+    };
+
+    if (friendStatus === 'requested') {
+        return (
+            <button onClick={cancelRequest} className="px-4 py-1 bg-gray-500 hover:bg-gray-600 rounded-full text-white transition-colors">
+                Cancel Request
+            </button>
+        );
+    }
+
+    if (friendStatus === 'accepted') {
+        return (
+            <div className="px-4 py-1 bg-green-500 text-white rounded-full">
+                Connected
+            </div>
+        );
+    }
+
     return (
-        <button className="px-4 py-1 bg-blue-500 hover:bg-blue-600 rounded-full text-white transition-colors">
+        <button onClick={requestOrCancelRequest} className="px-4 py-1 bg-blue-500 hover:bg-blue-600 rounded-full text-white transition-colors">
             Connect
         </button>
-    )
-}
+    );
+};
+
+
+
+
+
+
+
+
+
+
 
 
 // import React from "react";

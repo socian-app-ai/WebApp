@@ -31,9 +31,9 @@ export default function TeacherDashboard() {
         const fetch = async () => {
             try {
                 const response = await axiosInstance.get(routesForApi.posts.campusAll);
-                console.log("POSTS,", response.data)
+                // console.log("POSTS,", response.data)
                 setPosts(response.data)
-                console.log("hie", response)
+                // console.log("hie", response)
             } catch (err) {
                 // setError("Error fetching society data.");
                 console.error("Error fetching society details:", err);

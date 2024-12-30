@@ -158,7 +158,7 @@ export default function ProgramNameAndCourses() {
                 setDepartments(allDepartments);
 
                 // setCourses(allDepartments[3].subjects.map(v => v))
-                console.log("Departments: ", departments)
+                // console.log("Departments: ", departments)
             } catch (error) {
                 console.error(error.message)
             }

@@ -44,7 +44,7 @@ export default function UploadMorePapers() {
         async function fetchSubjects(departmentId) {
             try {
                 const response = await axiosInstance.get(`api/subject/by-dept?departmentId=${departmentId}`);
-                console.log(response.data)
+                // console.log(response.data)
                 setSubjects(response.data.subjects.subjects);
             } catch (error) {
                 console.error('Error fetching subjects:', error);
@@ -132,7 +132,7 @@ export default function UploadMorePapers() {
                         if (selectedDept) {
                             setDepartmentName(selectedDept.name);
                             setDepartmentID(selectedDept._id);
-                            console.log("selectedDept: ", selectedDept);
+                            // console.log("selectedDept: ", selectedDept);
                         }
                     }}
                         className="w-full px-4 py-2 capitalize border border-gray-300 text-black rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -150,7 +150,7 @@ export default function UploadMorePapers() {
                         if (selectedSubject) {
                             setSubjectID(selectedSubject._id)
                             setSubjectName(selectedSubject.name)
-                            console.log("selectedSubject: ", selectedSubject);
+                            // console.log("selectedSubject: ", selectedSubject);
                             setCourseName(selectedSubject.courseCode.courseCode)
                         }
 

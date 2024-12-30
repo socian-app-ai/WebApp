@@ -19,7 +19,7 @@ export default function AddCampusPage() {
 
     const { UniversitySelector, campus, currentUniversity, setCurrentUniversity } = useUniversityData();
 
-    console.log(currentUniversity, "or\n", currentUniversityData._id)
+    // console.log(currentUniversity, "or\n", currentUniversityData._id)
     useEffect(() => {
         if (campusId) {
             const fetchUniversityData = async () => {

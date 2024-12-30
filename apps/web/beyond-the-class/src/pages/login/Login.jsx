@@ -11,7 +11,7 @@ import routesForLinks, { routesForApi } from "../../utils/routes/routesForLinks"
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  console.log('in login')
+  // console.log('in login')
   const { loading, login } = useLogin();
 
   const handleSubmit = async (e) => {

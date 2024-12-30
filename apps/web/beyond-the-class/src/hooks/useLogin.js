@@ -23,7 +23,7 @@ const useLogin = () => {
 
       const data = res.data;
 
-      console.log(data);
+      // console.log(data);
       if (res.status >= 400) {
         throw new Error(data.error);
       }

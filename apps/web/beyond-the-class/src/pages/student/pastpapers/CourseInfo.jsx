@@ -18,7 +18,7 @@ export default function CourseInfo() {
         );
         setPastPapers(res.data.pastPapers);
         setSubjectName(res.data.subjectName)
-        console.log(res.data);
+        // console.log(res.data);
       } catch (error) {
         console.error("Error fetching data", error);
         setError("Error loading past papers data.");
