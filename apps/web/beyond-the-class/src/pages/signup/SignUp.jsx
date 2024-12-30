@@ -138,6 +138,7 @@ export default function SignUpR() {
                     <LabelDropDownSearchableInputCustomizable
                         fetchOptions={fetchUniversities}
                         type="text"
+                        autoComplete="off"
                         name="University_and_Campus"
                         className="my-3 w-full"
                         value={universityCampus}
@@ -164,7 +165,7 @@ export default function SignUpR() {
 
                     <LabelInputCustomizable
                         type="text"
-                        // autocomplete="username"
+                        // autoComplete="username"
                         name="username"
                         className="my-3 w-full"
                         value={userName}
@@ -187,7 +188,7 @@ export default function SignUpR() {
                     <LabelInputCustomizable
                         type="email"
                         name="universityEmail"
-                        autocomplete="email"
+                        autoComplete="email"
                         className="my-3 w-full"
                         value={universityEmail}
                         label="Your University Email"
@@ -201,7 +202,7 @@ export default function SignUpR() {
 
                     {(role === 'alumni') && <LabelInputCustomizable
                         type="email"
-                        autocomplete="email"
+                        autoComplete="email"
                         name="personalEmail"
                         className="my-3 w-full"
                         value={personalEmail}
@@ -214,7 +215,7 @@ export default function SignUpR() {
 
                     <LabelInputCustomizable
                         type="password"
-                        autocomplete="new-password"
+                        autoComplete="new-password"
                         name="universityEmailPassword"
                         className="my-4 mb-5 w-full"
                         value={universityEmailPassword}

@@ -19,7 +19,8 @@ export function CreateCampusComponent({ universityId }) {
         location: '',
         // studentPattern: [],
         // teacherPattern: [],
-        regex: ''
+        regex: '',
+        domain: ''
     });
 
     useEffect(() => {
@@ -113,7 +114,8 @@ export function CreateCampusComponent({ universityId }) {
                     universityOrigin: '',
                     name: '',
                     location: '',
-                    regex: ''
+                    regex: '',
+                    domain: ''
                 });
                 toast.success("Created Successfully")
             }
@@ -168,6 +170,17 @@ export function CreateCampusComponent({ universityId }) {
                             placeholder="^[a-zA-Z]{2}\d{2}"
                             onChange={(e) => setCampusData({ ...campusData, regex: e.target.value })}
                             value={campusData.regex}
+                        />
+                    </div>
+                    <div className='flex flex-row items-baseline space-x-2'>
+                        <p>Domain: </p>
+                        <LabelInputUnderLineCustomizable
+                            type="text"
+                            name="regex"
+                            className="my-2"
+                            placeholder="@cuilahore.edu.pk"
+                            onChange={(e) => setCampusData({ ...campusData, domain: e.target.value })}
+                            value={campusData.domain}
                         />
                     </div>
 
