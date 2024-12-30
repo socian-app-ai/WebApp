@@ -50,7 +50,8 @@ export const routesForApi = buildRoutes(baseUrl, {
         login: 'login',
         register: 'register',
         forgotPassword: 'forgot-password',
-        registerationVerifyOTP: 'registration-verify-otp'
+        registerationVerifyOTP: 'registration-verify-otp',
+        registerationResendOTP: "register-resend-otp"
     },
     google: {
         request: 'request'

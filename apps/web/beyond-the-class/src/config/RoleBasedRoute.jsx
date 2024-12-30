@@ -1,5 +1,6 @@
 import { Navigate, Outlet } from 'react-router-dom';
 import { useAuthContext } from '../context/AuthContext';
+import { bypassRoutes } from '../utils/routes/routesForLinks';
 
 // A function to restrict access based on user role
 const RoleBasedRoute = ({ allowedRoles }) => {
@@ -30,6 +31,17 @@ export const SuperRoleBasedRoute = ({ allowedRoles }) => {
     if (isLoading) {
         return <div>Loading...</div>;
     }
+
+    // if (!authUser) {
+
+    //     if (window.location.pathname === '/signup' || bypassRoutes.some(route => route.test(window.location.pathname))) {
+    //         return <Outlet />
+    //     } else if (window.location.pathname === '/login') {
+    //         return <Outlet />
+    //     }
+    // }
+
+
     // console.log("Auth User in SuperRoleBasedRoute:", authUser);
     return (
         authUser && allowedRoles.includes(authUser.super_role)
