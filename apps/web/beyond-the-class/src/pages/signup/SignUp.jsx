@@ -164,7 +164,7 @@ export default function SignUpR() {
 
                     <LabelInputCustomizable
                         type="text"
-                        autocomplete="username"
+                        // autocomplete="username"
                         name="username"
                         className="my-3 w-full"
                         value={userName}
