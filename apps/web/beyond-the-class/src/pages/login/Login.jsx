@@ -80,9 +80,15 @@ export default function Login() {
 
         />
 
-        <div>
+        <div className="flex flex-row justify-evenly w-full">
+
           <Link className="[&&]:dark:text-[#c4c3c3] [&&]:text-black" to={routesForLinks.signup}>Don&apos;t Have an Account?</Link>
+          <Link className=" underline" to={routesForLinks.signup}>Sign Up</Link>
+
         </div>
+
+
+
 
         <DarkButton className="my-5 " text="Login"
           loading={loading}

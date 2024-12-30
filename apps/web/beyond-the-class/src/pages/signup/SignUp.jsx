@@ -236,8 +236,9 @@ export default function SignUpR() {
                     {/* <DarkButtonLink to="/auth/registered/create-username" className="flex my-4 justify-center items-center w-full" text="Sign up with email" /> */}
                 </form>
 
-                <div>
+                <div className="flex flex-row justify-evenly w-full">
                     <Link to={routesForLinks.login}>Already Have an Account?</Link>
+                    <Link className=" underline" to={routesForLinks.login}>Sign In</Link>
                 </div>
 
                 <div className="flex justify-center items-center m-4 w-full">
