@@ -17,6 +17,7 @@ import CreateSocietyButton from "../../pages/society/CreateSocietyButton";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../config/users/axios.instance";
 import SocitiesDropDown from "./sidebarComponents/SocitiesDropDown";
+import { ChevronDown } from "lucide-react";
 
 function Sidebar() {
   const { sideBarState, setSideBarState } = useSetSideBarState();
@@ -167,6 +168,10 @@ function Sidebar() {
       name: "Campuses",
       path: "/super/campuses",
       icon: <FaBuilding className="w-5" />,
+      submenu: [
+        { name: "Create", path: "/super/campus/create" },
+        { name: "Edit", path: "/super/campus/edit/0" },
+      ],
     },
     {
       name: "Users",
@@ -195,6 +200,16 @@ function Sidebar() {
                 : processMenu
     ) : processMenu
 
+  const [dropdownStates, setDropdownStates] = useState({});
+
+
+  const toggleDropdown = (menuName) => {
+    setDropdownStates((prev) => ({
+      ...prev,
+      [menuName]: !prev[menuName],
+    }));
+  };
+
 
   return (
     <div
@@ -210,7 +225,84 @@ function Sidebar() {
     >
       {/* bg-sidebar-pattern bg-bg-var-sidebar dark:bg-bg-var-sidebar-dark */}
       <nav className="mt-12">
-        <ul className="border-b border-[#787878] flex flex-col">
+        <ul className="flex flex-col space-y-1">
+          {menuItems.map((item) => (
+            <li key={item.name} className="relative">
+              <Link
+                to={item.path}
+                className="flex items-center p-2 text-sm text-gray-700 dark:text-gray-300 rounded hover:bg-gray-100 dark:hover:bg-gray-700"
+                onClick={() => width < 768 && setSideBarState(false)}
+              >
+                {item.icon}
+                <span className="ml-2">{item.name}</span>
+                {item.submenu && (
+                  <button
+                    className="ml-auto focus:outline-none"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      toggleDropdown(item.name);
+                    }}
+                  >
+                    {dropdownStates[item.name] ? (
+                      <ChevronDown className="w-4 h-4 text-gray-500" />
+                    ) : (
+                      <ChevronRight className="w-4 h-4 text-gray-500" />
+                    )}
+                  </button>
+                )}
+              </Link>
+              {item.submenu && dropdownStates[item.name] && (
+                <ul className="ml-6 mt-1 space-y-1">
+                  {item.submenu.map((subItem) => (
+                    <li key={subItem.name}>
+                      <Link
+                        to={subItem.path}
+                        className="block p-2 text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded"
+                        onClick={() => width < 768 && setSideBarState(false)}
+                      >
+                        {subItem.name}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </li>
+          ))}
+        </ul>
+
+        {/* <ul className="border-b border-[#787878] flex flex-col">
+          {menuItems.map((item, idx) => (
+            <div key={item.name} className="relative">
+              <Link
+                to={item.path}
+                className={`text-sm text-[#787878] flex justify-start items-center p-2 rounded hover:bg-slate-100 dark:hover:bg-[#2B3236]`}
+                onClick={() => width < 768 && setSideBarState(false)}
+              >
+                {item.icon}
+                <p className="ml-2">{item.name}</p>
+                {item.submenu && (
+                  <ChevronRight className="ml-auto w-4 h-4 text-gray-400" />
+                )}
+              </Link>
+              {item.submenu && (
+                <ul className="ml-6 mt-1 border-l pl-4 border-gray-200 dark:border-gray-600">
+                  {item.submenu.map((subItem) => (
+                    <Link
+                      to={subItem.path}
+                      key={subItem.name}
+                      className="text-sm text-[#787878] flex justify-start items-center p-2 rounded hover:bg-slate-100 dark:hover:bg-[#2B3236]"
+                      onClick={() => width < 768 && setSideBarState(false)}
+                    >
+                      <p>{subItem.name}</p>
+                    </Link>
+                  ))}
+                </ul>
+              )}
+            </div>
+          ))}
+        </ul> */}
+
+        {/* <ul className="border-b border-[#787878] flex flex-col">
           {menuItems.map((item, idx) => (
             <Link
               to={item.path}
@@ -223,7 +315,7 @@ function Sidebar() {
               <p className="ml-2">{item.name}</p>
             </Link>
           ))}
-        </ul>
+        </ul> */}
 
         <CreateSocietyButton />
 

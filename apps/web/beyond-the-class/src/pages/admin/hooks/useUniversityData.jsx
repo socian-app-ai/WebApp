@@ -8,7 +8,11 @@ import axiosInstance from '../../../config/users/axios.instance';
 export default function useUniversityData() {
 
     const [universities, setUniversities] = useState([]);
+    const [campuses, setCampuses] = useState([]);
+
     const [currentUniversity, setCurrentUniversity] = useState([]);
+    const [currentCampus, setCurrentCampus] = useState([]);
+
     const [campus, setCampus] = useState([]);
 
 
@@ -32,21 +36,27 @@ export default function useUniversityData() {
 
 
     const handleUniversityChange = (event, value) => {
-        // console.log("value", value)
+        console.log("value", value)
         setCurrentUniversity(value)
 
         if (value) {
             const courseList = value.campuses.map(subject => subject);
             setCampus(courseList);
+            setCampuses(courseList)
 
-            // console.log("Selected Campus:", courseList);
+            console.log("Selected Campus:", courseList);
         } else {
             setCampus([]);
+            setCampuses([]);
             setCurrentUniversity([])
         }
     };
 
 
+    const handleCampusesChange = (event, value) => {
+        console.log("CAMPUS", value)
+        setCurrentCampus(value)
+    }
 
 
     return {
@@ -59,7 +69,17 @@ export default function useUniversityData() {
                 isOptionEqualToValue={(option, value) => option._id === value._id}
             />
         ,
+        CampusSelector:
+            <CustomAutocomplete
+                options={campuses}
+                label={"Campuses"}
+                onChange={handleCampusesChange}
+                filterOptions={filterOptionsCampuses}
+                isOptionEqualToValue={(option, value) => option._id === value._id}
+            />
+        ,
         campus,
+        currentCampus,
         currentUniversity,
         setCurrentUniversity
     }
@@ -67,7 +87,14 @@ export default function useUniversityData() {
 const filterOptionsUniversites = createFilterOptions({
     matchFrom: 'start',
     stringify: (option) => {
-        // console.log("Options: ", option.name)
+        console.log("Options: ", option.name)
+        return option.name
+    },
+});
+const filterOptionsCampuses = createFilterOptions({
+    matchFrom: 'start',
+    stringify: (option) => {
+        console.log("Options:c ", option.name)
         return option.name
     },
 });

@@ -8,7 +8,7 @@ import { useSetInfoBarState } from "../../state_management/zustand/useInfoBar";
 const Layout = ({ children }) => {
   const { width } = useWindowDimensions();
   const { sideBarState, setSideBarState } = useSetSideBarState();
-  const { infoBarState, setInfoBarState } = useSetInfoBarState();
+  const { infoBarState } = useSetInfoBarState();
 
   return (
     <div className="text-black  placeholder-black dark:placeholder-white dark:text-white">

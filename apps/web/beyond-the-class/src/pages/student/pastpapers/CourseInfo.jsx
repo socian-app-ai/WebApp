@@ -96,6 +96,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axiosInstance from "../../../config/users/axios.instance";
 import { ArrowBack } from "@mui/icons-material";
+import { useSetInfoBarState } from "../../../state_management/zustand/useInfoBar";
 
 export default function CourseInfo() {
   const { id } = useParams();
@@ -104,6 +105,14 @@ export default function CourseInfo() {
   const [subjectName, setSubjectName] = useState(null);
   const [error, setError] = useState(null); // Track errors
   const navigate = useNavigate();
+  const { infoBarState, setInfoBarState } = useSetInfoBarState();
+
+  useEffect(() => {
+    if (infoBarState === true) {
+      setInfoBarState(false);
+    }
+  }, [setInfoBarState, infoBarState]);
+
 
   useEffect(() => {
     const fetch = async () => {
