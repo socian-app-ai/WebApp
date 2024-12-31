@@ -102,7 +102,7 @@ export default function AddDepartmentAndSubjects() {
             toast.error(error)
         } finally {
             setNewSubjectName('')
-            setShowDepBox(false)
+            setShowSubjectBox(false)
         }
     }
 

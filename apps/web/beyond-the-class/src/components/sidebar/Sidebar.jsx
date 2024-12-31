@@ -18,6 +18,7 @@ import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../config/users/axios.instance";
 import SocitiesDropDown from "./sidebarComponents/SocitiesDropDown";
 import { ChevronDown } from "lucide-react";
+import { SettingsIcon } from "lucide-react";
 
 function Sidebar() {
   const { sideBarState, setSideBarState } = useSetSideBarState();
@@ -172,6 +173,11 @@ function Sidebar() {
         { name: "Create", path: "/super/campus/create" },
         { name: "Edit", path: "/super/campus/edit/0" },
       ],
+    },
+    {
+      name: "Teachers",
+      path: "/super/teachers",
+      icon: <SettingsIcon className="w-5" />,
     },
     {
       name: "Users",

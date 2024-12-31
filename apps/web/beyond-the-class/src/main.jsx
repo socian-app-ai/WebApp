@@ -36,6 +36,7 @@ import CampusesPosts from './pages/student/campuses/CampusesPosts.jsx';
 import ProfilePage from './pages/ProfilePage.jsx';
 import Feedback from './pages/teacher/feedback/Feedback.jsx';
 import AddDepartmentAndSubjects from './pages/admin/add/edit/AddDepartmentAndSubjects.jsx';
+import AddTeacher from './pages/admin/add/AddTeacher.jsx';
 
 
 const router = createBrowserRouter([
@@ -85,6 +86,9 @@ const router = createBrowserRouter([
           { path: 'campuses', element: <Layout><CampusView /></Layout> },
           { path: "campus/create", element: <Layout> <AddCampusPage /></Layout> },
           { path: "campus/edit/:campusId", element: <Layout> <AddDepartmentAndSubjects /></Layout> },
+
+
+          { path: "teachers", element: <Layout> <AddTeacher /></Layout> },
 
 
           { path: "pastpapers/upload", element: <Layout> <UploadForm /></Layout> },
