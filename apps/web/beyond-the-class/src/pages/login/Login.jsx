@@ -10,6 +10,8 @@ import routesForLinks, { routesForApi } from "../../utils/routes/routesForLinks"
 
 export default function Login() {
   const [email, setEmail] = useState("");
+  const [inputType, setInputType] = useState("email");
+
   const [password, setPassword] = useState("");
   // console.log('in login')
   const { loading, login } = useLogin();
@@ -19,6 +21,12 @@ export default function Login() {
     await login(email.toLocaleLowerCase(), password);
   };
 
+  const handleEmailChange = (e) => {
+    const emailValue = e.target.value;
+    setEmail(emailValue);
+    // If email does not contain '@', consider it as a username
+    setInputType(emailValue.includes("@") ? "email" : "username");
+  };
 
   function navigate(url) {
     window.location.href = url;
@@ -56,13 +64,13 @@ export default function Login() {
         onSubmit={handleSubmit}
       >
         <LabelInputCustomizable
-          type="email"
-          name="email"
+          type={inputType === "email" ? "email" : "text"}
+          name={inputType === "email" ? "email" : "username"}
           className="my-2"
           value={email}
-          label={"Email"}
+          label={"Email/Username"}
           placeholder="fa21-bcs-000@cuilahore.pk"
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={(e) => handleEmailChange(e)}
           autoComplete="on"
         />
 

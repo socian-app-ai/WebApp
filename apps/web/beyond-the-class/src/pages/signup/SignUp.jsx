@@ -170,7 +170,7 @@ export default function SignUpR() {
                     <LabelInputCustomizable
                         type="text"
                         autoComplete="off"
-                        // name="username"
+                        name="username"
                         className="my-3 w-full"
                         value={userName}
                         onKeyUp={
@@ -185,7 +185,7 @@ export default function SignUpR() {
                         errorMessage={usernameError && "Username Already Exists" || usernameLess !== '' && usernameLess}
                         onChange={(e) => {
                             const sanitizedValue = e.target.value.replace(/[^a-z0-9._]/g, "");
-                            setUserName(sanitizedValue)
+                            setUserName(sanitizedValue.toLowerCase())
                         }}
                     />
 
