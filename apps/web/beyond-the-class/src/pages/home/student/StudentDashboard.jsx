@@ -31,7 +31,7 @@ export default function StudentDashboard() {
     if (infoBarState === false && width > 768) {
       setInfoBarState(true);
     }
-  }, [setInfoBarState, infoBarState]);
+  }, []);
 
 
   const [posts, setPosts] = useState([]);

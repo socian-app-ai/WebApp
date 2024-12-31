@@ -176,7 +176,7 @@ function InfoBar() {
       setInfoBarState(false);
     }
 
-    if (width > 1028) {
+    if (width >= 1028) {
       setInfoBarState(true);
     }
     if (authUser?.super_role === 'super') setInfoBarState(false)
@@ -226,12 +226,6 @@ export default InfoBar;
 
 
 
-const trendingData = [
-  { title: "Figma Guys", postsToday: 125, inHour: 66 },
-  { title: "Blenderz", postsToday: 117, inHour: 45 },
-  { title: "RAS IEEE", postsToday: 57, inHour: 42 },
-  { title: "Comsians", postsToday: 32, inHour: 24 },
-];
 
 const Trending = () => {
 
@@ -310,17 +304,20 @@ const ConnectionsList = () => {
   useEffect(() => {
     const fetchFriends = async () => {
       try {
-        const res = await axiosInstance.get('/api/user/connections', {
-          params: { id: authUser._id }
-        });
-        setFriendsData(res.data.connections); // Adjusted to match the response structure
-        // console.log("CONNECTIONS", res);
+        if (authUser._id) {
+          const res = await axiosInstance.get('/api/user/connections', {
+            params: { id: authUser._id }
+          });
+          setFriendsData(res.data.connections); // Adjusted to match the response structure
+          // console.log("CONNECTIONS", res); 
+        }
+
       } catch (error) {
         console.error("Error fetching friends data:", error);
       }
     };
     fetchFriends();
-  }, [authUser._id]);
+  }, []);
 
   return (
     <div className="dark:bg-[#1E1F24] dark:border-gray-700 dark:text-white

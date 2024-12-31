@@ -38,3 +38,44 @@ const ProtectedLayout = () => {
 
 
 export default ProtectedLayout;
+
+
+
+
+// import { Outlet } from "react-router-dom";
+// import { useAuthContext } from "./AuthContext";
+// import { useNavigate } from "react-router-dom";
+// import { useEffect } from "react";
+// import { bypassRoutes } from "../utils/routes/routesForLinks";
+// import AestheticLoadingScreen from "../components/loading/LoadingScreen";
+
+// const ProtectedLayout = () => {
+//   const { authUser, isLoading } = useAuthContext();
+//   const navigate = useNavigate();
+
+//   useEffect(() => {
+//     if (!isLoading) {
+//       if (authUser) {
+//         if (window.location.pathname === "/login" || window.location.pathname === "/signup") {
+//           navigate("/");
+//         }
+//       } else {
+//         if (
+//           !(window.location.pathname === "/login" ||
+//             window.location.pathname === "/signup" ||
+//             bypassRoutes.some((route) => route.test(window.location.pathname)))
+//         ) {
+//           navigate("/login");
+//         }
+//       }
+//     }
+//   }, [authUser, isLoading, navigate]);
+
+//   if (isLoading) {
+//     return <AestheticLoadingScreen />;
+//   }
+
+//   return <Outlet />;
+// };
+
+// export default ProtectedLayout;

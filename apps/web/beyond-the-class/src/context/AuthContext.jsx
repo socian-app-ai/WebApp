@@ -73,3 +73,107 @@ export const AuthContextProvider = ({ children }) => {
 };
 
 
+
+
+
+
+// import { createContext, useContext, useEffect, useMemo } from "react";
+// import React from "react";
+// import axiosInstance from "../config/users/axios.instance";
+// import { bypassRoutes } from "../utils/routes/routesForLinks";
+// import secureLocalStorage from "react-secure-storage";
+
+// export const AuthContext = createContext();
+
+// export const useAuthContext = () => {
+//     return useContext(AuthContext);
+// };
+
+// // eslint-disable-next-line react/prop-types
+// export const AuthContextProvider = ({ children }) => {
+//     const [authUser, setAuthUser] = React.useState(null);
+//     const [isLoading, setIsLoading] = React.useState(true);
+
+//     const STORAGE_KEY = "authData";
+//     const TIMESTAMP_KEY = "authTimestamp";
+//     const SESSION_KEY = 'iidxi';
+
+
+//     const isWithin24Hours = (timestamp) => {
+//         const now = Date.now();
+//         const oneDay = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+//         return now - timestamp < oneDay;
+//     };
+
+
+
+
+
+//     useEffect(() => {
+//         const storedData = secureLocalStorage.getItem(STORAGE_KEY);
+//         const storedTimestamp = localStorage.getItem(TIMESTAMP_KEY);
+
+//         const handleUnauthenticated = () => {
+//             setAuthUser(null);
+//             secureLocalStorage.removeItem(STORAGE_KEY);
+//             localStorage.removeItem(TIMESTAMP_KEY);
+//             sessionStorage.removeItem(SESSION_KEY)
+//             if (window.location.pathname !== '/login') {
+//                 window.location.href = '/login';
+//             }
+//         };
+
+//         const fetchSessionData = async () => {
+//             try {
+//                 const res = await axiosInstance.get('/api/auth/session', { credentials: 'include' });
+//                 if (res.status >= 200 && res.status < 300) {
+//                     const data = res.data;
+//                     setAuthUser(data);
+//                     secureLocalStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+//                     localStorage.setItem(TIMESTAMP_KEY, Date.now().toString());
+
+//                     if (window.location.pathname === '/login') {
+//                         window.location.href = '/';
+//                     }
+//                 } else {
+//                     console.warn("Session fetch failed with status:", res.status);
+//                     handleUnauthenticated();
+//                 }
+//             } catch (error) {
+//                 console.error("Error fetching session data:", error);
+//                 if (window.location.pathname === '/signup' || bypassRoutes.some(route => route.test(window.location.pathname))) {
+//                     return
+//                 } else if (window.location.pathname !== '/login') {
+//                     window.location.pathname = '/login'
+//                 }
+//             } finally {
+//                 setIsLoading(false);
+//             }
+//         };
+
+//         if (sessionStorage.getItem(SESSION_KEY)) {
+//             if (storedData && storedTimestamp && isWithin24Hours(Number(storedTimestamp))) {
+//                 setAuthUser(JSON.parse(storedData));
+//                 setIsLoading(false);
+//             } else {
+//                 fetchSessionData();
+//             }
+//         }
+
+
+//         // handleUnauthenticated()
+//         setIsLoading(false);
+
+
+
+
+//     }, []);
+
+//     const value = useMemo(() => ({ authUser, setAuthUser, isLoading }), [authUser, isLoading]);
+
+//     return (
+//         <AuthContext.Provider value={value}>
+//             {children}
+//         </AuthContext.Provider>
+//     );
+// };

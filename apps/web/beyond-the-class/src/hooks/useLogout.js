@@ -3,6 +3,7 @@ import toast from "react-hot-toast";
 import { useAuthContext } from "../context/AuthContext";
 import axiosInstance from "../config/users/axios.instance";
 import { routesForApi } from "../utils/routes/routesForLinks";
+// import secureLocalStorage from "react-secure-storage";
 
 const useLogout = () => {
     const [loading, setLoading] = useState(false);
@@ -10,6 +11,10 @@ const useLogout = () => {
     const { isLoading, setAuthUser } = useAuthContext()
     const logout = async () => {
         setLoading(true)
+
+        // const STORAGE_KEY = "authData";
+        // const TIMESTAMP_KEY = "authTimestamp";
+        const SESSION_KEY = 'iidxi';
 
 
         try {
@@ -31,7 +36,9 @@ const useLogout = () => {
         }
         finally {
             setLoading(false)
-            // sessionStorage.clear('iidxi')
+            sessionStorage.clear(SESSION_KEY)
+            // secureLocalStorage.removeItem(STORAGE_KEY);
+            // localStorage.removeItem(TIMESTAMP_KEY);
             setAuthUser(null)
             window.location.href = '/login'
         }
