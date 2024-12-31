@@ -35,8 +35,9 @@ export default function SignUpR() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        console.log("REOLE", role)
         // setUniversityEmail(universityEmail);
-        if (!role) {
+        if (role === 'none') {
             return setRoleError(true)
         } else {
             setRoleError(false)
@@ -131,9 +132,12 @@ export default function SignUpR() {
                             roleType={_role}
                             role={role}
                             roleError={roleError}
+                            setRoleError={setRoleError}
                         />
                     ))}
+
                 </div>
+                {/* {roleError && <div className="p-2 my-1 border rounded-lg bg-red-200 text-center border-red-500 text-red-500"><p>Select a role</p></div>} */}
                 <form className="w-full" onSubmit={handleSubmit}>
                     <LabelDropDownSearchableInputCustomizable
                         fetchOptions={fetchUniversities}
@@ -165,8 +169,8 @@ export default function SignUpR() {
 
                     <LabelInputCustomizable
                         type="text"
-                        // autoComplete="username"
-                        name="username"
+                        autoComplete="off"
+                        // name="username"
                         className="my-3 w-full"
                         value={userName}
                         onKeyUp={
@@ -187,7 +191,7 @@ export default function SignUpR() {
 
                     <LabelInputCustomizable
                         type="email"
-                        name="universityEmail"
+                        name="email"
                         autoComplete="email"
                         className="my-3 w-full"
                         value={universityEmail}
@@ -203,7 +207,7 @@ export default function SignUpR() {
                     {(role === 'alumni') && <LabelInputCustomizable
                         type="email"
                         autoComplete="email"
-                        name="personalEmail"
+                        name="email"
                         className="my-3 w-full"
                         value={personalEmail}
                         label="Your Personal Email"
@@ -216,7 +220,7 @@ export default function SignUpR() {
                     <LabelInputCustomizable
                         type="password"
                         autoComplete="new-password"
-                        name="universityEmailPassword"
+                        name="password"
                         className="my-4 mb-5 w-full"
                         value={universityEmailPassword}
                         label="Password"
@@ -266,21 +270,25 @@ export default function SignUpR() {
 const roleList = ["student", "teacher", "alumni"];
 
 // eslint-disable-next-line react/prop-types
-function RoleSelectionBox({ handleRoleChange, roleType, role, roleError }) {
-    // console.log("Ero roler", roleError)
+function RoleSelectionBox({ handleRoleChange, roleType, role, roleError, setRoleError }) {
+    console.log("Ero roler", roleError)
     return (
         // <button className={`${roleType === role ? 'bg-slate-500' : 'bg-red-300'} btn glass  p-2 max-h-14 max-w-20`} onClick={() => handleRoleChange(roleType)}>
         //     {roleType}
         // </button>
         <button
-            onClick={() => handleRoleChange(roleType)}
-            className={`${roleType === role ? 'bg-stone-400 border-black dark:text-black  ' : 'bg-transparent border-white dark:text-white dark:text-text-primary-dark text-text-primary '} relative inline-block px-6 py-3 font-medium  
+            onClick={() => {
+                handleRoleChange(roleType)
+                setRoleError(false)
+            }}
+            className={`${roleType === role ? 'bg-stone-400 border-black dark:text-black  ' : roleError ? 'border-red-500 border' : 'bg-transparent  border-white dark:text-white dark:text-text-primary-dark text-text-primary '} relative inline-block px-6 py-3 font-medium  
              border-2 rounded-lg overflow-hidden group 
+              
             focus:outline-none`}
         >
-            <span className={`${roleError && 'border-red-500'} "absolute inset-0 w-full h-full bg-gradient-to-r from-grey-500 via-blue-500 to-purple-500 opacity-30" `}></span>
-            <span className={`${roleError && 'border-red-500'} absolute inset-0 w-full h-full bg-white opacity-10 backdrop-blur-md}`}></span>
-            <span className={`${roleError && 'border-red-500'} relative z-10}`}>{roleType}</span>
+            <span className={"absolute inset-0 w-full h-full bg-gradient-to-r from-grey-500 via-blue-500 to-purple-500 opacity-30"}></span>
+            <span className={" absolute inset-0 w-full h-full bg-white opacity-10 backdrop-blur-md"}></span>
+            <span className={" relative z-10"}>{roleType}</span>
         </button>
 
     );
