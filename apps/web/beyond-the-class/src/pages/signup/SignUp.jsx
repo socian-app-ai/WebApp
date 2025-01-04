@@ -9,6 +9,8 @@ import GoogleButton from "../../components/Buttons/GoogleButton";
 import DarkButton from "../../components/Buttons/DarkButton";
 import routesForLinks, { routesForApi } from "../../utils/routes/routesForLinks";
 import toast from "react-hot-toast";
+import { useDebouncedCallback } from 'use-debounce';
+
 
 export default function SignUpR() {
     const [universityCampus, setUniversityPlusCampus] = useState("");
@@ -23,6 +25,7 @@ export default function SignUpR() {
     const [usernameError, setUsernameError] = useState(false)
     const [usernameLess, setUsernameLess] = useState('')
 
+
     const { loading, signup } = useSignup();
 
     const [roleError, setRoleError] = useState(false)
@@ -36,7 +39,7 @@ export default function SignUpR() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         console.log("REOLE", role)
-        // setUniversityEmail(universityEmail);
+        setUniversityEmail(universityEmail);
         if (role === 'none') {
             return setRoleError(true)
         } else {
@@ -113,6 +116,9 @@ export default function SignUpR() {
 
     }
 
+    const debouncedHandleUsername = useDebouncedCallback(handleUsernameFunction, 300);
+
+
 
 
     return (
@@ -173,11 +179,13 @@ export default function SignUpR() {
                         name="username"
                         className="my-3 w-full"
                         value={userName}
-                        onKeyUp={
-                            (e) => {
-                                handleUsernameFunction(e.target.value)
-                            }
-                        }
+                        // onKeyUp={
+                        //     (e) => {
+                        //         handleUsernameFunction(e.target.value)
+                        //     }
+                        // }
+                        onKeyUp={(e) => debouncedHandleUsername(e.target.value)}
+
                         label="Username"
                         placeholder="beyond_the._.class"
                         width="w-[100%]"

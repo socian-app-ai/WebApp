@@ -98,21 +98,6 @@ function handleInputErrors({ universityEmail, personalEmail, password, role }) {
     if (role === 'alumni' && !personalEmail) return toast.error("Alumni needs a personal Email");
 
     if (!roleList.includes(role)) return false;
-    // const allowedDomains = ["cuilahore", "cuiislamabad", "cuiabbottabad"];
-    // const domainPattern = allowedDomains.join("|");
-
-    // const universityEmailRegex = new RegExp(
-    //     `^(fa|sp)\\d{2}-(bcs|bse|baf|bai|bar|bba|bce|bch|bde|bec|bee|ben|bid|bmc|bph|bpy|bsm|bst|che|mel|pch|pcs|pec|pee|phm|pms|pmt|ppc|pph|pst|r06|rba|rch|rcp|rcs|rec|ree|rel|rms|rmt|rne|rph|rpm|rpy|rst)-\\d{3}@(${domainPattern})\\.edu\\.pk$`
-    // );
-
-    // if (isUniversityRequired) {
-    //     if (!universityEmailRegex.test(email)) {
-    //         toast.error(
-    //             "Invalid email format or domain. Allowed domains are cuilahore, cuiislamabad, cuiabbottabad with .edu.pk"
-    //         );
-    //         return false;
-    //     }
-    // }
 
     return true;
 }

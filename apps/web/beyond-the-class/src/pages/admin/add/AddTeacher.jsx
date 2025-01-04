@@ -69,6 +69,51 @@ export default function AddTeacher() {
         }
     }
 
+
+
+    // const [isPending, startTransaction] = useTransition();
+    // const [error, setError] = useState(null);
+
+
+    // const handleTransaction = () => {
+    //     startTransaction(async () => {
+    //         const response = await handleNewTeacherSave();
+    //         if (response?.status === 200) {
+    //             toast.success(`OK ${response.data.message.name}`)
+    //         }
+    //         if (error) {
+    //             setError(error)
+    //             console.error(error)
+    //             toast.error(error)
+    //         }
+
+    //         setNewTeacherName('')
+    //         setShowTeacherBox(false)
+    //     })
+    // }
+
+    // const handleNewTeacherSave = async () => {
+    //     if (newTeacherName === '' || newTeacherEmail === '' || newTeacherPictureUrl === '') return
+
+    //     try {
+    //         const response = await axiosInstance.post('/api/teacher/',
+    //             {
+    //                 universityOrigin: currentUniversity._id,
+    //                 campusOrigin: currentCampus._id,
+    //                 departmentId: currentDepartment._id,
+    //                 name: newTeacherName,
+    //                 picture: newTeacherPictureUrl,
+    //                 email: newTeacherEmail
+    //             }
+    //         )
+    //         return response
+    //     } catch (error) {
+    //         return error;
+    //     }
+    // }
+
+
+
     return (
         <div className='pt-10 px-3 min-h-screen'>
             <h5>Teachers</h5>
