@@ -99,8 +99,8 @@ function Comment({ comment, onReply, }) {
                 <div className="flex items-start ">
                     {comment.user ?
                         <Avatar className="w-8 h-8 rounded-full"
-                            src={comment.user.profile.picture}
-                            alt={comment.user.name} />
+                            src={comment?.user ? comment?.user?.profile?.picture ?? "" : "D"}
+                            alt={comment?.user?.name} />
                         :
                         <Skeleton variant="circular" height={35} width={35} />}
                 </div>

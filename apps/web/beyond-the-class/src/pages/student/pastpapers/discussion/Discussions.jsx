@@ -11,9 +11,9 @@ export default function Discussions({ toBeDisccusedId }) {
     const [discussionId, setDiscussionId] = useState('');
     const [comments, setComments] = useState([]);
     const [sortMethod, setSortMethod] = useState('votes');
-    const {authUser}= useAuthContext()
+    const { authUser } = useAuthContext()
 
-    
+
 
     useEffect(() => {
         const fetchDiscussion = async () => {
@@ -30,9 +30,23 @@ export default function Discussions({ toBeDisccusedId }) {
         fetchDiscussion();
     }, [toBeDisccusedId]);
 
+    // const handleNewComment = (newComment) => {
+    //     setComments((prevComments) => [newComment, ...prevComments]);
+    // };
+
     const handleNewComment = (newComment) => {
+        // console.log("NEW COMMET", newComment)
+        // Ensure the new comment has the 'user' field
+        if (!newComment.user) {
+            newComment.user = {
+                username: authUser.username,
+                profile: { picture: authUser.profile.picture },
+                _id: authUser._id,
+            };
+        }
         setComments((prevComments) => [newComment, ...prevComments]);
     };
+
 
 
     const handleReply = async (commentId, replyContent) => {

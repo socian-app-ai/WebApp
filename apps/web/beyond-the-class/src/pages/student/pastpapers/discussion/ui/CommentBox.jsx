@@ -23,8 +23,11 @@ export default function CommentBox({ discussionId, onComment }) {
         }
     };
 
+    const [isSending, setIsSending] = useState(false)
+
     const handleSubmit = async (event) => {
         // console.log("here", authUser._id)
+        setIsSending(true)
         event.preventDefault();
         if (comment.trim()) {
             try {
@@ -40,6 +43,8 @@ export default function CommentBox({ discussionId, onComment }) {
             } catch (error) {
                 console.error('Error submitting comment:', error);
                 toast.error('Failed to submit comment');
+            } finally {
+                setIsSending(false)
             }
         }
     };
@@ -53,12 +58,13 @@ export default function CommentBox({ discussionId, onComment }) {
     //         setShowCommentBox(true)
     //     }
     // }
+    // console.log("Authenticated user data:", authUser);
 
     return (
         <form onSubmit={handleSubmit} className="my-1">
             <div className="bg-gray-100 dark:bg-[#151515] mb-5 rounded-3xl shadow-md p-4">
                 <div className="flex  items-start">
-                    <img className="mt-3 w-10 h-10 rounded-full" src={authUser.picture} alt={authUser.name} />
+                    <img className="mt-3 w-10 h-10 rounded-full" src={authUser.profile.picture} alt={authUser.name} />
                     <div className="ml-4 w-full">
                         <textarea
                             onClick={() => { setShowCommentBox(true) }}
@@ -77,8 +83,8 @@ export default function CommentBox({ discussionId, onComment }) {
                             }} className="px-4 py-2 rounded-3xl border border-[#4f4f4f]  bg-[#343434d3] brightness-75 text-white  hover:bg-[#343434d3] hover:brightness-110">
                                 Cancel
                             </button>
-                            <button type="submit" className="px-4 py-2 rounded-3xl border border-[#7a7a7a] bg-[#262626] brightness-75 text-white  hover:bg-[#262626] hover:brightness-110">
-                                Comment
+                            <button type="submit" disabled={isSending} className="px-4 py-2 rounded-3xl border border-[#7a7a7a] bg-[#262626] brightness-75 text-white  hover:bg-[#262626] hover:brightness-110">
+                                {isSending ? 'sending..' : 'Comment'}
                             </button>
 
                         </div>
