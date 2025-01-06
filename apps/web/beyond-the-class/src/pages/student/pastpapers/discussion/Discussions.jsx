@@ -109,7 +109,8 @@ export default function Discussions({ toBeDisccusedId }) {
             <div className="flex flex-col">
 
                 {comments.length !== 0 ? sortComments(comments, sortMethod).map((comment) => (
-                    <div key={comment._id} className="border-b-[0.05rem]">
+                    <div key={comment._id} >
+                        {/* className="border-b-[0.05rem]" */}
                         <Comment
                             key={comment._id}
                             comment={comment}

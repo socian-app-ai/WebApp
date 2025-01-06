@@ -51,18 +51,10 @@ export default function CommentBox({ discussionId, onComment }) {
 
     const [showCommentBox, setShowCommentBox] = useState('')
 
-    // const handleCommentShow = () => {
-    //     if (showCommentBox) {
-    //         setShowCommentBox(false)
-    //     } else {
-    //         setShowCommentBox(true)
-    //     }
-    // }
-    // console.log("Authenticated user data:", authUser);
 
     return (
         <form onSubmit={handleSubmit} className="my-1">
-            <div className="bg-gray-100 dark:bg-[#151515] mb-5 rounded-3xl shadow-md p-4">
+            <div className="bg-gray-100 dark:bg-[#151515] mb-5 rounded-lg  px-4 py-2">
                 <div className="flex  items-start">
                     <img className="mt-3 w-10 h-10 rounded-full" src={authUser.profile.picture} alt={authUser.name} />
                     <div className="ml-4 w-full">
@@ -71,7 +63,7 @@ export default function CommentBox({ discussionId, onComment }) {
                             ref={textAreaRef}
                             placeholder="Add a comment"
                             rows={1}
-                            className="w-full p-3 pl-5 mt-2  dark:bg-transparent border border-[#fffb] text-gray-900 dark:text-white rounded-3xl focus:outline-none focus:ring-1 focus:ring-[#fffb]"
+                            className="w-full p-3 pl-5 mt-2  dark:bg-transparent border border-[#fffb] text-gray-900 dark:text-white rounded-lg focus:outline-none focus:ring-1 focus:ring-[#fffb]"
                             value={comment}
                             onChange={(e) => setComment(e.target.value)}
                         />
