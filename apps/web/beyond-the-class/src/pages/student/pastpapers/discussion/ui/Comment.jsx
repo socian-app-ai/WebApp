@@ -296,7 +296,7 @@ const VoteButton = ({ active, direction, count, onClick, loading }) => (
 
 
 export function ReVote({ comment }) {
-    console.log("THOS", comment)
+    // console.log("THOS", comment)
     const { authUser } = useAuthContext();
     const [upvote, setUpvote] = useState(comment.voteId.upVotesCount);
     const [downvote, setDownvote] = useState(comment.voteId.downVotesCount);

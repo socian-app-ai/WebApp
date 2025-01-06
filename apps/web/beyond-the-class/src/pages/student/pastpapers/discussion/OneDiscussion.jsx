@@ -18,7 +18,7 @@ export default function OneDiscussion() {
     const sliderRef = useRef(null);
     const navigate = useNavigate();
 
-    console.log(years, subject, t)
+    // console.log(years, subject, t)
 
     const settings = {
         // dots: true,
@@ -121,7 +121,7 @@ export default function OneDiscussion() {
                     {t && (
                         <div key={t._id} className="flex flex-col p-4 sm:p-6">
                             <div className="m-2 w-full h-[60vh] overflow-auto border border-gray-200 dark:border-gray-600">
-                                {/* <PdfReact pdf={t.file} /> */}
+                                <PdfReact pdf={t.file.pdf} />
                                 <iframe
                                     className="w-full h-full "
                                     src={`${t.file.pdf}#toolbar=0&navpanes=0&scrollbar=0`}

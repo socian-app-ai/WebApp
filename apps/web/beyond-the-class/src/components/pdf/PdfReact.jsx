@@ -32,7 +32,7 @@ export default function PdfReact({ pdf }) {
 
     return (
         <div onDoubleClick={handleDoubleClick} style={{ cursor: 'pointer' }}>
-            {console.log("PDF file naem ", pdf)}
+            {/* {console.log("PDF file naem ", pdf)} */}
             {/* <Document file={decodeURIComponent(`${import.meta.env.VITE_API_URL}/api${pdf}`)} onLoadSuccess={onDocumentLoadSuccess}> */}
             <Document file={pdf} onLoadSuccess={onDocumentLoadSuccess}>
                 {Array.apply(null, Array(numPages)).map((x, i) => i + 1).map((page, idx) => {
