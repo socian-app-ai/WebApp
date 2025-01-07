@@ -46,6 +46,7 @@ export default function AddDepartmentAndSubjects() {
     };
 
     useEffect(() => {
+        console.log("ID", typeof campusId, campusId !== 0, campusId !== '0')
 
         if (campusId !== '0') {
             fetchData(campusId);
@@ -88,7 +89,7 @@ export default function AddDepartmentAndSubjects() {
             const response = await axiosInstance.post('/api/subject/create',
                 {
                     universityOrigin: data.universityOrigin._id,
-                    campusOrigin: campusId,
+                    campusOrigin: campusId !== '0' ? campusId : currentCampus._id,
                     departmentId: selectedDepartment._id,
                     name: newSubjectName
                 }
