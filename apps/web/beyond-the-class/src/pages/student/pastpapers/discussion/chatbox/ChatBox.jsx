@@ -51,7 +51,7 @@ const ChatBox = ({ discussionId }) => {
     return (
 
 
-        <div className={`fixed bottom-0 right-0 ${showChatBox ? "h-[35rem] md:h-[40rem]" : "h-[2.7rem]"} w-[80%] md:w-[30rem] max-w-[40rem]  bg-slate-400 dark:bg-[#282828] border border-white rounded-t-xl`}>
+        <div className={`fixed bottom-0 right-0 ${showChatBox ? "h-[50%] md:h-[70%]" : "h-[2.7rem]"} w-[80%] md:w-[30rem] max-w-[40rem]  bg-slate-400 dark:bg-[#282828] border border-white rounded-t-xl`}>
             <div className='flex flex-row justify-between'>
                 <div className='bg-slate-300 dark:bg-[#9c9c9c] p-2 text-black rounded-tl-lg w-full flex items-center'>
 
@@ -69,7 +69,7 @@ const ChatBox = ({ discussionId }) => {
 
             </div>
             <p className='text-sm  mx-2'>These chats are removed on reload</p>
-            <div className={`${showChatBox ? "flex flex-col overflow-y-scroll h-[82%] p-1 dark:bg-[#161616] bg-gray-100" : "hidden"}`}>
+            <div className={`${showChatBox ? "flex flex-col overflow-y-scroll h-[75%] p-1 dark:bg-[#161616] bg-gray-100" : "hidden"}`}>
                 {messages.map((msg, index) => (
                     <div key={index} className={`flex  ${msg.user === socket.id ? "justify-end" : "justify-start"} mb-1`}>
                         <div className={`p-2  max-w-[70%] bg-white dark:bg-[#a9a9a9] rounded-xl shadow-md ${msg.user === socket.id ? "bg-blue-500 text-white self-end" : "self-start"}`}>

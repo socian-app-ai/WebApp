@@ -5,6 +5,9 @@ export default {
 
   theme: {
     extend: {
+      screens: {
+        xs: '300px', // Define the `xs` breakpoint (example size)
+      },
       colors: {
         "bg-var-sidebar": "var(--var-bg-sidebar)",
         "bg-var-sidebar-dark": "var(--var-bg-sidebar-dark)",

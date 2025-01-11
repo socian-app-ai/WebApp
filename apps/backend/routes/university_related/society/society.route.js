@@ -395,7 +395,13 @@ router.get("/universities/all", async (req, res) => {
         }
         const society = await Society.find({
             "references.role": role,
-        });
+        }).populate([
+            {
+                path: 'references',
+                populate: 'universityOrigin campusOrigin',
+                select: 'name location'
+            }
+        ]);
 
         if (!society) return res.status(404).json("no society found");
         res.status(200).json(society);
@@ -411,26 +417,22 @@ router.get("/universities/all", async (req, res) => {
  * @summary get all-campus[parent and child] societies
  */
 router.get("/campuses/all", async (req, res) => {
-    let role;
-    let universityOrigin;
+
+
+    const { universityOrigin, role } = getUserDetails(req)
     try {
-        const platform = req.headers["x-platform"];
-        if (platform === "web") {
-            role = req.session.user.role;
-            if (role !== "ext_org") {
-                universityOrigin = req.session.user.university.universityId._id;
-            }
-        } else if (platform === "app") {
-            role = req.user.role;
-            if (role !== "ext_org") {
-                universityOrigin = req.user.university.universityId._id;
-            }
-        }
+
         // console.log("hey", role);
         const society = await Society.find({
             "references.role": role,
             "references.universityOrigin": universityOrigin,
-        });
+        }).populate([
+            {
+                path: 'references',
+                populate: 'universityOrigin campusOrigin',
+                select: 'name location'
+            }
+        ]);
         // console.log("hey yo", society);
 
         if (!society) return res.status(404).json("no society found");
@@ -446,33 +448,28 @@ router.get("/campuses/all", async (req, res) => {
  */
 router.get("/campus/all", async (req, res) => {
     const { id } = req.params;
-    let role;
-    let universityOrigin;
-    let campusOrigin;
-    try {
-        const platform = req.headers["x-platform"];
-        if (platform === "web") {
-            role = req.session.user.role;
-            if (role !== "ext_org") {
-                (universityOrigin = req.session.user.university.universityId._id),
-                    (campusOrigin = req.session.user.university.campusId._id);
-            }
-        } else if (platform === "app") {
-            role = req.user.role;
-            if (role !== "ext_org") {
-                (universityOrigin = req.user.university.universityId._id),
-                    (campusOrigin = req.user.university.campusId._id);
-            }
-        }
-        const society = await Society.find(
-            { _id: id },
 
+    try {
+        const { universityOrigin, campusOrigin, role } = getUserDetails(req)
+
+        const society = await Society.find({
+            "references.role": role,
+            "references.universityOrigin": universityOrigin,
+            "references.campusOrigin": campusOrigin,
+        }
+        ).populate([
             {
-                "references.role": role,
-                "references.universityOrigin": universityOrigin,
-                "references.campusOrigin": campusOrigin,
+                path: 'references',
+                populate: 'universityOrigin campusOrigin',
+                select: 'name location'
             }
-        );
+        ]);
+        // path: 'postsCollectionRef',
+        //                 populate: {
+        //                     path: 'posts.postId',
+        //                     model: 'Post',
+        //                     populate: [{
+        //                         path: 'author
 
         if (!society) return res.status(404).json("no society found");
         res.status(200).json(society);

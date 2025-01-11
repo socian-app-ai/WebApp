@@ -14,9 +14,9 @@ export default function PastPapers() {
     useEffect(() => {
         // PDF of all Year of specific paper then href to another comment page
 
-        const params_CourseName = new URLSearchParams(location.search).get('name')
+        // const params_CourseName = new URLSearchParams(location.search).get('name')
         const params_SubjectId = new URLSearchParams(location.search).get('id')
-        const params_CourseDepartment = new URLSearchParams(location.search).get('dep')
+        // const params_CourseDepartment = new URLSearchParams(location.search).get('dep')
 
         // console.log(params_CourseDepartment, params_CourseName, params_SubjectId)
 

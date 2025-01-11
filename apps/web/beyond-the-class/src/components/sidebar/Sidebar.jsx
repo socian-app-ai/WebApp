@@ -153,6 +153,8 @@ function Sidebar() {
     // Add more external organization links
   ];
 
+
+
   //========= SUPER
   const superMenu = [
     {
@@ -172,6 +174,7 @@ function Sidebar() {
       submenu: [
         { name: "Create", path: "/super/campus/create" },
         { name: "Edit", path: "/super/campus/edit/0" },
+        { name: "Papers", path: `campus/pastpapers/${authUser.university.campusId._id}` },
       ],
     },
     {

@@ -10,11 +10,16 @@ export default function useUniversityData() {
     const [universities, setUniversities] = useState([]);
     const [campuses, setCampuses] = useState([]);
     const [departments, setDepartments] = useState([]);
+    const [subjects, setSubjects] = useState([]);
+    const [teachers, setTeachers] = useState([]);
 
 
     const [currentUniversity, setCurrentUniversity] = useState([]);
     const [currentCampus, setCurrentCampus] = useState([]);
     const [currentDepartment, setCurrentDepartment] = useState([]);
+    const [currentSubject, setCurrentSubject] = useState([]);
+    const [currentTeacher, setCurrentTeacher] = useState([]);
+
 
     const [campus, setCampus] = useState([]);
 
@@ -25,7 +30,7 @@ export default function useUniversityData() {
             try {
 
                 const response = await axiosInstance.get("/api/university/")
-                // console.log(response.data)
+                console.log(response.data)
 
                 setUniversities(response.data);
                 // console.log("universities: ", universities)
@@ -60,6 +65,13 @@ export default function useUniversityData() {
         console.log("CAMPUS", value)
         setCurrentCampus(value)
         setDepartments(value.departments)
+        setTeachers(value.teachers)
+    }
+
+    const handleDepartmentChange = (event, value) => {
+        console.log("Department", value)
+        setCurrentDepartment(value)
+        setSubjects(value.subjects)
     }
 
 
@@ -86,16 +98,44 @@ export default function useUniversityData() {
             <CustomAutocomplete
                 options={departments}
                 label={"Departments"}
-                onChange={(event, value) => setCurrentDepartment(value)}
+                onChange={handleDepartmentChange}
                 filterOptions={filterOptionsDepartments}
                 isOptionEqualToValue={(option, value) => option._id === value._id}
             />,
-        campus,
-        departments,
-        currentDepartment,
-        currentCampus,
+
+        SubjectSelector:
+            <CustomAutocomplete
+                options={subjects}
+                label={"Subjects"}
+                onChange={(event, value) => setCurrentSubject(value)}
+                filterOptions={filterOptionsSubjects}
+                isOptionEqualToValue={(option, value) => option._id === value._id}
+            />,
+
+        TeacherSelector:
+            <CustomAutocomplete
+                options={teachers}
+                label={"Teachers"}
+                onChange={(event, value) => setCurrentTeacher(value)}
+                filterOptions={filterOptionsTeachers}
+                isOptionEqualToValue={(option, value) => option._id === value._id}
+            />,
         currentUniversity,
-        setCurrentUniversity
+        setCurrentUniversity,
+
+        campus,
+        currentCampus,
+
+
+        currentDepartment,
+        setCurrentDepartment,
+
+        currentSubject,
+        setCurrentSubject,
+
+        teachers,
+        currentTeacher
+
     }
 }
 const filterOptionsUniversites = createFilterOptions({
@@ -113,6 +153,20 @@ const filterOptionsCampuses = createFilterOptions({
     },
 });
 const filterOptionsDepartments = createFilterOptions({
+    matchFrom: 'start',
+    stringify: (option) => {
+        console.log("Options: ", option.name)
+        return option.name
+    },
+});
+const filterOptionsSubjects = createFilterOptions({
+    matchFrom: 'start',
+    stringify: (option) => {
+        console.log("Options: ", option.name)
+        return option.name
+    },
+});
+const filterOptionsTeachers = createFilterOptions({
     matchFrom: 'start',
     stringify: (option) => {
         console.log("Options: ", option.name)

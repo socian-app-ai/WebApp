@@ -57,7 +57,7 @@ export default function StudentDashboard() {
   return (
     <div className="min-h-screen pt-[0.1rem] sm:pt-1 md:pt-4 ">
       {/* <p className="p-10 m-10 font-extrabold text-4xl">CREATE UI FIRST</p> */}
-      <div className="fixed bg-[#dcdada] dark:bg-[#171718] w-full p-2">
+      <div className="fixed bg-[var(--var-bg-primary-color)] dark:bg-[#171718] w-full p-2 ">
         <div className="flex overflow-x-auto space-x-4 flex-row ">
           {filters.map((filter, idx) => (
             <button
@@ -72,7 +72,7 @@ export default function StudentDashboard() {
 
 
 
-      <div className="mt-10 flex flex-col justify-center items-center w-full lg:w-[90%]  ">
+      <div className="mt-12 flex flex-col justify-center items-center w-full lg:w-[90%]  ">
 
         <div className="px-2  w-full md:w-4/5 lg:w-2/3">
           <PostBar authUser={authUser} />

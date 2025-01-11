@@ -122,7 +122,7 @@ export default function CourseInfo() {
         );
         setPastPapers(res.data.pastPapers);
         setSubjectName(res.data.subjectName);
-        // console.log(res.data);
+        console.log(res.data);
       } catch (error) {
         console.error("Error fetching data", error);
         setError("Error loading past papers data.");
@@ -147,7 +147,7 @@ export default function CourseInfo() {
           {subjectName}
         </h6>
       </div>
-      {pastPapers.map((paper, index) => (
+      {pastPapers.map(paper => (
         <div key={paper._id} className="mb-8">
           <h3 className="text-lg font-semibold mb-4">{paper.year}</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">

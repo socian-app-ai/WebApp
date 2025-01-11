@@ -13,7 +13,7 @@ export default function AddDepartmentAndSubjects() {
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [showModal, setShowModal] = useState({ type: null, payload: null });
+    // const [showModal, setShowModal] = useState({ type: null, payload: null });
     const [selectedDepartment, setSelectedDepartment] = useState(null);
     const [selectedSubject, setSelectedSubject] = useState(null);
 

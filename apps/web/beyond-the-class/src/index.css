@@ -9,7 +9,7 @@
 }
 .dark body {
   /* background-color: #80a1cd; */
-  background-color: #171718;
+  background-color: #151515e3;
   @apply transition-colors duration-1000 ease-in-out;
 }
 
@@ -31,7 +31,7 @@ body {
   --var-bg-navbar-url-dark: url(https://arc.net/noise-light.png) #383838;
   --var-bg-navbar-url-light: url(https://arc.net/noise-light.png) #456378; */
 
-  --var-bg-primary-color: #dcdada;
+  --var-bg-primary-color: #ebf0ecdb;
   --var-bg-secondary-color: #dddddd;
 
   --var-bg-primary-color-dark: #121212;
