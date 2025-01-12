@@ -135,8 +135,10 @@ export default function AddPastPapers() {
             return;
         }
         if (formData.type === 'mid' || formData.type === 'final') {
+if(formData.term ==='' || formData.termMode ===''){
             alert('Term and TemMode also required when Mid/Final Term');
             return;
+}
         }
 
 
