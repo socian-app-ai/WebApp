@@ -92,14 +92,14 @@ export default function TypeCourse() {
       keyVal={paper._id}
       title={paper.name}
       content={""}
-      link={paper.file.pdf}
+      link={`${import.meta.env.VITE_BACKEND_API_URL}/api/uploads/${paper.file.pdf}`}
       t={paper}
       years={data}
       subject={subjectName}
     />
   );
 
-  console.log("DATA", data)
+  // console.log("DATA", data)
   return (
     <div className="min-h-screen w-full px-2 pt-8">
       <ArrowBack onClick={() => navigate(-1)} className="cursor-pointer mr-2" />
@@ -118,7 +118,7 @@ export default function TypeCourse() {
             <div className="flex flex-col xs:flex-row flex-wrap" >
               {data[year].map((item, index) => {
 
-                console.log(index, year)
+                // console.log(index, year)
                 return (
                   <div key={index} className="flex flex-col xs:flex-row flex-wrap">
 
@@ -222,18 +222,24 @@ const FilePreviewCard = ({
     });
   };
 
+  // console.log(link)
   return (
     <div
       key={keyVal}
-      className=" m-1 bg-white dark:bg-[#2a3c56] rounded-md shadow-md p-3 font-sans"
+      className="max-w-xs w-fit m-1 bg-white dark:bg-[#2a3c56] rounded-md shadow-md p-3 font-sans"
     >
       {/* PDF Preview */}
-      <div className="bg-gray-50 dark:bg-[#111827] rounded-lg p-4 mb-2">
-        <div className="border border-gray-200 dark:border-gray-700 rounded-sm p-2 overflow-hidden">
+      <div className={`${numPages ? ' p-1' : ' p-3'} bg-gray-50 dark:bg-[#111827] rounded-lg mb-1`}>
+        <div className={`${numPages ? 'w-full h-36 ' : 'p-2 '} border  border-gray-200 dark:border-gray-700 rounded-sm overflow-hidden`} >
           {numPages ? (
             <>
-              <Document file={link} onLoadSuccess={onDocumentLoadSuccess}>
-                <Page pageNumber={pageNumber} width={180} />
+
+              <Document className="rounded-lg" file={link} onLoadSuccess={onDocumentLoadSuccess}>
+                {Array.apply(null, Array(numPages)).map((x, i) => i + 1).map((page, idx) => {
+                  return (<Page className=" " key={idx} pageNumber={page} renderTextLayer={false} renderAnnotationLayer={false} />)
+
+                })}
+
               </Document>
               <p className="text-sm text-gray-500 mt-2">
                 Page 1 of {numPages || "Loading..."}

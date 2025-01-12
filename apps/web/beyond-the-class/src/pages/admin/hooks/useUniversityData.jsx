@@ -30,7 +30,7 @@ export default function useUniversityData() {
             try {
 
                 const response = await axiosInstance.get("/api/university/")
-                console.log(response.data)
+                // console.log(response.data)
 
                 setUniversities(response.data);
                 // console.log("universities: ", universities)
@@ -44,7 +44,7 @@ export default function useUniversityData() {
 
 
     const handleUniversityChange = (event, value) => {
-        console.log("value", value)
+        // console.log("value", value)
         setCurrentUniversity(value)
 
         if (value) {
@@ -52,7 +52,7 @@ export default function useUniversityData() {
             setCampus(courseList);
             setCampuses(courseList)
 
-            console.log("Selected Campus:", courseList);
+            // console.log("Selected Campus:", courseList);
         } else {
             setCampus([]);
             setCampuses([]);
@@ -62,14 +62,14 @@ export default function useUniversityData() {
 
 
     const handleCampusesChange = (event, value) => {
-        console.log("CAMPUS", value)
+        // console.log("CAMPUS", value)
         setCurrentCampus(value)
         setDepartments(value.departments)
         setTeachers(value.teachers)
     }
 
     const handleDepartmentChange = (event, value) => {
-        console.log("Department", value)
+        // console.log("Department", value)
         setCurrentDepartment(value)
         setSubjects(value.subjects)
     }
@@ -141,35 +141,35 @@ export default function useUniversityData() {
 const filterOptionsUniversites = createFilterOptions({
     matchFrom: 'start',
     stringify: (option) => {
-        console.log("Options: ", option.name)
+        // console.log("Options: ", option.name)
         return option.name
     },
 });
 const filterOptionsCampuses = createFilterOptions({
     matchFrom: 'start',
     stringify: (option) => {
-        console.log("Options:c ", option.name)
+        // console.log("Options:c ", option.name)
         return option.name
     },
 });
 const filterOptionsDepartments = createFilterOptions({
     matchFrom: 'start',
     stringify: (option) => {
-        console.log("Options: ", option.name)
+        // console.log("Options: ", option.name)
         return option.name
     },
 });
 const filterOptionsSubjects = createFilterOptions({
     matchFrom: 'start',
     stringify: (option) => {
-        console.log("Options: ", option.name)
+        // console.log("Options: ", option.name)
         return option.name
     },
 });
 const filterOptionsTeachers = createFilterOptions({
     matchFrom: 'start',
     stringify: (option) => {
-        console.log("Options: ", option.name)
+        // console.log("Options: ", option.name)
         return option.name
     },
 });

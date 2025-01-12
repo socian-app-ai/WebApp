@@ -43,7 +43,7 @@ export default function CustomAccordianPastPaper({ t, years, subject }) {
               </a>
             </Button>
             <Button className="ml-2">
-              {/* {console.log(`Test url ${import.meta.env.VITE_API_URL}/api${t.pdf}`)} */}
+              {/* {console.log(`Test url ${import.meta.env.VITE_BACKEND_API_URL}/api${t.pdf}`)} */}
               <a
                 href={`${t.file.pdf}`}
                 target="_blank"
