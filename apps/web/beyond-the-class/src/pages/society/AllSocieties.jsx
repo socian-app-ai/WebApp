@@ -209,10 +209,17 @@ export default function AllSocieties() {
     const SocietyCard = ({ society }) => (
         <Link to={`/${authUser.role}/society/${society._id}`} className="block transition-transform duration-200 hover:scale-105">
             <div className="h-full bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-xl transition-shadow p-6">
-                <h3 className="text-xl font-semibold mb-2">{society.name}</h3>
-                {society.references.campusOrigin.name}
-                <h5>{society.references.campusOrigin.location} </h5>
-                {society.references.universityOrigin.name}
+                <div className='flex flex-row'>
+                    <p className="text-md font-sans mb-2">{society.name}</p>
+                    {/* {society.references.campusOrigin.name} */}
+                    <div className="inline-flex items-center mx-[0.1rem] bg-[#4c60f7c5] text-white text-xs font-thin h-min px-1 py-1 rounded-2xl">
+                        {society.references.universityOrigin.name}
+                    </div>
+                    <div className="inline-flex items-center mx-[0.1rem] bg-[#4c60f7c5] text-white text-xs font-thin h-min px-1 py-1 rounded-2xl">
+                        <h5>{society.references.campusOrigin.location} </h5>
+                    </div>
+                </div>
+
                 <p className="text-gray-600 dark:text-gray-300 text-sm line-clamp-2">
                     {society.description || 'No description available'}
                 </p>

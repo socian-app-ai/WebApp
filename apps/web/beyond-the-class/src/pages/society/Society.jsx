@@ -291,9 +291,9 @@ export default function Society() {
                 } else {
                     setPosts(prevPosts => [...prevPosts, ...response.data.posts]); // Append posts for subsequent pages
                 }
-                setJoined(response.data.society.members.members.includes(authUser._id));
+                setJoined(response.data.society?.members?.members?.includes(authUser._id) ?? false);
             } catch (err) {
-                setError("Error fetching society data.");
+                setError("Your Society has vanished into space.");
                 console.error("Error fetching society details:", err);
             } finally {
                 setLoading(false);
@@ -378,9 +378,9 @@ export default function Society() {
 
     return (
         <div className="min-h-screen">
-            <div className="container mx-auto p-6 space-y-6">
+            <div className=" mx-auto p-6 space-y-6">
                 {/* Society Header */}
-                <div className="rounded-lg shadow-lg p-6">
+                <div className="rounded-lg w-full shadow-lg p-6">
                     <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                         <div className="space-y-2">
                             <div className="flex items-center gap-2 flex-wrap">
@@ -432,7 +432,7 @@ export default function Society() {
                         ))}
                     </div>
                 ) : (
-                    <div className="text-center text-gray-500">No posts yet.</div>
+                    <div className="text-center text-gray-500">Be the First One to Post!</div>
                 )}
             </div>
         </div>

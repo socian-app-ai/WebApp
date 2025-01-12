@@ -1,5 +1,4 @@
 /* eslint-disable react/prop-types */
-import React from 'react'
 import { useState } from 'react';
 import { useAuthContext } from '../../../context/AuthContext';
 import { useEffect } from 'react';
