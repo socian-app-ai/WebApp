@@ -84,6 +84,7 @@ router.get('/:universityOrigin/:campusOrigin/student/pastpapers/:year/:departmen
         Bucket: process.env.AWS_S3_BUCKET_NAME,
         Key: key
     };
+    console.log("IN term")
 
     try {
         const command = new GetObjectCommand(s3Params);
@@ -124,10 +125,13 @@ router.post('/upload/pastpaper/aws', superProtect, upload.single('file'), async 
     // ${term}.${type}.${termMode}`
     let concat = "/";
     if (type === "assignment" || type === "quiz") {
+        console.log("IN MID OR FINAL", type, type === "assignment", type === "quiz")
         concat = `/${type}`;
     } else if (type === 'mid' || type === 'final') {
+        console.log("IN MID OR FINAL", type, type === 'mid', type === 'final')
         concat = `/${term}/${type}/${termMode}`;
     }
+    console.log("IN MID OR FINAL2", type, type === 'mid', type === 'final')
     const pathNameDefined = `${universityOrigin}/${campusOrigin}/${role}/pastpapers/${year}/${departmentId}/${subjectId}${concat}/${file.originalname}-${Date.now()}`
 
     console.log("Path Name", pathNameDefined)

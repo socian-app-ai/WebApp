@@ -135,10 +135,10 @@ export default function AddPastPapers() {
             return;
         }
         if (formData.type === 'mid' || formData.type === 'final') {
-if(formData.term ==='' || formData.termMode ===''){
-            alert('Term and TemMode also required when Mid/Final Term');
-            return;
-}
+            if (formData.term === '' || formData.termMode === '') {
+                alert('Term and TemMode also required when Mid/Final Term');
+                return;
+            }
         }
 
 
@@ -160,7 +160,7 @@ if(formData.term ==='' || formData.termMode ===''){
             const response = await axiosInstance.post('/api/uploads/upload/pastpaper/aws', formDataConst, {
                 headers: { 'Content-Type': 'multipart/form-data' },
             });
-            alert('File uploaded successfully!');
+            // alert('File uploaded successfully!');
             console.log(response.data);
 
             setDisableUrlField(true)
