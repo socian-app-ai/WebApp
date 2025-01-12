@@ -1,8 +1,9 @@
 
 import { useEffect, useRef, useState } from "react";
-import toast from "react-hot-toast";
+// import toast from "react-hot-toast";
 import { useAuthContext } from "../../../../../context/AuthContext";
 import axiosInstance from "../../../../../config/users/axios.instance";
+import { useToast } from "../../../../../components/toaster/ToastCustom";
 
 // eslint-disable-next-line react/prop-types
 export default function CommentBox({ discussionId, onComment }) {
@@ -11,6 +12,8 @@ export default function CommentBox({ discussionId, onComment }) {
 
 
     const textAreaRef = useRef(null);
+    const { addToast } = useToast();
+
 
     useEffect(() => {
         adjustHeight();
@@ -38,11 +41,15 @@ export default function CommentBox({ discussionId, onComment }) {
                 });
                 onComment(response.data);
                 setComment('');
-                toast.success('Comment submitted successfully!');
+                // toast.success();
                 setShowCommentBox(false)
+                addToast('Comment submitted successfully!');
+
             } catch (error) {
                 console.error('Error submitting comment:', error);
-                toast.error('Failed to submit comment');
+                // toast.error('Failed to submit comment');
+                addToast('Failed to submit comment');
+
             } finally {
                 setIsSending(false)
             }

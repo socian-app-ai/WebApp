@@ -38,6 +38,7 @@ import Feedback from './pages/teacher/feedback/Feedback.jsx';
 import AddDepartmentAndSubjects from './pages/admin/add/edit/AddDepartmentAndSubjects.jsx';
 import AddTeacher from './pages/admin/add/AddTeacher.jsx';
 import AddPastPapers from './pages/admin/add/AddPastPapers.jsx';
+import { ToastProviders } from './components/toaster/ToastCustom.jsx';
 
 
 const router = createBrowserRouter([
@@ -158,10 +159,12 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <AuthContextProvider>
-      <RouterProvider router={router} />
-      <Toaster />
-    </AuthContextProvider>
+    <ToastProviders>
+      <AuthContextProvider>
+        <RouterProvider router={router} />
+        <Toaster />
+      </AuthContextProvider>
+    </ToastProviders>
   </StrictMode>,
 )
 

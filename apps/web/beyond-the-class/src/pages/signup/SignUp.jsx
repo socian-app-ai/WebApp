@@ -8,8 +8,9 @@ import LabelInputCustomizable, {
 import GoogleButton from "../../components/Buttons/GoogleButton";
 import DarkButton from "../../components/Buttons/DarkButton";
 import routesForLinks, { routesForApi } from "../../utils/routes/routesForLinks";
-import toast from "react-hot-toast";
+// import toast from "react-hot-toast";
 import { useDebouncedCallback } from 'use-debounce';
+import { useToast } from "../../components/toaster/ToastCustom";
 
 
 export default function SignUpR() {
@@ -26,6 +27,11 @@ export default function SignUpR() {
     const [usernameLess, setUsernameLess] = useState('')
 
 
+    const { addToast } = useToast();
+
+
+
+
     const { loading, signup } = useSignup();
 
     const [roleError, setRoleError] = useState(false)
@@ -38,9 +44,10 @@ export default function SignUpR() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log("REOLE", role)
+        // console.log("REOLE", role)
         setUniversityEmail(universityEmail);
         if (role === 'none') {
+            addToast("Select a role")
             return setRoleError(true)
         } else {
             setRoleError(false)
@@ -59,7 +66,7 @@ export default function SignUpR() {
                 role: role,
             });
         } else {
-            toast.error("This username already exists")
+            addToast("This username already exists")
         }
         // console.log(universityEmail, universityEmailPassword)
     };
@@ -279,7 +286,7 @@ const roleList = ["student", "teacher", "alumni"];
 
 // eslint-disable-next-line react/prop-types
 function RoleSelectionBox({ handleRoleChange, roleType, role, roleError, setRoleError }) {
-    console.log("Ero roler", roleError)
+    // console.log("Ero roler", roleError)
     return (
         // <button className={`${roleType === role ? 'bg-slate-500' : 'bg-red-300'} btn glass  p-2 max-h-14 max-w-20`} onClick={() => handleRoleChange(roleType)}>
         //     {roleType}

@@ -5,6 +5,7 @@ import { useState } from 'react';
 import toast from 'react-hot-toast';
 import LabelInputCustomizable from '../../../components/TextField/LabelInputCustomizable';
 import DarkButton from '../../../components/Buttons/DarkButton';
+import { useToast } from '../../../components/toaster/ToastCustom';
 
 export default function AddTeacher() {
     const { UniversitySelector, campus, currentUniversity,
@@ -42,6 +43,7 @@ export default function AddTeacher() {
 
     const [selectedTeacher, setSelectedTeacher] = useState(null);
 
+    const { addToast } = useToast();
 
     const handleNewTeacherSave = async () => {
         if (newTeacherName === '' || newTeacherEmail === '' || newTeacherPictureUrl === '') return
@@ -57,12 +59,12 @@ export default function AddTeacher() {
                 }
             )
             if (response.status === 200) {
-                toast.success(`OK `)
+                addToast(`OK `)
             }
             console.log("response newTeacherName", response)
         } catch (error) {
             console.error(error)
-            toast.error(error)
+            addToast(error)
         } finally {
             setNewTeacherName('')
             setShowTeacherBox(false)

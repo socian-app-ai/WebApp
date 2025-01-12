@@ -252,7 +252,7 @@ export default function Reviews() {
                         />
                         <div className="flex -mt-[0.4rem] items-center">
                             <p className="text-xs md:text-md  text-gray-600 dark:text-gray-400">Submit anonymously?</p>
-                            {console.log("THIS IS EDIT ANONYMOUS: ", editAnonymous)}
+                            {/* {console.log("THIS IS EDIT ANONYMOUS: ", editAnonymous)} */}
                             <BpCheckbox
                                 value={editAnonymous}
                                 onClick={() => setEditAnonymous(prev => !prev)}

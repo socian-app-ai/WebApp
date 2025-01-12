@@ -11,12 +11,15 @@ import Discussions from "./Discussions";
 import { useNavigate } from "react-router-dom";
 import { ArrowBack } from "@mui/icons-material";
 import PdfReact from "../../../../components/pdf/PdfReact";
+import { useParams } from "react-router-dom";
 
 export default function OneDiscussion() {
     const location = useLocation();
     const { years, subject, t } = location.state || {};
     const sliderRef = useRef(null);
     const navigate = useNavigate();
+
+    const { toBeDisccusedId } = useParams()
 
     // console.log(years, subject, t)
 
@@ -42,7 +45,7 @@ export default function OneDiscussion() {
     const renderPdfSlide = (pdfItem, year, term, examType) => (
         <div key={`${term}-${examType}`} className="flex flex-col p-4 sm:p-6">
             <div className="m-2 w-full h-[60vh] overflow-auto border border-gray-200 dark:border-gray-600 rounded-lg" key={`${term}-${examType}`}>
-                <PdfReact pdf={`${import.meta.env.VITE_BACKEND_API_URL}/api/uploads/${t.file.pdf}`} />
+                <PdfReact pdf={`${import.meta.env.VITE_BACKEND_API_URL}/api/uploads/${pdfItem.pdf}`} />
 
                 {/* <iframe
                     className="w-full h-full "
@@ -150,7 +153,7 @@ export default function OneDiscussion() {
             <div className="w-full mt-2 relative overflow-hidden custom-scrollbar">
 
                 <Slider arrows={false} {...settings} ref={sliderRef} className="w-full custom-scrollbar max-w-full mt-5">
-                    {t && (
+                    {t && t.file.pdf && (
                         <div key={t._id} className="flex flex-col p-4 sm:p-6">
                             <div className="m-2 w-full h-[60vh] overflow-auto border border-gray-200 dark:border-gray-600">
                                 <PdfReact pdf={`${import.meta.env.VITE_BACKEND_API_URL}/api/uploads/${t.file.pdf}`} />
@@ -189,7 +192,7 @@ export default function OneDiscussion() {
 
             <div className="w-full min-h-screen">
                 {/* Discussion of {t.pdf} */}
-                <Discussions toBeDisccusedId={t._id} />
+                <Discussions toBeDisccusedId={toBeDisccusedId} />
             </div>
         </div>
     );

@@ -13,6 +13,7 @@ import { ArrowUp } from "lucide-react";
 import { ArrowDown } from "lucide-react";
 import formatTimeDifference from "../../../../../utils/formatDate";
 import { ReplyIcon } from "lucide-react";
+import { useToast } from "../../../../../components/toaster/ToastCustom";
 
 function Comment({ comment, onReply, }) {
     const [reply, setReply] = useState('');
@@ -21,6 +22,7 @@ function Comment({ comment, onReply, }) {
     // const [upvote, setUpvote] = useState(comment.upvotes.length)
     // const [downvote, setDownvote] = useState(comment.downvotes.length)
 
+    const { addToast } = useToast();
 
     // const { authUser } = useAuthContext()
 
@@ -32,7 +34,7 @@ function Comment({ comment, onReply, }) {
         if (reply.trim()) {
             onReply(comment._id, reply);
             setReply('');
-            toast.success('Reply submitted!');
+            addToast('Reply submitted!');
         }
     };
 

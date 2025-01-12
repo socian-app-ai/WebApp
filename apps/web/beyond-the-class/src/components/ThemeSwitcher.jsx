@@ -60,46 +60,4 @@ export default ThemeSwitcher;
 
 
 
-export const ThemeSwitchers = () => {
-
-  const [theme, setTheme] = useState(
-    localStorage.getItem('theme') || "light"
-  );
-
-
-  useEffect(() => {
-    if (theme === 'dark') {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-      document.documentElement.classList.add('light');
-
-    }
-
-    localStorage.setItem('theme', theme);
-  }, [theme, setTheme]);
-
-  const toggleTheme = () => {
-    setTheme(theme === 'light' ? 'dark' : 'light');
-  };
-
-  // console.log("TESTING")
-
-  return (
-    <label className="cursor-pointer   w-full relative flex items-center justify-center  ">
-      {/* <input
-        type="checkbox"
-        checked={theme === 'dark'}
-        onChange={toggleTheme}
-        className="hidden"
-      /> */}
-      {/* {theme === 'dark' ? <ToggleRight size={22} /> : <ToggleLeft size={22} />} */}
-
-      <li onClick={toggleTheme} className="px-4 py-2 w-full  z-50 hover:bg-gray-200 dark:hover:bg-[#2B3236] cursor-pointer">
-        Theme
-
-      </li>
-    </label>
-  );
-};
 

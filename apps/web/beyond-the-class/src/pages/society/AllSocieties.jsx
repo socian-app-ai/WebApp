@@ -164,7 +164,7 @@ export default function AllSocieties() {
 
                 const universities = await axiosInstance.get(routesForApi.society.universitiesAll);
                 setSocietiesUniversities(universities.data);
-                console.log("universities", universities.data)
+                // console.log("universities", universities.data)
             } catch (err) {
                 setErrorUni("Error fetching universities.");
                 console.error("Error fetching universities societies: ", err);
@@ -178,7 +178,7 @@ export default function AllSocieties() {
             try {
                 const campuses = await axiosInstance.get(routesForApi.society.campusesAll);
                 setSocietiesCampuses(campuses.data);
-                console.log("campuses", campuses.data)
+                // console.log("campuses", campuses.data)
             } catch (err) {
                 setErrorCampuses("Error fetching campuses.");
                 console.error("Error fetching campuses societies: ", err);
@@ -192,7 +192,7 @@ export default function AllSocieties() {
             try {
                 const campus = await axiosInstance.get(routesForApi.society.campusAll);
                 setSocietiesCampus(campus.data);
-                console.log("campus", campus.data)
+                // console.log("campus", campus.data)
             } catch (err) {
                 setErrorCampus("Error fetching single campus.");
                 console.error("Error fetching single campus societies: ", err);

@@ -7,6 +7,7 @@ import useTriggerReRender from "../../../../../state_management/zustand/useTrigg
 import axiosInstance from "../../../../../config/users/axios.instance";
 import BpCheckbox from '../../../../../components/MaterialUI/BpCheckbox'
 import { useParams } from "react-router-dom";
+import { useToast } from "../../../../../components/toaster/ToastCustom";
 
 
 export default function CommentBox() {
@@ -18,6 +19,7 @@ export default function CommentBox() {
     const { setTriggerReRender } = useTriggerReRender();
     const [anonymous, setAnonymous] = useState(false)
 
+    const { addToast } = useToast();
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -32,7 +34,7 @@ export default function CommentBox() {
                 hideUser: anonymous
             });
 
-            toast.success('Review submitted successfully!')
+            addToast('Review submitted successfully!')
             setTriggerReRender(true)
             setComment('');
             setRating(0);

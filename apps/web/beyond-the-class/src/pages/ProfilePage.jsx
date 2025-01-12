@@ -10,12 +10,14 @@ import { useEffect } from 'react';
 import axiosInstance from '../config/users/axios.instance';
 import toast from 'react-hot-toast';
 import PostDiv from './society/post/PostDiv';
+import { useToast } from '../components/toaster/ToastCustom';
 
 const ProfilePage = () => {
     const { id } = useParams()
 
     const { authUser } = useAuthContext()
     const [user, setUser] = useState(null)
+    const { addToast } = useToast();
 
     const [loading, setLoading] = useState(true)
 
@@ -27,7 +29,7 @@ const ProfilePage = () => {
                 setUser(user.data)
 
             } catch (error) {
-                toast.error("User not found")
+                addToast("User not found")
             } finally {
                 setLoading(false)
             }

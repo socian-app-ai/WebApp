@@ -146,7 +146,6 @@ import { Search } from "lucide-react";
 import { ChevronUp, ChevronDown } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { ThemeSwitchers } from "../ThemeSwitcher";
 import CreatePostButton from "../../pages/society/post/CreatePostButton";
 import useLogout from "../../hooks/useLogout";
 import routesForLinks from "../../utils/routes/routesForLinks";
@@ -156,6 +155,7 @@ import routesForLinks from "../../utils/routes/routesForLinks";
 import ThemeSwitcher from "../ThemeSwitcher";
 import { useSetSideBarState } from "../../state_management/zustand/useSideBar";
 import useWindowDimensions from "../../hooks/useWindowDimensions";
+import ThemeSwitcherButton from "../ThemeSwitcherButton";
 
 export function LeftSection() {
     const { width } = useWindowDimensions();
@@ -258,7 +258,7 @@ export function RightSection() {
                             >
                                 Profile
                             </Link>
-                            <ThemeSwitchers />
+                            <ThemeSwitcherButton />
                             <li className="px-4 py-2 hover:bg-gray-200 dark:hover:bg-[#2B3236] cursor-pointer">
                                 Settings
                             </li>

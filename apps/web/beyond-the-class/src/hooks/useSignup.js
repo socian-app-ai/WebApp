@@ -1,11 +1,13 @@
 import { useState } from "react";
-import toast from "react-hot-toast";
+// import toast from "react-hot-toast";
 import { useAuthContext } from "../context/AuthContext";
 import axiosInstance from "../config/users/axios.instance";
 import { routesForApi } from "../utils/routes/routesForLinks";
+import { useToast } from "../components/toaster/ToastCustom";
 
 const useSignup = () => {
     const [loading, setLoading] = useState(false);
+    const { addToast } = useToast();
 
     const { setAuthUser } = useAuthContext();
 
@@ -13,7 +15,7 @@ const useSignup = () => {
     }) => {
         // console.log("\nuniversityEmail", universityEmail, "\npersonalEmail", personalEmail, "\npassword", password, "\nusername", username, "\nname", name, "\nuniversityId", universityId, "\ncampusId", campusId, "\nrole", role,)
         const success = handleInputErrors({
-            universityEmail, personalEmail, password, username, name, universityId, campusId, role,
+            universityEmail, personalEmail, password, username, name, universityId, campusId, role, addToast
         });
 
         // console.log("secuess? ", success)
@@ -33,6 +35,9 @@ const useSignup = () => {
             role,
         }
         if (role === 'alumni') requestBody.personalEmail = personalEmail
+        if (role === 'teacher' || role === 'student') {
+            requestBody.universityEmail = universityEmail;
+        }
         try {
 
             const res = await axiosInstance.post(
@@ -43,8 +48,8 @@ const useSignup = () => {
             const data = res.data;
 
             if (res.status === 200) {
-                toast.success(data.message, { duration: 20000 });
-                toast.success(
+                addToast(data.message, { duration: 20000 });
+                addToast(
                     "Verification Link Has Been Sent To Your University Email",
                     { duration: 20000 }
                 );
@@ -67,7 +72,7 @@ const useSignup = () => {
         } catch (error) {
             const errorMessage =
                 error.response?.data?.error || "Unexpected error occurred";
-            toast.error(errorMessage);
+            addToast(errorMessage);
         } finally {
             setLoading(false);
         }
@@ -84,18 +89,18 @@ const roleList = [
     'teacher',
     'alumni'
 ]
-function handleInputErrors({ universityEmail, personalEmail, password, role }) {
+function handleInputErrors({ universityEmail, personalEmail, password, role, addToast }) {
     if (!universityEmail || !password) {
-        toast.error("Please fill all fields");
+        addToast("Please fill all fields");
         return false;
     }
 
     if (password.length < 6) {
-        toast.error("Password must be at least 6 characters");
+        addToast("Password must be at least 6 characters");
         return false;
     }
 
-    if (role === 'alumni' && !personalEmail) return toast.error("Alumni needs a personal Email");
+    if (role === 'alumni' && !personalEmail) return addToast("Alumni needs a personal Email");
 
     if (!roleList.includes(role)) return false;
 
@@ -106,12 +111,12 @@ function handleInputErrors({ universityEmail, personalEmail, password, role }) {
 //     email, password, isUniversityRequired
 // }) {
 //     if (!email || !password) {
-//         toast.error("Please fill all fields")
+//         addToast("Please fill all fields")
 //         return false
 //     }
 
 //     if (password.length < 6) {
-//         toast.error("Password must be atlest 6 characters")
+//         addToast("Password must be atlest 6 characters")
 //         return false
 //     }
 
@@ -122,7 +127,7 @@ function handleInputErrors({ universityEmail, personalEmail, password, role }) {
 
 //     if (isUniversityRequired) {
 //         if (!emailRegex.test(email)) {
-//             toast.error("Invalid email domain. Allowed domains are cuilahore, cuiislamabad, cuiabbottabad with .edu.pk")
+//             addToast("Invalid email domain. Allowed domains are cuilahore, cuiislamabad, cuiabbottabad with .edu.pk")
 //             return false;
 //         } else {
 //             return true;

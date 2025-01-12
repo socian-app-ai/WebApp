@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
-import toast from "react-hot-toast";
+// import toast from "react-hot-toast";
 import CommentBox from "./ui/CommentBox";
 import Comment from "./ui/Comment";
 import ChatBox from "./chatbox/ChatBox";
 import axiosInstance from "../../../../config/users/axios.instance";
 import { useAuthContext } from "../../../../context/AuthContext";
+import { useToast } from "../../../../components/toaster/ToastCustom";
 
 // eslint-disable-next-line react/prop-types
 export default function Discussions({ toBeDisccusedId }) {
@@ -12,6 +13,8 @@ export default function Discussions({ toBeDisccusedId }) {
     const [comments, setComments] = useState([]);
     const [sortMethod, setSortMethod] = useState('votes');
     const { authUser } = useAuthContext()
+
+    const { addToast } = useToast();
 
 
 
@@ -24,7 +27,15 @@ export default function Discussions({ toBeDisccusedId }) {
                 // console.log("DI", discussionId)
                 setComments(response.data.discussion.discussioncomments);
             } catch (error) {
-                toast.error('Failed to fetch discussion');
+                // toast.error('Failed to fetch discussion');
+                // toast.custom("Be the first to discuss", {
+                //     className: "border border-white dart:bg-[121212] w-fit ",
+                //     position: 'bottom-right',
+                //     duration: 2000
+                // })
+                addToast("Be the first to discuss");
+
+
             }
         };
         fetchDiscussion();
@@ -64,7 +75,8 @@ export default function Discussions({ toBeDisccusedId }) {
             });
             setComments(updatedComments);
         } catch (error) {
-            toast.error('Failed to submit reply');
+            // toast.error('Failed to submit reply');
+            addToast("Retry Submiting Reply");
         }
     };
 

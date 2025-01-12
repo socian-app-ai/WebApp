@@ -22,10 +22,9 @@ export default function Login() {
   };
 
   const handleEmailChange = (e) => {
-    const emailValue = e.target.value;
-    setEmail(emailValue);
+    setEmail(e.target.value);
     // If email does not contain '@', consider it as a username
-    setInputType(emailValue.includes("@") ? "email" : "username");
+    setInputType(e.target.value.includes("@") ? "email" : "username");
   };
 
   function navigate(url) {

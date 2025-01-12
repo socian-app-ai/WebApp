@@ -23,7 +23,7 @@ export default function StudentDashboard() {
     { filterName: "Lost & Found" },
     { filterName: "Polls" },
   ];
-  console.log("here");
+  // console.log("here");
 
   const { infoBarState, setInfoBarState } = useSetInfoBarState();
 
