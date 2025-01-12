@@ -690,8 +690,8 @@ const ChatBox = ({ discussionId }) => {
 
     return (
         <div className={`fixed z-50 bottom-0 right-4 transition-all duration-300 ease-in-out
-            ${showChatBox ? "h-[600px]" : "h-12"}
-            w-[380px] bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-t-lg shadow-lg`}>
+            ${showChatBox ? "h-[400px] md:h-[540px] lg:h-[600px]" : "h-12"}
+            w-[280px] md:w-[380px] bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-t-lg shadow-lg`}>
 
             {/* Header */}
             <div className="p-3 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
@@ -722,7 +722,7 @@ const ChatBox = ({ discussionId }) => {
                     </div>
 
                     {/* Messages Area */}
-                    <div className="flex-1 h-[460px] overflow-y-auto p-4 bg-gray-50 dark:bg-gray-900">
+                    <div className="flex-1 h-[260px] md:h-[400px] lg:h-[460px] overflow-y-auto p-4 bg-gray-50 dark:bg-gray-900">
                         <div className="space-y-4">
                             {groupedMessages.map((group, index) => {
                                 if (group.type === 'date') {
