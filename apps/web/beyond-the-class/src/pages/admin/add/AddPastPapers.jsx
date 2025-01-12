@@ -402,7 +402,7 @@ export default function AddPastPapers() {
                     ))}
                 </div>
                 <h5 className="font-bold mt-5">Form Data Preview</h5>
-                <pre className="bg-gray-200 p-3 rounded">{JSON.stringify(formData, null, 2)}</pre>
+                <pre className="bg-gray-200 p-3 rounded whitespace-break-spaces" style={{ lineBreak: 'anywhere' }}>{JSON.stringify(formData, null, 2)}</pre>
             </div>
         </div>
     );
