@@ -173,7 +173,7 @@ function Sidebar() {
       icon: <FaBuilding className="w-5" />,
       submenu: [
         { name: "Create", path: "/super/campus/create" },
-        { name: "Edit", path: "/super/campus/edit/0" },
+        { name: "Subject & Departments", path: "/super/campus/edit/0" },
         { name: "Papers", path: `campus/pastpapers/${authUser.university.campusId._id}` },
       ],
     },

@@ -114,7 +114,7 @@ export default function AddDepartmentAndSubjects() {
     if (error) return <div>Error: {error}</div>;
 
     return (
-        <div className="min-h-screen p-5 bg-gray-100">
+        <div className="min-h-screen p-5 bg-gray-100 dark:bg-[#1e1e1e]">
             <h1 className="text-2xl font-bold mb-5">Campus Admin Panel</h1>
             {UniversitySelector}
             {CampusSelector}
@@ -125,7 +125,7 @@ export default function AddDepartmentAndSubjects() {
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                     {data?.departments.map(dep => (
-                        <div key={dep._id} className="flex flex-col justify-between sm:flex-row bg-white p-2 rounded shadow">
+                        <div key={dep._id} className="flex flex-col justify-between sm:flex-row bg-white dark:bg-[#1e1e1e] dark:border border-[#e0e0e0] p-2 rounded shadow">
                             <p><strong>{dep.name}</strong></p>
                             <div className="">
                                 <button
@@ -150,7 +150,7 @@ export default function AddDepartmentAndSubjects() {
                         {selectedDepartment.subjects.map(sub => (
                             <div
                                 key={sub._id}
-                                className="bg-white p-5 rounded shadow cursor-pointer"
+                                className="bg-white dark:bg-[#1e1e1e] dark:border border-[#e0e0e0] px-4 py-3 rounded shadow cursor-pointer "
                                 onClick={() => {
                                     setSelectedSubject(sub);
                                 }}
