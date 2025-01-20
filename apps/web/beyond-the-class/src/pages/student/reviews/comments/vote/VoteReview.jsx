@@ -6,8 +6,8 @@ import axiosInstance from '../../../../../config/users/axios.instance';
 export default function VoteReview({ review, userData }) {
 
 
-    const [upvoted, setUpvoted] = useState(review.userVote === 'upvote');
-    const [downvoted, setDownvoted] = useState(review.userVote === 'downvote');
+    const [upvoted, setUpvoted] = useState(review.userVote === 'upVote');
+    const [downvoted, setDownvoted] = useState(review.userVote === 'downVote');
     const [upvoteCount, setUpvoteCount] = useState(review.upvoteCount);
     const [downvoteCount, setDownvoteCount] = useState(review.downvoteCount);
 
@@ -16,17 +16,17 @@ export default function VoteReview({ review, userData }) {
     const handleVote = async (voteType) => {
         // console.log("vote handle", voteType)
         try {
-            const response = await axiosInstance.post('/api/teacher/reviews/comments/vote', {
+            const response = await axiosInstance.post('/api/teacher/reviews/feedbacks/vote', {
                 reviewId: review._id,
-                userId: userData._id,
+                userIdOther: userData._id,
                 voteType,
             });
 
             const { upvoteCount, downvoteCount } = response.data;
-            // console.log(response.data)
+            console.log("VTOE REs", response.data)
 
-            setUpvoted(voteType === 'upvote' && !upvoted);
-            setDownvoted(voteType === 'downvote' && !downvoted);
+            setUpvoted(voteType === 'upVote' && !upvoted);
+            setDownvoted(voteType === 'downVote' && !downvoted);
 
 
             setUpvoteCount(upvoteCount);
@@ -41,14 +41,14 @@ export default function VoteReview({ review, userData }) {
         <div className='flex justify-start space-x-2 m-2 -mt-5'>
             <button
                 className="flex text-gray-500 hover:text-gray-700"
-                onClick={() => handleVote('upvote')}
+                onClick={() => handleVote('upVote')}
             >
                 <ArrowUpward className={`${upvoted ? 'text-red-500' : ''}`} />
                 <p> {upvoteCount}</p>
             </button>
             <button
                 className="flex text-gray-500 hover:text-gray-700"
-                onClick={() => handleVote('downvote')}
+                onClick={() => handleVote('downVote')}
             >
                 <ArrowDownward className={`${downvoted ? 'text-blue-500' : ''}`} />
                 <p> {downvoteCount}</p>

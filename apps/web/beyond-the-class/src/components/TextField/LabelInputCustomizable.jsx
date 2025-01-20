@@ -354,15 +354,18 @@ export function LabelDropDownSearchableInputCustomizable({
     label,
     onChange,
     setUniversityPlusCampusDomain,
+    setUniversityPlusCampusDepartments,
     type = "text",
     fetchOptions,
+    filteredOptionsProp = null,
     ...inputProps
 }) {
     const [showPassword, setShowPassword] = React.useState("password");
     const [options, setOptions] = React.useState([]); // For dropdown options
-    const [filteredOptions, setFilteredOptions] = React.useState([]); // For search
+    const [filteredOptions, setFilteredOptions] = React.useState(filteredOptionsProp ?? []); // For search
     const [searchTerm, setSearchTerm] = React.useState(value || ""); // Default to passed value
     const [showDropDown, setShowDropDown] = React.useState(false)
+
 
     // Fetch data when component mounts
     React.useEffect(() => {
@@ -371,12 +374,20 @@ export function LabelDropDownSearchableInputCustomizable({
                 .then((data) => {
                     setOptions(data); // Save fetched options
                     setFilteredOptions(data); // Initialize filtered options
+                    // console.log("departments", data)
                 })
                 .catch((error) => {
                     console.error("Error fetching data:", error);
                 });
         }
-    }, [fetchOptions]);
+        if (filteredOptionsProp) {
+            // console.log("J", filteredOptionsProp)
+            setOptions(filteredOptionsProp); // Save fetched options
+            setFilteredOptions(filteredOptionsProp);
+        }
+    }, [fetchOptions, filteredOptionsProp]);
+
+
 
     // Handle search term changes
     const handleSearch = (e) => {
@@ -391,10 +402,15 @@ export function LabelDropDownSearchableInputCustomizable({
 
     // Handle option selection
     const handleSelect = (selectedOption) => {
-        // console.log("selected opyion", selectedOption)
+        // console.log("selected opyion", selectedOption, fetchOptions)
         onChange({ target: { value: selectedOption._id } }); // Pass _id as value
         setSearchTerm(selectedOption.name); // Display name in input
-        setUniversityPlusCampusDomain(selectedOption.domain)
+
+        if (fetchOptions) {
+            setUniversityPlusCampusDomain(selectedOption.domain)
+            setUniversityPlusCampusDepartments(selectedOption.departments)
+        }
+
         setFilteredOptions(options); // Reset filtered options
         setShowDropDown(false)
     };

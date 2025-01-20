@@ -11,11 +11,11 @@ const useSignup = () => {
 
     const { setAuthUser } = useAuthContext();
 
-    const signup = async ({ universityEmail, personalEmail, password, name, username, universityId, campusId, role,
+    const signup = async ({ universityEmail, personalEmail, password, name, username, universityId, campusId, role, departmentId
     }) => {
-        // console.log("\nuniversityEmail", universityEmail, "\npersonalEmail", personalEmail, "\npassword", password, "\nusername", username, "\nname", name, "\nuniversityId", universityId, "\ncampusId", campusId, "\nrole", role,)
+        // console.log("\nuniversityEmail", universityEmail, "\npersonalEmail", personalEmail, "\npassword", password, "\nusername", username, "\nname", name, "\nuniversityId", universityId, "\ncampusId", campusId, "\nrole", role, "DEparmtent", departmentId)
         const success = handleInputErrors({
-            universityEmail, personalEmail, password, username, name, universityId, campusId, role, addToast
+            universityEmail, personalEmail, password, username, name, universityId, campusId, role, addToast, departmentId
         });
 
         // console.log("secuess? ", success)
@@ -33,6 +33,7 @@ const useSignup = () => {
             universityId,
             campusId,
             role,
+            departmentId
         }
         if (role === 'alumni') requestBody.personalEmail = personalEmail
         if (role === 'teacher' || role === 'student') {

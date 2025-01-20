@@ -15,6 +15,8 @@ import { useToast } from "../../components/toaster/ToastCustom";
 
 export default function SignUpR() {
     const [universityCampus, setUniversityPlusCampus] = useState("");
+    const [universityCampusDepartments, setUniversityPlusCampusDepartments] = useState([]);
+    const [campusDepartment, setCampusDepartment] = useState('')
     const [universityCampusDomain, setUniversityPlusCampusDomain] = useState("");
 
     const [universityEmail, setUniversityEmail] = useState("");
@@ -45,7 +47,7 @@ export default function SignUpR() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         // console.log("REOLE", role)
-        setUniversityEmail(universityEmail);
+        // setUniversityEmail(universityEmail);
         if (role === 'none') {
             addToast("Select a role")
             return setRoleError(true)
@@ -63,6 +65,7 @@ export default function SignUpR() {
                 name: name,
                 universityId: universityCampus.split("-")[0],
                 campusId: universityCampus.split("-")[1],
+                departmentId: campusDepartment,
                 role: role,
             });
         } else {
@@ -165,6 +168,21 @@ export default function SignUpR() {
                         inputClassName="w-min-[10rem]"
                         onChange={(e) => setUniversityPlusCampus(e.target.value)}
                         setUniversityPlusCampusDomain={setUniversityPlusCampusDomain}
+                        setUniversityPlusCampusDepartments={setUniversityPlusCampusDepartments}
+                    />
+
+                    <LabelDropDownSearchableInputCustomizable
+                        filteredOptionsProp={universityCampusDepartments}
+                        type="text"
+                        autoComplete="off"
+                        name="Campus_Departments"
+                        className="my-3 w-full"
+                        value={campusDepartment}
+                        label="Select your department"
+                        placeholder="Computer Science"
+                        width="w-[100%]"
+                        inputClassName="w-min-[10rem]"
+                        onChange={(e) => setCampusDepartment(e.target.value)}
                     />
 
                     <LabelInputCustomizable
@@ -215,7 +233,10 @@ export default function SignUpR() {
                         // "FAXX-XXX-XXX@XXX.edu.pk"
                         width="w-[100%]"
                         inputClassName="w-min-[10rem]"
-                        onChange={(e) => setUniversityEmail(e.target.value)}
+                        onChange={(e) => {
+                            const data = e.target.value
+                            setUniversityEmail(data)
+                        }}
                     />
 
 
