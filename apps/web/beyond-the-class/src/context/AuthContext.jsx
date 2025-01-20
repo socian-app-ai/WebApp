@@ -19,7 +19,7 @@ export const AuthContextProvider = ({ children }) => {
 
                 if (res.status >= 200 && res.status < 300) {
                     setAuthUser(res.data);
-                    console.log("Authenticated user data:", res.data);
+                    // console.log("Authenticated user data:", res.data);
 
                     // Redirect to home if currently on the login page
                     if (window.location.pathname === '/login') {
