@@ -37,7 +37,7 @@ export default function Reviews() {
                 const sortedFeedbacks = data.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
                 setFeedbacks(sortedFeedbacks);
                 setFilteredFeedbacks(sortedFeedbacks);
-                console.log("hide ", data)
+                // console.log("hide ", data)
                 setTriggerReRender(false);
             } catch (error) {
                 console.error('Error fetching teacher data:', error);
@@ -67,7 +67,7 @@ export default function Reviews() {
 
     const handleUpdateFeedback = async () => {
         try {
-            console.log("Hidemmmm", editingFeedback)
+            // console.log("Hidemmmm", editingFeedback)
             await axiosInstance.post('/api/teacher/rate', {
                 teacherId,
                 userId: editingFeedback.userId._id,
@@ -76,13 +76,13 @@ export default function Reviews() {
                 hideUser: editingFeedback.hideUser
             });
 
-            console.log({
-                teacherId,
-                userId: editingFeedback.userId._id,
-                rating: editRating,
-                feedback: editFeedbackText,
-                hideUser: editingFeedback.hideUser
-            })
+            // console.log({
+            //     teacherId,
+            //     userId: editingFeedback.userId._id,
+            //     rating: editRating,
+            //     feedback: editFeedbackText,
+            //     hideUser: editingFeedback.hideUser
+            // })
 
             const updatedFeedbacks = feedbacks.map(c =>
                 c._id === editingFeedback._id

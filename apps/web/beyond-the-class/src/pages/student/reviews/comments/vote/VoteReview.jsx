@@ -23,7 +23,7 @@ export default function VoteReview({ review, userData }) {
             });
 
             const { upvoteCount, downvoteCount } = response.data;
-            console.log("VTOE REs", response.data)
+            // console.log("VTOE REs", response.data)
 
             setUpvoted(voteType === 'upVote' && !upvoted);
             setDownvoted(voteType === 'downVote' && !downvoted);

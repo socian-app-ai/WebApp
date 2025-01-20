@@ -78,12 +78,12 @@ const TeacherFeedback = () => {
                             teacherId: authUser.teacherConnectivities.teacherModal
                         }
                     });
-                    console.log(response)
+                    // console.log(response)
                     setSelectedTeacher(response.data.teacher);
                     setFeedbacks(response.data.feedbacks);
                 } else {
                     const response = await axiosInstance.get('/api/user/teacher/attachUser');
-                    console.log(response)
+                    // console.log(response)
                     setMessage(response.data.message);
                     if (response.data.teachers) {
                         setTeachers(response.data.teachers);
@@ -104,7 +104,7 @@ const TeacherFeedback = () => {
 
     const handleTeacherSelect = async (teacherId) => {
         try {
-            console.log("TEACHER ID", teacherId)
+            // console.log("TEACHER ID", teacherId)
             setLoading(true);
             const response = await axiosInstance.get('/api/user/teacher/joinModel', {
                 params: {
