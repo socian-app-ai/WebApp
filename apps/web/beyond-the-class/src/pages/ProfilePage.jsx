@@ -134,6 +134,8 @@ const ProfileComponent = ({ user }) => {
                         </div>}
                     </div>
 
+
+
                     {/* Bio */}
                     <div className="mt-4">
                         <div className="flex items-center gap-2">

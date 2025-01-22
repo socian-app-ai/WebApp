@@ -35,6 +35,7 @@ import UniPosts from './pages/student/universities/UniPosts.jsx';
 import CampusesPosts from './pages/student/campuses/CampusesPosts.jsx';
 import ProfilePage from './pages/ProfilePage.jsx';
 import Feedback from './pages/teacher/feedback/Feedback.jsx';
+import TeachersView from './pages/admin/pages/teachers/TeachersView.jsx';
 
 
 const router = createBrowserRouter([
@@ -84,6 +85,8 @@ const router = createBrowserRouter([
 
 
           { path: "pastpapers/upload", element: <Layout> <UploadForm /></Layout> },
+          { path: "teachers", element: <Layout> <TeachersView/></Layout> },
+
         ],
       },
       // Students
