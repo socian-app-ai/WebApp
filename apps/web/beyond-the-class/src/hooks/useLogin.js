@@ -5,6 +5,7 @@ import { useAuthContext } from "../context/AuthContext";
 import { redirect } from "react-router-dom";
 import { routesForApi } from "../utils/routes/routesForLinks";
 import { useToast } from "../components/toaster/ToastCustom";
+import { useNavigate } from "react-router-dom";
 // import secureLocalStorage from "react-secure-storage"
 
 const useLogin = () => {
@@ -13,6 +14,7 @@ const useLogin = () => {
 
   const { addToast } = useToast();
 
+  const navigate = useNavigate()
   function handleInputErrors(email, password) {
     if (!email || !password) {
       addToast("Please fill all fields");
@@ -36,11 +38,17 @@ const useLogin = () => {
       });
 
       const data = res.data;
+      console.log("DE", data)
 
+      if (res.data?.redirectUrl) {
+        console.log(res.data.redirectUrl)
+        return window.location.href = `${res.data.redirectUrl}`
+      }
       // console.log(data);
       if (res.status >= 400) {
         throw new Error(data.error);
       }
+
 
       // secureLocalStorage.setItem("object", JSON.stringify(data))
       setAuthUser(res.data);

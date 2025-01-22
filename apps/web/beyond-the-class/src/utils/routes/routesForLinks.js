@@ -57,7 +57,7 @@ export const routesForApi = buildRoutes(baseUrl, {
         request: 'request'
     },
     accessible: {
-        universityGroupedCampus: "universities-grouped-campus",
+        universityGroupedCampus: "universities/grouped/campus",
         usernames: 'usernames',
     },
     posts: {
