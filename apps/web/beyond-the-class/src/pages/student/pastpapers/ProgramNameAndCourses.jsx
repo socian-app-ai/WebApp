@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axiosInstance from "../../../config/users/axios.instance";
 import { CustomAutocompleteSearchStyle } from '../../../components/FilterOption/CustomAutocomplete';
+import { useSetInfoBarState } from "../../../state_management/zustand/useInfoBar";
 
 
 
@@ -144,6 +145,15 @@ export default function ProgramNameAndCourses() {
 
     const [currentDepartment, setCurrentDepartment] = useState([]);
 
+
+    const { infoBarState, setInfoBarState } = useSetInfoBarState();
+
+    useEffect(() => {
+        if (infoBarState === true) {
+            setInfoBarState(false);
+        }
+    }, []);
+
     useEffect(() => {
 
         const fetch = async () => {
@@ -158,7 +168,7 @@ export default function ProgramNameAndCourses() {
                 setDepartments(allDepartments);
 
                 // setCourses(allDepartments[3].subjects.map(v => v))
-                console.log("Departments: ", departments)
+                // console.log("Departments: ", departments)
             } catch (error) {
                 console.error(error.message)
             }
@@ -166,6 +176,7 @@ export default function ProgramNameAndCourses() {
         fetch()
 
     }, []);
+
 
 
 

@@ -14,29 +14,30 @@ export default function Reviews() {
     const teacherId = id
 
 
-    const [comments, setComments] = useState([]);
-    const [filteredComments, setFilteredComments] = useState([]);
+    const [feedbacks, setFeedbacks] = useState([]);
+    const [filteredFeedbacks, setFilteredFeedbacks] = useState([]);
     const { triggerReRender, setTriggerReRender } = useTriggerReRender();
     const [selectedRating, setSelectedRating] = useState(-1);
     const { authUser } = useAuthContext();
-    const [editingComment, setEditingComment] = useState(null);
-    const [editCommentText, setEditCommentText] = useState('');
+    const [editingFeedback, setEditingFeedback] = useState(null);
+    const [editFeedbackText, setEditFeedbackText] = useState('');
     const [editRating, setEditRating] = useState(0);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [anchorEl, setAnchorEl] = useState(null);
-    const [selectedComment, setSelectedComment] = useState(null);
+    const [selectedFeedback, setSelectedFeedback] = useState(null);
     const [loading, setLoading] = useState(true);
 
     const [editAnonymous, setEditAnonymous] = useState(false);
 
     useEffect(() => {
 
-        const fetchComments = async () => {
+        const fetchFeedbacks = async () => {
             try {
-                const { data } = await axiosInstance.get(`/api/teacher/reviews/comments?id=${teacherId}`);
-                const sortedComments = data.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
-                setComments(sortedComments);
-                setFilteredComments(sortedComments);
+                const { data } = await axiosInstance.get(`/api/teacher/reviews/feedbacks?id=${teacherId}`);
+                const sortedFeedbacks = data.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+                setFeedbacks(sortedFeedbacks);
+                setFilteredFeedbacks(sortedFeedbacks);
+                // console.log("hide ", data)
                 setTriggerReRender(false);
             } catch (error) {
                 console.error('Error fetching teacher data:', error);
@@ -44,62 +45,70 @@ export default function Reviews() {
                 setLoading(false)
             }
         };
-        fetchComments();
+        fetchFeedbacks();
     }, [triggerReRender, location.search]);
 
     useEffect(() => {
         if (selectedRating === -1) {
-            setFilteredComments(comments);
+            setFilteredFeedbacks(feedbacks);
         } else {
-            setFilteredComments(comments.filter(comment => comment.rating === selectedRating));
+            setFilteredFeedbacks(feedbacks.filter(feedback => feedback.rating === selectedRating));
         }
-    }, [selectedRating, comments]);
+    }, [selectedRating, feedbacks]);
 
-    const handleEditComment = (comment) => {
-        setEditingComment(comment);
-        setEditCommentText(comment.comment);
-        setEditRating(comment.rating);
-        setEditAnonymous(comment.hideUser);
-        // console.log("hide ", comment.hideUser)
+    const handleEditFeedback = (feedback) => {
+        setEditingFeedback(feedback);
+        setEditFeedbackText(feedback.feedback);
+        setEditRating(feedback.rating);
+        setEditAnonymous(feedback.hideUser);
+        // console.log("hide ", feedback)
         setIsDialogOpen(true);
     };
 
-    const handleUpdateComment = async () => {
+    const handleUpdateFeedback = async () => {
         try {
-            // console.log("Hide", editingComment)
+            // console.log("Hidemmmm", editingFeedback)
             await axiosInstance.post('/api/teacher/rate', {
                 teacherId,
-                userId: editingComment.userId._id,
+                userId: editingFeedback.userId._id,
                 rating: editRating,
-                comment: editCommentText,
-                hideUser: editingComment.hideUser
+                feedback: editFeedbackText,
+                hideUser: editingFeedback.hideUser
             });
 
-            const updatedComments = comments.map(c =>
-                c._id === editingComment._id
-                    ? { ...c, rating: editRating, comment: editCommentText }
+            // console.log({
+            //     teacherId,
+            //     userId: editingFeedback.userId._id,
+            //     rating: editRating,
+            //     feedback: editFeedbackText,
+            //     hideUser: editingFeedback.hideUser
+            // })
+
+            const updatedFeedbacks = feedbacks.map(c =>
+                c._id === editingFeedback._id
+                    ? { ...c, rating: editRating, feedback: editFeedbackText }
                     : c
             );
-            const sortedComments = updatedComments.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
-            setComments(sortedComments);
-            setFilteredComments(sortedComments);
+            const sortedFeedbacks = updatedFeedbacks.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+            setFeedbacks(sortedFeedbacks);
+            setFilteredFeedbacks(sortedFeedbacks);
             setIsDialogOpen(false);
         } catch (error) {
             console.error('Error updating review:', error);
         }
     };
 
-    const handleDeleteComment = async () => {
+    const handleDeleteFeedback = async () => {
         try {
 
-            await axiosInstance.delete(`/api/teacher/reviews/comments/delete`, {
+            await axiosInstance.delete(`/api/teacher/reviews/feedbacks/delete`, {
                 data: { teacherId: teacherId, userId: authUser._id }
             });
 
-            const updatedComments = comments.filter(c => c._id !== selectedComment._id);
-            const sortedComments = updatedComments.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
-            setComments(sortedComments);
-            setFilteredComments(sortedComments);
+            const updatedFeedbacks = feedbacks.filter(c => c._id !== selectedFeedback._id);
+            const sortedFeedbacks = updatedFeedbacks.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+            setFeedbacks(sortedFeedbacks);
+            setFilteredFeedbacks(sortedFeedbacks);
             setAnchorEl(null); // Colse menu
         } catch (error) {
             console.error('Error deleting review:', error);
@@ -112,7 +121,7 @@ export default function Reviews() {
     };
 
 
-    const renderCommentCard = (t) => {
+    const renderFeedbackCard = (t) => {
         const maskName = (name) => {
             if (!name) return '[deleted]';
             return name.charAt(0) + "****";
@@ -123,7 +132,7 @@ export default function Reviews() {
             ? maskEmail(t.userId?.personalEmail || t.userId?.universityEmail)
             : (t.userId?.personalEmail || t.userId?.universityEmail || t.userId?.email || '[deleted]');
 
-        console.log("user id", t.userId)
+        // console.log("user id", t.userId)
 
         return <Card key={t._id} className="bg-gray-100 dark:bg-[#222222] md:mx-2 mb-2">
             <CardHeader
@@ -152,7 +161,7 @@ export default function Reviews() {
                         </IconButton>
                         <IconButton aria-label="settings" onClick={(e) => {
                             setAnchorEl(e.currentTarget);
-                            setSelectedComment(t);
+                            setSelectedFeedback(t);
                         }}>
                             <MoreVertOutlined />
                         </IconButton>
@@ -167,7 +176,7 @@ export default function Reviews() {
                 </p>}
             />
             <Typography variant="p" className="mt-2 text-sm md:text-md  font-semibold dark:text-white whitespace-pre-line" component="div" marginLeft="4.2rem" marginBottom="2rem">
-                {t.comment}
+                {t.feedback}
             </Typography>
             <VoteReview review={t} userData={t.userId} />
             <div className='mr-20'>
@@ -180,10 +189,10 @@ export default function Reviews() {
                     }}
                     className='text-sm'
                 >
-                    {selectedComment?.userId._id === authUser._id ?
+                    {selectedFeedback?.userId._id === authUser._id ?
                         <>
-                            <MenuItem key={selectedComment._id} onClick={() => handleEditComment(selectedComment)}>edit</MenuItem>
-                            <MenuItem key={selectedComment._id + "d"} onClick={handleDeleteComment}>delete</MenuItem>
+                            <MenuItem key={selectedFeedback._id} onClick={() => handleEditFeedback(selectedFeedback)}>edit</MenuItem>
+                            <MenuItem key={selectedFeedback._id + "d"} onClick={handleDeleteFeedback}>delete</MenuItem>
 
                         </>
                         : <MenuItem >report</MenuItem>
@@ -195,9 +204,9 @@ export default function Reviews() {
     }
 
 
-    // if (filteredComments.length === 0) {
+    // if (filteredFeedbacks.length === 0) {
     //     return (<Card className='mx-4 mb-2 flex justify-center bg-gray-100 dark:bg-[#222222]'>
-    //         <CardHeader subheader={<p className='text-gray-600 dark:text-white'>No Comments</p>} />
+    //         <CardHeader subheader={<p className='text-gray-600 dark:text-white'>No Feedbacks</p>} />
     //     </Card>)
     // }
     return (
@@ -234,25 +243,25 @@ export default function Reviews() {
                         </div>
                     </Card>
                 ))
-                : (comments.length === 0 ? (<Card className='mx-4 mb-2 flex justify-center bg-gray-100 dark:bg-[#222222]'>
-                    <CardHeader subheader={<p className='text-gray-600 dark:text-white'>No Comments</p>} />
+                : (feedbacks.length === 0 ? (<Card className='mx-4 mb-2 flex justify-center bg-gray-100 dark:bg-[#222222]'>
+                    <CardHeader subheader={<p className='text-gray-600 dark:text-white'>No Feedbacks</p>} />
                 </Card>) :
-                    filteredComments.map(renderCommentCard)
+                    filteredFeedbacks.map(renderFeedbackCard)
                 )
             }
             {isDialogOpen && (
                 <div className="fixed inset-0 flex w-full items-center justify-center bg-black bg-opacity-50 z-40" onClick={() => setIsDialogOpen(false)}>
                     <div className="bg-white w-full dark:bg-[#333333] p-6 rounded-lg max-w-lg" onClick={(e) => e.stopPropagation()}>
-                        <h2 className="text-lg font-bold mb-4 dark:text-white">Edit Comment</h2>
+                        <h2 className="text-lg font-bold mb-4 dark:text-white">Edit Feedback</h2>
                         <textarea
                             className="w-full p-2 mb-4 border rounded dark:bg-[#444444] dark:text-white"
                             rows="4"
-                            value={editCommentText}
-                            onChange={(e) => setEditCommentText(e.target.value)}
+                            value={editFeedbackText}
+                            onChange={(e) => setEditFeedbackText(e.target.value)}
                         />
                         <div className="flex -mt-[0.4rem] items-center">
                             <p className="text-xs md:text-md  text-gray-600 dark:text-gray-400">Submit anonymously?</p>
-                            {console.log("THIS IS EDIT ANONYMOUS: ", editAnonymous)}
+                            {/* {console.log("THIS IS EDIT ANONYMOUS: ", editAnonymous)} */}
                             <BpCheckbox
                                 value={editAnonymous}
                                 onClick={() => setEditAnonymous(prev => !prev)}
@@ -280,7 +289,7 @@ export default function Reviews() {
                                 Cancel
                             </button>
                             <button
-                                onClick={handleUpdateComment}
+                                onClick={handleUpdateFeedback}
                                 className="px-4 py-2 rounded-3xl bg-[#262626] brightness-75 text-white hover:bg-[#262626] hover:brightness-110"
                             >
                                 Update

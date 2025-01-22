@@ -4,11 +4,27 @@ import axiosInstance from "../config/users/axios.instance";
 import { useAuthContext } from "../context/AuthContext";
 import { redirect } from "react-router-dom";
 import { routesForApi } from "../utils/routes/routesForLinks";
+import { useToast } from "../components/toaster/ToastCustom";
+import { useNavigate } from "react-router-dom";
 // import secureLocalStorage from "react-secure-storage"
 
 const useLogin = () => {
   const [loading, setLoading] = useState(false);
   const { setAuthUser } = useAuthContext();
+
+  const { addToast } = useToast();
+
+  const navigate = useNavigate()
+  function handleInputErrors(email, password) {
+    if (!email || !password) {
+      addToast("Please fill all fields");
+      return false;
+    }
+
+    return true;
+  }
+
+
   const login = async (email, password) => {
     // console.log(email, password)
     const success = handleInputErrors(email, password);
@@ -22,11 +38,17 @@ const useLogin = () => {
       });
 
       const data = res.data;
+      console.log("DE", data)
 
-      console.log(data);
+      if (res.data?.redirectUrl) {
+        console.log(res.data.redirectUrl)
+        return window.location.href = `${res.data.redirectUrl}`
+      }
+      // console.log(data);
       if (res.status >= 400) {
         throw new Error(data.error);
       }
+
 
       // secureLocalStorage.setItem("object", JSON.stringify(data))
       setAuthUser(res.data);
@@ -34,7 +56,7 @@ const useLogin = () => {
     } catch (error) {
       const errorMessage =
         error.response?.data?.error || "Unexpected error occurred";
-      toast.error(errorMessage);
+      addToast(errorMessage);
       // throw new Error(error)
     } finally {
       setLoading(false);
@@ -45,11 +67,4 @@ const useLogin = () => {
 
 export default useLogin;
 
-function handleInputErrors(email, password) {
-  if (!email || !password) {
-    toast.error("Please fill all fields");
-    return false;
-  }
 
-  return true;
-}

@@ -2,19 +2,61 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const teacherRatingSchema = new Schema({
+
     teacherId: { type: Schema.Types.ObjectId, ref: 'Teacher', required: true },
     userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+
     hideUser: { type: Boolean, default: false },
+    favouritedByTeacher: { type: Boolean, default: false },
 
-    upvoteCount: { type: Number, default: 0 },
-    downvoteCount: { type: Number, default: 0 },
+    upVotesCount: { type: Number, default: 0 },
+    downVotesCount: { type: Number, default: 0 },
 
+
+    userVotes: {
+        type: Map,
+        of: {
+            type: String,
+            enum: ['upVote', 'downVote']
+        },
+        default: {}
+    },
+
+    isFeedbackEdited: {
+        timestamp: { type: Date, default: Date.now() },
+        bool: { type: Boolean, default: false }
+    },
+
+    // comment: { type: String },
+    feedback: { type: String },
     rating: { type: Number, required: true },
-    comment: { type: String },
-    isDeleted: { type: Boolean, default: false},
-    isReported: { type: Boolean, default: false},
+
+
+    replies: [{ type: Schema.Types.ObjectId, ref: 'FeedBackComment' }],
+
+
+    isDeleted: { type: Boolean, default: false },
+    isReported: { type: Boolean, default: false },
     __v: { type: Number, default: 0 }
 }, { timestamps: true });
+
+teacherRatingSchema.index({ _id: 1, teacherId: 1, userId: 1 }, { unique: true });
+
+
+
+
+const feedbackCommentSchema = new Schema({
+    user: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+    comment: { type: String, required: true },
+    mentions: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+    replies: [{ type: Schema.Types.ObjectId, ref: 'FeedBackComment' }],
+    isDeleted: { type: Boolean, default: false },
+    createdAt: { type: Date, default: Date.now },
+    updatedAt: { type: Date },
+});
+
+
+
 
 const TeacherRating = mongoose.model('TeacherRating', teacherRatingSchema);
 

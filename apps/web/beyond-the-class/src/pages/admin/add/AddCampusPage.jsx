@@ -6,6 +6,7 @@ import LabelFileInputCustomizable from '../../../components/Upload/LabelFileInpu
 import { LabelInputUnderLineCustomizable } from '../../../components/TextField/LabelInputCustomizable';
 import DepartmentsManager, { AcademicFormat, CreateCampusComponent, Departments } from '../components/CreateCampusComponent';
 import { useNavigate } from 'react-router-dom';
+import axiosInstance from '../../../config/users/axios.instance';
 
 export default function AddCampusPage() {
     // const [universities, setUniversities] = useState([]);
@@ -19,12 +20,12 @@ export default function AddCampusPage() {
 
     const { UniversitySelector, campus, currentUniversity, setCurrentUniversity } = useUniversityData();
 
-    console.log(currentUniversity, "or\n", currentUniversityData._id)
+    // console.log(currentUniversity, "or\n", currentUniversityData._id)
     useEffect(() => {
         if (campusId) {
             const fetchUniversityData = async () => {
                 try {
-                    const res = await axios.get(`/api/campus/${campusId}`);
+                    const res = await axiosInstance.get(`/api/campus/${campusId}`);
                     setCurrentUniversityData(res.data);
 
                 } catch (error) {
@@ -41,10 +42,10 @@ export default function AddCampusPage() {
     const handleSave = async () => {
         try {
             if (campusId) {
-                await axios.put(`/api/university/${campusId}`, currentUniversityData);
+                await axiosInstance.put(`/api/university/${campusId}`, currentUniversityData);
 
             } else {
-                await axios.post('/api/university/register', currentUniversityData);
+                await axiosInstance.post('/api/university/register', currentUniversityData);
             }
             navigate('/admin/universities');
         } catch (error) {

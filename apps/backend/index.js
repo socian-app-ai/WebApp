@@ -3,8 +3,7 @@
 const express = require("express");
 const app = express();
 const PORT = process.env.PORT || 8080;
-const http = require("http");
-const socketIo = require("socket.io");
+
 const dotenv = require("dotenv");
 const bodyParser = require("body-parser");
 const cors = require("cors");
@@ -15,6 +14,9 @@ const session = require("express-session");
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const csrfProtection = require('@fastify/csrf-protection');
+const compression = require('compression');
+const http = require("http");
+const { attachSocketToApp } = require("./socket/socket.js");
 
 // const sanitizeHtml = require('sanitize-html');
 // const cleanHtml = sanitizeHtml(userInput, { allowedTags: [], allowedAttributes: {} });
@@ -59,7 +61,7 @@ app.use(sessionData);
 app.use(
   cors({
     // origin: ["http://localhost:4352", "https://m.bilalellahi.com"],
-    origin: [process.env.FRONTEND_URL, process.env.APP_ID],
+    origin: [process.env.FRONTEND_URL, process.env.APP_ID, process.env.LOCALHOST],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE"],
   })
@@ -80,6 +82,20 @@ app.use(morgan(process.env.NODE_ENV === "production" ? "combined" : "dev"));
 app.use(express.json());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(compression());
+
+
+const server = http.createServer(app)
+attachSocketToApp(app, server)
+
+app.use((req, res, next) => {
+  const io = req.app.get('io');
+  req.io = io;
+  next();
+});
+
+
+
 
 // generate hash
 // const crypto = require('crypto')
@@ -107,7 +123,9 @@ const teacherRouter = require("./routes/university_related/teacher/teacher.route
 const pastpaperRouter = require("./routes/university_related/pastpapers/pastpaper.route.js");
 const academicRouter = require("./routes/university_related/pastpapers/academic.format.route.js");
 const discussionRouter = require("./routes/university_related/pastpapers/discussion.route.js");
-const User = require("./models/user/user.model.js");
+
+const uploadsRouter = require('./utils/aws/servePDF.js')
+
 
 app.use("/api/super", superProtect, superRouter);
 
@@ -116,14 +134,15 @@ app.use("/api/auth", authRouter);
 // app.use('/api/oauth', oAuthRouter);
 // app.use('/api/request', requestRoute);
 // app.use('/email', emailRoute);
-app.use("/api/university", protectRoute, universityRouter);
-app.use("/api/campus", protectRoute, campusRouter);
+app.use("/api/university", superProtect, universityRouter);
+app.use("/api/campus", superProtect, campusRouter);
 
 app.use("/api/teacher", protectRoute, teacherRouter);
 app.use("/api/department", protectRoute, departmentRouter);
 app.use("/api/subject", protectRoute, subjectRouter);
 
 app.use("/api/pastpaper", protectRoute, pastpaperRouter);
+app.use("/api/uploads", uploadsRouter);//protectRoute,
 app.use("/api/academic", protectRoute, academicRouter);
 app.use("/api/discussion", discussionRouter);
 
@@ -141,7 +160,11 @@ const accessibleRoutes = require('./routes/accessibles/accessible.route.js')
 app.use('/api/accessible/', accessibleRoutes)
 
 
-const userRouter = require('./routes/user/user.route.js')
+const userRouter = require('./routes/user/user.route.js');
+// const User = require("./models/user/user.model.js");
+// const Campus = require("./models/university/campus.university.model.js");
+
+
 app.use("/api/user", protectRoute, userRouter);
 
 
@@ -171,6 +194,7 @@ const suspiciousRoutes = [
   '//shop/wp-includes/wlwmanifest.xml',
   '//test/wp-includes/wlwmanifest.xml',
   '//cms/wp-includes/wlwmanifest.xml',
+  '/wp-includes/js/jquery/jquery.js'
 ];
 // Add suspicious routes to return a safe response
 suspiciousRoutes.forEach((route) => {
@@ -198,7 +222,7 @@ app.all('*', (req, res) => {
 
 // Start Server
 const startServer = () => {
-  app.listen(PORT, () => {
+  server.listen(PORT, () => {
     mongoDB(app);
     console.log(`Server Running on ${PORT}`);
   });
@@ -243,8 +267,34 @@ startServer();
 // }
 
 
+// const remAllInvalidUserInCampus = async () => {
+//   try {
+//     // Step 1: Get all valid user IDs from the User collection
+//     const validUserIds = await User.find({}, { _id: 1 }); // `toArray()` is unnecessary with Mongoose
+//     const validIds = validUserIds.map(user => user._id);
+
+//     // Step 2: Update the Campus model to remove invalid user IDs
+//     await Campus.updateMany(
+//       { _id: '6714235976333e618a4809bd' }, // Match specific Campus document by ID
+//       {
+//         $pull: {
+//           users: { $nin: validIds }, // Remove users whose IDs are not in the valid list
+//         },
+//       }
+//     );
+
+//     console.log("Invalid users removed successfully!");
+//   } catch (error) {
+//     console.error("Error while removing invalid users:", error);
+//   }
+// };
+
+// remAllInvalidUserInCampus()
 
 /**has left : teacher
- * @param {hasLeft} Teacher 
+ * @param {hasLeft} Teacher
  * join teacher later
  * */
+
+
+

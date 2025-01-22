@@ -9,15 +9,15 @@ router.post("/register", async (req, res) => {
   const { name, mainLocationAddress } = req.body;
 
   try {
-    console.log(name);
+    // console.log(name);
     const universityExists = await University.findOne({ name: name });
-    console.log(universityExists);
+    // console.log(universityExists);
     if (universityExists) return res.status(400).json("Alredy Exists");
 
     const newUniversity = new University(req.body);
     await newUniversity.save();
 
-    console.log("University created successfully:", newUniversity);
+    // console.log("University created successfully:", newUniversity);
 
     res.status(201).json(newUniversity);
   } catch (error) {
@@ -35,7 +35,7 @@ router.put("/:universityId", async (req, res) => {
       { _id: universityId },
       req.body
     );
-    console.log(universityExistsAndUpdated);
+    // console.log(universityExistsAndUpdated);
     if (!universityExistsAndUpdated)
       return res.status(400).json("University does not Exists");
 
@@ -50,7 +50,18 @@ router.put("/:universityId", async (req, res) => {
 
 router.get("/", async (req, res) => {
   try {
-    const university = await University.find().populate("campuses");
+    const university = await University.find().populate({
+      path: "campuses",
+      populate: [{
+        path: "departments",
+        populate: {
+          path: "subjects"
+        }
+      },
+      {
+        path: "teachers"
+      }],
+    });
 
     res.status(200).json(university);
   } catch (error) {
@@ -62,11 +73,12 @@ router.get("/", async (req, res) => {
 
 router.get("/:universityId", async (req, res) => {
   const { universityId } = req.params;
-  console.log(req.query, "and", req.params);
+  // console.log(req.query, "and", req.params);
   try {
     const university = await University.findOne({
       _id: universityId,
-    }).populate("campuses");
+    })
+      .populate("campuses");
 
     res.status(200).json(university);
   } catch (error) {

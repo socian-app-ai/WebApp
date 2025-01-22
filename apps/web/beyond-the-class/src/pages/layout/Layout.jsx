@@ -8,7 +8,7 @@ import { useSetInfoBarState } from "../../state_management/zustand/useInfoBar";
 const Layout = ({ children }) => {
   const { width } = useWindowDimensions();
   const { sideBarState, setSideBarState } = useSetSideBarState();
-  const { infoBarState, setInfoBarState } = useSetInfoBarState();
+  const { infoBarState } = useSetInfoBarState();
 
   return (
     <div className="text-black  placeholder-black dark:placeholder-white dark:text-white">
@@ -16,16 +16,16 @@ const Layout = ({ children }) => {
       {sideBarState && (
         <div
           onClick={() => setSideBarState(false)}
-          className="absolute md:hidden bg-[#121212] w-full z-[3] h-svh"
+          className="fixed md:hidden dark:bg-[#121212] bg-slate-50 opacity-[0.6] w-full z-[3] h-svh"
         ></div>
       )}
       <Navbar />
 
-      <InfoBar />
+      {infoBarState && <InfoBar />}
       <div
         // dark:bg-gradient-to-br dark:from-blue-200 dark:to-blue-900 bg-gradient-to-br from-blue-200 to-blue-100
         className={`flex-1 pt-10   ${sideBarState && width > 768 ? "ml-60" : ""}
-                ${infoBarState && width > 768 ? "mr-64" : ""}
+                ${infoBarState && width > 768 ? " mr-64" : ""}
               `}
       >
         {children}

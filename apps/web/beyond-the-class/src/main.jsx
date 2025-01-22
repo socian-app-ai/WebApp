@@ -35,7 +35,10 @@ import UniPosts from './pages/student/universities/UniPosts.jsx';
 import CampusesPosts from './pages/student/campuses/CampusesPosts.jsx';
 import ProfilePage from './pages/ProfilePage.jsx';
 import Feedback from './pages/teacher/feedback/Feedback.jsx';
-import TeachersView from './pages/admin/pages/teachers/TeachersView.jsx';
+import AddDepartmentAndSubjects from './pages/admin/add/edit/AddDepartmentAndSubjects.jsx';
+import AddTeacher from './pages/admin/add/AddTeacher.jsx';
+import AddPastPapers from './pages/admin/add/AddPastPapers.jsx';
+import { ToastProviders } from './components/toaster/ToastCustom.jsx';
 
 
 const router = createBrowserRouter([
@@ -72,6 +75,9 @@ const router = createBrowserRouter([
         path: 'super',
         children: [
           { index: true, element: <Layout> <AlumniHome /></Layout> },
+          { path: 'user/:id', element: <Layout><ProfilePage /></Layout> },
+
+
           { path: 'users', element: <Layout><UsersView /></Layout> },
 
           { path: 'universities', element: <Layout><UniversityView /></Layout> },
@@ -81,7 +87,11 @@ const router = createBrowserRouter([
 
           { path: 'campuses', element: <Layout><CampusView /></Layout> },
           { path: "campus/create", element: <Layout> <AddCampusPage /></Layout> },
-          { path: "campus/edit/:campusId", element: <Layout> <AddCampusPage /></Layout> },
+          { path: "campus/edit/:campusId", element: <Layout> <AddDepartmentAndSubjects /></Layout> },
+          { path: "campus/pastpapers/:campusId", element: <Layout> <AddPastPapers /></Layout> },
+
+
+          { path: "teachers", element: <Layout> <AddTeacher /></Layout> },
 
 
           { path: "pastpapers/upload", element: <Layout> <UploadForm /></Layout> },
@@ -151,10 +161,12 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <AuthContextProvider>
-      <RouterProvider router={router} />
-      <Toaster />
-    </AuthContextProvider>
+    <ToastProviders>
+      <AuthContextProvider>
+        <RouterProvider router={router} />
+        <Toaster />
+      </AuthContextProvider>
+    </ToastProviders>
   </StrictMode>,
 )
 

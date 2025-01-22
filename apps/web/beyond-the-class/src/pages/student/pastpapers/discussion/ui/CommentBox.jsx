@@ -1,16 +1,19 @@
 
 import { useEffect, useRef, useState } from "react";
-import toast from "react-hot-toast";
+// import toast from "react-hot-toast";
 import { useAuthContext } from "../../../../../context/AuthContext";
 import axiosInstance from "../../../../../config/users/axios.instance";
+import { useToast } from "../../../../../components/toaster/ToastCustom";
 
 // eslint-disable-next-line react/prop-types
 export default function CommentBox({ discussionId, onComment }) {
-  const {authUser} = useAuthContext()
+    const { authUser } = useAuthContext()
     const [comment, setComment] = useState('');
 
 
     const textAreaRef = useRef(null);
+    const { addToast } = useToast();
+
 
     useEffect(() => {
         adjustHeight();
@@ -23,8 +26,11 @@ export default function CommentBox({ discussionId, onComment }) {
         }
     };
 
+    const [isSending, setIsSending] = useState(false)
+
     const handleSubmit = async (event) => {
-        console.log("here", authUser._id)
+        // console.log("here", authUser._id)
+        setIsSending(true)
         event.preventDefault();
         if (comment.trim()) {
             try {
@@ -35,37 +41,36 @@ export default function CommentBox({ discussionId, onComment }) {
                 });
                 onComment(response.data);
                 setComment('');
-                toast.success('Comment submitted successfully!');
+                // toast.success();
                 setShowCommentBox(false)
+                addToast('Comment submitted successfully!');
+
             } catch (error) {
                 console.error('Error submitting comment:', error);
-                toast.error('Failed to submit comment');
+                // toast.error('Failed to submit comment');
+                addToast('Failed to submit comment');
+
+            } finally {
+                setIsSending(false)
             }
         }
     };
 
     const [showCommentBox, setShowCommentBox] = useState('')
 
-    // const handleCommentShow = () => {
-    //     if (showCommentBox) {
-    //         setShowCommentBox(false)
-    //     } else {
-    //         setShowCommentBox(true)
-    //     }
-    // }
 
     return (
         <form onSubmit={handleSubmit} className="my-1">
-            <div className="bg-gray-100 dark:bg-[#151515] mb-5 rounded-3xl shadow-md p-4">
+            <div className="bg-gray-100 dark:bg-[#151515] mb-5 rounded-lg  px-4 py-2">
                 <div className="flex  items-start">
-                    <img className="mt-3 w-10 h-10 rounded-full" src={authUser.picture} alt={authUser.name} />
+                    <img className="mt-3 w-10 h-10 rounded-full" src={authUser.profile.picture} alt={authUser.name} />
                     <div className="ml-4 w-full">
                         <textarea
                             onClick={() => { setShowCommentBox(true) }}
                             ref={textAreaRef}
                             placeholder="Add a comment"
                             rows={1}
-                            className="w-full p-3 pl-5 mt-2  dark:bg-transparent border border-[#fffb] text-gray-900 dark:text-white rounded-3xl focus:outline-none focus:ring-1 focus:ring-[#fffb]"
+                            className="w-full p-3 pl-5 mt-2  dark:bg-transparent border border-[#fffb] text-gray-900 dark:text-white rounded-lg focus:outline-none focus:ring-1 focus:ring-[#fffb]"
                             value={comment}
                             onChange={(e) => setComment(e.target.value)}
                         />
@@ -77,8 +82,8 @@ export default function CommentBox({ discussionId, onComment }) {
                             }} className="px-4 py-2 rounded-3xl border border-[#4f4f4f]  bg-[#343434d3] brightness-75 text-white  hover:bg-[#343434d3] hover:brightness-110">
                                 Cancel
                             </button>
-                            <button type="submit" className="px-4 py-2 rounded-3xl border border-[#7a7a7a] bg-[#262626] brightness-75 text-white  hover:bg-[#262626] hover:brightness-110">
-                                Comment
+                            <button type="submit" disabled={isSending} className="px-4 py-2 rounded-3xl border border-[#7a7a7a] bg-[#262626] brightness-75 text-white  hover:bg-[#262626] hover:brightness-110">
+                                {isSending ? 'sending..' : 'Comment'}
                             </button>
 
                         </div>

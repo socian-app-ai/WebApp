@@ -324,6 +324,8 @@ const CreatePostButton = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [filteredSocieties, setFilteredSocieties] = useState([]);
     const [selectedSociety, setSelectedSociety] = useState(null);
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
 
     const [formData, setFormData] = useState({
         title: '',
@@ -463,7 +465,11 @@ const CreatePostButton = () => {
                                     <input
                                         type="text"
                                         value={searchQuery}
-                                        onChange={(e) => setSearchQuery(e.target.value)}
+                                        onChange={(e) => {
+                                            setIsDropdownOpen(true)
+                                            setSearchQuery(e.target.value)
+
+                                        }}
                                         placeholder="Search for a society"
                                         className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
                                     />
@@ -474,7 +480,7 @@ const CreatePostButton = () => {
                                     )}
                                 </div>
 
-                                {searchQuery && (
+                                {isDropdownOpen && searchQuery && (
                                     <div className="absolute z-10 w-full mt-1 bg-white dark:bg-gray-700 border rounded-lg shadow-lg max-h-60 overflow-y-auto">
                                         {filteredSocieties.length > 0 ? (
                                             filteredSocieties.map((society) => (
@@ -483,6 +489,8 @@ const CreatePostButton = () => {
                                                     onClick={() => {
                                                         setSelectedSociety(society);
                                                         setSearchQuery(society.name);
+                                                        setIsDropdownOpen(false)
+
                                                     }}
                                                     className={`px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer ${selectedSociety && selectedSociety._id === society._id ? 'bg-blue-100 dark:bg-gray-600' : ''}`}
                                                 >

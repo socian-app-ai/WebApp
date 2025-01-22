@@ -9,6 +9,7 @@ pdfjs.GlobalWorkerOptions.workerSrc = new URL(
 ).toString();
 
 // pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
+// pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.worker.min.js`;
 
 
 // eslint-disable-next-line react/prop-types
@@ -32,7 +33,7 @@ export default function PdfReact({ pdf }) {
 
     return (
         <div onDoubleClick={handleDoubleClick} style={{ cursor: 'pointer' }}>
-            {console.log("PDF file naem ", pdf)}
+            {/* {console.log("PDF file naem ", pdf)} */}
             {/* <Document file={decodeURIComponent(`${import.meta.env.VITE_API_URL}/api${pdf}`)} onLoadSuccess={onDocumentLoadSuccess}> */}
             <Document file={pdf} onLoadSuccess={onDocumentLoadSuccess}>
                 {Array.apply(null, Array(numPages)).map((x, i) => i + 1).map((page, idx) => {

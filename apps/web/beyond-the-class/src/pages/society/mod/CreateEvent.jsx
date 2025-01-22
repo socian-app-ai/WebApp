@@ -292,7 +292,7 @@ const DrawingMap = () => {
             });
             const result = await response.json();
             if (response.ok) {
-                console.log('Area saved successfully:', result);
+                // console.log('Area saved successfully:', result);
                 alert('Area saved successfully!');
             } else {
                 console.error('Error saving area:', result);

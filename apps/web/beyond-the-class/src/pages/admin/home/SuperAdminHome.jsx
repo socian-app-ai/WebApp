@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Avatar, createFilterOptions } from '@mui/material';
 import { Link } from 'react-router-dom';
+import axiosInstance from '../../../config/users/axios.instance';
 
 export default function SuperAdminHome() {
 
@@ -17,8 +18,8 @@ export default function SuperAdminHome() {
         const fetch = async () => {
             try {
 
-                const response = await axios.get("/api/university/")
-                console.log(response.data)
+                const response = await axiosInstance.get("/api/university/")
+                // console.log(response.data)
 
                 setUniversities(response.data);
                 // console.log("universities: ", universities)
@@ -32,7 +33,7 @@ export default function SuperAdminHome() {
 
 
     const handleUniversityChange = (event, value) => {
-        console.log("value", value)
+        // console.log("value", value)
         setCurrentUniversity(value)
 
         if (value) {

@@ -28,7 +28,7 @@ export default function ReviewPage() {
         const response = await axiosInstance.get(
           `/api/teacher/teachers-by-campus`
         );
-        console.log("Teachers: ", response);
+        // console.log("Teachers: ", response);
         if (response.data) {
           setTeachers(response.data);
           setFilteredTeachers(response.data);
@@ -68,7 +68,7 @@ export default function ReviewPage() {
   }, []);
 
   const changeNavBg = () => {
-    console.log("hi");
+    // console.log("hi");
     if (window.scrollY > 10) {
       setBackgroundColor(" bg-[#dbd2d2f5] dark:bg-[#121212f5]");
     } else {

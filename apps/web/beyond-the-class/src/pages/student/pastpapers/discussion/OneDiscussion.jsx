@@ -11,6 +11,7 @@ import Discussions from "./Discussions";
 import { useNavigate } from "react-router-dom";
 import { ArrowBack } from "@mui/icons-material";
 import PdfReact from "../../../../components/pdf/PdfReact";
+import { useParams } from "react-router-dom";
 
 export default function OneDiscussion() {
     const location = useLocation();
@@ -18,7 +19,9 @@ export default function OneDiscussion() {
     const sliderRef = useRef(null);
     const navigate = useNavigate();
 
-    console.log(years, subject, t)
+    const { toBeDisccusedId } = useParams()
+
+    // console.log(years, subject, t)
 
     const settings = {
         // dots: true,
@@ -40,14 +43,15 @@ export default function OneDiscussion() {
 
 
     const renderPdfSlide = (pdfItem, year, term, examType) => (
-        <div className="flex flex-col p-4 sm:p-6">
+        <div key={`${term}-${examType}`} className="flex flex-col p-4 sm:p-6">
             <div className="m-2 w-full h-[60vh] overflow-auto border border-gray-200 dark:border-gray-600 rounded-lg" key={`${term}-${examType}`}>
-                {/* <PdfReact pdf={pdfItem.file} /> */}
-                <iframe
+                <PdfReact pdf={`${import.meta.env.VITE_BACKEND_API_URL}/api/uploads/${pdfItem.pdf}`} />
+
+                {/* <iframe
                     className="w-full h-full "
                     src={`${t.file.pdf}#toolbar=0&navpanes=0&scrollbar=0`}
                     style={{ border: "none" }}
-                ></iframe>
+                ></iframe> */}
 
             </div>
             <div className="p-2 text-center text-xs sm:text-sm text-white">
@@ -94,10 +98,41 @@ export default function OneDiscussion() {
             Object.keys(years).forEach(yearKey => {
                 const yearDocuments = years[yearKey];
 
+                // console.log("Doc", yearDocuments)
                 yearDocuments.forEach(doc => {
-                    if (doc.file && doc.file.pdf) {
-                        slides.push(renderPdfSlide(doc.file, yearKey, doc.name, 'General'));
-                    }
+                    // console.log(":DOC", doc)
+
+                    doc?.assignments && doc.assignments.forEach(fileContents => {
+                        if (fileContents.file && fileContents.file.pdf) {
+                            slides.push(renderPdfSlide(fileContents.file, yearKey, fileContents.name, 'Assign'));
+                        }
+                    })
+
+                    doc?.quizzes && doc.quizzes.forEach(fileContents => {
+                        if (fileContents.file && fileContents.file.pdf) {
+                            slides.push(renderPdfSlide(fileContents.file, yearKey, fileContents.name, 'Quiz'));
+                        }
+                    })
+
+                    doc?.sessional && doc.sessional.forEach(fileContents => {
+                        if (fileContents.file && fileContents.file.pdf) {
+                            slides.push(renderPdfSlide(fileContents.file, yearKey, fileContents.name, 'Session'));
+                        }
+                    })
+
+                    doc?.final && doc.final.forEach(fileContents => {
+                        // console.log("B", doc.final)
+                        if (fileContents.file && fileContents.file.pdf) {
+                            // console.log("THIS", fileContents)
+                            slides.push(renderPdfSlide(fileContents.file, yearKey, fileContents.name, `${doc.term} ${doc.type}`));
+                        }
+                    })
+
+                    doc?.mid && doc.mid.forEach(fileContents => {
+                        if (fileContents.file && fileContents.file.pdf) {
+                            slides.push(renderPdfSlide(fileContents.file, yearKey, fileContents.name, `${doc.term} ${doc.type}`));
+                        }
+                    })
                 });
             });
         } else {
@@ -118,15 +153,17 @@ export default function OneDiscussion() {
             <div className="w-full mt-2 relative overflow-hidden custom-scrollbar">
 
                 <Slider arrows={false} {...settings} ref={sliderRef} className="w-full custom-scrollbar max-w-full mt-5">
-                    {t && (
+                    {t && t.file.pdf && (
                         <div key={t._id} className="flex flex-col p-4 sm:p-6">
                             <div className="m-2 w-full h-[60vh] overflow-auto border border-gray-200 dark:border-gray-600">
-                                {/* <PdfReact pdf={t.file} /> */}
+                                <PdfReact pdf={`${import.meta.env.VITE_BACKEND_API_URL}/api/uploads/${t.file.pdf}`} />
+                                {/* {console.log(`Test url ${import.meta.env.VITE_BACKEND_API_URL}/api/uploads/${t.file.pdf}`)}
+
                                 <iframe
                                     className="w-full h-full "
-                                    src={`${t.file.pdf}#toolbar=0&navpanes=0&scrollbar=0`}
+                                    src={`${import.meta.env.VITE_BACKEND_API_URL}/api/uploads/${t.file.pdf}#toolbar=0&navpanes=0&scrollbar=0`}
                                     style={{ border: "none" }}
-                                ></iframe>
+                                ></iframe> */}
                                 {/* {t.file} */}
                             </div>
                             <div className="p-2 text-center text-xs sm:text-sm">
@@ -155,7 +192,7 @@ export default function OneDiscussion() {
 
             <div className="w-full min-h-screen">
                 {/* Discussion of {t.pdf} */}
-                <Discussions toBeDisccusedId={t._id} />
+                <Discussions toBeDisccusedId={toBeDisccusedId} />
             </div>
         </div>
     );

@@ -8,10 +8,15 @@ import LabelInputCustomizable, {
 import GoogleButton from "../../components/Buttons/GoogleButton";
 import DarkButton from "../../components/Buttons/DarkButton";
 import routesForLinks, { routesForApi } from "../../utils/routes/routesForLinks";
-import toast from "react-hot-toast";
+// import toast from "react-hot-toast";
+import { useDebouncedCallback } from 'use-debounce';
+import { useToast } from "../../components/toaster/ToastCustom";
+
 
 export default function SignUpR() {
     const [universityCampus, setUniversityPlusCampus] = useState("");
+    const [universityCampusDepartments, setUniversityPlusCampusDepartments] = useState([]);
+    const [campusDepartment, setCampusDepartment] = useState('')
     const [universityCampusDomain, setUniversityPlusCampusDomain] = useState("");
 
     const [universityEmail, setUniversityEmail] = useState("");
@@ -21,6 +26,14 @@ export default function SignUpR() {
     const [role, setRole] = useState("none");
     const [personalEmail, setPersonalEmail] = useState("")
     const [usernameError, setUsernameError] = useState(false)
+    const [usernameLess, setUsernameLess] = useState('')
+
+
+    const { addToast } = useToast();
+
+
+
+
     const { loading, signup } = useSignup();
 
     const [roleError, setRoleError] = useState(false)
@@ -33,14 +46,16 @@ export default function SignUpR() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        // console.log("REOLE", role)
         // setUniversityEmail(universityEmail);
-        if (!role) {
+        if (role === 'none') {
+            addToast("Select a role")
             return setRoleError(true)
         } else {
             setRoleError(false)
         }
 
-        console.log("DATA", universityCampus)
+        // console.log("DATA", universityCampus)
         if (!usernameError) {
             await signup({
                 universityEmail: universityEmail.toLowerCase(),
@@ -50,10 +65,11 @@ export default function SignUpR() {
                 name: name,
                 universityId: universityCampus.split("-")[0],
                 campusId: universityCampus.split("-")[1],
+                departmentId: campusDepartment,
                 role: role,
             });
         } else {
-            toast.error("This username already exists")
+            addToast("This username already exists")
         }
         // console.log(universityEmail, universityEmailPassword)
     };
@@ -86,9 +102,10 @@ export default function SignUpR() {
 
     const handleUsernameFunction = async () => {
         if (userName.length > 6) {
+            setUsernameLess('')
             handleUsernameSearch(userName)
                 .then((data) => {
-                    console.log("Username exists: ", data)
+                    // console.log("Username exists: ", data)
                     if (data) {
                         setUsernameError(data)
                     } else {
@@ -97,16 +114,20 @@ export default function SignUpR() {
                     }
                 })
                 .catch(() => {
-                    return toast.error("Username error")
+                    // return toast.error("Username error")
                 })
         }
-        else if (userName.length == 6) {
-            toast.error('username must be greater than 6 characters', { duration: 1000 })
+        else if (userName.length <= 6) {
+            setUsernameLess('username must be greater than 6 characters')
 
+            // toast.error('username must be greater than 6 characters', { duration: 1000 })
             return;
         }
 
     }
+
+    const debouncedHandleUsername = useDebouncedCallback(handleUsernameFunction, 300);
+
 
 
 
@@ -127,13 +148,17 @@ export default function SignUpR() {
                             roleType={_role}
                             role={role}
                             roleError={roleError}
+                            setRoleError={setRoleError}
                         />
                     ))}
+
                 </div>
+                {/* {roleError && <div className="p-2 my-1 border rounded-lg bg-red-200 text-center border-red-500 text-red-500"><p>Select a role</p></div>} */}
                 <form className="w-full" onSubmit={handleSubmit}>
                     <LabelDropDownSearchableInputCustomizable
                         fetchOptions={fetchUniversities}
                         type="text"
+                        autoComplete="off"
                         name="University_and_Campus"
                         className="my-3 w-full"
                         value={universityCampus}
@@ -143,6 +168,21 @@ export default function SignUpR() {
                         inputClassName="w-min-[10rem]"
                         onChange={(e) => setUniversityPlusCampus(e.target.value)}
                         setUniversityPlusCampusDomain={setUniversityPlusCampusDomain}
+                        setUniversityPlusCampusDepartments={setUniversityPlusCampusDepartments}
+                    />
+
+                    <LabelDropDownSearchableInputCustomizable
+                        filteredOptionsProp={universityCampusDepartments}
+                        type="text"
+                        autoComplete="off"
+                        name="Campus_Departments"
+                        className="my-3 w-full"
+                        value={campusDepartment}
+                        label="Select your department"
+                        placeholder="Computer Science"
+                        width="w-[100%]"
+                        inputClassName="w-min-[10rem]"
+                        onChange={(e) => setCampusDepartment(e.target.value)}
                     />
 
                     <LabelInputCustomizable
@@ -160,25 +200,32 @@ export default function SignUpR() {
 
                     <LabelInputCustomizable
                         type="text"
+                        autoComplete="off"
                         name="username"
                         className="my-3 w-full"
                         value={userName}
-                        onKeyUp={
-                            (e) => {
-                                handleUsernameFunction(e.target.value)
-                            }
-                        }
+                        // onKeyUp={
+                        //     (e) => {
+                        //         handleUsernameFunction(e.target.value)
+                        //     }
+                        // }
+                        onKeyUp={(e) => debouncedHandleUsername(e.target.value)}
+
                         label="Username"
                         placeholder="beyond_the._.class"
                         width="w-[100%]"
                         inputClassName="w-min-[10rem]"
-                        errorMessage={usernameError ? "Username Already Exists" : ""}
-                        onChange={(e) => setUserName(e.target.value)}
+                        errorMessage={usernameError && "Username Already Exists" || usernameLess !== '' && usernameLess}
+                        onChange={(e) => {
+                            const sanitizedValue = e.target.value.replace(/[^a-z0-9._]/g, "");
+                            setUserName(sanitizedValue.toLowerCase())
+                        }}
                     />
 
                     <LabelInputCustomizable
                         type="email"
-                        name="universityEmail"
+                        name="email"
+                        autoComplete="email"
                         className="my-3 w-full"
                         value={universityEmail}
                         label="Your University Email"
@@ -186,13 +233,17 @@ export default function SignUpR() {
                         // "FAXX-XXX-XXX@XXX.edu.pk"
                         width="w-[100%]"
                         inputClassName="w-min-[10rem]"
-                        onChange={(e) => setUniversityEmail(e.target.value)}
+                        onChange={(e) => {
+                            const data = e.target.value
+                            setUniversityEmail(data)
+                        }}
                     />
 
 
                     {(role === 'alumni') && <LabelInputCustomizable
                         type="email"
-                        name="personalEmail"
+                        autoComplete="email"
+                        name="email"
                         className="my-3 w-full"
                         value={personalEmail}
                         label="Your Personal Email"
@@ -204,11 +255,12 @@ export default function SignUpR() {
 
                     <LabelInputCustomizable
                         type="password"
-                        name="universityEmailPassword"
+                        autoComplete="new-password"
+                        name="password"
                         className="my-4 mb-5 w-full"
                         value={universityEmailPassword}
                         label="Password"
-                        autoComplete="on"
+                        // autoComplete="on"
                         placeholder="Must be 8 Characters long with any special ch"
                         width="w-[100%]"
                         hideShowPass={true}
@@ -224,8 +276,9 @@ export default function SignUpR() {
                     {/* <DarkButtonLink to="/auth/registered/create-username" className="flex my-4 justify-center items-center w-full" text="Sign up with email" /> */}
                 </form>
 
-                <div>
+                <div className="flex flex-row justify-evenly w-full">
                     <Link to={routesForLinks.login}>Already Have an Account?</Link>
+                    <Link className=" underline" to={routesForLinks.login}>Sign In</Link>
                 </div>
 
                 <div className="flex justify-center items-center m-4 w-full">
@@ -253,21 +306,25 @@ export default function SignUpR() {
 const roleList = ["student", "teacher", "alumni"];
 
 // eslint-disable-next-line react/prop-types
-function RoleSelectionBox({ handleRoleChange, roleType, role, roleError }) {
-    console.log("Ero roler", roleError)
+function RoleSelectionBox({ handleRoleChange, roleType, role, roleError, setRoleError }) {
+    // console.log("Ero roler", roleError)
     return (
         // <button className={`${roleType === role ? 'bg-slate-500' : 'bg-red-300'} btn glass  p-2 max-h-14 max-w-20`} onClick={() => handleRoleChange(roleType)}>
         //     {roleType}
         // </button>
         <button
-            onClick={() => handleRoleChange(roleType)}
-            className={`${roleType === role ? 'bg-stone-100' : 'bg-transparent'} relative inline-block px-6 py-3 font-medium text-text-primary 
-            dark:text-white  border-2 border-white rounded-lg overflow-hidden group 
+            onClick={() => {
+                handleRoleChange(roleType)
+                setRoleError(false)
+            }}
+            className={`${roleType === role ? 'bg-stone-400 border-black dark:text-black  ' : roleError ? 'border-red-500 border' : 'bg-transparent  border-white dark:text-white dark:text-text-primary-dark text-text-primary '} relative inline-block px-6 py-3 font-medium  
+             border-2 rounded-lg overflow-hidden group 
+              
             focus:outline-none`}
         >
-            <span className={`${roleError && 'border-red-500'} "absolute inset-0 w-full h-full bg-gradient-to-r from-grey-500 via-blue-500 to-purple-500 opacity-30" `}></span>
-            <span className={`${roleError && 'border-red-500'} absolute inset-0 w-full h-full bg-white opacity-10 backdrop-blur-md}`}></span>
-            <span className={`${roleError && 'border-red-500'} relative z-10}`}>{roleType}</span>
+            <span className={"absolute inset-0 w-full h-full bg-gradient-to-r from-grey-500 via-blue-500 to-purple-500 opacity-30"}></span>
+            <span className={" absolute inset-0 w-full h-full bg-white opacity-10 backdrop-blur-md"}></span>
+            <span className={" relative z-10"}>{roleType}</span>
         </button>
 
     );

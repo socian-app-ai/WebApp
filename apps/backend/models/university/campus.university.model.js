@@ -16,16 +16,25 @@ const campusSchema = new Schema({
         required: true,
         index: true,
     },
+    websiteUrl: {
+        type: String,
+        // required: true,
+        default: ''
+    },
 
     emailPatterns: {
-        teacherPatterns: [String],
-        studentPatterns: [String],
-        convertedRegEx: {
-            teacherPatterns: [String],
-            studentPatterns: [String],
-        },
+        // teacherPatterns: [String],
+        // studentPatterns: [String],
+        // convertedRegEx: {
+        //     teacherPatterns: [String],
+        //     studentPatterns: [String],
+        // },
         domain: {
             type: String,
+        },
+        regex: {
+            type: String,
+            default: ''
         }
         // RollNumberFormat: [String]
     },

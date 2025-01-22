@@ -8,6 +8,7 @@ const router = express.Router();
 const UserReviewTeacherVote = require("../../../models/university/teacher/teacher.user.review.vote");
 const TeacherRating = require("../../../models/university/teacher/rating.teacher.model");
 const { default: mongoose } = require("mongoose");
+const { getUserDetails } = require("../../../utils/utils");
 
 // router.get("/teachers-by-campus", async (req, res) => {
 //   try {
@@ -37,21 +38,22 @@ const { default: mongoose } = require("mongoose");
 // });
 
 
+// GET all teachers by campus on student feedback page
 
 router.get("/teachers-by-campus", async (req, res) => {
   try {
-    const user = req.session.user;
 
-    const campusLocation = user.university.campusId;
-    if (!campusLocation) return res.status(400).json({ error: "Campus location not provided" });
+    const { campusOrigin } = getUserDetails(req);
 
-    const findCampus = await Campus.findOne({ _id: campusLocation });
+    if (!campusOrigin) return res.status(400).json({ error: "Campus location not provided" });
+
+    const findCampus = await Campus.findOne({ _id: campusOrigin });
     if (!findCampus) return res.status(404).json({ error: "Error finding campus" });
 
-    const teachers = await Teacher.find({ campusOrigin: campusLocation })
+    const teachers = await Teacher.find({ campusOrigin: campusOrigin })
       .populate({
         path: "ratingsByStudents",
-        select: "comment upvoteCount userId",
+        select: "feedback upvoteCount userId",
         match: { isDeleted: false },
         options: { sort: { upvoteCount: -1 }, limit: 1 },
       })
@@ -62,8 +64,46 @@ router.get("/teachers-by-campus", async (req, res) => {
       const topRating = teacher.ratingsByStudents?.[0] || null;
       return {
         ...teacher,
-        topComment: topRating ? topRating.comment : null,
-        topCommentUser: topRating ? topRating.userId : null,
+        topFeedback: topRating ? topRating.feedback : null,
+        topFeedbackUser: topRating ? topRating.userId : null,
+      };
+    });
+
+    res.status(200).json(result);
+  } catch (error) {
+    console.error("Error in teacher:", error);
+    res.status(500).json({ message: error.message });
+  }
+});
+
+
+
+router.get("/super-teachers-by-campus", async (req, res) => {
+  try {
+
+    const campusOrigin = req.query.campusId
+
+    if (!campusOrigin) return res.status(400).json({ error: "Campus location not provided" });
+
+    const findCampus = await Campus.findOne({ _id: campusOrigin });
+    if (!findCampus) return res.status(404).json({ error: "Error finding campus" });
+
+    const teachers = await Teacher.find({ campusOrigin: campusOrigin })
+      .populate({
+        path: "ratingsByStudents",
+        select: "feedback upvoteCount userId",
+        match: { isDeleted: false },
+        options: { sort: { upvoteCount: -1 }, limit: 1 },
+      })
+      .lean();
+
+
+    const result = teachers.map((teacher) => {
+      const topRating = teacher.ratingsByStudents?.[0] || null;
+      return {
+        ...teacher,
+        topFeedback: topRating ? topRating.feedback : null,
+        topFeedbackUser: topRating ? topRating.userId : null,
       };
     });
 
@@ -81,9 +121,9 @@ router.get("/teachers-by-campus", async (req, res) => {
 
 
 
-
+// CREATE TEACHER
 router.post("/", async (req, res) => {
-  const { name, departmentId, universityOrigin, campusOrigin } = req.body;
+  const { name, email, picture, departmentId, universityOrigin, campusOrigin } = req.body;
   try {
     const findUni = await University.findOne({ _id: universityOrigin });
     if (!findUni)
@@ -106,6 +146,8 @@ router.post("/", async (req, res) => {
 
     const teacher = await Teacher.create({
       name: name,
+      email: email,
+      imageUrl: picture,
       "department.name": findDepartment.name,
       "department.departmentId": departmentId,
       universityOrigin: universityOrigin,
@@ -149,7 +191,7 @@ router.post("/", async (req, res) => {
 
 router.get("/info", async (req, res) => {
   const { id } = req.query;
-  console.log("info id", id);
+  // console.log("info id", id);
   try {
     const teacher = await Teacher.findById(id).populate({
       path: "department.departmentId campusOrigin",
@@ -168,9 +210,9 @@ router.get("/info", async (req, res) => {
   }
 });
 
-router.get("/reviews/comments", async (req, res) => {
+router.get("/reviews/feedbacks", async (req, res) => {
   const { id } = req.query;
-  console.log(id, ":in review commetn");
+  // console.log(id, ":in review commetn");
   try {
     const teacher = await Teacher.findById(id).populate({
       path: "ratingsByStudents",
@@ -185,7 +227,7 @@ router.get("/reviews/comments", async (req, res) => {
       return res.status(404).json({ message: "Teacher not found" });
     }
 
-    console.log("Teacher: ", teacher);
+    // console.log("Teacher: ", teacher);
 
     const populatedRatings = await Promise.all(
       teacher.ratingsByStudents.map(async (review) => {
@@ -193,10 +235,10 @@ router.get("/reviews/comments", async (req, res) => {
         if (review.userId) {
           userIdData = {
             _id: review.userId._id,
-            name: review.userId.name,
-            personalEmail: review.userId.personalEmail,
-            universityEmail: review.userId.universityEmail,
-            profilePic: review.userId.profilePic,
+            name: review.hideUser ? 'Anonymous' : review.userId.name,
+            personalEmail: review.hideUser ? 'Anonymous' : review.userId.personalEmail,
+            universityEmail: review.hideUser ? 'Anonymous' : review.userId.universityEmail,
+            profilePic: review.hideUser ? 'Anonymous' : review.userId.profilePic,
             universityEmailVerified: review.userId.universityEmailVerified,
             personalEmailVerified: review.userId.personalEmailVerified,
           };
@@ -211,17 +253,17 @@ router.get("/reviews/comments", async (req, res) => {
             personalEmailVerified: false,
           };
         }
-        console.log("user data", userIdData);
+        // console.log("user data", userIdData);
 
-        const userVote = await UserReviewTeacherVote.findOne({
-          reviewId: review._id,
-          userId: review.userId?._id,
-        });
-        console.log("first time null ", userVote);
+        // const userVote = await UserReviewTeacherVote.findOne({
+        //   reviewId: review._id,
+        //   userId: review.userId?._id,
+        // });
+        // console.log("first time null ", userVote);
 
         return {
           rating: review.rating,
-          comment: review.comment,
+          feedback: review.feedback,
           __v: review.__v,
           _id: review._id,
           upvoteCount: review.upvoteCount,
@@ -229,12 +271,12 @@ router.get("/reviews/comments", async (req, res) => {
           updatedAt: review.updatedAt,
           userId: userIdData,
           hideUser: review.hideUser,
-          userVote: userVote ? userVote.voteType : "none",
+          // userVote: userVote ? userVote.userVotes : "none",
         };
       })
     );
 
-    console.log("pop rate", populatedRatings);
+    // console.log("pop rate", populatedRatings);
     res.status(200).json(populatedRatings);
   } catch (err) {
     console.error("error", err.message);
@@ -242,8 +284,11 @@ router.get("/reviews/comments", async (req, res) => {
   }
 });
 
+
+
+
 router.post("/rate", async (req, res) => {
-  const { teacherId, userId, rating, comment, hideUser = false } = req.body;
+  const { teacherId, userId, rating, feedback, hideUser = false } = req.body;
 
   if (!teacherId || !userId || rating === undefined) {
     return res.status(400).send("Missing required fields");
@@ -259,34 +304,38 @@ router.post("/rate", async (req, res) => {
     console.log("existing?", existingRating);
     if (existingRating) {
       existingRating.rating = rating;
-      existingRating.comment = comment;
+      existingRating.feedback = feedback;
       existingRating.__v += 1;
       existingRating.hideUser = hideUser;
-      existingRating.upvoteCount = 0;
-      existingRating.downvoteCount = 0;
+      existingRating.upVotesCount = 0;
+      existingRating.downVotesCount = 0;
+      existingRating.replies = []
+      existingRating.userVotes = {}
+      existingRating.isFeedbackEdited.timestamp = Date.now()
+      existingRating.isFeedbackEdited.bool = true;
       await existingRating.save();
+      teacher.ratingsByStudentsMap.clear()
+      // teacher.save()
     } else {
       existingRating = new TeacherRating({
         teacherId,
         userId,
         rating,
-        comment,
+        feedback,
         hideUser,
+        userVotes: { userId: 'upVote' }
       });
       existingRating.save();
       teacher.ratingsByStudents.push(existingRating._id);
-
-      await teacher.save();
+      teacher.ratingsByStudentsMap.set(userId, rating)
+      // await teacher.save();
     }
-    // const teacherIdObj = new mongoose.Types.ObjectId(teacherId);
 
-    const [sumRatings] = await TeacherRating.aggregate([
-      { $match: { teacherId: teacher._id } },
-      { $group: { _id: null, total: { $sum: "$rating" }, count: { $sum: 1 } } },
-    ]);
+    const ratingsArray = Array.from(teacher.ratingsByStudentsMap.values());
+    const totalRatings = ratingsArray.reduce((acc, curr) => acc + curr, 0);
+    const averageRating = ratingsArray.length > 0 ? totalRatings / ratingsArray.length : 0;
 
-    const averageRating = sumRatings ? sumRatings.total / sumRatings.count : 0;
-    teacher.rating = averageRating;
+    teacher.rating = parseFloat(averageRating.toFixed(2));
 
     // console.log("This is Teacher rating:", teacher.rating, "and average: ", averageRating, "sum ", sumRatings)
 
@@ -299,10 +348,23 @@ router.post("/rate", async (req, res) => {
   }
 });
 
-router.post("/reviews/comments/vote", async (req, res) => {
-  const { reviewId, userId, voteType } = req.body;
 
-  if (!reviewId || !userId || !voteType) {
+
+
+
+
+
+
+
+
+
+
+
+
+router.post("/reviews/feedbacks/vote", async (req, res) => {
+  const { reviewId, userIdOther, voteType } = req.body;
+
+  if (!reviewId || !userIdOther || !voteType) {
     return res.status(400).send("Missing required fields");
   }
 
@@ -310,47 +372,102 @@ router.post("/reviews/comments/vote", async (req, res) => {
   session.startTransaction();
 
   try {
-    const review = await TeacherRating.findById(reviewId).session(session);
+    const { userId } = getUserDetails(req);
+
+
+    const review = await TeacherRating.findOne({ _id: reviewId, userId: userIdOther }).session(session);
+
     if (!review) {
       await session.abortTransaction();
       session.endSession();
       return res.status(404).send("Review not found");
     }
 
-    const existingVote = await UserReviewTeacherVote.findOne({
-      reviewId,
-      userId,
-    }).session(session);
 
-    if (existingVote) {
-      if (existingVote.voteType === voteType) {
-        review[voteType === "upvote" ? "upvoteCount" : "downvoteCount"]--;
-        await UserReviewTeacherVote.deleteOne({
-          _id: existingVote._id,
-        }).session(session);
-      } else {
-        review[
-          existingVote.voteType === "upvote" ? "upvoteCount" : "downvoteCount"
-        ]--;
-        review[voteType === "upvote" ? "upvoteCount" : "downvoteCount"]++;
-        existingVote.voteType = voteType;
-        await existingVote.save();
+    // Fetch current vote status
+    const currentVote = review.userVotes.get(userId) || null;
+
+    // If the user has already voted and is changing their vote
+    if (currentVote !== null && currentVote !== voteType) {
+      const updateOps = {
+        $set: { [`userVotes.${userId}`]: voteType }
+      };
+
+      // Remove the old vote first (decrement the respective vote count)
+      if (currentVote === 'upVote') {
+        updateOps.$inc = { upVotesCount: -1 };
+      } else if (currentVote === 'downVote') {
+        updateOps.$inc = { downVotesCount: -1 };
       }
-    } else {
-      review[voteType === "upvote" ? "upvoteCount" : "downvoteCount"]++;
-      await UserReviewTeacherVote.create([{ reviewId, userId, voteType }], {
-        session,
+
+      // Apply the new vote and increment the respective vote count
+      if (voteType === 'upVote') {
+        updateOps.$inc = { ...updateOps.$inc, upVotesCount: 1 };
+      } else if (voteType === 'downVote') {
+        updateOps.$inc = { ...updateOps.$inc, downVotesCount: 1 };
+      }
+
+      // Perform the update with the changes
+      const reviewUpdated = await TeacherRating.findOneAndUpdate({ _id: reviewId, userId: userIdOther }, updateOps, { session, new: true });
+
+      return res.status(200).json({
+        message: "Vote reprocessed successfully.",
+        upVotesCount: reviewUpdated.upVotesCount,
+        downVotesCount: reviewUpdated.downVotesCount,
       });
     }
 
-    await review.save();
+    // Skip processing if the vote is unchanged
+    if (currentVote === voteType) {
+      const updateOps = {
+        $set: { [`userVotes.${userId}`]: null }
+      };
+
+      // If the user is undoing the vote, decrement the vote count accordingly
+      if (voteType === 'upVote') {
+        updateOps.$inc = { upVotesCount: -1 };
+      } else if (voteType === 'downVote') {
+        updateOps.$inc = { downVotesCount: -1 };
+      }
+
+      const reviewUpdated = await TeacherRating.findOneAndUpdate({ _id: reviewId, userId: userIdOther }, updateOps, { session, new: true });
+      await session.commitTransaction();
+      session.endSession();
+
+      return res.status(200).json({
+        message: "Vote already registered.",
+        upVotesCount: reviewUpdated.upVotesCount,
+        downVotesCount: reviewUpdated.downVotesCount,
+        noneSelected: true
+
+      });
+    }
+
+    // Handle the initial vote if the user hasn't voted yet
+    const updateOps = {
+      $set: { [`userVotes.${userId}`]: voteType }
+    };
+
+    if (voteType === 'upVote') {
+      updateOps.$inc = { upVotesCount: 1 };
+    } else if (voteType === 'downVote') {
+      updateOps.$inc = { downVotesCount: 1 };
+    }
+
+    const reviewUpdated = await TeacherRating.findOneAndUpdate({ _id: reviewId, userId: userIdOther }, updateOps, { session, new: true });
+
+
     await session.commitTransaction();
     session.endSession();
 
-    res.status(200).json({
-      upvoteCount: review.upvoteCount,
-      downvoteCount: review.downvoteCount * -1,
+
+    return res.status(200).json({
+      message: "Vote processed successfully.",
+      upVotesCount: reviewUpdated.upVotesCount,
+      downVotesCount: reviewUpdated.downVotesCount,
     });
+
+
   } catch (error) {
     console.error("Error updating vote:", error);
     await session.abortTransaction();
@@ -358,7 +475,17 @@ router.post("/reviews/comments/vote", async (req, res) => {
   }
 });
 
-router.delete("/reviews/comments/delete", async (req, res) => {
+
+
+
+
+
+
+
+
+
+
+router.delete("/reviews/feedbacks/delete", async (req, res) => {
   const { teacherId, userId } = req.body;
 
   if (!teacherId || !userId) {
@@ -399,6 +526,42 @@ router.delete("/reviews/comments/delete", async (req, res) => {
   }
 });
 
+
+router.get('/account/feedbacks', async (req, res) => {
+  const { teacherId } = req.query;
+  // console.log(teacherId, ":in review commetn");
+  try {
+    const teacher = await Teacher.findById(teacherId).populate({
+      path: "ratingsByStudents",
+    });
+
+    if (!teacher) {
+      return res.status(404).json({ message: "Teacher not found" });
+    }
+
+    // console.log("Teacher: ", teacher);
+
+    const populatedRatings = await Promise.all(
+      teacher.ratingsByStudents.map(async (review) => {
+        return {
+          rating: review.rating,
+          feedback: review.feedback,
+          __v: review.__v,
+          _id: review._id,
+          upVotesCount: review.upVotesCount,
+          downVotesCount: review.downVotesCount * -1,
+          updatedAt: review.updatedAt,
+        };
+      })
+    );
+
+    // console.log("pop rate", populatedRatings);
+    res.status(200).json({ teacher: teacher, feedbacks: populatedRatings });
+  } catch (err) {
+    console.error("error", err.message);
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+})
 const getTeacherReviews = async (req, res) => {
   const { id } = req.query;
 

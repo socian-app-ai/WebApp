@@ -9,7 +9,7 @@
 }
 .dark body {
   /* background-color: #80a1cd; */
-  background-color: #171718;
+  background-color: #151515e3;
   @apply transition-colors duration-1000 ease-in-out;
 }
 
@@ -31,7 +31,7 @@ body {
   --var-bg-navbar-url-dark: url(https://arc.net/noise-light.png) #383838;
   --var-bg-navbar-url-light: url(https://arc.net/noise-light.png) #456378; */
 
-  --var-bg-primary-color: #dcdada;
+  --var-bg-primary-color: #ebf0ecdb;
   --var-bg-secondary-color: #dddddd;
 
   --var-bg-primary-color-dark: #121212;
@@ -40,6 +40,14 @@ body {
 
 --var-text-primary: #121212;
 --var-text-primary-dark: #9d9d9d;
+
+
+--var-button-bg: #494949;
+--var-button-bg-dark: #121212;
+--var-button-border: #a9a9a9;
+--var-button-border-dark: #9b9b9b;
+--var-button-text: #ffffff;
+--var-button-text-dark: #ffffff;
 
 
   /* end */
@@ -117,6 +125,26 @@ label {
   color: rgb(160, 160, 160);
 } */
 
+
+.btn{
+  width: fit-content;
+  padding: 0.5rem 0.6rem;
+  margin: 0.1%;
+  border-radius: 0.6rem;
+  background-color: var(--var-button-bg);
+  color: var(--var-button-text);
+  border: 1px solid var(--var-button-border);
+}
+
+.btn-dark{
+  width: fit-content;
+  padding: 0.5rem 0.6rem;
+  margin: 0.1%;
+  border-radius: 0.6rem;
+  background-color: var(--var-button-bg-dark);
+  color: var(--var-button-text-dark);
+  border: 1px solid var(--var-button-border-dark);
+}
 
 
 

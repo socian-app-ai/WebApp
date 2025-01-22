@@ -1,4 +1,4 @@
-/* eslint-disable react/prop-types */
+
 import { FaBuilding, FaChalkboardTeacher, FaMedapps } from "react-icons/fa";
 import { IoMdHome } from "react-icons/io";
 import { MdWorkOutline } from "react-icons/md";
@@ -14,7 +14,11 @@ import { useSetSideBarState } from "../../state_management/zustand/useSideBar";
 import { useAuthContext } from "../../context/AuthContext";
 import { useEffect } from "react";
 import CreateSocietyButton from "../../pages/society/CreateSocietyButton";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
+// import axiosInstance from "../../config/users/axios.instance";
+import SocitiesDropDown from "./sidebarComponents/SocitiesDropDown";
+import { ChevronDown } from "lucide-react";
+import { SettingsIcon } from "lucide-react";
 
 function Sidebar() {
   const { sideBarState, setSideBarState } = useSetSideBarState();
@@ -29,7 +33,7 @@ function Sidebar() {
     if (width > 768) {
       setSideBarState(true);
     }
-    console.log("useEffect");
+    // console.log("useEffect");
   }, [width, setSideBarState]);
 
   // Define different menus for different roles
@@ -149,6 +153,8 @@ function Sidebar() {
     // Add more external organization links
   ];
 
+
+
   //========= SUPER
   const superMenu = [
     {
@@ -165,6 +171,16 @@ function Sidebar() {
       name: "Campuses",
       path: "/super/campuses",
       icon: <FaBuilding className="w-5" />,
+      submenu: [
+        { name: "Create", path: "/super/campus/create" },
+        { name: "Subject & Departments", path: "/super/campus/edit/0" },
+        { name: "Papers", path: `campus/pastpapers/${authUser.university.campusId._id}` },
+      ],
+    },
+    {
+      name: "Teachers",
+      path: "/super/teachers",
+      icon: <SettingsIcon className="w-5" />,
     },
     {
       name: "Users",
@@ -199,14 +215,23 @@ function Sidebar() {
                 : processMenu
     ) : processMenu
 
+  const [dropdownStates, setDropdownStates] = useState({});
+
+
+  const toggleDropdown = (menuName) => {
+    setDropdownStates((prev) => ({
+      ...prev,
+      [menuName]: !prev[menuName],
+    }));
+  };
+
 
   return (
     <div
       className={`${sideBarState ? "left-0" : "-left-[100rem]"}  z-20 w-60
-         bg-[#171718] text-white
+         bg-[#ffffff] text-black
            dark:bg-[#171718] dark:text-white 
            h-screen py-4 px-3 fixed
-
            overflow-y-auto
            overflow-x-hidden
            border-r dark:border-[#696969a4]
@@ -215,7 +240,84 @@ function Sidebar() {
     >
       {/* bg-sidebar-pattern bg-bg-var-sidebar dark:bg-bg-var-sidebar-dark */}
       <nav className="mt-12">
-        <ul className="border-b border-[#787878] flex flex-col">
+        <ul className="flex flex-col space-y-1">
+          {menuItems.map((item) => (
+            <li key={item.name} className="relative">
+              <Link
+                to={item.path}
+                className="flex items-center p-2 text-sm text-gray-700 dark:text-gray-300 rounded hover:bg-gray-100 dark:hover:bg-gray-700"
+                onClick={() => width < 768 && setSideBarState(false)}
+              >
+                {item.icon}
+                <span className="ml-2">{item.name}</span>
+                {item.submenu && (
+                  <button
+                    className="ml-auto focus:outline-none"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      toggleDropdown(item.name);
+                    }}
+                  >
+                    {dropdownStates[item.name] ? (
+                      <ChevronDown className="w-4 h-4 text-gray-500" />
+                    ) : (
+                      <ChevronRight className="w-4 h-4 text-gray-500" />
+                    )}
+                  </button>
+                )}
+              </Link>
+              {item.submenu && dropdownStates[item.name] && (
+                <ul className="ml-6 mt-1 space-y-1">
+                  {item.submenu.map((subItem) => (
+                    <li key={subItem.name}>
+                      <Link
+                        to={subItem.path}
+                        className="block p-2 text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded"
+                        onClick={() => width < 768 && setSideBarState(false)}
+                      >
+                        {subItem.name}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </li>
+          ))}
+        </ul>
+
+        {/* <ul className="border-b border-[#787878] flex flex-col">
+          {menuItems.map((item, idx) => (
+            <div key={item.name} className="relative">
+              <Link
+                to={item.path}
+                className={`text-sm text-[#787878] flex justify-start items-center p-2 rounded hover:bg-slate-100 dark:hover:bg-[#2B3236]`}
+                onClick={() => width < 768 && setSideBarState(false)}
+              >
+                {item.icon}
+                <p className="ml-2">{item.name}</p>
+                {item.submenu && (
+                  <ChevronRight className="ml-auto w-4 h-4 text-gray-400" />
+                )}
+              </Link>
+              {item.submenu && (
+                <ul className="ml-6 mt-1 border-l pl-4 border-gray-200 dark:border-gray-600">
+                  {item.submenu.map((subItem) => (
+                    <Link
+                      to={subItem.path}
+                      key={subItem.name}
+                      className="text-sm text-[#787878] flex justify-start items-center p-2 rounded hover:bg-slate-100 dark:hover:bg-[#2B3236]"
+                      onClick={() => width < 768 && setSideBarState(false)}
+                    >
+                      <p>{subItem.name}</p>
+                    </Link>
+                  ))}
+                </ul>
+              )}
+            </div>
+          ))}
+        </ul> */}
+
+        {/* <ul className="border-b border-[#787878] flex flex-col">
           {menuItems.map((item, idx) => (
             <Link
               to={item.path}
@@ -228,15 +330,14 @@ function Sidebar() {
               <p className="ml-2">{item.name}</p>
             </Link>
           ))}
-        </ul>
+        </ul> */}
 
         <CreateSocietyButton />
 
-        <TopCommunitiesDropdown title="Top Socities" />
-        <TopCommunitiesDropdown
+        {/* <SocitiesDropDown title="Top Socities" /> */}
+        <SocitiesDropDown
           title="My Socities"
           isOpenParam={true}
-          data={authUser.joinedSocieties}
         />
 
         <UpcomingEvents />
@@ -278,51 +379,6 @@ function Sidebar() {
 }
 export default Sidebar;
 
-function TopCommunitiesDropdown({ title, isOpenParam, data }) {
-  const [isOpen, setIsOpen] = useState(isOpenParam ?? false);
-
-  const { authUser } = useAuthContext()
-  const navigate = useNavigate()
-  console.log("HI", data);
-
-  return (
-    <div className="text-[#787878] px-2">
-      {/* Dropdown Header */}
-      <div
-        className="flex items-center  py-1  cursor-pointer"
-        onClick={() => setIsOpen(!isOpen)}
-      >
-        <span
-          className={`transform  transition-transform ${isOpen ? "rotate-90" : "rotate-0"
-            }`}
-        >
-          <ChevronRight size={18} />
-        </span>
-        <p className="text-sm">{title}</p>
-      </div>
-
-      {/* Dropdown Items */}
-      {isOpen && (
-        <ul className="px-1">
-          {data?.length &&
-            data.length > 0 &&
-            data.map((society, index) => (
-              <li onClick={() => navigate(`${authUser.role}/society/${society._id}`)}
-                key={index} className="flex items-center p-2 cursor-pointer">
-                <span className="mr-1">
-                  {society?.icon ? society.icon : "🟣"}
-                </span>
-                <span className="text-sm">{society.name}</span>
-                {/* {society.notification && (
-                <span className="w-2 h-2 bg-red-500 rounded-full ml-auto"></span>
-              )} */}
-              </li>
-            ))}
-        </ul>
-      )}
-    </div>
-  );
-}
 
 const eventsData = [
   {

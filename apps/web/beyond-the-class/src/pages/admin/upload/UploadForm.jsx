@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import axiosInstance from '../../../config/users/axios.instance';
 
 const UploadForm = () => {
   const [formData, setFormData] = useState({
@@ -28,7 +29,7 @@ const UploadForm = () => {
     setMessage('');
 
     try {
-      const response = await axios.post(`/upload-${type}`, formData, {
+      const response = await axiosInstance.post(`/upload-${type}`, formData, {
         headers: {
           'Content-Type': 'application/json',
         },

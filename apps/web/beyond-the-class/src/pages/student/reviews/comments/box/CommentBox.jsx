@@ -1,51 +1,52 @@
 import { Avatar, Card, CardHeader, CardMedia, IconButton, Rating, Skeleton } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 import { Star } from "@mui/icons-material";
-import toast from "react-hot-toast";
 import { useAuthContext } from "../../../../../context/AuthContext";
 import useTriggerReRender from "../../../../../state_management/zustand/useTriggerReRender";
 import axiosInstance from "../../../../../config/users/axios.instance";
 import BpCheckbox from '../../../../../components/MaterialUI/BpCheckbox'
 import { useParams } from "react-router-dom";
+import { useToast } from "../../../../../components/toaster/ToastCustom";
 
 
-export default function CommentBox() {
+export default function FeedbackBox() {
     const { id } = useParams()
 
     const { authUser } = useAuthContext()
     const [rating, setRating] = useState(0);
-    const [comment, setComment] = useState('');
+    const [feedback, setFeedback] = useState('');
     const { setTriggerReRender } = useTriggerReRender();
     const [anonymous, setAnonymous] = useState(false)
 
+    const { addToast } = useToast();
 
     const handleSubmit = async (event) => {
         event.preventDefault();
         const teacherId = id
         try {
-            if (comment === '') return;
+            if (feedback === '') return;
             await axiosInstance.post('/api/teacher/rate', {
                 teacherId,
                 userId: authUser._id,
                 rating,
-                comment,
+                feedback,
                 hideUser: anonymous
             });
 
-            toast.success('Review submitted successfully!')
+            addToast('Review submitted successfully!')
             setTriggerReRender(true)
-            setComment('');
+            setFeedback('');
             setRating(0);
         } catch (error) {
             console.error('Error submitting review:', error);
         }
     };
-    const [showCommentBox, setShowCommentBox] = useState('')
+    const [showFeedbackBox, setShowFeedbackBox] = useState('')
     const textAreaRef = useRef(null);
 
     useEffect(() => {
         adjustHeight();
-    }, [comment]);
+    }, [feedback]);
 
     const adjustHeight = () => {
         if (textAreaRef.current) {
@@ -113,24 +114,24 @@ export default function CommentBox() {
 
                 <div className="px-4 pb-2 -mt-3 w-[100%]">
                     <textarea
-                        onClick={() => { setShowCommentBox(true) }}
+                        onClick={() => { setShowFeedbackBox(true) }}
                         ref={textAreaRef}
-                        placeholder="Add a comment"
+                        placeholder="Add a feedback"
                         rows={1}
                         className="w-full p-3 pl-5 mt-2  dark:bg-transparent border border-[#1e1e1ebb] dark:border-[#fffb] text-gray-900 dark:text-white rounded-3xl focus:outline-none focus:ring-1 focus:ring-[#1e1e1ebb] dark:focus:ring-[#fffb]"
-                        value={comment}
-                        onChange={(e) => setComment(e.target.value)}
+                        value={feedback}
+                        onChange={(e) => setFeedback(e.target.value)}
                     />
-                    <div id="comment-box" className={`${showCommentBox ? 'flex' : 'hidden'} justify-end space-x-2 my-2 `}>
+                    <div id="feedback-box" className={`${showFeedbackBox ? 'flex' : 'hidden'} justify-end space-x-2 my-2 `}>
                         <button onClick={(e) => {
                             e.preventDefault()
-                            setShowCommentBox(false)
-                            setComment('')
+                            setShowFeedbackBox(false)
+                            setFeedback('')
                         }} className="px-4 py-2 rounded-3xl border border-[#4f4f4f]  bg-[#343434d3] brightness-75 text-white  hover:bg-[#343434d3] hover:brightness-110">
                             Cancel
                         </button>
                         <button type="submit" className="px-4 py-2 rounded-3xl border border-[#7a7a7a] bg-[#262626] brightness-75 text-white  hover:bg-[#262626] hover:brightness-110">
-                            Comment
+                            Feedback
                         </button>
 
                     </div>

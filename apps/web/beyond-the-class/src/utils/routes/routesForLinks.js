@@ -1,3 +1,7 @@
+/**
+ * These are normal links (not used for api)
+ * used on button, links etc
+ */
 const routesForLinks = {
     signup: "/signup",
     login: "/login",
@@ -39,7 +43,7 @@ const buildRoutes = (base, paths) => {
     }
     return result;
 };
-
+// routesForApi.auth.forgotPassword => /api/auth/forgot-password
 export const routesForApi = buildRoutes(baseUrl, {
     super:{
         teachersAll : 'teachers-all'
@@ -49,13 +53,14 @@ export const routesForApi = buildRoutes(baseUrl, {
         login: 'login',
         register: 'register',
         forgotPassword: 'forgot-password',
-        registerationVerifyOTP: 'registration-verify-otp'
+        registerationVerifyOTP: 'registration-verify-otp',
+        registerationResendOTP: "register-resend-otp"
     },
     google: {
         request: 'request'
     },
     accessible: {
-        universityGroupedCampus: "universities-grouped-campus",
+        universityGroupedCampus: "universities/grouped/campus",
         usernames: 'usernames',
     },
     posts: {
@@ -72,7 +77,7 @@ export const routesForApi = buildRoutes(baseUrl, {
 
 });
 
-console.log("ROUTES", routesForApi);
+// console.log("ROUTES", routesForApi);
 
 
 

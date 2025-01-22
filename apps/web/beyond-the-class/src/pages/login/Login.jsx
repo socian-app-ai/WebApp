@@ -10,8 +10,10 @@ import routesForLinks, { routesForApi } from "../../utils/routes/routesForLinks"
 
 export default function Login() {
   const [email, setEmail] = useState("");
+  const [inputType, setInputType] = useState("email");
+
   const [password, setPassword] = useState("");
-  console.log('in login')
+  // console.log('in login')
   const { loading, login } = useLogin();
 
   const handleSubmit = async (e) => {
@@ -19,6 +21,11 @@ export default function Login() {
     await login(email.toLocaleLowerCase(), password);
   };
 
+  const handleEmailChange = (e) => {
+    setEmail(e.target.value);
+    // If email does not contain '@', consider it as a username
+    setInputType(e.target.value.includes("@") ? "email" : "username");
+  };
 
   function navigate(url) {
     window.location.href = url;
@@ -56,13 +63,13 @@ export default function Login() {
         onSubmit={handleSubmit}
       >
         <LabelInputCustomizable
-          type="email"
-          name="email"
+          type={inputType === "email" ? "email" : "text"}
+          name={inputType === "email" ? "email" : "username"}
           className="my-2"
           value={email}
-          label={"Email"}
+          label={"Email/Username"}
           placeholder="fa21-bcs-000@cuilahore.pk"
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={(e) => handleEmailChange(e)}
           autoComplete="on"
         />
 
@@ -80,9 +87,15 @@ export default function Login() {
 
         />
 
-        <div>
+        <div className="flex flex-row justify-evenly w-full">
+
           <Link className="[&&]:dark:text-[#c4c3c3] [&&]:text-black" to={routesForLinks.signup}>Don&apos;t Have an Account?</Link>
+          <Link className=" underline" to={routesForLinks.signup}>Sign Up</Link>
+
         </div>
+
+
+
 
         <DarkButton className="my-5 " text="Login"
           loading={loading}

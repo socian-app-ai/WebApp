@@ -164,6 +164,7 @@ export default function AllSocieties() {
 
                 const universities = await axiosInstance.get(routesForApi.society.universitiesAll);
                 setSocietiesUniversities(universities.data);
+                // console.log("universities", universities.data)
             } catch (err) {
                 setErrorUni("Error fetching universities.");
                 console.error("Error fetching universities societies: ", err);
@@ -177,6 +178,7 @@ export default function AllSocieties() {
             try {
                 const campuses = await axiosInstance.get(routesForApi.society.campusesAll);
                 setSocietiesCampuses(campuses.data);
+                // console.log("campuses", campuses.data)
             } catch (err) {
                 setErrorCampuses("Error fetching campuses.");
                 console.error("Error fetching campuses societies: ", err);
@@ -190,6 +192,7 @@ export default function AllSocieties() {
             try {
                 const campus = await axiosInstance.get(routesForApi.society.campusAll);
                 setSocietiesCampus(campus.data);
+                // console.log("campus", campus.data)
             } catch (err) {
                 setErrorCampus("Error fetching single campus.");
                 console.error("Error fetching single campus societies: ", err);
@@ -206,7 +209,17 @@ export default function AllSocieties() {
     const SocietyCard = ({ society }) => (
         <Link to={`/${authUser.role}/society/${society._id}`} className="block transition-transform duration-200 hover:scale-105">
             <div className="h-full bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-xl transition-shadow p-6">
-                <h3 className="text-xl font-semibold mb-2">{society.name}</h3>
+                <div className='flex flex-row'>
+                    <p className="text-md font-sans mb-2">{society.name}</p>
+                    {/* {society.references.campusOrigin.name} */}
+                    <div className="inline-flex items-center mx-[0.1rem] bg-[#4c60f7c5] text-white text-xs font-thin h-min px-1 py-1 rounded-2xl">
+                        {society.references.universityOrigin.name}
+                    </div>
+                    <div className="inline-flex items-center mx-[0.1rem] bg-[#4c60f7c5] text-white text-xs font-thin h-min px-1 py-1 rounded-2xl">
+                        <h5>{society.references.campusOrigin.location} </h5>
+                    </div>
+                </div>
+
                 <p className="text-gray-600 dark:text-gray-300 text-sm line-clamp-2">
                     {society.description || 'No description available'}
                 </p>
@@ -247,11 +260,11 @@ export default function AllSocieties() {
                 </div>
 
                 <div className="mb-8">
-                    <div className="flex rounded-lg bg-gray-100 dark:bg-gray-700 p-1">
+                    <div className="flex flex-col md:flex-row rounded-lg bg-gray-100 dark:bg-gray-700 p-1">
                         {[
                             { id: 'universities', icon: Building, label: 'Universities' },
-                            { id: 'campuses', icon: Building2Icon, label: 'Campuses' },
-                            { id: 'campus', icon: Users, label: 'Single Campus' }
+                            { id: 'campuses', icon: Building2Icon, label: `${authUser.university.universityId.name.toUpperCase()}` },
+                            { id: 'campus', icon: Users, label: `${authUser.university.campusId.name.toUpperCase()}` }
                         ].map(({ id, icon: Icon, label }) => (
                             <button
                                 key={id}
@@ -279,7 +292,7 @@ export default function AllSocieties() {
                             ) : societiesUniversities.length === 0 ? (
                                 <EmptyState />
                             ) : (
-                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                                <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 gap-3">
                                     {societiesUniversities.map((society) => (
                                         <SocietyCard key={society._id} society={society} />
                                     ))}

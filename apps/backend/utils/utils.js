@@ -75,7 +75,7 @@ const sendOtp = async (phoneNumber, email, user, name) => {
 
   const hashedOTP = await bcryptjs.hash(otp, 10);
 
-  console.log("this query", query);
+  // console.log("this query", query);
   const otpResponse = await OTP.findOneAndUpdate(
     query,
     {
@@ -100,18 +100,20 @@ const sendOtp = async (phoneNumber, email, user, name) => {
 /**
  * Extracts user details based on the platform and session or user data.
  * @param {Object} req - The request object
- * @returns {Object} - The user details, including userId, role, universityId, and campusId
+ * @returns {Object} - The user details, including  userId, role, universityOrigin, campusOrigin
+ * @returns {user}
  * @returns {userId}
  * @returns {role}
  * @returns {universityOrigin}
  * @returns {campusOrigin}
  */
 const getUserDetails = (req) => {
-  let userId, role, universityOrigin, campusOrigin;
+  let user, userId, role, universityOrigin, campusOrigin;
 
   const platform = req.headers["x-platform"];
 
   if (platform === "web") {
+    user = req.session.user;
     userId = req.session.user._id;
     role = req.session.user.role;
     if (role !== "ext_org") {
@@ -119,6 +121,7 @@ const getUserDetails = (req) => {
       campusOrigin = req.session.user.university.campusId._id;
     }
   } else if (platform === "app") {
+    user = req.user;
     userId = req.user._id;
     role = req.user.role;
     if (role !== "ext_org") {

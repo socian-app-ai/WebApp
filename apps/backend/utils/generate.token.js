@@ -1,9 +1,10 @@
 const jwt = require("jsonwebtoken");
-const moment = require('moment')
+const moment = require('moment');
+const UserRoles = require("../models/userRoles");
 
 // Helper function to generate tokens
 const generateToken = (user) => {
-  console.log("suer", user);
+  // console.log("suer", user);
   const payload = {
     _id: user._id,
     name: user.name,
@@ -32,6 +33,12 @@ const generateToken = (user) => {
     },
   };
 
+  if (user.role === UserRoles.teacher) {
+    payload.teacherConnectivities = {
+      attached: user?.teacherConnectivities?.attached ?? false,
+      teacherModal: user?.teacherConnectivities?.teacherModal ?? null
+    }
+  }
   const accessToken = jwt.sign(payload, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_ACCESS_EXPIRY_TIME,
   });

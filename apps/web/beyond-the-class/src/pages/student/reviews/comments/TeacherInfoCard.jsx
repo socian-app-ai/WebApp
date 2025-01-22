@@ -21,7 +21,7 @@ export default function TeacherInfoCard() {
                 setTeacher(response.data);
                 setTriggerReRender(false);
 
-                console.log("Teacher Crd", response.data)
+                // console.log("Teacher Crd", response.data)
 
             } catch (error) {
                 console.error('Error fetching teacher data:', error);
