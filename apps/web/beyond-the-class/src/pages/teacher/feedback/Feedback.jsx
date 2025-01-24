@@ -1,56 +1,3 @@
-// import React from 'react'
-// import { useAuthContext } from '../../../context/AuthContext'
-// import { useEffect } from 'react'
-// import axiosInstance from '../../../config/users/axios.instance'
-// import { useState } from 'react'
-
-// export default function Feedback() {
-
-//     const { authUser } = useAuthContext()
-
-//     const [teachers, setTeachers] = useState([])
-//     const [teacher, setTeacher] = useState(null)
-//     const [message, setMessage] = useState('')
-
-
-
-//     useEffect(() => {
-//         if (authUser?.teacherConnectivities?.teacherModal) {
-//             setTeacher(authUser.teacherConnectivities.teacherModal)
-//         }
-
-//         if (!authUser?.teacherConnectivities?.teacherModal) {
-//             connectTeacherToUser
-//         }
-
-
-
-//         const connectTeacherToUser = async () => {
-//             const response = await axiosInstance.get('/api/user/teacher/attachUser')
-//             console.log(response)
-//             setMessage(response.data.message)
-//             setTeachers(response.data?.teachers)
-//             setTeacher(response.data?.teacher)
-//         }
-
-//     }, [])
-
-
-//     return (
-//         <div className='mt-10 px-2'>Feedbacks
-//             {teacher ? (
-//                 <div>
-//                     {/* FEtch teachers feedbacks */}
-//                 </div>
-//             ) : teachers && (
-//                 <div>
-//                     {teachers.map(teacher=>())}
-//                 </div>
-//             )}
-//         </div>
-//     )
-// }
-
 import React, { useState, useEffect } from 'react';
 import { useAuthContext } from '../../../context/AuthContext';
 import axiosInstance from '../../../config/users/axios.instance';
@@ -214,19 +161,36 @@ const TeacherFeedback = () => {
                         {teachers.map((teacher) => (
                             <div key={teacher._id} className="bg-white dark:bg-[#121212] rounded-lg shadow hover:shadow-lg transition-shadow">
                                 <div className="p-6">
+                                    {console.log(teacher)}
                                     <h3 className="text-xl font-semibold mb-2">{teacher.name}</h3>
+                                    <h3 className="text-md font-normal mb-2">{teacher.email}</h3>
+                                    <img src={teacher.imageUrl} className=' h-10 w-10' />
                                     <div className="space-y-2">
                                         <p>Department: {teacher.department?.name || 'N/A'}</p>
                                         <p>Rating: {teacher.rating.toFixed(1)}/5.0</p>
                                         <p className="text-sm text-gray-500">
                                             {teacher.onLeave ? 'Currently on leave' : 'Active'}
                                         </p>
-                                        <button
-                                            onClick={() => handleTeacherSelect(teacher._id)}
-                                            className="w-full mt-4 bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition-colors"
-                                        >
-                                            Request to Attach
-                                        </button>
+
+                                        {
+                                            !teacher.userAttachedBool ?
+                                                <button
+
+                                                    onClick={() => handleTeacherSelect(teacher._id)}
+                                                    className="w-full mt-4 bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition-colors"
+                                                >
+                                                    Request to Attach
+                                                </button>
+                                                :
+                                                <button
+
+                                                    // onClick={() => {}} // TOTELL user to request a query to mod to adjust your email
+                                                    disabled // for now
+                                                    className="w-full mt-4 bg-blue-900 text-white py-2 px-4 rounded hover:bg-blue-700 transition-colors"
+                                                >
+                                                    An account Attached already
+                                                </button>
+                                        }
                                     </div>
                                 </div>
                             </div>
