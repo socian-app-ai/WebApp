@@ -192,6 +192,12 @@ function Sidebar() {
       path: `/super/societies`,
       icon: <FaMedapps className="w-5" />,
     },
+
+    {
+      name: "Teachers",
+      path: `/super/teachers`,
+      icon: <FaMedapps className="w-5" />,
+    },
   ];
 
   const processMenu = [];

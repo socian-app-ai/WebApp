@@ -45,6 +45,9 @@ const buildRoutes = (base, paths) => {
 };
 // routesForApi.auth.forgotPassword => /api/auth/forgot-password
 export const routesForApi = buildRoutes(baseUrl, {
+    super:{
+        teachersAll : 'teachers-all'
+    },
     auth: {
         logout: 'logout',
         login: 'login',
