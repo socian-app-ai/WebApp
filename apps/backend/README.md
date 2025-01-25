@@ -166,12 +166,23 @@ D:\MYFOLDER\mongodb JSON duplicate>  <strong>mongorestore</strong> --uri "mongod
 2. create new instances
 3. set it up blah blah you're kind.. no spoon feeding
 4. download .pem file. edit access to your user with read permission only.
+5. make the .pem file permision to be READONLY. incase anyone changes the file name or file content. (Windows)
+   <br/>
+   <code>
+   icacls "btc-key-pair-backend-2.pem" /inheritance:r
+   </code>
+   <br/>
+   <code> icacls "btc-key-pair-backend-2.pem" /grant:r "\$($env:USERNAME):(R)"
+   </code>
+   <br/>
+   5.1 Now go to file properties>security>edit> set permission to read for YOUR ACCOUNT ONLY. <br> for other "no" read,write or any permission, disabe all.
+6. create an ip address. dont want tocreatedynamic ipaddress (by default). We will create  elastic ip. associate it with insatnce. Hurry to associate it with an intance otherwise bill will be genertated on unassigned elastice ip. If not using it, then disassoiate it and remove it. (there is no bill in free-tier)
 
 ### Handling SSH and uploading Project to Instance
 
-1. open git bash with admin, then run with your .pem and public ec2 ip.
+1. open git bash with admin, then run with your .pem and public ec2 ip. (you can use new Terminal on windows from microsoftstore )
    <code>
-   ssh -i "D:\Your Project\EC2-RSA\your-key.pem" ubuntu@1.12.12.123
+   ssh -i "D:\Your Project\EC2-RSA\your-key.pem" ubuntu@1.12.12.123 (this address should be permannet from elastic ip)
    </code>
 2. then upgrade everything on the ec2 ubuntu that you're now connected with on your computer
    <code>
@@ -198,7 +209,8 @@ sudo chmod +x /usr/local/bin/docker-compose
 <code>
 scp -i "D:\Your Project\EC2-RSA\your-key.pem" -r D:/Your\ Project/project-folder-name ubuntu@1.12.12.123:/home/ubuntu/
 </code>
-<bold>NOW Wait till your marriage... your project is uploading</bold>
+Click yes.<br/>
+<bold>uploading node_module and .git. shit.. now Wait till your marriage... your project is uploading (seriously remove both folders)</bold>
 
 #### just dont upload .git files or node_modules (or else say byebye to your precious time)
 
