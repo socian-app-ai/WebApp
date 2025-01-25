@@ -95,7 +95,7 @@ const router = createBrowserRouter([
 
 
           { path: "pastpapers/upload", element: <Layout> <UploadForm /></Layout> },
-          { path: "teachers", element: <Layout> <TeachersView/></Layout> },
+          // { path: "teachers", element: <Layout> <TeachersView/></Layout> }, mistakenly written by rayyan
 
         ],
       },
