@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState, useMemo } from "react";
 import axiosInstance from "../config/users/axios.instance";
 import { bypassRoutes } from "../utils/routes/routesForLinks";
+import logWithFileLocation from "../utils/consoleLog";
 export const AuthContext = createContext();
 
 export const useAuthContext = () => {
@@ -19,7 +20,8 @@ export const AuthContextProvider = ({ children }) => {
 
                 if (res.status >= 200 && res.status < 300) {
                     setAuthUser(res.data);
-                    // console.log("Authenticated user data:", res.data);
+                    // { import.meta.env.VITE_DEVELOPMENT === "developement" && console.log("Authenticated user data:", res.data); }
+                    logWithFileLocation("Authenticated user data:", res.data)
 
                     // Redirect to home if currently on the login page
                     if (window.location.pathname === '/login') {
