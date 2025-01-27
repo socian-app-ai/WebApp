@@ -7,6 +7,7 @@ import { Plus } from "lucide-react";
 import { Trash } from "lucide-react";
 import { useEffect } from "react";
 import DropZone from "../../../components/dropZone/DropZone";
+import { routesForApi } from "../../../utils/routes/routesForLinks";
 
 export default function AddPastPapers() {
     const [loading, setLoading] = useState(false);
@@ -62,7 +63,7 @@ export default function AddPastPapers() {
                 teachers: formData.teachers.map((teacher) => teacher.id), // Only include IDs
             };
 
-            const response = await axiosInstance.post("/api/pastpaper/upload/types", payload);
+            const response = await axiosInstance.post(routesForApi.super.pastpaper.upload.types, payload);
             console.log("Saved successfully:", response.data);
             alert("Past paper added successfully!");
 

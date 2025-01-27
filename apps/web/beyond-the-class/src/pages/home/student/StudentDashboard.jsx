@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { useEffect } from "react";
 import PostComponent from "../../../components/postBox/PostComponent";
 import { useAuthContext } from "../../../context/AuthContext";

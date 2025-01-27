@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import axiosInstance from "../../../config/users/axios.instance";
 import { CustomAutocompleteSearchStyle } from '../../../components/FilterOption/CustomAutocomplete';
 import { useSetInfoBarState } from "../../../state_management/zustand/useInfoBar";
+import { routesForApi } from "../../../utils/routes/routesForLinks";
 
 
 
@@ -159,7 +160,7 @@ export default function ProgramNameAndCourses() {
         const fetch = async () => {
             try {
 
-                const response = await axiosInstance.get("/api/department/with-subjects-by-campus")
+                const response = await axiosInstance.get(routesForApi.department.campusWithSubjects)
                 // console.log(JSON.stringify(response.data))
 
                 const allDepartments = response.data.flatMap(campus => campus.departments);

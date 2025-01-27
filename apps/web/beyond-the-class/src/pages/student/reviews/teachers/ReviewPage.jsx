@@ -5,6 +5,7 @@ import { Search } from "@mui/icons-material";
 import TeacherCard from "./TeacherCard";
 import axiosInstance from "../../../../config/users/axios.instance";
 import { useSetInfoBarState } from "../../../../state_management/zustand/useInfoBar";
+import { routesForApi } from "../../../../utils/routes/routesForLinks";
 
 export default function ReviewPage() {
   const [teachers, setTeachers] = useState([]);
@@ -25,9 +26,7 @@ export default function ReviewPage() {
     const fetchTeachersByCampus = async () => {
       setLoading(true);
       try {
-        const response = await axiosInstance.get(
-          `/api/teacher/teachers-by-campus`
-        );
+        const response = await axiosInstance.get(routesForApi.teacher.teacherInCampus);
         // console.log("Teachers: ", response);
         if (response.data) {
           setTeachers(response.data);

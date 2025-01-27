@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState, useMemo } from "react";
 import axiosInstance from "../config/users/axios.instance";
-import { bypassRoutes } from "../utils/routes/routesForLinks";
+import { bypassRoutes, routesForApi } from "../utils/routes/routesForLinks";
 import logWithFileLocation from "../utils/consoleLog";
 export const AuthContext = createContext();
 
@@ -16,6 +16,7 @@ export const AuthContextProvider = ({ children }) => {
     useEffect(() => {
         const fetchSessionData = async () => {
             try {
+
                 const res = await axiosInstance.get('/api/auth/session', { credentials: 'include' });
 
                 if (res.status >= 200 && res.status < 300) {
