@@ -284,9 +284,9 @@ const ConnectButton = ({ user }) => {
                 toFriendUser: user._id,
             });
 
-            console.log(res)
+            // console.log(res)
             if (res.data?.requested) {
-                console.log("res")
+                // console.log("res")
                 setFriendStatus('canCancel'); // Update state dynamically
             }
         } catch (error) {
