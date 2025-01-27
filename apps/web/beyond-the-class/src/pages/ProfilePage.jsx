@@ -12,6 +12,9 @@ import toast from 'react-hot-toast';
 import PostDiv from './society/post/PostDiv';
 import { useToast } from '../components/toaster/ToastCustom';
 import { routesForApi } from '../utils/routes/routesForLinks';
+import logWithFileLocation from '../utils/consoleLog';
+import { CheckCircle2 } from 'lucide-react';
+import { X } from 'lucide-react';
 
 const ProfilePage = () => {
     const { id } = useParams()
@@ -30,6 +33,7 @@ const ProfilePage = () => {
                     params: { id: id }
                 })
                 setUser(user.data)
+                logWithFileLocation("User", user.data)
 
             } catch (error) {
                 addToast("User not found")
@@ -262,8 +266,17 @@ const ProfileComponent = ({ user }) => {
 // }
 
 
-const ConnectButton = ({ user, authUserId }) => {
-    const [friendStatus, setFriendStatus] = useState(user.connections[authUserId]);
+const ConnectButton = ({ user }) => {
+    // const friendStatus =
+    //     user.friendStatus === 'connect' ? false :  //no status yet
+    //         user.friendStatus === 'friends' ? true //you are friends
+    //             : user.friendStatus === 'cancel' //cancel the request you requested
+    //                 ? user.friendStatus === 'accept/reject' ? false : // XO 
+
+
+
+    const [friendStatus, setFriendStatus] = useState(user.friendStatus);
+    const [isModalOpen, setModalOpen] = useState(false);
 
     const requestOrCancelRequest = async () => {
         try {
@@ -271,8 +284,10 @@ const ConnectButton = ({ user, authUserId }) => {
                 toFriendUser: user._id,
             });
 
-            if (res.status === 200) {
-                setFriendStatus('requested'); // Update state dynamically
+            console.log(res)
+            if (res.data?.requested) {
+                console.log("res")
+                setFriendStatus('canCancel'); // Update state dynamically
             }
         } catch (error) {
             console.error("Error while sending friend request:", error);
@@ -293,7 +308,64 @@ const ConnectButton = ({ user, authUserId }) => {
         }
     };
 
-    if (friendStatus === 'requested') {
+
+    const rejectFriendShip = async () => {
+        try {
+            const res = await axiosInstance.post('/api/user/reject-friend-request', {
+                toRejectUser: user._id,
+            });
+
+            if (res.status === 200) {
+                setFriendStatus(null); // Reset status when rejected
+            }
+        } catch (error) {
+            console.error("Error while rejecting friend request:", error);
+        }
+    };
+
+
+    const acceptFriendShip = async () => {
+        try {
+            const res = await axiosInstance.post('/api/user/accept-friend-request', {
+                toAcceptFriendUser: user._id,
+            });
+
+            if (res.status === 200) {
+                setFriendStatus('friends'); //  status when accepted
+            }
+        } catch (error) {
+            console.error("Error while acceptinging friend request:", error);
+        }
+    };
+
+
+    const unFriend = async () => {
+        try {
+            const res = await axiosInstance.post('/api/user/unfriend-request', {
+                toUn_FriendUser: user._id,
+            });
+
+            if (res.status === 200) {
+                setFriendStatus(null);
+                setModalOpen(false);
+            }
+        } catch (error) {
+            console.error("Error while acceptinging friend request:", error);
+        }
+    };
+
+
+
+    if (friendStatus === 'accept/reject') {
+        return (
+            <div className='px-4 py-1 flex flex-row'>
+                <CheckCircle2 onClick={acceptFriendShip} className='mr-2' />
+                <X onClick={rejectFriendShip} />
+            </div>
+        )
+    }
+
+    if (friendStatus === 'canCancel') { //you requested, or call it 'requested'
         return (
             <button onClick={cancelRequest} className="px-4 py-1 bg-gray-500 hover:bg-gray-600 rounded-full text-white transition-colors">
                 Cancel Request
@@ -301,13 +373,49 @@ const ConnectButton = ({ user, authUserId }) => {
         );
     }
 
-    if (friendStatus === 'accepted') {
+    if (isModalOpen) {
+        return <div className="fixed inset-0 bg-[#ffffff8a] dark:bg-[#0b0b0bd6] text-black dark:text-white bg-opacity-50 flex justify-center items-center">
+            <div className="bg-white bg-opacity-80 dark:bg-black rounded-lg shadow-lg p-6 w-96">
+                <h2 className="text-lg font-semibold">This Action Can&apos;t Reverse</h2>
+                <p className="text-sm text-gray-600 mt-2">
+                    Are you sure you want to unfriend this user?
+                </p>
+                <div className="mt-4 flex justify-end space-x-2">
+                    <button
+                        onClick={() => setModalOpen(false)}
+                        className="px-4 py-2 bg-gray-300 hover:bg-gray-400 rounded-md text-gray-800"
+                    >
+                        Cancel
+                    </button>
+                    <button
+                        onClick={unFriend}
+                        className="px-4 py-2 bg-red-500 hover:bg-red-600 rounded-md text-white"
+                    >
+                        Unfriend
+                    </button>
+                </div>
+            </div>
+        </div>
+    }
+
+    if (friendStatus === 'friends') {
         return (
-            <div className="px-4 py-1 bg-green-500 text-white rounded-full">
-                Connected
+            <div className='flex flex-row'>
+                <div className="px-4 py-1  bg-[#020202c8] text-white rounded-full">
+                    Connected
+
+                </div>
+                <button
+                    onClick={() => setModalOpen(true)} // Open modal when "Unfriend" is clicked
+                    className="ml-2 px-4 py-1 bg-[#121212de]  hover:bg-[#020202f0] rounded-full text-white transition-colors"
+                >
+                    Unfriend
+                </button>
             </div>
         );
     }
+
+
 
     return (
         <button onClick={requestOrCancelRequest} className="px-4 py-1 bg-blue-500 hover:bg-blue-600 rounded-full text-white transition-colors">
