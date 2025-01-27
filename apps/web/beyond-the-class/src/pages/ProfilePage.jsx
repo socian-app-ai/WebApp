@@ -11,6 +11,7 @@ import axiosInstance from '../config/users/axios.instance';
 import toast from 'react-hot-toast';
 import PostDiv from './society/post/PostDiv';
 import { useToast } from '../components/toaster/ToastCustom';
+import { routesForApi } from '../utils/routes/routesForLinks';
 
 const ProfilePage = () => {
     const { id } = useParams()
@@ -25,7 +26,9 @@ const ProfilePage = () => {
         const fetchUser = async () => {
             setLoading(true)
             try {
-                const user = await axiosInstance.get(`/api/user/profile?id=${id}`)
+                const user = await axiosInstance.get(routesForApi.user.profile, {
+                    params: { id: id }
+                })
                 setUser(user.data)
 
             } catch (error) {

@@ -61,6 +61,10 @@ export const routesForApi = buildRoutes(baseUrl, {
         registerationVerifyOTP: 'registration-verify-otp',
         registerationResendOTP: "register-resend-otp"
     },
+    user: {
+        profile: "profile",
+        connection: { stream: 'stream' }
+    },
     google: {
         request: 'request'
     },

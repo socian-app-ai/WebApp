@@ -350,14 +350,8 @@ router.get("/:id", async (req, res) => {
 
 
 router.get('/user/subscribedSocieties', async (req, res) => {
-    let userId;
     try {
-        const platform = req.headers["x-platform"];
-        if (platform === "web") {
-            userId = req.session.user._id;
-        } else if (platform === "app") {
-            userId = req.user._id;
-        }
+        const { userId } = getUserDetails(req)
 
 
         const user = await User.findById({ _id: userId })
@@ -566,41 +560,18 @@ router.get("/campus/all", async (req, res) => {
  * FOR
  */
 router.get("/with-company/all", async (req, res) => {
-    let role;
-    let universityId;
-    let campusId;
+
     try {
-        const platform = req.headers["x-platform"];
-        if (platform === "web") {
-            role = req.session.user.role;
-            if (role !== "ext_org") {
-                (universityId = req.session.user.university.universityId._id),
-                    (campusId = req.session.user.university.campusId._id);
-            }
-            // else {
-            //     // TODO IMPLEMENT LATER - to make query faster, give company id
-            //     // companyId
-            // }
-        } else if (platform === "app") {
-            userId = req.user._id;
-            role = req.user.role;
-            if (role !== "ext_org") {
-                (universityId = req.user.university.universityId._id),
-                    (campusId = req.user.university.campusId._id);
-            }
-            // else {
-            //     // TODO IMPLEMENT LATER - to make query faster, give company id
-            //     // companyId
-            // }
-        }
+        const { role, universityOrigin, campusOrigin } = getUserDetails(req)
+
         const society = await Society.find(
             role === "ext_org"
                 ? { companyReference: { isCompany: true } }
                 : {
                     references: {
                         role: role,
-                        universityId,
-                        campusId,
+                        universityOrigin,
+                        campusOrigin
                     },
                 }
         );
@@ -667,25 +638,16 @@ router.get("/sub-societies/:societyId", async (req, res) => {
  */
 router.post("/role-based/:id", async (req, res) => {
     const { id } = req.params;
-    let roleFromMiddleware;
 
     try {
-        const platform = req.header["x-platform"];
-
-        if (platform === "web") {
-            roleFromMiddleware = req.session.user.role;
-        } else if (platform === "app") {
-            roleFromMiddleware = req.user.role;
-        }
-
-        if (!roleFromMiddleware) return res.status(404).json("role required");
+        const { role } = getUserDetails(req);
         const society = await Society.findOne(
             { _id: id },
-            { "references.role": roleFromMiddleware }
+            { "references.role": role }
         );
 
         if (!society)
-            return res.status(404).json("no society found in " + roleFromMiddleware);
+            return res.status(404).json("no society found in " + role);
         res.status(200).json(society);
     } catch (error) {
         console.error("Error in society.route.js ", error);

@@ -164,6 +164,7 @@ import { ChevronDown } from "lucide-react";
 import axiosInstance from "../../config/users/axios.instance";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import { routesForApi } from "../../utils/routes/routesForLinks";
 
 function InfoBar() {
   const { infoBarState, setInfoBarState } = useSetInfoBarState();
@@ -305,11 +306,9 @@ const ConnectionsList = () => {
     const fetchFriends = async () => {
       try {
         if (authUser._id) {
-          const res = await axiosInstance.get('/api/user/connections', {
-            params: { id: authUser._id }
-          });
+          const res = await axiosInstance.get(routesForApi.user.connection.stream);
           setFriendsData(res.data.connections); // Adjusted to match the response structure
-          // console.log("CONNECTIONS", res); 
+          console.log("CONNECTIONS", res.data);
         }
 
       } catch (error) {
