@@ -160,6 +160,7 @@ export default function ProgramNameAndCourses() {
         const fetch = async () => {
             try {
 
+                // console.log(routesForApi.department.campusWithSubjects)
                 const response = await axiosInstance.get(routesForApi.department.campusWithSubjects)
                 // console.log(JSON.stringify(response.data))
 
@@ -171,7 +172,7 @@ export default function ProgramNameAndCourses() {
                 // setCourses(allDepartments[3].subjects.map(v => v))
                 // console.log("Departments: ", departments)
             } catch (error) {
-                console.error(error.message)
+                console.error(error)
             }
         }
         fetch()

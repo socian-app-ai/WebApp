@@ -172,6 +172,8 @@ function InfoBar() {
   const { authUser } = useAuthContext();
 
   useEffect(() => {
+    if (authUser?.super_role === 'super') return setInfoBarState(false)
+
 
     if (width < 1028) {
       setInfoBarState(false);
@@ -180,9 +182,9 @@ function InfoBar() {
     if (width >= 1028) {
       setInfoBarState(true);
     }
-    if (authUser?.super_role === 'super') setInfoBarState(false)
+
     // console.log("useEffect");
-  }, [width, setInfoBarState]);
+  }, [width]);
 
   if (authUser.role !== "student") return;
 
@@ -235,7 +237,7 @@ const Trending = () => {
   const { authUser } = useAuthContext();
 
   useEffect(() => {
-    const fetchFriends = async () => {
+    const fetchSocieties = async () => {
       try {
         const res = await axiosInstance.get('/api/user/societies-top', {
           params: { id: authUser._id }
@@ -243,11 +245,11 @@ const Trending = () => {
         setTopSocieties(res.data); // Adjusted to match the response structure
         // console.log("topSocities", res);
       } catch (error) {
-        console.error("Error fetching friends data:", error);
+        console.error("Error fetching societies data:", error);
       }
     };
-    fetchFriends();
-  }, [authUser._id]);
+    fetchSocieties();
+  }, [authUser?._id]);
 
   const navigate = useNavigate()
 
@@ -305,6 +307,8 @@ const ConnectionsList = () => {
   useEffect(() => {
     const fetchFriends = async () => {
       try {
+
+        if (!authUser?._id || friendsData) return;
         if (authUser._id) {
           const res = await axiosInstance.get(routesForApi.user.connection.stream);
           setFriendsData(res.data.connections); // Adjusted to match the response structure
@@ -316,7 +320,7 @@ const ConnectionsList = () => {
       }
     };
     fetchFriends();
-  }, []);
+  }, [authUser._id, friendsData]);
 
   return (
     <div className="dark:bg-[#1E1F24] dark:border-gray-700 dark:text-white

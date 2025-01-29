@@ -31,12 +31,13 @@ export default function Login() {
     window.location.href = url;
   }
 
-  async function auth() {
-    const response = await axiosInstance.post(routesForApi.google.request);
-    // '/api/request'
+  async function auth(e) {
+    e.preventDefault();
+    const response = await axiosInstance.post(routesForApi.oauth.google.request);
+    // '/api/google/request'
 
     const data = response.data;
-    // console.log("The data before secure: ", data);
+    console.log("The data before secure: ", data);
     navigate(data.url);
 
 
@@ -124,7 +125,7 @@ export default function Login() {
 
 
 
-        <GoogleButton onClick={() => auth()} />
+        <GoogleButton onClick={(e) => auth(e)} />
 
 
 

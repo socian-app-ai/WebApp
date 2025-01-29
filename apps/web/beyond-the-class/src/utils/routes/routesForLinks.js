@@ -65,8 +65,10 @@ export const routesForApi = buildRoutes(baseUrl, {
         profile: "profile",
         connection: { stream: 'stream' }
     },
-    google: {
-        request: 'request'
+    oauth: {
+        google: {
+            request: 'request'
+        }
     },
     accessible: {
         universityGroupedCampus: "universities/grouped/campus",
@@ -100,5 +102,6 @@ export const routesForApi = buildRoutes(baseUrl, {
 
 export const bypassRoutes = [
     /^\/otp\/.*$/,
+    /^\/oauth\.*/,
 
 ]

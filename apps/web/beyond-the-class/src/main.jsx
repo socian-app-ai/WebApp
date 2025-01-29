@@ -39,6 +39,7 @@ import AddDepartmentAndSubjects from './pages/admin/add/edit/AddDepartmentAndSub
 import AddTeacher from './pages/admin/add/AddTeacher.jsx';
 import AddPastPapers from './pages/admin/add/AddPastPapers.jsx';
 import { ToastProviders } from './components/toaster/ToastCustom.jsx';
+import OAuthRedirectHandler from './pages/auth/oAuthHandler.jsx';
 
 
 const router = createBrowserRouter([
@@ -59,6 +60,10 @@ const router = createBrowserRouter([
       {
         path: "login",
         element: <Login />
+      },
+      {
+        path: 'oauth',
+        element: <OAuthRedirectHandler />
       },
 
       {

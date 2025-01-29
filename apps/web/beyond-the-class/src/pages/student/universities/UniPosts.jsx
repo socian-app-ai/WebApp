@@ -15,7 +15,7 @@ export default function UniPosts() {
     const { infoBarState, setInfoBarState } = useSetInfoBarState();
 
     useEffect(() => {
-        if (infoBarState === false && width > 768) {
+        if (infoBarState === false && width > 1028) {
             setInfoBarState(true);
         }
     }, [setInfoBarState, infoBarState]);
