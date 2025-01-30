@@ -59,7 +59,8 @@ export const routesForApi = buildRoutes(baseUrl, {
         register: 'register',
         forgotPassword: 'forgot-password',
         registerationVerifyOTP: 'registration-verify-otp',
-        registerationResendOTP: "register-resend-otp"
+        registerationResendOTP: "register-resend-otp",
+        completeInfo: 'complete/info'
     },
     user: {
         profile: "profile",
@@ -88,7 +89,10 @@ export const routesForApi = buildRoutes(baseUrl, {
         universitiesAll: "universities/all"
     },
     department: {
-        campusWithSubjects: "campus/subjects"
+        campusWithSubjects: "campus/subjects",
+        allDepartmentsInCampus: 'by-campus',
+        allDepartmentsInCampusAuth: 'campus/auth'
+
     },
     teacher: {
         teacherInCampus: 'campus/teachers'

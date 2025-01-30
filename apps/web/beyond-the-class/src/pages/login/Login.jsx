@@ -53,7 +53,7 @@ export default function Login() {
 
 
   return (
-    <div className="flex flex-col justify-center items-center min-h-svh  w-full">
+    <div className="flex flex-col justify-center items-center min-h-svh  w-full auth_page_style" >
       <div className=" flex flex-col justify-center items-center">
         <h1 className="text-3xl md:text-4xl lg:text-6xl font-bold my-4">Login to your account</h1>
         <p className=" text-lg p-2">Open gate to Opportunities</p>

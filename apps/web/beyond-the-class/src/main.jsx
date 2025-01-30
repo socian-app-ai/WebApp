@@ -40,7 +40,7 @@ import AddTeacher from './pages/admin/add/AddTeacher.jsx';
 import AddPastPapers from './pages/admin/add/AddPastPapers.jsx';
 import { ToastProviders } from './components/toaster/ToastCustom.jsx';
 import OAuthRedirectHandler from './pages/auth/oAuthHandler.jsx';
-
+import CompleteYourInfo from './pages/noAccess/CompleteYourInfo.jsx';
 
 const router = createBrowserRouter([
   {
@@ -64,6 +64,16 @@ const router = createBrowserRouter([
       {
         path: 'oauth',
         element: <OAuthRedirectHandler />
+      },
+
+      {
+        element: <RoleBasedRoute allowedRoles={['no_access']} />,
+        path: 'define',
+        children: [
+          { index: true, element: <CompleteYourInfo /> },
+          // { path: "complete/info", element: <CompleteYourInfo /> },
+
+        ]
       },
 
       {
@@ -155,8 +165,13 @@ const router = createBrowserRouter([
         ],
       },
 
+
+
+
       { path: "unauthorized", element: <Unauthorized /> },
       { path: "*", element: <Navigate to="/" replace /> },
+
+
     ],
   },
 ]);
