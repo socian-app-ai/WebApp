@@ -37,7 +37,7 @@ export default function Login() {
     // '/api/google/request'
 
     const data = response.data;
-    console.log("The data before secure: ", data);
+    // console.log("The data before secure: ", data);
     navigate(data.url);
 
 

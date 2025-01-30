@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { bypassRoutes } from "../utils/routes/routesForLinks";
 import AestheticLoadingScreen from "../components/loading/LoadingScreen";
 import logWithFileLocation from "../utils/consoleLog";
+import { Navigate } from "react-router-dom";
 
 
 const ProtectedLayout = () => {
@@ -33,6 +34,7 @@ const ProtectedLayout = () => {
     }
   }
   logWithFileLocation("THIS IS SIGNUP IN PROTECTED LAYOUT3", authUser, "asnf", window.location.pathname)
+
 
 
   if (authUser) return <Outlet />

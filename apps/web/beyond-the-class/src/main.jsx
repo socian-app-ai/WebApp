@@ -68,7 +68,7 @@ const router = createBrowserRouter([
 
       {
         element: <RoleBasedRoute allowedRoles={['no_access']} />,
-        path: 'define',
+        path: 'complete/info',
         children: [
           { index: true, element: <CompleteYourInfo /> },
           // { path: "complete/info", element: <CompleteYourInfo /> },

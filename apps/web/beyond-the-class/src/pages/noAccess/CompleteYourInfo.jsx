@@ -34,7 +34,7 @@ export default function CompleteYourInfo() {
 
         const response = await axiosInstance.get(routesForApi.department.allDepartmentsInCampusAuth)
 
-        console.log(response)
+        // console.log(response)
 
         return response.data.departmentsInFormat;
 
@@ -80,7 +80,7 @@ export default function CompleteYourInfo() {
         setLoading(true);
 
         try {
-            console.log("data", routesForApi.auth.completeInfo)
+            // console.log("data", routesForApi.auth.completeInfo)
             const response = await axiosInstance.post(routesForApi.auth.completeInfo, {
                 departmentId: campusDepartment,
                 name,
@@ -92,7 +92,7 @@ export default function CompleteYourInfo() {
             });
 
 
-            console.log("Profile completed successfully:", response.data);
+            // console.log("Profile completed successfully:", response.data);
             addToast("Profile completed successfully!");
             window.location.href = '/'
 

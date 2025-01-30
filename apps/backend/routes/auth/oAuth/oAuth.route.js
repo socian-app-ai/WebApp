@@ -31,9 +31,10 @@ async function getUserData(access_token, user, req, res) {
 
     const userInDatabase = await User.findOne(query);
 
+
     console.log("USer in google", userInDatabase);
 
-    if (userInDatabase) {
+    if (userInDatabase && userInDatabase.role !== 'no_access') {
         await userInDatabase.populate([
             { path: "university.universityId", select: "-users _id" },
             { path: "university.campusId", select: "-users _id" },
@@ -62,6 +63,8 @@ async function getUserData(access_token, user, req, res) {
         ]);
 
         platformSessionOrJwt_CALL_on_glogin_only(userInDatabase, req, res)
+        return 200;
+
     }
     else {
         const campusList = await Campus.find({}, "emailPatterns universityOrigin"); // Fetch only emailPatterns field
@@ -114,6 +117,8 @@ async function getUserData(access_token, user, req, res) {
             ]);
 
             platformSessionOrJwt_CALL_on_glogin_only(newUser, req, res)
+            return 200;
+
             // return res.status(200).json({ message: "Valid university email", user: newUser });
         } else {
             console.log("Email does not match any university pattern.");
@@ -122,7 +127,6 @@ async function getUserData(access_token, user, req, res) {
 
     }
 
-    return userInDatabase._id;
 
     // if (!(Boolean(universityEmail_UserDB || personalEmail_UserDB))) {
 
@@ -395,7 +399,7 @@ router.get('', async (req, res, next) => {
 
 
     } catch (err) {
-        console.error('Error logging in with OAuth2 user', err.message);
+        console.error('Error logging in with OAuth2 user', err);
         if (err.code !== 'ERR_HTTP_HEADERS_SENT') {
             res.status(500).json({ "error": err.message })
         }

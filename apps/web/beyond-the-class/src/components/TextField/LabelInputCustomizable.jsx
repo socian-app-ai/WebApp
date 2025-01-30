@@ -369,21 +369,21 @@ export function LabelDropDownSearchableInputCustomizable({
 
     // Fetch data when component mounts
     React.useEffect(() => {
-        console.log("HERE")
+        //console.log("HERE")
         if (fetchOptions) {
-            console.log("HERE1")
+            //console.log("HERE1")
             fetchOptions()
                 .then((data) => {
                     setOptions(data); // Save fetched options
                     setFilteredOptions(data); // Initialize filtered options
-                    console.log("departments", data)
+                    //console.log("departments", data)
                 })
                 .catch((error) => {
                     console.error("Error fetching data:", error);
                 });
         }
         if (filteredOptionsProp) {
-            console.log("HERE2")
+            //console.log("HERE2")
             // console.log("J", filteredOptionsProp)
             setOptions(filteredOptionsProp); // Save fetched options
             setFilteredOptions(filteredOptionsProp);
@@ -513,14 +513,14 @@ export function LabelDropDownSearchableInputCustomizableSecond({
 
     // Fetch data when component mounts
     React.useEffect(() => {
-        console.log("HERE")
+        //console.log("HERE")
         if (fetchOptions) {
-            console.log("HERE1")
+            //console.log("HERE1")
             fetchOptions()
                 .then((data) => {
                     setOptions(data); // Save fetched options
                     setFilteredOptions(data); // Initialize filtered options
-                    console.log("departments", data)
+                    //console.log("departments", data)
                 })
                 .catch((error) => {
                     console.error("Error fetching data:", error);
