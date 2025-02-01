@@ -6,7 +6,8 @@ const routesForLinks = {
     signup: "/signup",
     login: "/login",
     home: "/",
-    user: '/user'
+    user: '/user',
+    forgotPassword: '/forgot-password'
 };
 
 export default routesForLinks;
@@ -58,9 +59,17 @@ export const routesForApi = buildRoutes(baseUrl, {
         login: 'login',
         register: 'register',
         forgotPassword: 'forgot-password',
-        registerationVerifyOTP: 'registration-verify-otp',
-        registerationResendOTP: "register-resend-otp",
-        completeInfo: 'complete/info'
+        registerationVerifyOTP: 'verify-otp',
+        registerationResendOTP: "resend-otp",
+        completeInfo: 'complete/info',
+        verify: {
+            otp: {
+                password: 'password'
+            }
+        },
+        newPassword: 'newPassword'
+
+
     },
     user: {
         profile: "profile",
@@ -108,5 +117,5 @@ export const bypassRoutes = [
     /^\/otp\/.*$/,
     /^\/oauth\.*/,
     /^\/notUniversityMail$/,
-
+    /^\/forgot-password$/
 ]

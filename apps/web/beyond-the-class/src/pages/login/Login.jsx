@@ -95,6 +95,8 @@ export default function Login() {
 
         </div>
 
+        <Link className=" underline" to={routesForLinks.forgotPassword}>forgot password</Link>
+
 
 
 

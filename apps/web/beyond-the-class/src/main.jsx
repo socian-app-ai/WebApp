@@ -42,6 +42,7 @@ import { ToastProviders } from './components/toaster/ToastCustom.jsx';
 import OAuthRedirectHandler from './pages/auth/oAuthHandler.jsx';
 import CompleteYourInfo from './pages/noAccess/CompleteYourInfo.jsx';
 import NotUniversityMail from './pages/UnAuthenticatedPages/NotUniversityMail.jsx';
+import ForgotPassword from './pages/auth/forgotPassword/ForgotPassword.jsx';
 
 const router = createBrowserRouter([
   {
@@ -61,6 +62,10 @@ const router = createBrowserRouter([
       {
         path: "login",
         element: <Login />
+      },
+      {
+        path: "forgot-password",
+        element: <ForgotPassword />
       },
       {
         path: 'oauth',
