@@ -41,6 +41,7 @@ import AddPastPapers from './pages/admin/add/AddPastPapers.jsx';
 import { ToastProviders } from './components/toaster/ToastCustom.jsx';
 import OAuthRedirectHandler from './pages/auth/oAuthHandler.jsx';
 import CompleteYourInfo from './pages/noAccess/CompleteYourInfo.jsx';
+import NotUniversityMail from './pages/UnAuthenticatedPages/NotUniversityMail.jsx';
 
 const router = createBrowserRouter([
   {
@@ -65,22 +66,26 @@ const router = createBrowserRouter([
         path: 'oauth',
         element: <OAuthRedirectHandler />
       },
-
       {
-        element: <RoleBasedRoute allowedRoles={['no_access']} />,
-        path: 'complete/info',
-        children: [
-          { index: true, element: <CompleteYourInfo /> },
-          // { path: "complete/info", element: <CompleteYourInfo /> },
-
-        ]
+        path: 'notUniversityMail',
+        element: <NotUniversityMail />
       },
+      // {
+      //   element: <RoleBasedRoute allowedRoles={['no_access']} />,
+      //   path: 'complete/info',
+      //   children: [
+      //     { index: true, element: <CompleteYourInfo /> },
+      // { path: "complete/info", element: <CompleteYourInfo /> },
+
+      //   ]
+      // },
 
       {
         element: <RoleBasedRoute allowedRoles={['student', 'alumni', 'ext_org', 'teacher']} />,
         children: [
           { index: true, element: <Layout><AllHome /></Layout> },
           { path: 'user/:id', element: <Layout><ProfilePage /></Layout> },
+          { path: "complete/info", element: <CompleteYourInfo /> },
 
         ],
       },

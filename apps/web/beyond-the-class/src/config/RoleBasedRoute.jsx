@@ -17,13 +17,13 @@ const RoleBasedRoute = ({ allowedRoles }) => {
         return <Navigate to="/super" replace />;
     }
 
-    if (authUser && authUser.role === 'no_access') {
-        logWithFileLocation("IN If role is no_access", authUser.role === 'no_access')
-        // console.log('window.location.href !== \'define\'', window.location.pathname, window.location.pathname === '/define')
-        if (window.location.pathname !== '/complete/info') {
-            window.location.href = "/complete/info";
-        }
-    }
+    // if (authUser && authUser.role === 'no_access') {
+    //     logWithFileLocation("IN If role is no_access", authUser.role === 'no_access')
+    //     // console.log('window.location.href !== \'define\'', window.location.pathname, window.location.pathname === '/define')
+    //     if (window.location.pathname !== '/complete/info') {
+    //         window.location.href = "/complete/info";
+    //     }
+    // }
 
     return (
         // eslint-disable-next-line react/prop-types

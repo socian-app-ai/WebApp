@@ -18,14 +18,14 @@ export default function CompleteYourInfo() {
 
     const { authUser } = useAuthContext();
     const [name, setName] = useState(authUser.name ?? '')
-    const [userName, setUserName] = useState('');
+    const [userName, setUserName] = useState(authUser.username ?? '');
     const [universityEmailPassword, setUniversityEmailPassword] = useState('');
     const [personalEmail, setPersonalEmail] = useState('');
 
     const [usernameError, setUsernameError] = useState(false)
     const [usernameLess, setUsernameLess] = useState('');
     const [loading, setLoading] = useState(false);
-    const [role, setRole] = useState('none')
+    const [role, setRole] = useState(authUser.role ?? '')
 
 
     const [campusDepartment, setCampusDepartment] = useState([])
@@ -98,7 +98,9 @@ export default function CompleteYourInfo() {
 
         } catch (error) {
             console.error("Error completing profile:", error);
-            addToast("Error completing profile. Please try again.");
+
+
+            addToast(error?.response?.data?.error ?? "Please Check any missing value")
         } finally {
             setLoading(false);
         }
@@ -211,6 +213,7 @@ export default function CompleteYourInfo() {
 
                     <LabelDropDownSearchableInputCustomizableSecond
                         fetchOptions={fetchRoles}
+                        disabled
                         type="text"
                         autoComplete="off"
                         name="role"

@@ -22,12 +22,18 @@ export const AuthContextProvider = ({ children }) => {
                 if (res.status >= 200 && res.status < 300) {
                     setAuthUser(res.data);
                     // { import.meta.env.VITE_DEVELOPMENT === "developement" && console.log("Authenticated user data:", res.data); }
-                    logWithFileLocation("Authenticated user data:", res.data)
+                    logWithFileLocation("Authenticated user data:", res.data);
+
+                    console.log("requiresMoreInformation", authUser?.requiresMoreInformation)
 
                     // Redirect to home if currently on the login page
                     if (window.location.pathname === '/login') {
                         window.location.href = '/';
                     }
+
+                    // if (authUser?.requiresMoreInformation && window.location.pathname !== '/complete/info') {
+                    //     window.location.href = '/complete/info'
+                    // }
                 } else {
                     console.warn("Session fetch failed with status:", res.status);
                     handleUnauthenticated();

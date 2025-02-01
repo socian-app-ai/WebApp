@@ -107,5 +107,6 @@ export const routesForApi = buildRoutes(baseUrl, {
 export const bypassRoutes = [
     /^\/otp\/.*$/,
     /^\/oauth\.*/,
+    /^\/notUniversityMail$/,
 
 ]
