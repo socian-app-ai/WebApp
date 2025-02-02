@@ -212,6 +212,7 @@ export default function ForgotPassword() {
 
 
     const [token, setToken] = useState(null);
+    const [disableOTP, setDisableOTP] = useState(false)
 
     const setUpOtpScreen = async () => {
         try {
@@ -265,8 +266,9 @@ export default function ForgotPassword() {
             })
             setResponseState(response.data.message)
             if (response.status == 200) {
+                setDisableOTP(true)
                 setConfirmedOTP(true)
-                setToken(response.data.token)
+                setToken(response.data.token);
             }
         } catch (error) {
             console.error(error);
@@ -277,7 +279,7 @@ export default function ForgotPassword() {
 
     const resendOtp = async () => {
         try {
-            const response = await axiosInstance.post(routesForApi.auth.registerationResendOTP, {
+            const response = await axiosInstance.post(routesForApi.auth.resendOTP, {
                 email: email
             })
             setResponseState(response.data.message)
@@ -320,7 +322,7 @@ export default function ForgotPassword() {
                     Reset your password
                 </h2>
                 <p className="mt-2 text-center text-sm text-gray-600">
-                    We'll help you get back into your account
+                    We&apos;ll help you get back into your account
                 </p>
             </div>
 
@@ -365,12 +367,13 @@ export default function ForgotPassword() {
 
                     {/* OTP Section */}
                     {!hide && (
-                        <div className="mt-8 space-y-6">
+                        <div className={`mt-8 space-y-6 ${disableOTP ? 'opacity-50' : ''}`}>
                             <div className="relative">
                                 <KeyRound className="absolute left-3 top-10 h-5 w-5 text-gray-400" />
                                 <LabelInputCustomizable
                                     type="text"
                                     name="otp"
+                                    disabled={disableOTP}
                                     className="pl-10 w-full rounded-md border-gray-300 shadow-sm"
                                     value={otp}
                                     label="Enter OTP"
@@ -382,6 +385,7 @@ export default function ForgotPassword() {
 
                             <DarkButtonElement
                                 className="w-full flex justify-center items-center gap-2"
+                                disabled={disableOTP}
                                 text={
                                     <>
                                         Verify OTP
@@ -395,6 +399,7 @@ export default function ForgotPassword() {
                             <button
                                 className="w-full mt-4 flex items-center justify-center gap-2 text-sm text-gray-600 hover:text-gray-900"
                                 onClick={resendOtp}
+                                disabled={disableOTP}
                             >
                                 <RefreshCw className="h-4 w-4" />
                                 Resend OTP

@@ -59,8 +59,11 @@ export const routesForApi = buildRoutes(baseUrl, {
         login: 'login',
         register: 'register',
         forgotPassword: 'forgot-password',
-        registerationVerifyOTP: 'verify-otp',
-        registerationResendOTP: "resend-otp",
+        registerationVerifyOTP: 'registration-verify-otp',
+        // VerifyOTP: 'verify-otp',
+
+        registerationResendOTP: "register-resend-otp",
+        resendOTP: "resend-otp",
         completeInfo: 'complete/info',
         verify: {
             otp: {
