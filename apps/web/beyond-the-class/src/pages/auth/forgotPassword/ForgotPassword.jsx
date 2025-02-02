@@ -195,7 +195,8 @@ import LabelInputCustomizable from '../../../components/TextField/LabelInputCust
 import DarkButton, { DarkButtonElement } from '../../../components/Buttons/DarkButton';
 import { useToast } from '../../../components/toaster/ToastCustom';
 import axiosInstance from '../../../config/users/axios.instance';
-import { routesForApi } from '../../../utils/routes/routesForLinks';
+import routesForLinks, { routesForApi } from '../../../utils/routes/routesForLinks';
+import { Link } from 'react-router-dom';
 
 export default function ForgotPassword() {
     const [inputType, setInputType] = useState('email');
@@ -212,7 +213,10 @@ export default function ForgotPassword() {
 
 
     const [token, setToken] = useState(null);
-    const [disableOTP, setDisableOTP] = useState(false)
+    const [disableOTP, setDisableOTP] = useState(false);
+
+    const [passwordUpdated, setPasswordUpdated] = useState(false);
+    const [confirmedPassword, setConfirmedPassword] = useState(false)
 
     const setUpOtpScreen = async () => {
         try {
@@ -305,6 +309,10 @@ export default function ForgotPassword() {
 
             if (response.status === 200) {
                 setToken(null)
+
+                setPasswordUpdated(true)
+                setConfirmedPassword(true)
+                addToast("Password Updated");
             }
         } catch (error) {
             console.error(error);
@@ -329,8 +337,9 @@ export default function ForgotPassword() {
             <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
                 <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
                     {responseState && (
-                        <div className="mb-4 p-4 rounded-md bg-blue-50 text-blue-700">
+                        <div className={`mb-4 p-4 rounded-md ${passwordUpdated ? 'text-green-700 bg-green-400' : 'text-blue-700 bg-blue-50'}`}>
                             {responseState}
+                            {passwordUpdated && (<Link className='ml-2 underline' to={routesForLinks.login}>Login</Link>)}
                         </div>
                     )}
 
@@ -409,12 +418,13 @@ export default function ForgotPassword() {
 
                     {/* New Password Section */}
                     {confirmedOTP && (
-                        <div className="mt-8 space-y-6">
+                        <div className={`mt-8 space-y-6 ${confirmedPassword ? 'opacity-50' : ''}`}>
                             <div className="relative">
                                 <Lock className="absolute left-3 top-10 h-5 w-5 text-gray-400" />
                                 <LabelInputCustomizable
                                     type="password"
                                     name="new-password"
+                                    disabled={confirmedPassword}
                                     className="pl-10 w-full rounded-md border-gray-300 shadow-sm"
                                     value={newPassword}
                                     label="New Password"
@@ -433,6 +443,7 @@ export default function ForgotPassword() {
                                     </>
                                 }
                                 loading={loading}
+                                disabled={confirmedPassword}
                                 onClick={submitNewPassword}
                             />
                         </div>
