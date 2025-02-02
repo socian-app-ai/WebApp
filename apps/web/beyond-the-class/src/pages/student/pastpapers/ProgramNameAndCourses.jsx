@@ -5,6 +5,7 @@ import axiosInstance from "../../../config/users/axios.instance";
 import { CustomAutocompleteSearchStyle } from '../../../components/FilterOption/CustomAutocomplete';
 import { useSetInfoBarState } from "../../../state_management/zustand/useInfoBar";
 import { routesForApi } from "../../../utils/routes/routesForLinks";
+import { useAuthContext } from "../../../context/AuthContext";
 
 
 
@@ -144,7 +145,9 @@ export default function ProgramNameAndCourses() {
     const [courses, setCourses] = useState([]);
     const [filteredCourses, setFilteredCourses] = useState([]);
 
+    const { authUser } = useAuthContext()
     const [currentDepartment, setCurrentDepartment] = useState([]);
+
 
 
     const { infoBarState, setInfoBarState } = useSetInfoBarState();
@@ -153,6 +156,16 @@ export default function ProgramNameAndCourses() {
         if (infoBarState === true) {
             setInfoBarState(false);
         }
+
+        // if (departments.length > 0 && authUser?.university?.departmentId?._id) {
+        //     const userDepartment = departments.find(
+        //         (dept) => dept._id === authUser.university.departmentId._id
+        //     );
+
+        //     if (userDepartment) {
+        //         setCurrentDepartment(userDepartment);
+        //     }
+        // }
     }, []);
 
     useEffect(() => {
@@ -169,6 +182,21 @@ export default function ProgramNameAndCourses() {
 
                 setDepartments(allDepartments);
 
+                if (authUser?.university?.departmentId?._id) {
+
+                    const userDepartment = allDepartments.find(
+                        (dept) => {
+                            // console.log("dept id", dept);
+                            return dept._id === authUser.university.departmentId._id
+                        }
+                    );
+
+                    if (userDepartment) {
+                        // console.log("here", userDepartment.name, userDepartment.subjects)
+                        setCurrentDepartment(userDepartment?.name);
+                        setFilteredCourses(userDepartment?.subjects)
+                    }
+                }
                 // setCourses(allDepartments[3].subjects.map(v => v))
                 // console.log("Departments: ", departments)
             } catch (error) {
@@ -248,8 +276,9 @@ export default function ProgramNameAndCourses() {
 
                 </div>
                 <Divider className="bg-gray-300  dark:bg-white" />
+                <h5 className="px-4 py-1 flex ">Default Deparment: <p className="font-semibold ml-2">{authUser?.university?.departmentId?.name}</p></h5>
 
-                <Box className="p-8 md:p-10">
+                <Box className="p-2 md:p-10">
                     <Grid container spacing={3}>
                         {filteredCourses && filteredCourses.map((course, index) => (
                             <Grid item xs={12} sm={6} md={4} lg={3} key={index} >

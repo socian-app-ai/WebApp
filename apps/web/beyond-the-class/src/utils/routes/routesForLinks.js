@@ -13,6 +13,15 @@ const routesForLinks = {
 export default routesForLinks;
 
 
+export const hrefPathNames = {
+    student: {
+        teacherPage: '/student/reviews/teachers'
+    }
+};
+
+
+
+
 
 
 
