@@ -43,6 +43,7 @@ import OAuthRedirectHandler from './pages/auth/oAuthHandler.jsx';
 import CompleteYourInfo from './pages/noAccess/CompleteYourInfo.jsx';
 import NotUniversityMail from './pages/UnAuthenticatedPages/NotUniversityMail.jsx';
 import ForgotPassword from './pages/auth/forgotPassword/ForgotPassword.jsx';
+import PostPage from './pages/society/post/PostPage/PostPage.jsx';
 
 const router = createBrowserRouter([
   {
@@ -131,6 +132,7 @@ const router = createBrowserRouter([
         children: [
           { path: "all", element: <Layout> <UniPosts /></Layout> },
           { path: "inter", element: <Layout> <CampusesPosts /></Layout> },
+          { path: ':societyName/comments/:postId/:postTitle', element: <Layout><PostPage /></Layout> },
 
 
           { path: "reviews/teachers", element: <Layout> <ReviewPage /></Layout> },

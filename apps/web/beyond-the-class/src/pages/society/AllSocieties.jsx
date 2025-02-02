@@ -208,14 +208,14 @@ export default function AllSocieties() {
 
     const SocietyCard = ({ society }) => (
         <Link to={`/${authUser.role}/society/${society._id}`} className="block transition-transform duration-200 hover:scale-105">
-            <div className="h-full bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-xl transition-shadow p-6">
+            <div className="h-full bg-white dark:bg-[#141414cc] rounded-lg shadow-md hover:shadow-xl transition-shadow p-6">
                 <div className='flex flex-row'>
                     <p className="text-md font-sans mb-2">{society.name}</p>
                     {/* {society.references.campusOrigin.name} */}
-                    <div className="inline-flex items-center mx-[0.1rem] bg-[#4c60f7c5] text-white text-xs font-thin h-min px-1 py-1 rounded-2xl">
+                    <div className="inline-flex items-center mx-[0.1rem] bg-[#292929c5] text-white text-xs font-thin h-min px-1 py-1 rounded-2xl">
                         {society.references.universityOrigin.name}
                     </div>
-                    <div className="inline-flex items-center mx-[0.1rem] bg-[#4c60f7c5] text-white text-xs font-thin h-min px-1 py-1 rounded-2xl">
+                    <div className="inline-flex items-center mx-[0.1rem] bg-[#292929c5] text-white text-xs font-thin h-min px-1 py-1 rounded-2xl">
                         <h5>{society.references.campusOrigin.location} </h5>
                     </div>
                 </div>
@@ -229,7 +229,7 @@ export default function AllSocieties() {
 
     const LoadingState = () => (
         <div className="flex justify-center items-center min-h-32">
-            <div className="animate-spin h-8 w-8 border-4 border-t-transparent border-blue-500 rounded-full"></div>
+            <div className="animate-spin h-8 w-8 border-4 border-t-transparent border-[#292929c5] rounded-full"></div>
         </div>
     );
 
@@ -271,8 +271,8 @@ export default function AllSocieties() {
                                 onClick={() => setActiveTab(id)}
                                 className={`flex items-center justify-center gap-2 flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors
                                     ${activeTab === id
-                                        ? 'bg-white dark:bg-gray-800 text-blue-600 shadow-sm'
-                                        : 'text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400'
+                                        ? 'bg-white dark:bg-gray-500 dark:text-[#ffff] text-[#141414cc] shadow-sm'
+                                        : 'text-gray-[#141414cc] dark:text-gray-200 hover:text-[#292929c5] dark:hover:text-[#ffffff]'
                                     }`}
                             >
                                 <Icon className="h-4 w-4" />

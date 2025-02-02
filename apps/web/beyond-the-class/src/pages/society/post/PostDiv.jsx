@@ -18,7 +18,8 @@ import { ThumbsUp } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 
-export default function PostDiv({ society, postInfo }) {
+export default function PostDiv({ society, postInfo, linkActivate = true }) {
+    const { authUser } = useAuthContext()
     const [showHoverCard, setShowHoverCard] = useState(false);
 
     // console.log("INFO", postInfo)
@@ -28,7 +29,7 @@ export default function PostDiv({ society, postInfo }) {
 
     return (
         <Link
-            to={`${society?.name ?? "unknown"}/comments/${postInfo._id}/${postInfo.title.toString().replace(/\s+/g, '-')}`}
+            to={`${linkActivate ? `${authUser.role}/${society?.name ?? "unknown"}/comments/${postInfo._id}/${postInfo.title.toString().replace(/\s+/g, '-')}` : '#'}`}
             className="block max-w-2xl m-2"
         >
             <article className="bg-white dark:bg-[#1E1F24] rounded-lg shadow-sm hover:shadow-md transition-shadow border border-gray-200 dark:border-gray-700">

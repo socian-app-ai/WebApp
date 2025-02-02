@@ -109,7 +109,7 @@
 //                                     value={formData.name}
 //                                     onChange={handleInputChange}
 //                                     required
-//                                     className="w-full border rounded text-gray-900 dark:text-gray-200 dark:bg-gray-700 px-3 py-2 mt-1 focus:ring focus:ring-blue-300"
+//                                     className="w-full border rounded text-gray-900 dark:text-gray-200 dark:bg-[#2f2f2f] px-3 py-2 mt-1 focus:ring focus:ring-blue-300"
 //                                 />
 //                             </div>
 //                             <div>
@@ -121,7 +121,7 @@
 //                                     value={formData.description}
 //                                     onChange={handleInputChange}
 //                                     required
-//                                     className="w-full border rounded text-gray-900 dark:text-gray-200 dark:bg-gray-700 px-3 py-2 mt-1 focus:ring focus:ring-blue-300"
+//                                     className="w-full border rounded text-gray-900 dark:text-gray-200 dark:bg-[#2f2f2f] px-3 py-2 mt-1 focus:ring focus:ring-blue-300"
 //                                 />
 //                             </div>
 
@@ -134,7 +134,7 @@
 //                                     value={formData.societyTypeId}
 //                                     onChange={handleInputChange}
 //                                     required
-//                                     className="w-full border rounded text-gray-900 dark:text-gray-200 dark:bg-gray-700 px-3 py-2 mt-1 focus:ring focus:ring-blue-300"
+//                                     className="w-full border rounded text-gray-900 dark:text-gray-200 dark:bg-[#2f2f2f] px-3 py-2 mt-1 focus:ring focus:ring-blue-300"
 //                                 >
 //                                     <option disabled value="">Select Type</option>
 //                                     {societyType.map((type) => (
@@ -152,7 +152,7 @@
 //                                     value={formData.category}
 //                                     onChange={handleInputChange}
 //                                     required
-//                                     className="w-full border rounded text-gray-900 dark:text-gray-200 dark:bg-gray-700 px-3 py-2 mt-1 focus:ring focus:ring-blue-300"
+//                                     className="w-full border rounded text-gray-900 dark:text-gray-200 dark:bg-[#2f2f2f] px-3 py-2 mt-1 focus:ring focus:ring-blue-300"
 //                                 >
 //                                     <option disabled value="">Select Category</option>
 //                                     {categories.map((category, idx) => (
@@ -170,7 +170,7 @@
 //                                     value={formData.allows}
 //                                     onChange={handleInputChange}
 //                                     required
-//                                     className="w-full border rounded text-gray-900 dark:text-gray-200 dark:bg-gray-700 px-3 py-2 mt-1 focus:ring focus:ring-blue-300"
+//                                     className="w-full border rounded text-gray-900 dark:text-gray-200 dark:bg-[#2f2f2f] px-3 py-2 mt-1 focus:ring focus:ring-blue-300"
 //                                 >
 //                                     <option disabled value=''>Select Type</option>
 //                                     {allowsList.map((allow, idx) => (
@@ -287,7 +287,7 @@ const CreateSocietyButton = () => {
         <div>
             <button
                 onClick={toggleModal}
-                className="flex justify-center  w-full items-center my-2 py-1 bg-[#1E2024] text-white  rounded-md hover:bg-[#222b3f] transition-colors"
+                className="flex justify-center  w-full items-center my-2 py-1 bg-[#373737] text-white  rounded-md hover:bg-[#222b3f] transition-colors"
             >
                 <Plus className="" size={18} />
                 <p>Create Society</p>
@@ -295,7 +295,7 @@ const CreateSocietyButton = () => {
 
             {showModal && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 p-4">
-                    <div className="bg-white dark:bg-gray-800 w-full max-w-md rounded-lg shadow-2xl p-6 relative">
+                    <div className="bg-white dark:bg-[#1e1e1e] w-full max-w-md rounded-lg shadow-2xl p-6 relative">
                         <button
                             onClick={toggleModal}
                             className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
@@ -356,20 +356,21 @@ const CreateSocietyButton = () => {
 
                             <div className="flex justify-between space-x-4 mt-6">
                                 <button
-                                    type="submit"
-                                    className="flex-1 bg-green-500 text-white py-2 rounded-md hover:bg-green-600 transition-colors flex items-center justify-center"
-                                >
-                                    <PlusCircle className="mr-2" size={20} />
-                                    Create Society
-                                </button>
-                                <button
                                     type="button"
                                     onClick={toggleModal}
-                                    className="flex-1 bg-red-500 text-white py-2 rounded-md hover:bg-red-600 transition-colors flex items-center justify-center"
+                                    className="flex-1 bg-[#242424] text-white hover:bg-[#333] hover:border-[#ffffff] border border-[#ffffff80] py-2 rounded-md transition-colors flex items-center justify-center"
                                 >
                                     <XCircle className="mr-2" size={20} />
                                     Cancel
                                 </button>
+                                <button
+                                    type="submit"
+                                    className="flex-1 bg-[#131313] text-white hover:bg-[#333] hover:border-[#ffffff] border border-[#ffffff80] py-2 rounded-md  transition-colors flex items-center justify-center"
+                                >
+                                    <PlusCircle className="mr-2" size={20} />
+                                    Create Society
+                                </button>
+
                             </div>
                         </form>
 
@@ -419,7 +420,7 @@ const InputField = ({
                 required={required}
                 placeholder={placeholder}
                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm 
-                focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-200"
+                focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-[#2f2f2f] dark:text-gray-200"
             />
         ) : (
             <input
@@ -430,7 +431,7 @@ const InputField = ({
                 required={required}
                 placeholder={placeholder}
                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm 
-                focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-200"
+                focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-[#2f2f2f] dark:text-gray-200"
             />
         )}
     </div>
@@ -461,7 +462,7 @@ const SelectField = ({
             onChange={onChange}
             required={required}
             className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm 
-            focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-200"
+            focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-[#2f2f2f] dark:text-gray-200"
         >
             <option value="" disabled>Select {label}</option>
             {options.map((option) => {

@@ -147,7 +147,7 @@
 //                                         value={searchQuery}
 //                                         onChange={(e) => setSearchQuery(e.target.value)}
 //                                         placeholder="Search for a society"
-//                                         className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+//                                         className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-[#2f2f2f] dark:text-white"
 //                                     />
 //                                     {selectedSociety && (
 //                                         <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
@@ -157,7 +157,7 @@
 //                                 </div>
 
 //                                 {searchQuery && (
-//                                     <div className="absolute z-10 w-full mt-1 bg-white dark:bg-gray-700 border rounded-lg shadow-lg max-h-60 overflow-y-auto">
+//                                     <div className="absolute z-10 w-full mt-1 bg-white dark:bg-[#2f2f2f] border rounded-lg shadow-lg max-h-60 overflow-y-auto">
 //                                         {filteredSocieties.length > 0 ? (
 //                                             filteredSocieties.map((society) => (
 //                                                 <div
@@ -191,7 +191,7 @@
 //                                     onChange={handleInputChange}
 //                                     placeholder="Enter post title"
 //                                     required
-//                                     className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+//                                     className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-[#2f2f2f] dark:text-white"
 //                                 />
 //                             </div>
 
@@ -206,7 +206,7 @@
 //                                     placeholder="Write your post content"
 //                                     rows={4}
 //                                     required
-//                                     className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white resize-none"
+//                                     className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-[#2f2f2f] dark:text-white resize-none"
 //                                 />
 //                             </div>
 
@@ -309,6 +309,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { Plus, X, Send, Search, ChevronDown } from 'lucide-react';
 import { useAuthContext } from '../../../context/AuthContext';
 import axiosInstance from '../../../config/users/axios.instance';
+import { useNavigate } from 'react-router-dom';
 
 const CreatePostButton = () => {
     const { authUser } = useAuthContext();
@@ -325,6 +326,8 @@ const CreatePostButton = () => {
     const [filteredSocieties, setFilteredSocieties] = useState([]);
     const [selectedSociety, setSelectedSociety] = useState(null);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+    const navigate = useNavigate()
 
 
     const [formData, setFormData] = useState({
@@ -377,7 +380,7 @@ const CreatePostButton = () => {
 
         setLoading(true);
         try {
-            await axiosInstance.post('/api/posts/create', {
+            const response = await axiosInstance.post('/api/posts/create', {
                 title,
                 body,
                 societyId: selectedSociety._id,
@@ -386,9 +389,12 @@ const CreatePostButton = () => {
 
             setLoading(false);
             setSuccess('Post created successfully!');
-            setTimeout(() => {
-                toggleModal();
-            }, 1500);
+            // setTimeout(() => {
+            //     toggleModal();
+            // }, 1500);
+
+            console.log("Retirn", response)
+            navigate(`${response.data.societyName ?? "unknown"}/comments/${response.data.postId}/${response.data.postTitle.toString().replace(/\s+/g, '-')}`)
         } catch (err) {
             setLoading(false);
             setError('Failed to create post.');
@@ -441,7 +447,7 @@ const CreatePostButton = () => {
                 <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50 p-4">
                     <div
                         ref={modalRef}
-                        className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto"
+                        className="bg-white dark:bg-[#1e1e1e] rounded-xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto"
                     >
                         <div className="flex justify-between items-center p-6 border-b dark:border-gray-700">
                             <h2 className="text-2xl font-bold text-gray-800 dark:text-white">Create New Post</h2>
@@ -471,7 +477,7 @@ const CreatePostButton = () => {
 
                                         }}
                                         placeholder="Search for a society"
-                                        className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                                        className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-[#2f2f2f] dark:text-white"
                                     />
                                     {selectedSociety && (
                                         <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
@@ -481,7 +487,7 @@ const CreatePostButton = () => {
                                 </div>
 
                                 {isDropdownOpen && searchQuery && (
-                                    <div className="absolute z-10 w-full mt-1 bg-white dark:bg-gray-700 border rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                                    <div className="absolute z-10 w-full mt-1 bg-white dark:bg-[#2f2f2f] border rounded-lg shadow-lg max-h-60 overflow-y-auto">
                                         {filteredSocieties.length > 0 ? (
                                             filteredSocieties.map((society) => (
                                                 <div
@@ -517,7 +523,7 @@ const CreatePostButton = () => {
                                     onChange={handleInputChange}
                                     placeholder="Enter post title"
                                     required
-                                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-[#2f2f2f] dark:text-white"
                                 />
                             </div>
 
@@ -532,7 +538,7 @@ const CreatePostButton = () => {
                                     placeholder="Write your post content"
                                     rows={4}
                                     required
-                                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white resize-none"
+                                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-[#2f2f2f] dark:text-white resize-none"
                                 />
                             </div>
 
@@ -544,7 +550,7 @@ const CreatePostButton = () => {
                             )}
 
                             {success && (
-                                <div className="bg-green-50 border border-green-200 text-green-600 p-3 rounded-lg flex items-center">
+                                <div className="dark:bg-[#333] border border-[#6a6a6aa2] text-[#2f2f2f] dark:text-[#dedede] p-3 rounded-lg flex items-center">
                                     <Send className="mr-2" size={20} />
                                     {success}
                                 </div>
@@ -562,7 +568,7 @@ const CreatePostButton = () => {
                                 <button
                                     type="submit"
                                     disabled={loading}
-                                    className={`px-6 py-2 rounded-lg text-white transition-colors duration-300 ${loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600'}`}
+                                    className={`px-6 py-2 rounded-lg text-white transition-colors duration-300 ${loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#242424] text-white hover:bg-[#333] hover:border-[#ffffff] border border-[#ffffff80]'}`}
                                 >
                                     {loading ? 'Creating...' : 'Create Post'}
                                 </button>

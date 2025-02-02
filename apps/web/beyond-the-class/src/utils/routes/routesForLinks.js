@@ -100,7 +100,8 @@ export const routesForApi = buildRoutes(baseUrl, {
         votePost: "vote-post",
         campusAll: "campus/all",
         campusesAll: "campuses/all",
-        uniAll: "universities/all"
+        uniAll: "universities/all",
+        singlePost: 'single/post', //+:postId
     },
     society: {
         join: 'join',
