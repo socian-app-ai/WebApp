@@ -389,12 +389,12 @@ const CreatePostButton = () => {
 
             setLoading(false);
             setSuccess('Post created successfully!');
-            // setTimeout(() => {
-            //     toggleModal();
-            // }, 1500);
+            setTimeout(() => {
+                toggleModal();
+            }, 1500);
 
             console.log("Retirn", response)
-            navigate(`${response.data.societyName ?? "unknown"}/comments/${response.data.postId}/${response.data.postTitle.toString().replace(/\s+/g, '-')}`)
+            navigate(`${authUser.role}/${response.data.societyName ?? "unknown"}/comments/${response.data.postId}/${response.data.postTitle.toString().replace(/\s+/g, '-')}`)
         } catch (err) {
             setLoading(false);
             setError('Failed to create post.');
