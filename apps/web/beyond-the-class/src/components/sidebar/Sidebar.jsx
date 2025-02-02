@@ -244,7 +244,7 @@ function Sidebar() {
           {menuItems.map((item) => (
             <li key={item.name} className="relative">
               <Link
-                to={item.path}
+                to={item.path ? `${import.meta.env.VITE_FRONTENT_URL}/${authUser.role}/society/${item.path}` : '#'}
                 className="flex items-center p-2 text-sm text-gray-700 dark:text-gray-300 rounded hover:bg-gray-100 dark:hover:bg-gray-700"
                 onClick={() => width < 768 && setSideBarState(false)}
               >
@@ -271,7 +271,7 @@ function Sidebar() {
                   {item.submenu.map((subItem) => (
                     <li key={subItem.name}>
                       <Link
-                        to={subItem.path}
+                        to={subItem.path ? `${import.meta.env.VITE_FRONTENT_URL}/${authUser.role}/society/${subItem.path}` : '#'}
                         className="block p-2 text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded"
                         onClick={() => width < 768 && setSideBarState(false)}
                       >
@@ -340,7 +340,7 @@ function Sidebar() {
           isOpenParam={true}
         />
 
-        <UpcomingEvents />
+        {/* <UpcomingEvents /> */}
 
         {/* <div>
           <h5>Subscribed Socieites</h5>
