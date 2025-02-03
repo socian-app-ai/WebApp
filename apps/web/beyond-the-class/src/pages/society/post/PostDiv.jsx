@@ -17,6 +17,8 @@ import { ThumbUp } from '@mui/icons-material';
 import { ThumbsUp } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Video } from 'lucide-react';
+import { Dot } from 'lucide-react';
+import { BadgeCheck } from 'lucide-react';
 
 
 export default function PostDiv({ society, postInfo, linkActivate = true }) {
@@ -61,17 +63,26 @@ export default function PostDiv({ society, postInfo, linkActivate = true }) {
                                 }
                             </div>
                             <div>
-                                <p
-                                    onClick={(e) => {
+                                <div className='flex items-center align-baseline'>
+                                    <p
+                                        onClick={(e) => {
 
-                                        e.preventDefault();
-                                        e.stopPropagation();
-                                        navigate(`/user/${postInfo.author?._id}`)
-                                    }}
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                            navigate(`/user/${postInfo.author?._id}`)
+                                        }}
 
-                                    className="text-sm font-medium text-gray-900 dark:text-white">
-                                    {postInfo?.author ? `${postInfo.author.name}` : '[deleted-user]'}
-                                </p>
+                                        className="text-sm font-medium text-gray-900 dark:text-white">
+                                        {postInfo?.author ? `${postInfo.author.name}` : '[deleted-user]'}
+                                    </p>
+                                    <Dot />
+                                    <a href={`${import.meta.env.VITE_FRONTENT_URL}/${authUser.role}/society/${postInfo?.society?._id}`} className="text-sm font-medium text-gray-900 dark:text-white">
+
+                                        {postInfo?.society?.name ?? society?.name}</a>
+                                    <p className="text-sm font-medium text-gray-900 dark:text-white">
+                                        {postInfo?.society?.isPromoted?.promoted && <BadgeCheck size={20} />}
+                                    </p>
+                                </div>
                                 <p className="text-xs text-gray-500 dark:text-gray-400">
                                     {formatTimeDifference(postInfo.createdAt)}
                                 </p>
@@ -101,10 +112,10 @@ export default function PostDiv({ society, postInfo, linkActivate = true }) {
                             </p>
                         )}
                     </div>
-                    {console.log("HERE , ", postInfo?.media)}
+                    {/* {console.log("HERE , ", postInfo?.media)} */}
 
                     {postInfo?.media && postInfo.media.map(file => {
-                        console.log("FILE", file)
+                        // console.log("FILE", file)
 
                         if (file.type.startsWith('video')) {
                             return (
@@ -115,7 +126,7 @@ export default function PostDiv({ society, postInfo, linkActivate = true }) {
                             );
                         }
                         return (<div key={file.url}>
-                            {console.log("IN", file.url)}
+                            {/* {console.log("IN", file.url)} */}
 
                             <img src={file.url} />
                         </div>)

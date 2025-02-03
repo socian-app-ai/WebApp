@@ -35,6 +35,37 @@ const CreatePostButton = () => {
         societyId: '',
     });
 
+    const [doing, setDoing] = useState('body');
+    const [videoFiles, setVideoFiles] = useState([]);
+
+
+    const handleVideoUpload = (e, index) => {
+        const file = e.target.files[0];
+        if (file) {
+            setVideoFiles((prevFiles) => {
+                const newFiles = [...prevFiles];
+                newFiles[index] = file;
+                return newFiles;
+            });
+        }
+    };
+
+    const addNewVideoInput = (e) => {
+        e.preventDefault()
+        setVideoFiles((prevFiles) => [...prevFiles, null]);
+    };
+
+    const removeVideo = (e, index) => {
+        e.preventDefault()
+        setVideoFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
+    };
+
+
+
+    const handleDoingChange = (e, value) => {
+        e.preventDefault()
+        setDoing(value)
+    }
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (modalRef.current && !modalRef.current.contains(event.target)) {
@@ -72,9 +103,10 @@ const CreatePostButton = () => {
     const handleCreatePost = async (e) => {
         e.preventDefault();
         const { title, body, file } = formData;
-        console.log(title, body)
-        console.log("file", file)
-        if (!title || (body === '' && !file) || !selectedSociety) {
+        // console.log(title, body)
+        // console.log("file", file)
+        // console.log("videoFiles", videoFiles)
+        if (!title || (body === '' && !file && videoFiles.length === 0) || !selectedSociety) {
             setError('Please fill in all fields and select a society.');
             return;
         }
@@ -85,16 +117,21 @@ const CreatePostButton = () => {
         if (body) {
             formDataU.append("body", body);
         }
-        else if (file) {
-            formDataU.append("file", file);
+        else if (videoFiles.length > 0) {
+            videoFiles.forEach((f) => formDataU.append("file", f));
+        }
+        else if (file.length > 0) {
+            // formDataU.append("file", file);
+            file.forEach(f => formDataU.append("file", f))
+
         }
         formDataU.append("societyId", selectedSociety._id);
         formDataU.append("author", authUser._id);
 
 
 
-        console.log("FORM DATA CONTENT:", [...formDataU]);
-        console.log("FORM DATA", formDataU)
+        // console.log("FORM DATA CONTENT:", [...formDataU]);
+        // console.log("FORM DATA", formDataU)
 
 
         setLoading(true);
@@ -111,9 +148,9 @@ const CreatePostButton = () => {
                 toggleModal();
             }, 1500);
 
-            console.log("Retirn", response)
-            // navigate(`${authUser.role}/${response.data.societyName ?? "unknown"}/comments/${response.data.postId}/${response.data.postTitle.toString().replace(/\s+/g, '-')}`)
-            navigate(`${authUser.role}/${response.data.societyName ?? "unknown"}/comments/${response.data.postId}/${slugify(response.data.postTitle, { lower: true })}`);
+            // console.log("Retirn", response)
+            navigate(`${authUser.role}/${response.data.societyName ?? "unknown"}/comments/${response.data.postId}/${response.data.postTitle.toString().replace(/\s+/g, '-')}`)
+            // navigate(`${authUser.role}/${response.data.societyName ?? "unknown"}/comments/${response.data.postId}/${slugify(response.data.postTitle, { lower: true })}`);
 
         } catch (err) {
             setLoading(false);
@@ -155,16 +192,32 @@ const CreatePostButton = () => {
     }, [searchQuery, mergedSocieties]);
 
 
+    // const handleFileUpload = (e) => {
+    //     const file = e.target.files[0];
+    //     if (file) {
+    //         setFormData((prevData) => ({
+    //             ...prevData,
+    //             file: file,
+    //         }));
+    //         console.log("FILE HERE", file)
+    //     }
+    // };
     const handleFileUpload = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            setFormData((prevData) => ({
-                ...prevData,
-                file: file,
-            }));
-            console.log("FILE HERE", file)
-        }
+        const files = Array.from(e.target.files); // Convert FileList to an array
+
+        setFormData((prevData) => ({
+            ...prevData,
+            file: Array.isArray(prevData.file) ? [...prevData.file, ...files] : [...files], // Ensure prevData.file is an array
+        }));
     };
+
+
+
+
+
+
+
+
 
 
     return (
@@ -192,7 +245,7 @@ const CreatePostButton = () => {
                             </button>
                         </div>
 
-                        <form encType='multipart/form-data' onSubmit={handleCreatePost} className="p-6 space-y-6">
+                        <form noValidate encType='multipart/form-data' onSubmit={handleCreatePost} className="p-6 space-y-6">
                             <div className="relative">
                                 <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                                     Select Society
@@ -260,25 +313,109 @@ const CreatePostButton = () => {
                                 />
                             </div>
 
-                            {/* <div>
-                                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                                    Body
-                                </label>
-                                <textarea
-                                    name="body"
-                                    value={formData.body}
-                                    onChange={handleInputChange}
-                                    placeholder="Write your post content"
-                                    rows={4}
-                                    required
-                                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-[#2f2f2f] dark:text-white resize-none"
-                                />
-                            </div> */}
-
-
-                            <div>
-                                <input type="file" accept="image/*,video/*" onChange={handleFileUpload} />
+                            <div className='flex justify-evenly  bg-[#131313]'>
+                                <button className={`px-2 my-1 rounded-md ${doing === 'body' && 'bg-[#333]'}`} onClick={(e) => handleDoingChange(e, 'body')}>Body</button>
+                                <button className={`px-2 my-1 rounded-md ${doing === 'image' && 'bg-[#333]'}`} onClick={(e) => handleDoingChange(e, 'image')}>Image</button>
+                                <button className={`px-2 my-1 rounded-md ${doing === 'video' && 'bg-[#333]'}`} onClick={(e) => handleDoingChange(e, 'video')}>Video</button>
                             </div>
+
+                            {
+                                doing === 'body' && (
+                                    <div>
+                                        <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                                            Body
+                                        </label>
+                                        <textarea
+                                            name="body"
+                                            value={formData.body}
+                                            onChange={handleInputChange}
+                                            placeholder="Write your post content"
+                                            rows={4}
+                                            required
+                                            className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-[#2f2f2f] dark:text-white resize-none"
+                                        />
+                                    </div>
+                                )
+                            }
+
+
+                            {/* {
+                                doing === 'video' && (<div>
+                                    <input className='border rounded-md bg-[#333] px-2 py-1' type="file" accept="video/*" onChange={handleFileUpload} />
+                                </div>)
+                            } */}
+
+                            {doing === 'video' && (
+                                <div className="space-y-2">
+                                    {videoFiles.map((file, index) => (
+                                        <div key={index} className="flex items-center space-x-2">
+                                            <input
+                                                type="file"
+                                                accept="video/*"
+                                                onChange={(e) => handleVideoUpload(e, index)}
+                                                className="border rounded-md bg-[#333] px-2 py-1"
+                                            />
+                                            {videoFiles.length > 1 && (
+                                                <button
+                                                    onClick={(e) => removeVideo(e, index)}
+                                                    className="text-red-500 text-sm"
+                                                >
+                                                    <X />
+                                                </button>
+                                            )}
+                                        </div>
+                                    ))}
+
+                                    {videoFiles.length < 3 && ( // Limit number of videos (optional)
+                                        <button
+                                            onClick={(e) => addNewVideoInput(e)}
+                                            className="text-blue-500 text-sm flex items-center space-x-1"
+                                        >
+                                            <Plus size={16} /> <span>Add Video</span>
+                                        </button>
+                                    )}
+                                </div>
+                            )}
+
+
+
+                            {
+                                doing === 'image' && (<div className='border rounded-md bg-[#333] px-2 py-1' >
+                                    <input type="file" accept="image/*" multiple onChange={handleFileUpload} />
+                                </div>)
+                            }
+                            {/* {
+                                formData.file && (
+                                    <div>
+                                        <img src={formData.file[0]} />
+                                    </div>
+                                )
+                            } */}
+                            <div className="mt-2 flex flex-wrap gap-2">
+                                {/* formData.file */}
+                                {formData.file && formData.file.map((file, index) => (
+                                    <div key={index} className="relative">
+                                        <img
+                                            src={URL.createObjectURL(file)}
+                                            alt={`Preview ${index}`}
+                                            className="w-20 h-20 object-cover rounded-md"
+                                        />
+                                        <button
+                                            onClick={() =>
+                                                setFormData((prev) => ({
+                                                    ...prev,
+                                                    files: prev.file.filter((_, i) => i !== index),
+                                                }))
+                                            }
+                                            className="absolute top-0 right-0 bg-red-500 text-white p-1 rounded-full"
+                                        >
+                                            <X size={12} />
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
+
+
 
                             {error && (
                                 <div className="bg-red-50 border border-red-200 text-red-600 p-3 rounded-lg flex items-center">
