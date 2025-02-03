@@ -100,6 +100,18 @@ export default function PostDiv({ society, postInfo, linkActivate = true }) {
                             </p>
                         )}
                     </div>
+                    {console.log("HERE , ", postInfo?.media)}
+
+                    {postInfo?.media && postInfo.media.map(file => {
+                        console.log("FILE", file)
+                        return (<div key={file.url}>
+                            {console.log("IN", file.url)}
+                            <img src={file.url} />
+                        </div>)
+                    }
+
+                    )}
+
 
                     {/* Footer */}
                     <div className="flex items-center  pt-3 border-t border-gray-200 dark:border-gray-700">

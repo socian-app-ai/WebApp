@@ -1,308 +1,3 @@
-// import React, { useEffect, useState, useRef } from 'react';
-// import { Plus, X, Send, Search, ChevronDown } from 'lucide-react';
-// import { useAuthContext } from '../../../context/AuthContext';
-// import axiosInstance from '../../../config/users/axios.instance';
-
-// const CreatePostButton = () => {
-//     const { authUser } = useAuthContext();
-//     const modalRef = useRef(null);
-
-//     const [loading, setLoading] = useState(false);
-//     const [error, setError] = useState('');
-//     const [success, setSuccess] = useState(null);
-
-//     const [showModal, setShowModal] = useState(false);
-//     const [societies, setSocieties] = useState([]);
-//     const [searchQuery, setSearchQuery] = useState('');
-//     const [filteredSocieties, setFilteredSocieties] = useState([]);
-//     const [selectedSociety, setSelectedSociety] = useState(null);
-
-//     const [formData, setFormData] = useState({
-//         title: '',
-//         body: '',
-//         societyId: '',
-//     });
-
-//     // Close modal when clicking outside
-//     useEffect(() => {
-//         const handleClickOutside = (event) => {
-//             if (modalRef.current && !modalRef.current.contains(event.target)) {
-//                 setShowModal(false);
-//             }
-//         };
-
-//         document.addEventListener('mousedown', handleClickOutside);
-//         return () => {
-//             document.removeEventListener('mousedown', handleClickOutside);
-//         };
-//     }, []);
-
-//     const handleInputChange = (e) => {
-//         const { name, value } = e.target;
-//         setFormData({ ...formData, [name]: value });
-//     };
-
-//     const toggleModal = (e) => {
-//         e?.preventDefault();
-//         setShowModal(!showModal);
-//         if (!showModal) {
-//             resetForm();
-//         }
-//     };
-
-//     const resetForm = () => {
-//         setError(null);
-//         setSuccess(null);
-//         setFormData({ title: '', body: '', societyId: '' });
-//         setSelectedSociety(null);
-//         setSearchQuery('');
-//     };
-
-//     const handleCreatePost = async (e) => {
-//         e.preventDefault();
-//         const { title, body } = formData;
-//         if (!title || !body || !selectedSociety) {
-//             setError('Please fill in all fields and select a society.');
-//             return;
-//         }
-
-//         setLoading(true);
-//         try {
-//             await axiosInstance.post('/api/posts/create', {
-//                 title,
-//                 body,
-//                 societyId: selectedSociety._id,
-//                 author: authUser._id,
-//             });
-
-//             setLoading(false);
-//             setSuccess('Post created successfully!');
-//             setTimeout(() => {
-//                 toggleModal();
-//             }, 1500);
-//         } catch (err) {
-//             setLoading(false);
-//             setError('Failed to create post.');
-//             console.error('Error creating post:', err);
-//         }
-//     };
-
-//     useEffect(() => {
-//         const fetchSubscribedSocieties = async () => {
-//             try {
-//                 // const response = await axiosInstance.get(`/api/society/user/subscribedSocieties`);
-//                 const response = await axiosInstance.get(`/api/society/public/societies`);
-//                 setSocieties(response.data);
-//             } catch (err) {
-//                 console.error('Error fetching subscribed societies:', err);
-//             }
-//         };
-//         showModal && fetchSubscribedSocieties();
-//     }, [showModal]);
-
-//     useEffect(() => {
-//         setFilteredSocieties(
-//             societies.filter((society) =>
-//                 society.name.toLowerCase().includes(searchQuery.toLowerCase())
-//             )
-//         );
-//     }, [searchQuery, societies]);
-
-//     return (
-//         <div className="relative">
-//             <button
-//                 onClick={toggleModal}
-//                 className="flex items-center justify-center w-10 h-10 text-black dark:text-white rounded-full   transition-colors duration-300"
-//             >
-//                 <Plus size={24} />
-//             </button>
-
-//             {showModal && (
-//                 <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50 p-4">
-//                     <div
-//                         ref={modalRef}
-//                         className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto"
-//                     >
-//                         <div className="flex justify-between items-center p-6 border-b dark:border-gray-700">
-//                             <h2 className="text-2xl font-bold text-gray-800 dark:text-white">Create New Post</h2>
-//                             <button
-//                                 onClick={toggleModal}
-//                                 className="text-gray-500 hover:text-gray-700 dark:hover:text-white"
-//                             >
-//                                 <X size={24} />
-//                             </button>
-//                         </div>
-
-//                         <form onSubmit={handleCreatePost} className="p-6 space-y-6">
-//                             <div className="relative">
-//                                 <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-//                                     Select Society
-//                                 </label>
-//                                 <div className="relative">
-//                                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-//                                         <Search size={18} className="text-gray-400" />
-//                                     </div>
-//                                     <input
-//                                         type="text"
-//                                         value={searchQuery}
-//                                         onChange={(e) => setSearchQuery(e.target.value)}
-//                                         placeholder="Search for a society"
-//                                         className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-[#2f2f2f] dark:text-white"
-//                                     />
-//                                     {selectedSociety && (
-//                                         <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-//                                             <ChevronDown size={18} className="text-gray-400" />
-//                                         </div>
-//                                     )}
-//                                 </div>
-
-//                                 {searchQuery && (
-//                                     <div className="absolute z-10 w-full mt-1 bg-white dark:bg-[#2f2f2f] border rounded-lg shadow-lg max-h-60 overflow-y-auto">
-//                                         {filteredSocieties.length > 0 ? (
-//                                             filteredSocieties.map((society) => (
-//                                                 <div
-//                                                     key={society._id}
-//                                                     onClick={() => {
-//                                                         setSelectedSociety(society);
-//                                                         setSearchQuery(society.name);
-//                                                     }}
-//                                                     className={`px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer ${selectedSociety && selectedSociety._id === society._id ? 'bg-blue-100 dark:bg-gray-600' : ''}`}
-//                                                 >
-//                                                     {society.name}
-//                                                 </div>
-//                                             ))
-//                                         ) : (
-//                                             <div className="px-4 py-2 text-gray-500 dark:text-gray-300">
-//                                                 No societies found
-//                                             </div>
-//                                         )}
-//                                     </div>
-//                                 )}
-//                             </div>
-
-//                             <div>
-//                                 <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-//                                     Title
-//                                 </label>
-//                                 <input
-//                                     type="text"
-//                                     name="title"
-//                                     value={formData.title}
-//                                     onChange={handleInputChange}
-//                                     placeholder="Enter post title"
-//                                     required
-//                                     className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-[#2f2f2f] dark:text-white"
-//                                 />
-//                             </div>
-
-//                             <div>
-//                                 <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-//                                     Body
-//                                 </label>
-//                                 <textarea
-//                                     name="body"
-//                                     value={formData.body}
-//                                     onChange={handleInputChange}
-//                                     placeholder="Write your post content"
-//                                     rows={4}
-//                                     required
-//                                     className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-[#2f2f2f] dark:text-white resize-none"
-//                                 />
-//                             </div>
-
-//                             {error && (
-//                                 <div className="bg-red-50 border border-red-200 text-red-600 p-3 rounded-lg flex items-center">
-//                                     <X className="mr-2" size={20} />
-//                                     {error}
-//                                 </div>
-//                             )}
-
-//                             {success && (
-//                                 <div className="bg-green-50 border border-green-200 text-green-600 p-3 rounded-lg flex items-center">
-//                                     <Send className="mr-2" size={20} />
-//                                     {success}
-//                                 </div>
-//                             )}
-
-//                             <div className="flex justify-end space-x-4">
-//                                 <button
-//                                     type="button"
-//                                     onClick={toggleModal}
-//                                     className="px-4 py-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
-//                                 >
-//                                     Cancel
-//                                 </button>
-
-//                                 <button
-//                                     type="submit"
-//                                     disabled={loading}
-//                                     className={`
-//                                         px-6 py-2 rounded-lg text-white transition-colors duration-300 
-//                                         ${loading
-//                                             ? 'bg-gray-400 cursor-not-allowed'
-//                                             : 'bg-blue-500 hover:bg-blue-600'
-//                                         }
-//                                     `}
-//                                 >
-//                                     {loading ? 'Creating...' : 'Create Post'}
-//                                 </button>
-//                             </div>
-//                         </form>
-//                     </div>
-//                 </div>
-//             )}
-//         </div>
-//     );
-// };
-
-// export default CreatePostButton;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 import React, { useEffect, useState, useRef } from 'react';
@@ -310,6 +5,9 @@ import { Plus, X, Send, Search, ChevronDown } from 'lucide-react';
 import { useAuthContext } from '../../../context/AuthContext';
 import axiosInstance from '../../../config/users/axios.instance';
 import { useNavigate } from 'react-router-dom';
+
+import slugify from 'slugify';
+
 
 const CreatePostButton = () => {
     const { authUser } = useAuthContext();
@@ -333,6 +31,7 @@ const CreatePostButton = () => {
     const [formData, setFormData] = useState({
         title: '',
         body: '',
+        file: [],
         societyId: '',
     });
 
@@ -372,20 +71,39 @@ const CreatePostButton = () => {
 
     const handleCreatePost = async (e) => {
         e.preventDefault();
-        const { title, body } = formData;
-        if (!title || !body || !selectedSociety) {
+        const { title, body, file } = formData;
+        console.log(title, body)
+        console.log("file", file)
+        if (!title || (body === '' && !file) || !selectedSociety) {
             setError('Please fill in all fields and select a society.');
             return;
         }
 
+
+        const formDataU = new FormData();
+        formDataU.append("title", title);
+        if (body) {
+            formDataU.append("body", body);
+        }
+        else if (file) {
+            formDataU.append("file", file);
+        }
+        formDataU.append("societyId", selectedSociety._id);
+        formDataU.append("author", authUser._id);
+
+
+
+        console.log("FORM DATA CONTENT:", [...formDataU]);
+        console.log("FORM DATA", formDataU)
+
+
         setLoading(true);
         try {
-            const response = await axiosInstance.post('/api/posts/create', {
-                title,
-                body,
-                societyId: selectedSociety._id,
-                author: authUser._id,
-            });
+            const response = await axiosInstance.post('/api/posts/create', formDataU,
+                {
+                    headers: { "Content-Type": "multipart/form-data" }
+                },
+            );
 
             setLoading(false);
             setSuccess('Post created successfully!');
@@ -394,7 +112,9 @@ const CreatePostButton = () => {
             }, 1500);
 
             console.log("Retirn", response)
-            navigate(`${authUser.role}/${response.data.societyName ?? "unknown"}/comments/${response.data.postId}/${response.data.postTitle.toString().replace(/\s+/g, '-')}`)
+            // navigate(`${authUser.role}/${response.data.societyName ?? "unknown"}/comments/${response.data.postId}/${response.data.postTitle.toString().replace(/\s+/g, '-')}`)
+            navigate(`${authUser.role}/${response.data.societyName ?? "unknown"}/comments/${response.data.postId}/${slugify(response.data.postTitle, { lower: true })}`);
+
         } catch (err) {
             setLoading(false);
             setError('Failed to create post.');
@@ -434,6 +154,19 @@ const CreatePostButton = () => {
         );
     }, [searchQuery, mergedSocieties]);
 
+
+    const handleFileUpload = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setFormData((prevData) => ({
+                ...prevData,
+                file: file,
+            }));
+            console.log("FILE HERE", file)
+        }
+    };
+
+
     return (
         <div className="relative">
             <button
@@ -459,7 +192,7 @@ const CreatePostButton = () => {
                             </button>
                         </div>
 
-                        <form onSubmit={handleCreatePost} className="p-6 space-y-6">
+                        <form encType='multipart/form-data' onSubmit={handleCreatePost} className="p-6 space-y-6">
                             <div className="relative">
                                 <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                                     Select Society
@@ -527,7 +260,7 @@ const CreatePostButton = () => {
                                 />
                             </div>
 
-                            <div>
+                            {/* <div>
                                 <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                                     Body
                                 </label>
@@ -540,6 +273,11 @@ const CreatePostButton = () => {
                                     required
                                     className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-[#2f2f2f] dark:text-white resize-none"
                                 />
+                            </div> */}
+
+
+                            <div>
+                                <input type="file" accept="image/*" onChange={handleFileUpload} />
                             </div>
 
                             {error && (
