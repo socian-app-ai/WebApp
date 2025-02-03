@@ -16,6 +16,7 @@ import { ThumbsDown } from 'lucide-react';
 import { ThumbUp } from '@mui/icons-material';
 import { ThumbsUp } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { Video } from 'lucide-react';
 
 
 export default function PostDiv({ society, postInfo, linkActivate = true }) {
@@ -104,8 +105,18 @@ export default function PostDiv({ society, postInfo, linkActivate = true }) {
 
                     {postInfo?.media && postInfo.media.map(file => {
                         console.log("FILE", file)
+
+                        if (file.type.startsWith('video')) {
+                            return (
+                                <video key={file.url} controls className="max-w-full rounded-lg">
+                                    <source src={file.url} type={file.type} />
+                                    Your browser does not support the video tag.
+                                </video>
+                            );
+                        }
                         return (<div key={file.url}>
                             {console.log("IN", file.url)}
+
                             <img src={file.url} />
                         </div>)
                     }

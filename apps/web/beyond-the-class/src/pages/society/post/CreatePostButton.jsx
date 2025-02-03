@@ -277,7 +277,7 @@ const CreatePostButton = () => {
 
 
                             <div>
-                                <input type="file" accept="image/*" onChange={handleFileUpload} />
+                                <input type="file" accept="image/*,video/*" onChange={handleFileUpload} />
                             </div>
 
                             {error && (
