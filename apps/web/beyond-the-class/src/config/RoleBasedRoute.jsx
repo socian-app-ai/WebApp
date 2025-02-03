@@ -10,7 +10,7 @@ const RoleBasedRoute = ({ allowedRoles }) => {
     if (isLoading) {
         return <div>Loading...</div>;
     }
-    logWithFileLocation("Auth User in RoleBasedRoute:", authUser.role);
+    // logWithFileLocation("Auth User in RoleBasedRoute:", authUser.role);
 
     // If hits / and is 'super' then redirect to /super
     if (authUser && authUser.super_role === 'super') {
@@ -53,7 +53,7 @@ export const SuperRoleBasedRoute = ({ allowedRoles }) => {
     // }
 
 
-    logWithFileLocation("Auth User in SuperRoleBasedRoute:", authUser);
+    // logWithFileLocation("Auth User in SuperRoleBasedRoute:", authUser);
     return (
         authUser && allowedRoles.includes(authUser.super_role)
             ? <Outlet />

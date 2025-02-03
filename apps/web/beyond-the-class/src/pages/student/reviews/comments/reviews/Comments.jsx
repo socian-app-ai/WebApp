@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+
 import { useEffect, useState } from 'react';
 import { Card, CardMedia, Typography, CardHeader, IconButton, Rating, Avatar, Skeleton, Menu, MenuItem } from '@mui/material';
 import { MoreVertOutlined, Star } from '@mui/icons-material';
@@ -7,6 +9,11 @@ import axiosInstance from '../../../../../config/users/axios.instance';
 import { useParams } from 'react-router-dom';
 import VoteReview from '../vote/VoteReview';
 import BpCheckbox from '../../../../../components/MaterialUI/BpCheckbox';
+import logWithFileLocation from '../../../../../utils/consoleLog';
+import { Plus } from 'lucide-react';
+import FeedbackReplyBox from '../box/ReplyBox';
+import { useToast } from '../../../../../components/toaster/ToastCustom';
+import { MessageSquareMore } from 'lucide-react';
 
 export default function Reviews() {
 
@@ -29,6 +36,10 @@ export default function Reviews() {
 
     const [editAnonymous, setEditAnonymous] = useState(false);
 
+    const [showFeedBackReplies, setShowFeedBackReplies] = useState(false)
+    const [replyState, setReplyState] = useState(false)
+
+
     useEffect(() => {
 
         const fetchFeedbacks = async () => {
@@ -37,7 +48,7 @@ export default function Reviews() {
                 const sortedFeedbacks = data.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
                 setFeedbacks(sortedFeedbacks);
                 setFilteredFeedbacks(sortedFeedbacks);
-                // console.log("hide ", data)
+                logWithFileLocation("hide ", data)
                 setTriggerReRender(false);
             } catch (error) {
                 console.error('Error fetching teacher data:', error);
@@ -75,14 +86,6 @@ export default function Reviews() {
                 feedback: editFeedbackText,
                 hideUser: editingFeedback.hideUser
             });
-
-            // console.log({
-            //     teacherId,
-            //     userId: editingFeedback.userId._id,
-            //     rating: editRating,
-            //     feedback: editFeedbackText,
-            //     hideUser: editingFeedback.hideUser
-            // })
 
             const updatedFeedbacks = feedbacks.map(c =>
                 c._id === editingFeedback._id
@@ -127,6 +130,7 @@ export default function Reviews() {
             return name.charAt(0) + "****";
         };
 
+        // setShorFeedBackReplies
 
         const displayEmail = t.hideUser
             ? maskEmail(t.userId?.personalEmail || t.userId?.universityEmail)
@@ -175,17 +179,28 @@ export default function Reviews() {
                     {/*   {t.userId?.personalEmail || t.userId?.universityEmail || '[deleted]'} */}
                 </p>}
             />
-            <Typography variant="p" className="mt-2 text-sm md:text-md  font-semibold dark:text-white whitespace-pre-line" component="div" marginLeft="4.2rem" marginBottom="2rem">
+            <p className="px-8 text-sm md:text-md  font-semibold dark:text-white whitespace-pre-line">
                 {t.feedback}
-            </Typography>
-            <VoteReview review={t} userData={t.userId} />
-            <div className='mr-20'>
+            </p>
+
+            <div>
+                <div >
+                    <VoteReview review={t} userData={t.userId} />
+                    {replyState && <FeedbackReplyBox feedbackReviewId={t._id} isRootReply={true} teacherId={id} />}
+                </div>
+                <Plus onClick={() => setShowFeedBackReplies(true)} />
+                <MessageSquareMore onClick={() => setReplyState(!replyState)} />
+            </div>
+
+            {showFeedBackReplies && <FeedbackComment comment={t.replies} />}
+
+            <div className='mr-20 bg-black dark:bg-white text-black dark:text-white '>
                 <Menu
                     anchorEl={anchorEl}
                     open={Boolean(anchorEl)}
                     onClose={() => setAnchorEl(null)}
                     PaperProps={{
-                        className: `bg-white dark:bg-gray-800 text-black dark:text-white left-10`
+                        className: ``
                     }}
                     className='text-sm'
                 >
@@ -193,7 +208,6 @@ export default function Reviews() {
                         <>
                             <MenuItem key={selectedFeedback._id} onClick={() => handleEditFeedback(selectedFeedback)}>edit</MenuItem>
                             <MenuItem key={selectedFeedback._id + "d"} onClick={handleDeleteFeedback}>delete</MenuItem>
-
                         </>
                         : <MenuItem >report</MenuItem>
                     }
@@ -261,7 +275,6 @@ export default function Reviews() {
                         />
                         <div className="flex -mt-[0.4rem] items-center">
                             <p className="text-xs md:text-md  text-gray-600 dark:text-gray-400">Submit anonymously?</p>
-                            {/* {console.log("THIS IS EDIT ANONYMOUS: ", editAnonymous)} */}
                             <BpCheckbox
                                 value={editAnonymous}
                                 onClick={() => setEditAnonymous(prev => !prev)}
@@ -300,4 +313,199 @@ export default function Reviews() {
             )}
         </div>
     );
+}
+
+
+
+const FeedbackComment = ({ comment }) => {
+    // console.log("FeedbackComment", comment)
+    return (
+        comment && comment.length > 0 &&
+        comment.map((cmt) => (
+            <SeperateComment key={cmt._id} comment={cmt} />
+        ))
+    );
+};
+
+const SeperateComment = ({ comment }) => {
+    const { id } = useParams()
+
+
+    const [showReplyBox, setShowReplyBox] = useState(false);
+    const [replyText, setReplyText] = useState("");
+    const [replies, setReplies] = useState(null)
+    const [isLoading, setIsLoading] = useState(false)
+
+    const { addToast } = useToast();
+
+    const handleReply = async (event, feedbackId) => {
+        setIsLoading(true)
+
+        event.preventDefault();
+        try {
+            if (replyText === '') return;
+            await axiosInstance.post('/api/teacher/reply/reply/feedback', {
+
+                teacherId: id,
+                feedbackCommentId: feedbackId,
+                feedbackComment: replyText,
+                // gifUrl
+                // mentions 
+            });
+
+            addToast('Review submitted successfully!')
+            setReplyText('');
+
+        } catch (error) {
+            console.error('Error submitting review:', error);
+        } finally {
+            setIsLoading(false)
+            setShowReplyBox(false);
+
+        }
+    };
+
+    const getChildReplies = async (feedbackCommentId) => {
+        console.log("Is it null", feedbackCommentId)
+        try {
+            const response = await axiosInstance.get('/api/teacher/reply/reply/feedback', {
+                params: {
+                    feedbackCommentId: feedbackCommentId
+                }
+            });
+
+            if (response.data) {
+                setReplies(response.data.replies)
+                console.log("yoyo", response.data)
+            }
+        } catch (error) {
+            console.error('Error submitting review:', error);
+        }
+    }
+
+
+
+    return (
+        <div key={comment._id} className="ml-4 border-l-2 pl-2 mt-2">
+            <p className="text-sm font-bold">@{comment.user.username}</p>
+            <p className="text-gray-700">{comment.comment}</p>
+
+            <div className='flex'>
+                <button
+                    className="dark:text-white text-black text-xs mt-1"
+                    onClick={() => setShowReplyBox(!showReplyBox)}
+                >
+                    Reply
+                </button>
+                <button className='dark:text-white text-black text-xs mt-1 mx-2' onClick={() => getChildReplies(comment._id)} >view reply</button>
+            </div>
+
+
+            {showReplyBox && (
+                <div className="mt-2">
+                    <input
+                        type="text"
+                        className="border p-1 text-sm w-full"
+                        value={replyText}
+                        onChange={(e) => setReplyText(e.target.value)}
+                        placeholder={`Reply to @${comment.user.username}...`}
+                    />
+                    <button
+                        className="bg-[#333] text-white text-xs p-1 mt-1"
+                        onClick={(e) => handleReply(e, comment._id)}
+                    >
+                        Submit
+                    </button>
+                </div>
+            )}
+            {/* {console.log("lenght", replies)} */}
+
+            {
+                replies && replies.replies.map((reply) => {
+                    return (
+                        <FeedBackReply
+                            commentId={comment._id}
+                            key={reply._id}
+                            reply={reply}
+                        />
+                    )
+                })
+            }
+
+
+        </div>
+    );
+}
+
+
+
+const FeedBackReply = ({ key, reply, commentId }) => {
+    console.log("KEY", key, reply)
+    const [showReplyBox, setShowReplyBox] = useState(false);
+    const [replyText, setReplyText] = useState("");
+    const [replies, setReplies] = useState(null)
+
+
+    // console.log("FeedBackReply", reply)
+
+    const { id } = useParams()
+
+    const [isLoading, setIsLoading] = useState(false)
+
+    const { addToast } = useToast();
+
+    const handleReply = async (event) => {
+        setIsLoading(true)
+
+        event.preventDefault();
+        try {
+            if (replyText === '') return;
+            await axiosInstance.post('/api/teacher/reply/reply/feedback', {
+
+                teacherId: id,
+                feedbackCommentId: commentId,
+                feedbackComment: replyText,
+                // gifUrl
+                // mentions 
+            });
+
+            addToast('Review submitted successfully!')
+            setReplyText('');
+
+        } catch (error) {
+            console.error('Error submitting review:', error);
+        } finally {
+            setIsLoading(false)
+            setShowReplyBox(false);
+
+        }
+    };
+
+    return (<div key={reply._id} className="ml-4 border-l-2 pl-2 mt-2">
+        <p className="text-sm font-bold">@{reply.user.username}</p>
+        <p className="text-gray-700">{reply.comment}</p>
+        <button
+            className="text-blue-500 text-xs mt-1"
+            onClick={() => setShowReplyBox(!showReplyBox)}
+        >
+            Reply
+        </button>
+        {showReplyBox && (
+            <div className="mt-2">
+                <input
+                    type="text"
+                    className="border p-1 text-sm w-full"
+                    value={replyText}
+                    onChange={(e) => setReplyText(e.target.value)}
+                    placeholder={`Reply to @${reply.user.username}...`}
+                />
+                <button
+                    className="bg-blue-500 text-white text-xs p-1 mt-1"
+                    onClick={(e) => handleReply(e)}
+                >
+                    Submit
+                </button>
+            </div>
+        )}
+    </div>)
 }

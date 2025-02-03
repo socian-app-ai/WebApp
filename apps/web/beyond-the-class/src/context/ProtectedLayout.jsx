@@ -10,7 +10,7 @@ import { Navigate } from "react-router-dom";
 const ProtectedLayout = () => {
   const { authUser, isLoading } = useAuthContext();
   const navigate = useNavigate()
-  logWithFileLocation("THIS IS SIGNUP IN PROTECTED LAYOUT  1", authUser, "asnf", window.location.pathname)
+  // logWithFileLocation("THIS IS SIGNUP IN PROTECTED LAYOUT  1", authUser, "asnf", window.location.pathname)
 
 
   if (isLoading) return <AestheticLoadingScreen />;
@@ -22,7 +22,7 @@ const ProtectedLayout = () => {
       return navigate('/')
     }
   }
-  logWithFileLocation("THIS IS SIGNUP IN PROTECTED LAYOUT2", authUser, "asnf", window.location.pathname)
+  // logWithFileLocation("THIS IS SIGNUP IN PROTECTED LAYOUT2", authUser, "asnf", window.location.pathname)
 
 
   if (!authUser) {
@@ -33,14 +33,14 @@ const ProtectedLayout = () => {
       return <Outlet />
     }
   }
-  logWithFileLocation("THIS IS SIGNUP IN PROTECTED LAYOUT3", authUser, "asnf", window.location.pathname)
+  // logWithFileLocation("THIS IS SIGNUP IN PROTECTED LAYOUT3", authUser, "asnf", window.location.pathname)
 
 
 
   if (authUser) return <Outlet />
 
 
-  logWithFileLocation("THIS IS SIGNUP IN PROTECTED LAYOUT", authUser, "asnf", window.location.pathname)
+  // logWithFileLocation("THIS IS SIGNUP IN PROTECTED LAYOUT", authUser, "asnf", window.location.pathname)
 
   return authUser && <Outlet />;
 };

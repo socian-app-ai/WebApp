@@ -16,11 +16,13 @@ export default function FeedbackBox() {
     const [rating, setRating] = useState(0);
     const [feedback, setFeedback] = useState('');
     const { setTriggerReRender } = useTriggerReRender();
-    const [anonymous, setAnonymous] = useState(false)
+    const [anonymous, setAnonymous] = useState(false);
+    const [isLoading, setIsLoading] = useState(false)
 
     const { addToast } = useToast();
 
     const handleSubmit = async (event) => {
+        setIsLoading(true)
         event.preventDefault();
         const teacherId = id
         try {
@@ -39,6 +41,8 @@ export default function FeedbackBox() {
             setRating(0);
         } catch (error) {
             console.error('Error submitting review:', error);
+        } finally {
+            setIsLoading(false)
         }
     };
     const [showFeedbackBox, setShowFeedbackBox] = useState('')
@@ -123,15 +127,18 @@ export default function FeedbackBox() {
                         onChange={(e) => setFeedback(e.target.value)}
                     />
                     <div id="feedback-box" className={`${showFeedbackBox ? 'flex' : 'hidden'} justify-end space-x-2 my-2 `}>
-                        <button onClick={(e) => {
-                            e.preventDefault()
-                            setShowFeedbackBox(false)
-                            setFeedback('')
-                        }} className="px-4 py-2 rounded-3xl border border-[#4f4f4f]  bg-[#343434d3] brightness-75 text-white  hover:bg-[#343434d3] hover:brightness-110">
+                        <button
+                            disabled={isLoading}
+                            onClick={(e) => {
+                                e.preventDefault()
+                                setShowFeedbackBox(false)
+                                setFeedback('')
+
+                            }} className="px-4 py-2 rounded-3xl border border-[#4f4f4f]  bg-[#343434d3] brightness-75 text-white  hover:bg-[#343434d3] hover:brightness-110">
                             Cancel
                         </button>
                         <button type="submit" className="px-4 py-2 rounded-3xl border border-[#7a7a7a] bg-[#262626] brightness-75 text-white  hover:bg-[#262626] hover:brightness-110">
-                            Feedback
+                            {isLoading ? 'Sending' : 'Feedback'}
                         </button>
 
                     </div>

@@ -33,7 +33,7 @@ const ProfilePage = () => {
                     params: { id: id }
                 })
                 setUser(user.data)
-                logWithFileLocation("User", user.data)
+                // logWithFileLocation("User", user.data)
 
             } catch (error) {
                 addToast("User not found")

@@ -43,10 +43,10 @@ export const AuthContextProvider = ({ children }) => {
                 // console.log(window.location.pathname, "thiss", bypassRoutes.some(route => route.test(window.location.pathname)))
                 // handleUnauthenticated();// dont use here otherwise routes wont work, had to solve this issue for hours
                 if (window.location.pathname === '/signup' || bypassRoutes.some(route => route.test(window.location.pathname))) {
-                    logWithFileLocation("Was in ByPass")
+                    // logWithFileLocation("Was in ByPass")
                     return
                 } else if (window.location.pathname !== '/login') {
-                    logWithFileLocation("was in else ByPass to Login")
+                    // logWithFileLocation("was in else ByPass to Login")
                     window.location.pathname = '/login'
                 }
             } finally {
