@@ -19,6 +19,8 @@ import { useNavigate } from 'react-router-dom';
 import { Video } from 'lucide-react';
 import { Dot } from 'lucide-react';
 import { BadgeCheck } from 'lucide-react';
+import { useRef } from 'react';
+import MediaSwiper from '../../../components/postBox/MediaSwiper';
 
 
 export default function PostDiv({ society, postInfo, linkActivate = true }) {
@@ -114,25 +116,11 @@ export default function PostDiv({ society, postInfo, linkActivate = true }) {
                     </div>
                     {/* {console.log("HERE , ", postInfo?.media)} */}
 
-                    {postInfo?.media && postInfo.media.map(file => {
-                        // console.log("FILE", file)
+                    {/* {postInfo?.media && <ScrollingImages media={postInfo.media} />} */}
+                    {postInfo?.media && <div className=' flex justify-center items-center'>
+                        < MediaSwiper media={postInfo.media} />
+                    </div>}
 
-                        if (file.type.startsWith('video')) {
-                            return (
-                                <video key={file.url} controls className="max-w-full rounded-lg">
-                                    <source src={file.url} type={file.type} />
-                                    Your browser does not support the video tag.
-                                </video>
-                            );
-                        }
-                        return (<div key={file.url}>
-                            {/* {console.log("IN", file.url)} */}
-
-                            <img src={file.url} />
-                        </div>)
-                    }
-
-                    )}
 
 
                     {/* Footer */}
@@ -289,3 +277,55 @@ const ProfileHoverCard = ({ author }) => {
         </div>
     );
 };
+
+
+
+
+
+// export  function ScrollingImages({ media }) {
+//     const scrollRef = useRef(null);
+
+//     useEffect(() => {
+//         const scrollContainer = scrollRef.current;
+//         let direction = 1;
+
+//         const scrollImages = () => {
+//             if (scrollContainer) {
+//                 if (scrollContainer.scrollLeft >= scrollContainer.scrollWidth - scrollContainer.clientWidth) {
+//                     direction = -1;
+//                 } else if (scrollContainer.scrollLeft <= 0) {
+//                     direction = 1;
+//                 }
+//                 scrollContainer.scrollLeft += direction * 2; // Adjust speed here
+//             }
+//         };
+
+//         const interval = setInterval(scrollImages, 50); // Adjust speed of scrolling
+//         return () => clearInterval(interval);
+//     }, []);
+
+//     return (
+//         <div
+//             ref={scrollRef}
+//             className="flex gap-2 overflow-x-auto scrollbar-hide scroll-smooth whitespace-nowrap w-full"
+//         >
+//             {media.map((file, index) => (
+//                 <div key={index} className="min-w-[200px] flex-shrink-0">
+//                     {file.type.startsWith('video') ? (
+//                         <video controls className="rounded-lg w-full h-auto">
+//                             <source src={file.url} type={file.type} />
+//                             Your browser does not support the video tag.
+//                         </video>
+//                     ) : (
+//                         <img src={file.url} className="rounded-lg w-full h-auto" alt="Post media" />
+//                     )}
+//                 </div>
+//             ))}
+//         </div>
+//     );
+// }
+
+
+
+
+

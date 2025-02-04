@@ -369,7 +369,7 @@ const CreatePostButton = () => {
                                     {videoFiles.length < 3 && ( // Limit number of videos (optional)
                                         <button
                                             onClick={(e) => addNewVideoInput(e)}
-                                            className="text-blue-500 text-sm flex items-center space-x-1"
+                                            className="text-white text-sm flex items-center space-x-1"
                                         >
                                             <Plus size={16} /> <span>Add Video</span>
                                         </button>
