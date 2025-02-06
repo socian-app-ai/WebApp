@@ -28,6 +28,7 @@ const CreatePostButton = () => {
     const navigate = useNavigate()
 
 
+
     const [formData, setFormData] = useState({
         title: '',
         body: '',
@@ -212,6 +213,20 @@ const CreatePostButton = () => {
     };
 
 
+    useEffect(() => {
+        const handleBeforeUnload = (event) => {
+            if (formData.title || formData.body || formData.file.length > 0 || videoFiles.length > 0) {
+                event.preventDefault();
+                event.returnValue = "You have unsaved changes. Are you sure you want to leave?";
+            }
+        };
+
+        window.addEventListener("beforeunload", handleBeforeUnload);
+
+        return () => {
+            window.removeEventListener("beforeunload", handleBeforeUnload);
+        };
+    }, [formData, videoFiles]);
 
 
 
@@ -332,7 +347,7 @@ const CreatePostButton = () => {
                                             placeholder="Write your post content"
                                             rows={4}
                                             required
-                                            className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-[#2f2f2f] dark:text-white resize-none"
+                                            className="whitespace-pre-line w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-[#2f2f2f] dark:text-white resize-none"
                                         />
                                     </div>
                                 )

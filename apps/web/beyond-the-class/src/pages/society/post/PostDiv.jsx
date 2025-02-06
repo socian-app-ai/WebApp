@@ -109,7 +109,7 @@ export default function PostDiv({ society, postInfo, linkActivate = true }) {
                             {postInfo.title}
                         </h2>
                         {postInfo?.body && (
-                            <p className="text-gray-600 dark:text-gray-300 text-sm">
+                            <p className="text-gray-600 dark:text-gray-300 text-sm whitespace-pre-line">
                                 {postInfo.body}
                             </p>
                         )}
