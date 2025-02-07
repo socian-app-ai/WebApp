@@ -38,7 +38,7 @@ function Sidebar() {
 
   // Define different menus for different roles
 
-  // ==========Student
+  // !==========Student
   const studentMenu = [
     { name: "Home", path: `/`, icon: <IoMdHome className="w-5" /> },
     {
@@ -85,7 +85,7 @@ function Sidebar() {
     },
   ];
 
-  // ===========Alumni
+  // !===========Alumni
   const alumniMenu = [
     {
       name: "Alumni Home",
@@ -100,7 +100,7 @@ function Sidebar() {
     // Add more alumni-specific links
   ];
 
-  // ==========Teacher
+  // !==========Teacher
   const teacherMenu = [
     { name: "Home", path: `/`, icon: <IoMdHome className="w-5" /> },
     {
@@ -143,7 +143,7 @@ function Sidebar() {
     },
   ];
 
-  // =========EXT_ORG
+  // !=========EXT_ORG
   const externalOrgMenu = [
     {
       name: "Organizations",
@@ -155,7 +155,7 @@ function Sidebar() {
 
 
 
-  //========= SUPER
+  // !========= SUPER
   const superMenu = [
     {
       name: "Organizations",
@@ -198,6 +198,50 @@ function Sidebar() {
       path: `/super/teachers`,
       icon: <FaMedapps className="w-5" />,
     },
+
+    {
+      name: "Team",
+      path: `/super/team`,
+      icon: <FaMedapps className="w-5" />,
+      submenu: [
+        {
+          name: "Manage",
+          path: "/super/team/manage",
+          submenu: [
+            { name: "New", path: "/super/team/manage/new" },
+            { name: 'Assign', path: '/super/team/manage/assign' },
+            { name: 'Overview', path: '/super/team/manage/overview' },
+            { name: 'Requests', path: '/super/team/manage/requests' }
+
+          ]
+        },
+        { name: "Admins", path: "/super/team/" },
+        { name: "Campus Mods", path: "/super/team/" },
+        { name: "Society Mods", path: "/super/team/" },
+        { name: "Ext. Managers", path: "/super/team/" },
+
+      ],
+    },
+
+    {
+      name: "Jobs",
+      path: `/super/teachers`,
+      icon: <FaMedapps className="w-5" />,
+    },
+
+    {
+      name: "Ads",
+      path: `/super/teachers`,
+      icon: <FaMedapps className="w-5" />,
+    },
+
+    {
+      name: "Offers/Promotions",
+      path: `/super/teachers`,
+      icon: <FaMedapps className="w-5" />,
+    },
+
+
   ];
 
   const processMenu = [];
@@ -272,11 +316,61 @@ function Sidebar() {
                     <li key={subItem.name}>
                       <Link
                         to={subItem.path}
-                        className="block p-2 text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded"
+                        className="flex items-center p-2 text-sm text-gray-700 dark:text-gray-300 rounded hover:bg-gray-100 dark:hover:bg-gray-700"
                         onClick={() => width < 768 && setSideBarState(false)}
                       >
                         {subItem.name}
+
+                        {subItem.submenu && (
+                          <button
+                            className="ml-auto focus:outline-none"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              toggleDropdown(subItem.name);
+                            }}
+                          >
+                            {dropdownStates[subItem.name] ? (
+                              <ChevronDown className="w-4 h-4 text-gray-500" />
+                            ) : (
+                              <ChevronRight className="w-4 h-4 text-gray-500" />
+                            )}
+                          </button>
+                        )}
+
+
                       </Link>
+
+
+                      {subItem.submenu && dropdownStates[subItem.name] && (
+                        <ul className="ml-2 mt-1 space-y-1">
+                          {subItem.submenu.map((subItemChild) => (
+                            <li key={subItemChild.name}>
+                              <Link
+                                to={subItemChild.path}
+                                className="block p-2 text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded"
+                                onClick={() => width < 768 && setSideBarState(false)}
+                              >
+                                {subItemChild.name}
+                              </Link>
+                              {subItemChild.submenu && (
+                                <button
+                                  className="ml-auto focus:outline-none"
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    toggleDropdown(subItemChild.name);
+                                  }}
+                                >
+                                  {dropdownStates[subItemChild.name] ? (
+                                    <ChevronDown className="w-4 h-4 text-gray-500" />
+                                  ) : (
+                                    <ChevronRight className="w-4 h-4 text-gray-500" />
+                                  )}
+                                </button>
+                              )}
+                            </li>
+                          ))}
+                        </ul>
+                      )}
                     </li>
                   ))}
                 </ul>

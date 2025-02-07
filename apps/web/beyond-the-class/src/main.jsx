@@ -21,7 +21,6 @@ import TypeCourse from './pages/student/pastpapers/type/TypeCourse.jsx';
 import UploadForm from './pages/admin/upload/UploadForm.jsx';
 import OneDiscussion from './pages/student/pastpapers/discussion/OneDiscussion.jsx';
 import TeacherReviewPage from './pages/student/reviews/comments/TeacherReviewPage.jsx';
-import AlumniHome from './pages/home/alumni/AlumniDashboard.jsx';
 import UsersView from './pages/admin/pages/users/UsersView.jsx';
 import CampusView from './pages/admin/pages/campus/CampusView.jsx';
 import UniversityView from './pages/admin/pages/university/UniversityView.jsx';
@@ -44,6 +43,8 @@ import CompleteYourInfo from './pages/noAccess/CompleteYourInfo.jsx';
 import NotUniversityMail from './pages/UnAuthenticatedPages/NotUniversityMail.jsx';
 import ForgotPassword from './pages/auth/forgotPassword/ForgotPassword.jsx';
 import PostPage from './pages/society/post/PostPage/PostPage.jsx';
+import SuperDashboard from './pages/home/super/SuperDashboard.jsx';
+import ModDashboard from './pages/home/mod/ModDashboard.jsx';
 
 const router = createBrowserRouter([
   {
@@ -86,6 +87,7 @@ const router = createBrowserRouter([
       //   ]
       // },
 
+      // !ALL ROLES except SUPER_ROLES
       {
         element: <RoleBasedRoute allowedRoles={['student', 'alumni', 'ext_org', 'teacher']} />,
         children: [
@@ -95,12 +97,12 @@ const router = createBrowserRouter([
 
         ],
       },
-      // SUPER
+      // !SUPER
       {
         element: <SuperRoleBasedRoute allowedRoles={['super']} />,
         path: 'super',
         children: [
-          { index: true, element: <Layout> <AlumniHome /></Layout> },
+          { index: true, element: <Layout> <SuperDashboard /></Layout> },
           { path: 'user/:id', element: <Layout><ProfilePage /></Layout> },
 
 
@@ -121,11 +123,34 @@ const router = createBrowserRouter([
 
 
           { path: "pastpapers/upload", element: <Layout> <UploadForm /></Layout> },
-          // { path: "teachers", element: <Layout> <TeachersView/></Layout> }, mistakenly written by rayyan
 
         ],
       },
-      // Students
+
+      // !CAMPUS MODERATOR
+      {
+        element: <SuperRoleBasedRoute allowedRoles={['mod']} />,
+        path: 'mod',
+        children: [
+          { index: true, element: <Layout> <ModDashboard /></Layout> },
+          { path: 'user/:id', element: <Layout><ProfilePage /></Layout> },
+
+          { path: 'users', element: <Layout><UsersView /></Layout> },
+
+          // { path: "campus/edit/:campusId", element: <Layout> <AddDepartmentAndSubjects /></Layout> },
+          // { path: "campus/pastpapers/:campusId", element: <Layout> <AddPastPapers /></Layout> },
+
+
+          // { path: "teachers", element: <Layout> <AddTeacher /></Layout> },
+
+          // { path: "pastpapers/upload", element: <Layout> <UploadForm /></Layout> },
+
+        ],
+      },
+
+
+
+      // !STUDENT
       {
         element: <RoleBasedRoute allowedRoles={['student']} />,
         path: "student",
@@ -151,7 +176,7 @@ const router = createBrowserRouter([
 
         ],
       },
-      // TEachers
+      // !TEACHER
       {
         element: <RoleBasedRoute allowedRoles={['teacher']} />,
         path: "teacher",

@@ -198,7 +198,7 @@ export default function AddPastPapers() {
     });
 
     return (
-        <div className="min-h-screen p-5 bg-gray-100">
+        <div className="min-h-screen p-5 ">
             <h1 className="text-2xl font-bold mb-5">Campus Admin Panel</h1>
             <h1 className="text-3xl font-bold mb-5">Add Past Papers</h1>
 

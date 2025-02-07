@@ -456,7 +456,9 @@ router.get("/post/comments", async (req, res) => {
                             select: 'name username profile.picture university.departmentId university.campusId ',
                         },
                         "voteId",
-                    ]
+                    ],
+                    options: { sort: { createdAt: -1 } }
+
                 }
             ]);
 
