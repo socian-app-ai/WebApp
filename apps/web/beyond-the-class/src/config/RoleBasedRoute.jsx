@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { Navigate, Outlet } from 'react-router-dom';
 import { useAuthContext } from '../context/AuthContext';
 import { bypassRoutes } from '../utils/routes/routesForLinks';
@@ -13,20 +14,27 @@ const RoleBasedRoute = ({ allowedRoles }) => {
     // logWithFileLocation("Auth User in RoleBasedRoute:", authUser.role);
 
     // If hits / and is 'super' then redirect to /super
-    if (authUser && authUser.super_role === 'super') {
-        return <Navigate to="/super" replace />;
+    console.log("DO", rolesList.superRoles.superRoles.includes(authUser.super_role))
+    if (authUser && rolesList.superRoles.superRoles.includes(authUser.super_role) && allowedRoles.includes(authUser.role)) { // ? is also any regular role
+        if (!localStorage.getItem('preferedView')) {
+            console.log("is here", localStorage.getItem('preferedView'))
+            localStorage.setItem('preferedView', authUser.role);
+            return <Navigate to={`/${authUser.super_role}`} replace />;
+        }
+        console.log("is better", localStorage.getItem('preferedView'))
+
+        const preferredView = localStorage.getItem('preferedView')
+
+        console.log(allowedRoles.includes(preferredView))
+        if (allowedRoles.includes(preferredView)) return <Outlet />
+        console.log("should be here ", `/${authUser.super_role}`)
+
+        return <Navigate to={`/${authUser.super_role}`} replace />;
     }
 
-    // if (authUser && authUser.role === 'no_access') {
-    //     logWithFileLocation("IN If role is no_access", authUser.role === 'no_access')
-    //     // console.log('window.location.href !== \'define\'', window.location.pathname, window.location.pathname === '/define')
-    //     if (window.location.pathname !== '/complete/info') {
-    //         window.location.href = "/complete/info";
-    //     }
-    // }
 
     return (
-        // eslint-disable-next-line react/prop-types
+
         authUser && allowedRoles.includes(authUser.role)
             ? <Outlet />
             : <Navigate to="/" />
@@ -41,6 +49,24 @@ export const SuperRoleBasedRoute = ({ allowedRoles }) => {
     const { authUser, isLoading } = useAuthContext();
     if (isLoading) {
         return <div>Loading...</div>;
+    }
+
+    console.log("was in super role")
+    if (authUser && rolesList.roles.roles.includes(authUser.role) && allowedRoles.includes(authUser.super_role)) { // ? is also any regular role
+        if (!localStorage.getItem('preferedView')) {
+            console.log("is here", localStorage.getItem('preferedView'))
+            localStorage.setItem('preferedView', authUser.role);
+            return <Navigate to={`/`} replace />;
+        }
+        console.log("is better", localStorage.getItem('preferedView'))
+
+        const preferredView = localStorage.getItem('preferedView')
+
+        console.log(allowedRoles.includes(preferredView))
+        if (allowedRoles.includes(preferredView)) return <Outlet />
+
+        console.log("should be here ", `/${authUser.super_role}`)
+        return <Navigate to={`/${authUser.super_role}`} replace />;
     }
 
     // if (!authUser) {
@@ -61,3 +87,22 @@ export const SuperRoleBasedRoute = ({ allowedRoles }) => {
     );
 };
 
+
+const rolesList =
+{
+    superRoles: {
+        superRoles: [
+            'super',
+            'admin',
+            'mod'
+        ]
+    },
+    roles: {
+        roles: [
+            'student',
+            'teacher',
+            'alumni',
+            'ext_org'
+        ]
+    }
+}

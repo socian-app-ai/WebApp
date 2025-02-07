@@ -19,6 +19,10 @@ import { useSetSideBarState } from "../../state_management/zustand/useSideBar";
 import useWindowDimensions from "../../hooks/useWindowDimensions";
 import ThemeSwitcherButton from "../ThemeSwitcherButton";
 import SearchBar from "./search/SearchBar";
+import { RefreshCw } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { GraduationCap } from "lucide-react";
+import { MonitorCog } from "lucide-react";
 
 export function LeftSection() {
     const { width } = useWindowDimensions();
@@ -60,6 +64,7 @@ export function RightSection() {
     const { logout } = useLogout();
     const [isDropdownOpen, setDropdownOpen] = useState(false);
 
+    const navigate = useNavigate()
 
     const modalRef = useRef(null);
 
@@ -121,8 +126,50 @@ export function RightSection() {
                     </div>
                 )}
             </div>
+            {authUser && !(!authUser.role) && authUser.super_role !== 'none' && <div>
+                {console.log("AUTH ROLES", authUser.role, authUser.super_role)}
+                <button className="flex">
+                    {(localStorage.getItem('preferedView') === authUser.super_role)
+                        ?
+                        <MonitorCog onClick={() => changeRole(authUser)} />
+                        :
+                        <GraduationCap onClick={() => changeRole(authUser)} />
+                    }
+
+                    {
+                        localStorage.getItem('preferedView') === authUser.super_role
+                            ?
+                            authUser.super_role
+                            :
+                            localStorage.getItem('preferedView') === authUser.role
+                                ?
+                                authUser.role
+                                :
+                                localStorage.setItem('preferedView', authUser.super_role)
+                                    ?
+                                    authUser.super_role
+                                    :
+                                    'loading'
+                    }
+                </button>
+            </div>}
         </div>
     );
+}
+
+const changeRole = (authUser) => {
+    if (localStorage.getItem('preferedView') === authUser.super_role) {
+
+        localStorage.setItem('preferedView', authUser.role)
+        // navigate(`/${authUser.role}`)
+        // window.location.href = `/${authUser.role}`
+        window.location.href = `/`
+    } else {
+        localStorage.setItem('preferedView', authUser.super_role)
+        // navigate(`/${authUser.super_role}`)
+        window.location.href = `/${authUser.super_role}`
+        // window.location.href = `/`
+    }
 }
 
 function Navbar() {

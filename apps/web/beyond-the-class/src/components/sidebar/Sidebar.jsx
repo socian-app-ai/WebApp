@@ -211,7 +211,8 @@ function Sidebar() {
             { name: "New", path: "/super/team/manage/new" },
             { name: 'Assign', path: '/super/team/manage/assign' },
             { name: 'Overview', path: '/super/team/manage/overview' },
-            { name: 'Requests', path: '/super/team/manage/requests' }
+            { name: 'Requests', path: '/super/team/manage/requests' },
+            { name: 'Ranked', path: '/super/team/manage/ranked' },
 
           ]
         },
@@ -223,6 +224,7 @@ function Sidebar() {
       ],
     },
 
+    // ? Rs.100 discount for users gained/subscribed by cafe admin -> must add
     {
       name: "Jobs",
       path: `/super/teachers`,

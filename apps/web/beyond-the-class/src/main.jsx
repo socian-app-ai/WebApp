@@ -181,8 +181,9 @@ const router = createBrowserRouter([
         element: <RoleBasedRoute allowedRoles={['teacher']} />,
         path: "teacher",
         children: [
-          // { path: "all", element: <Layout> <UniPosts /></Layout> },
+          { index: true, path: "all", element: <Layout> <UniPosts /></Layout> },
           // { path: "inter", element: <Layout> <CampusesPosts /></Layout> },
+
 
 
           { path: "feedbacks", element: <Layout> <Feedback /></Layout> },
