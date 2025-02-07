@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 
 
+import { PostHogProvider } from 'posthog-js/react'
 
 import { createBrowserRouter, RouterProvider, Navigate } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
@@ -215,16 +216,25 @@ const router = createBrowserRouter([
 ]);
 
 
+const options = {
+  api_host: import.meta.env.VITE_PUBLIC_POSTHOG_HOST,
+}
+
 
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <ToastProviders>
-      <AuthContextProvider>
-        <RouterProvider router={router} />
-        <Toaster />
-      </AuthContextProvider>
-    </ToastProviders>
+    <PostHogProvider
+      apiKey={import.meta.env.VITE_PUBLIC_POSTHOG_KEY}
+      options={options}
+    >
+      <ToastProviders>
+        <AuthContextProvider>
+          <RouterProvider router={router} />
+          <Toaster />
+        </AuthContextProvider>
+      </ToastProviders>
+    </PostHogProvider>
   </StrictMode>,
 )
 
