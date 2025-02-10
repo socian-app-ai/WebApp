@@ -19,6 +19,13 @@ import CreateSocietyButton from "../../pages/society/CreateSocietyButton";
 import SocitiesDropDown from "./sidebarComponents/SocitiesDropDown";
 import { ChevronDown } from "lucide-react";
 import { SettingsIcon } from "lucide-react";
+import { HomeIcon } from "lucide-react";
+import { HandCoins } from "lucide-react";
+import { NotebookPen } from "lucide-react";
+import { UsersRound } from "lucide-react";
+import { User } from "lucide-react";
+import { Handshake } from "lucide-react";
+import { Coffee } from "lucide-react";
 
 function Sidebar() {
   const { sideBarState, setSideBarState } = useSetSideBarState();
@@ -243,22 +250,245 @@ function Sidebar() {
       icon: <FaMedapps className="w-5" />,
     },
 
+    {
+      name: "UnAuthorized Users",//those who tried to signup but were not from any uni (not uni mail)
+      path: `/super/teachers`,
+      icon: <FaMedapps className="w-5" />,
+    },
+
 
   ];
+
+
+  // !========= SUPER
+  // ? A current campus dropdown like fleetly
+  const adminMenu = [
+    {
+      name: "Organizations Msg",
+      path: "/admin/ext-org",
+      icon: <FaBuilding className="w-5" />,
+    },
+
+    // {
+    //   name: "Campuses",
+    //   path: "/admin/campuses",
+    //   icon: <FaBuilding className="w-5" />,
+    //   submenu: [
+    //     { name: "Create", path: "/admin/campus/create" },
+    //     { name: "Subject & Departments", path: "/admin/campus/edit/0" },
+    //     { name: "Papers", path: `campus/pastpapers/${authUser.university.campusId._id}` },
+    //   ],
+    // },
+    {
+      name: "Campuses",
+      path: "/admin/campuses",
+      icon: <FaBuilding className="w-5" />,
+      submenu: [
+        // All campus in that University
+      ],
+    },
+    {
+      name: "Teachers",
+      path: "/admin/teachers",
+      icon: <SettingsIcon className="w-5" />,
+    },
+    {
+      name: "Users",
+      path: "/admin/users",
+      icon: <FaBuilding className="w-5" />,
+    },
+    {
+      name: "Societies",
+      path: `/admin/societies`,
+      icon: <FaMedapps className="w-5" />,
+    },
+
+    {
+      name: "Teachers",
+      path: `/admin/teachers`,
+      icon: <FaMedapps className="w-5" />,
+    },
+
+    {
+      name: "Team",
+      path: `/admin/team`,
+      icon: <FaMedapps className="w-5" />,
+      submenu: [
+        {
+          name: "Manage",
+          path: "/admin/team/manage",
+          submenu: [
+            { name: "New", path: "/admin/team/manage/new" },
+            { name: 'Assign', path: '/admin/team/manage/assign' },
+            { name: 'Overview', path: '/admin/team/manage/overview' },
+            { name: 'Requests', path: '/admin/team/manage/requests' },
+            { name: 'Ranked', path: '/admin/team/manage/ranked' },
+
+          ]
+        },
+        { name: "Campus Mods", path: "/admin/team/" },
+        { name: "Society Mods", path: "/admin/team/" },
+        { name: "Ext. Managers", path: "/admin/team/" },
+
+      ],
+    },
+
+    {
+      name: "Jobs",
+      path: `/admin/teachers`,
+      icon: <FaMedapps className="w-5" />,
+    },
+
+    {
+      name: "Offers/Promotions",
+      path: `/admin/teachers`,
+      icon: <FaMedapps className="w-5" />,
+    },
+
+  ];
+
+
+
+  const modMenu = [
+
+    {
+      name: "Home",
+      path: "/mod",
+      icon: <HomeIcon className="w-5" />,
+    },
+
+    {
+      name: "Organizations Msg",
+      path: "/mod/ext-org",
+      icon: <FaBuilding className="w-5" />,
+    },
+
+    // {
+    //   name: "Campuses",
+    //   path: "/mod/campuses",
+    //   icon: <FaBuilding className="w-5" />,
+    //   submenu: [
+    //     { name: "Create", path: "/mod/campus/create" },
+    //     { name: "Subject & Departments", path: "/mod/campus/edit/0" },
+    //     { name: "Papers", path: `campus/pastpapers/${authUser.university.campusId._id}` },
+    //   ],
+    // },
+    {
+      name: "Campus",
+      path: "/mod/campus",
+      icon: <FaBuilding className="w-5" />,
+      submenu: [
+        // All campus in that University
+      ],
+    },
+    {
+      name: "Teachers",
+      path: "/mod/teachers",
+      icon: <SettingsIcon className="w-5" />,
+    },
+    {
+      name: "Users",
+      path: "/mod/users",
+      icon: <User className="w-5" />,
+    },
+    {
+      name: "Societies",
+      path: `/mod/societies`,
+      icon: <Handshake className="w-5" />,
+    },
+    {
+      name: "Cafe",
+      path: `/mod/cafe`,
+      icon: <Coffee className="w-5" />,
+      submenu: [
+        {
+          name: 'Manage',
+          path: '/mod/cafe/manage',
+          icon: <Coffee className="w-5" />,
+        },
+        {
+          name: 'New Cafe',
+          path: '/mod/cafe/new',
+          icon: <Coffee className="w-5" />,
+        },
+        {
+          name: 'Cafe FeedBacks',
+          path: '/mod/cafe/feedbacks',
+          icon: <Coffee className="w-5" />,
+        },
+        {
+          name: 'Cafe Discounts',
+          path: '/mod/cafe/discounts',
+          icon: <Coffee className="w-5" />,
+        }
+      ]
+    },
+
+
+
+    {
+      name: "Team",
+      path: `/mod/team`,
+      icon: <UsersRound className="w-5" />,
+      submenu: [
+        {
+          name: "Manage",
+          path: "/mod/team/manage",
+          submenu: [
+            { name: "New", path: "/mod/team/manage/new" },
+            { name: 'Assign', path: '/mod/team/manage/assign' },
+            { name: 'Overview', path: '/mod/team/manage/overview' },
+            { name: 'Requests', path: '/mod/team/manage/requests' },
+            { name: 'Ranked', path: '/mod/team/manage/ranked' },
+
+          ]
+        },
+        { name: "Campus Mods", path: "/mod/team/" },
+        { name: "Society Mods", path: "/mod/team/" },
+        { name: "Ext. Managers", path: "/mod/team/" },
+
+      ],
+    },
+
+    {
+      name: "Jobs",
+      path: `/mod/jobs`,
+      icon: <NotebookPen className="w-5" />,
+    },
+
+    {
+      name: "Offers/Promotions",
+      path: `/mod/offers`,
+      icon: <HandCoins className="w-5" />,
+    },
+
+
+  ];
+
+
+
+
 
   const processMenu = [];
   // Select menu based on user role
   let menuItems = processMenu;
 
+
+
   menuItems = authUser
     ?
     (
+      //  || localStorage.getItem('preferedView') === 'student'
       authUser.super_role === "super" ? superMenu
-        : authUser.role === "student" ? studentMenu
+        : ((authUser.role === "student" && (authUser.super_role === 'none' || localStorage.getItem('preferedView') === 'student')))
+          ? studentMenu
           : authUser.role === "alumni" ? alumniMenu
-            : authUser.role === "teacher" ? teacherMenu
-              : authUser.role === "ext_org" ? externalOrgMenu
-                : processMenu
+            : (authUser.role === "teacher" && (authUser.super_role === 'none' || localStorage.getItem('preferedView') === 'teacher'))
+              ? teacherMenu
+              : (authUser.super_role === 'mod' && localStorage.getItem('preferedView') === 'mod')
+                ? modMenu
+                : authUser.role === "ext_org" ? externalOrgMenu
+                  : processMenu
     ) : processMenu
 
   const [dropdownStates, setDropdownStates] = useState({});

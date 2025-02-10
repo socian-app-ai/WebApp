@@ -46,6 +46,7 @@ import ForgotPassword from './pages/auth/forgotPassword/ForgotPassword.jsx';
 import PostPage from './pages/society/post/PostPage/PostPage.jsx';
 import SuperDashboard from './pages/home/super/SuperDashboard.jsx';
 import ModDashboard from './pages/home/mod/ModDashboard.jsx';
+import CafeManage from './pages/mod/cafe/CafeManage.jsx';
 
 const router = createBrowserRouter([
   {
@@ -98,6 +99,14 @@ const router = createBrowserRouter([
 
         ],
       },
+      // ! ALL SUPER ROLES EXCEPT ROLES
+      {
+        element: <SuperRoleBasedRoute allowedRoles={['super', 'admin', 'mod']} />,
+        children: [
+          { path: 'user/:id', element: <Layout><ProfilePage /></Layout> },
+        ],
+      },
+
       // !SUPER
       {
         element: <SuperRoleBasedRoute allowedRoles={['super']} />,
@@ -134,10 +143,10 @@ const router = createBrowserRouter([
         path: 'mod',
         children: [
           { index: true, element: <Layout> <ModDashboard /></Layout> },
-          { path: 'user/:id', element: <Layout><ProfilePage /></Layout> },
 
           { path: 'users', element: <Layout><UsersView /></Layout> },
-
+          // CafeConsole
+          { path: 'cafe/manage', element: <Layout><CafeManage /></Layout> }
           // { path: "campus/edit/:campusId", element: <Layout> <AddDepartmentAndSubjects /></Layout> },
           // { path: "campus/pastpapers/:campusId", element: <Layout> <AddPastPapers /></Layout> },
 
