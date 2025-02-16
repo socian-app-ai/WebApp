@@ -47,6 +47,7 @@ import PostPage from './pages/society/post/PostPage/PostPage.jsx';
 import SuperDashboard from './pages/home/super/SuperDashboard.jsx';
 import ModDashboard from './pages/home/mod/ModDashboard.jsx';
 import CafeManage from './pages/mod/cafe/CafeManage.jsx';
+import CafeNew from './pages/mod/cafe/CafeNew.jsx';
 
 const router = createBrowserRouter([
   {
@@ -146,7 +147,9 @@ const router = createBrowserRouter([
 
           { path: 'users', element: <Layout><UsersView /></Layout> },
           // CafeConsole
-          { path: 'cafe/manage', element: <Layout><CafeManage /></Layout> }
+          { path: 'cafe/manage', element: <Layout><CafeManage /></Layout> },
+          { path: 'cafe/new', element: <Layout><CafeNew /></Layout> }
+
           // { path: "campus/edit/:campusId", element: <Layout> <AddDepartmentAndSubjects /></Layout> },
           // { path: "campus/pastpapers/:campusId", element: <Layout> <AddPastPapers /></Layout> },
 

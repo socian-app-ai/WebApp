@@ -33,10 +33,7 @@ export default function PostDiv({ society, postInfo, linkActivate = true }) {
     const navigate = useNavigate()
 
     return (
-        <Link
-            to={`${linkActivate ? `${import.meta.env.VITE_FRONTENT_URL}/${authUser.role}/${society?.name ?? "unknown"}/comments/${postInfo._id}/${postInfo.title.toString().replace(/\s+/g, '-')}` : '#'}`}
-            className="block max-w-2xl m-2"
-        >
+        <article className="block max-w-2xl m-2">
             <article className="bg-white dark:bg-[#1E1F24] rounded-lg shadow-sm hover:shadow-md transition-shadow border border-gray-200 dark:border-gray-700">
                 <div className="p-4">
                     {/* Header */}
@@ -102,18 +99,24 @@ export default function PostDiv({ society, postInfo, linkActivate = true }) {
                         <ProfileHoverCard author={postInfo.author} />
                     )}
 
+                    <Link
+                        to={`${linkActivate ? `${import.meta.env.VITE_FRONTENT_URL}/${authUser.role}/${society?.name ?? "unknown"}/comments/${postInfo._id}/${postInfo.title.toString().replace(/\s+/g, '-')}` : '#'}`}
 
-                    {/* Content */}
-                    <div className="space-y-2 mb-4">
-                        <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-                            {postInfo.title}
-                        </h2>
-                        {postInfo?.body && (
-                            <p className="text-gray-600 dark:text-gray-300 text-sm whitespace-pre-line">
-                                {postInfo.body}
-                            </p>
-                        )}
-                    </div>
+                    >
+                        {/* Content */}
+                        <div className="space-y-2 mb-4">
+                            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+                                {postInfo.title}
+                            </h2>
+
+                            {postInfo?.body && (
+                                <p className="text-gray-600 dark:text-gray-300 text-sm whitespace-pre-line">
+                                    {postInfo.body}
+                                </p>
+                            )}
+
+                        </div>
+                    </Link >
                     {/* {console.log("HERE , ", postInfo?.media)} */}
 
                     {/* {postInfo?.media && <ScrollingImages media={postInfo.media} />} */}
@@ -140,7 +143,7 @@ export default function PostDiv({ society, postInfo, linkActivate = true }) {
                     </div>
                 </div>
             </article>
-        </Link >
+        </article>
     );
 }
 
