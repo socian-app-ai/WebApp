@@ -51,6 +51,7 @@ import CafeNew from './pages/mod/cafe/CafeNew.jsx';
 
 const router = createBrowserRouter([
   {
+    // ? WHAT WE DO TODAY ECHOS TO THE FUTURE
     path: "/",
     element: (
       <ProtectedLayout />

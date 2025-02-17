@@ -11,6 +11,7 @@ import routesForLinks, { routesForApi } from "../../utils/routes/routesForLinks"
 // import toast from "react-hot-toast";
 import { useDebouncedCallback } from 'use-debounce';
 import { useToast } from "../../components/toaster/ToastCustom";
+import { ShinyButtonParam } from "../../components/Shinny/ShinnyButton";
 
 
 export default function SignUpR() {
@@ -267,9 +268,10 @@ export default function SignUpR() {
                         inputClassName="w-min-[10rem]"
                         onChange={(e) => setUniversityEmailPassword(e.target.value)}
                     />
-                    <DarkButton
+                    <ShinyButtonParam
                         loading={loading}
                         type="submit"
+                        loadingText={'Signing Up...'}
                         className="flex my-4 justify-center items-center w-full"
                         text="Sign up with email"
                     />

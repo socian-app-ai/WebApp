@@ -6,6 +6,7 @@ import LabelInputCustomizable from '../../components/TextField/LabelInputCustomi
 import DarkButton from '../../components/Buttons/DarkButton';
 import GoogleButton from '../../components/Buttons/GoogleButton';
 import routesForLinks, { routesForApi } from "../../utils/routes/routesForLinks";
+import { ShinyButtonParam } from "../../components/Shinny/ShinnyButton";
 
 
 export default function Login() {
@@ -99,10 +100,17 @@ export default function Login() {
 
 
 
-
+        {/* 
         <DarkButton className="my-5 " text="Login"
           loading={loading}
+        /> */}
+
+
+        <ShinyButtonParam className="w-full" text="Login"
+          loading={loading}
+          loadingText={'Logging In...'}
         />
+
         <div className="flex justify-center items-center m-4 w-full">
           <hr className="w-full " />
           <p className="flex flex-nowrap w-full [&&]dark:text-[#c4c3c3]   whitespace-nowrap mx-2">or continue with</p>

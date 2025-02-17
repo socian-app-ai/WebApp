@@ -1,0 +1,91 @@
+import { motion } from "framer-motion";
+import { LoaderIcon } from 'react-hot-toast';
+
+const ShinyButton = () => {
+    return (
+        <motion.button
+            initial={{ "--x": "100%", scale: 1 }}
+            animate={{ "--x": "-100%" }}
+            whileTap={{ scale: 0.97 }}
+            transition={{
+                repeat: Infinity,
+                repeatType: "loop",
+                repeatDelay: 1,
+                type: "spring",
+                stiffness: 20,
+                damping: 15,
+                mass: 2,
+                scale: {
+                    type: "spring",
+                    stiffness: 10,
+                    damping: 5,
+                    mass: 0.1,
+                },
+            }}
+            className="px-6 py-2 rounded-md relative radial-gradient"
+        >
+            <span className="text-neutral-100 tracking-wide font-light h-full w-full block relative linear-mask">
+                Start now
+            </span>
+            <span className="block absolute inset-0 rounded-md p-px linear-overlay" />
+        </motion.button>
+    );
+};
+
+export default ShinyButton;
+
+
+
+
+export const ShinyButtonParam = ({ loading, text, loadingText = 'Loading..', className, ...inputProps }) => {
+
+    const animations = loading ? {
+        repeat: Infinity,
+        repeatType: "loop",
+        repeatDelay: 0.1,
+        type: "spring",
+        stiffness: 30,
+        damping: 20,
+        mass: 2,
+        scale: {
+            type: "spring",
+            stiffness: 10,
+            damping: 5,
+            mass: 0.1,
+        },
+    } : {
+        repeat: Infinity,
+        repeatType: "loop",
+        repeatDelay: 1,
+        type: "spring",
+        stiffness: 20,
+        damping: 15,
+        mass: 2,
+        scale: {
+            type: "spring",
+            stiffness: 10,
+            damping: 5,
+            mass: 0.1,
+        },
+    };
+
+
+    return (
+        <motion.button
+            initial={{ "--x": "100%", scale: 1 }}
+            animate={{ "--x": "-100%" }}
+            whileTap={{ scale: 0.97 }}
+            transition={animations}
+            className={`${className} px-6 py-2 rounded-md relative radial-gradient`}
+
+            {...inputProps}
+            disabled={loading}
+        >
+            <span className="text-neutral-100 tracking-wide font-light h-full w-full block relative linear-mask">
+                {loading ? `${loadingText}` : `${text}`}
+            </span>
+            <span className="block absolute inset-0 rounded-md p-px linear-overlay" />
+        </motion.button>
+    );
+};
+
