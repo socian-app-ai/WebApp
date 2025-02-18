@@ -2,16 +2,16 @@
 
 const AestheticLoadingScreen = ({
     message = "Beyond The Class",
-    backgroundColor = "bg-gradient-to-br from-blue-50 to-blue-100"
+    backgroundColor = "auth_page_style-gradient bg-gradient-to-br from-blue-50 to-blue-100"
 }) => {
     return (
-        <div className={`fixed inset-0 z-50 flex flex-col items-center justify-center ${backgroundColor} select-none`}>
+        <div className={` fixed inset-0 z-50 flex flex-col items-center justify-center ${backgroundColor} select-none`}>
             <div className="text-center space-y-6">
 
 
                 {/* Loading Text with Elegant Typography */}
                 <div className="space-y-2">
-                    <h1 className="text-4xl font-extralight text-gray-800 tracking-wide animate-pulse">
+                    <h1 className="text-4xl font-extralight dark:text-white text-gray-800 tracking-wide animate-pulse">
                         {message}
                     </h1>
                 </div>
@@ -19,7 +19,7 @@ const AestheticLoadingScreen = ({
                 {/* Subtle Progress Indicator */}
                 <div className="w-64 h-1 bg-blue-100 rounded-full overflow-hidden">
                     <div
-                        className="h-full bg-blue-500 animate-progress-bar"
+                        className="h-full bg-gray-700 animate-progress-bar"
                         style={{
                             animation: 'progressBar 2s infinite',
                             transformOrigin: 'left'
