@@ -176,6 +176,10 @@ const userRouter = require('./routes/user/user.route.js');
 
 app.use("/api/user", protectRoute, userRouter);
 
+const cafeRouter = require('./routes/university_related/cafe/cafe.route.js');
+const cafeProtect = require("./middlewares/cafe.protect.js");
+app.use('/api/cafe/auth', cafeProtect, cafeRouter);
+
 
 
 

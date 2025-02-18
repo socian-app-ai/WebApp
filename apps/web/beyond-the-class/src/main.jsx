@@ -48,6 +48,7 @@ import SuperDashboard from './pages/home/super/SuperDashboard.jsx';
 import ModDashboard from './pages/home/mod/ModDashboard.jsx';
 import CafeManage from './pages/mod/cafe/CafeManage.jsx';
 import CafeNew from './pages/mod/cafe/CafeNew.jsx';
+import { ThemeProvider } from './components/theme/ThemeContext.jsx';
 
 const router = createBrowserRouter([
   {
@@ -241,12 +242,14 @@ createRoot(document.getElementById('root')).render(
       apiKey={import.meta.env.VITE_PUBLIC_POSTHOG_KEY}
       options={options}
     >
-      <ToastProviders>
-        <AuthContextProvider>
-          <RouterProvider router={router} />
-          <Toaster />
-        </AuthContextProvider>
-      </ToastProviders>
+      <ThemeProvider>
+        <ToastProviders>
+          <AuthContextProvider>
+            <RouterProvider router={router} />
+            <Toaster />
+          </AuthContextProvider>
+        </ToastProviders>
+      </ThemeProvider>
     </PostHogProvider>
   </StrictMode>,
 )

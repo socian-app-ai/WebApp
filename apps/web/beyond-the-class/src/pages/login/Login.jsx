@@ -54,10 +54,10 @@ export default function Login() {
 
 
   return (
-    <div className="flex flex-col justify-center items-center min-h-svh  w-full auth_page_style" >
+    <div className="select-none flex flex-col justify-center items-center min-h-svh  w-full auth_page_style" >
       <div className=" flex flex-col justify-center items-center">
-        <h1 className="text-3xl md:text-4xl lg:text-6xl font-bold my-4">Login to your account</h1>
-        <p className=" text-lg p-2">Open gate to Opportunities</p>
+        <h1 className="dark:text-white text-3xl md:text-4xl lg:text-6xl font-bold my-4 select-none">Login to your account</h1>
+        <p className="dark:text-white text-lg p-2">Open gate to Opportunities</p>
       </div>
 
       <form
@@ -67,7 +67,7 @@ export default function Login() {
         <LabelInputCustomizable
           type={inputType === "email" ? "email" : "text"}
           name={inputType === "email" ? "email" : "username"}
-          className="my-2"
+          className="my-2 dark:text-white"
           value={email}
           label={"Email/Username"}
           placeholder="fa21-bcs-000@cuilahore.pk"
@@ -78,7 +78,7 @@ export default function Login() {
         <LabelInputCustomizable
           type="password"
           name="password"
-          className="my-2"
+          className="my-2 dark:text-white"
           value={password}
           label={"Password"}
           placeholder="Password"
@@ -91,12 +91,12 @@ export default function Login() {
 
         <div className="flex flex-row justify-evenly w-full">
 
-          <Link className="[&&]:dark:text-[#c4c3c3] [&&]:text-black" to={routesForLinks.signup}>Don&apos;t Have an Account?</Link>
-          <Link className=" underline" to={routesForLinks.signup}>Sign Up</Link>
+          <Link className="dark:text-[#c4c3c3] text-black" to={routesForLinks.signup}>Don&apos;t Have an Account?</Link>
+          <Link className="dark:text-white underline" to={routesForLinks.signup}>Sign Up</Link>
 
         </div>
 
-        <Link className=" underline" to={routesForLinks.forgotPassword}>forgot password</Link>
+        <Link className="dark:text-white underline my-2" to={routesForLinks.forgotPassword}>forgot password</Link>
 
 
 
@@ -113,7 +113,7 @@ export default function Login() {
 
         <div className="flex justify-center items-center m-4 w-full">
           <hr className="w-full " />
-          <p className="flex flex-nowrap w-full [&&]dark:text-[#c4c3c3]   whitespace-nowrap mx-2">or continue with</p>
+          <p className="flex flex-nowrap w-full dark:text-[#c4c3c3]   whitespace-nowrap mx-2">or continue with</p>
           <hr className="w-full " />
         </div>
 

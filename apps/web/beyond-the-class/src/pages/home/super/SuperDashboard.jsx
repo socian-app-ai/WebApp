@@ -3,6 +3,9 @@ export default function SuperDashboard() {
     return (
         <div className='min-h-screen w-full px-2 pt-8'>
             <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4  w-full'>
+
+                <h1 className="text-3xl">TODO </h1>
+                <h1 className="text-2xl">Add multi format past paper addition for universities </h1>
                 <div className=' border p-2 my-2 mx-2 md:mx-5'>All time user : <strong>19.2K</strong></div>
 
                 <div className=' border p-2 my-2 mx-2 md:mx-5'>Total Universities: <strong>25</strong></div>

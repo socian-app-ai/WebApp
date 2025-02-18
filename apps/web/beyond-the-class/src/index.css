@@ -58,6 +58,17 @@ body {
   --var-text-primary: #565656;
 
   --var-bg-dark: #1b1b1b;
+
+
+
+
+
+
+
+/* ? BUTTTON CSS */
+  --radial-gradient-background: 250, 250, 250;
+  --solid-color-background: 15, 15, 15;
+  --overlay-color: 255, 255, 255;
 }
 
 .auth_page_style{
@@ -66,8 +77,18 @@ body {
   background-position: bottom right;
   background-size: cover;
   width: 100%;
-  height: 10vh; 
+  height: 10vh;
 }
+
+.auth_page_style {
+  background: radial-gradient(
+          circle at 50% 0%,
+          rgba(var(--radial-gradient-background), 0.05) 0%,
+          transparent 60%
+      )
+      rgba(var(--solid-color-background), 1);
+}
+
 /* .dark h1,
 .dark h2,
 .dark h3,
@@ -197,27 +218,7 @@ label {
 
 
 
-
-
-
-
-
-
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-:root {
-    --radial-gradient-background: 250, 250, 250;
-    --solid-color-background: 15, 15, 15;
-    --overlay-color: 255, 255, 255;
-}
-
-/* body {
-    @apply bg-neutral-950;
-} */
-
-.radial-gradient {
+.radial-gradient{
     background: radial-gradient(
             circle at 50% 0%,
             rgba(var(--radial-gradient-background), 0.05) 0%,
@@ -257,3 +258,7 @@ label {
     mask-composite: exclude;
     -webkit-mask-composite: xor;
 }
+
+
+
+
