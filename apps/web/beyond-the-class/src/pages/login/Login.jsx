@@ -54,7 +54,7 @@ export default function Login() {
 
 
   return (
-    <div className="select-none flex flex-col justify-center items-center min-h-svh  w-full auth_page_style" >
+    <div className="select-none flex flex-col justify-center items-center min-h-svh  w-full auth_page_style auth_page_style-gradient" >
       <div className=" flex flex-col justify-center items-center">
         <h1 className="dark:text-white text-3xl md:text-4xl lg:text-6xl font-bold my-4 select-none">Login to your account</h1>
         <p className="dark:text-white text-lg p-2">Open gate to Opportunities</p>

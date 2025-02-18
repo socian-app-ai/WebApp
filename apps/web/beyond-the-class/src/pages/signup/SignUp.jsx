@@ -133,7 +133,7 @@ export default function SignUpR() {
 
 
     return (
-        <div className="min-h-screen w-full flex justify-center items-center ">
+        <div className=" auth_page_style-gradient dark:text-white min-h-screen w-full flex justify-center items-center ">
             <div className="flex flex-col justify-center items-center">
                 <h2 className="text-3xl font-bold py-2">Create an Account</h2>
                 <p className="text-md py-2">
@@ -166,7 +166,7 @@ export default function SignUpR() {
                         label="Select your university and campus"
                         placeholder="Comsats - Lahore"
                         width="w-[100%]"
-                        inputClassName="w-min-[10rem]"
+                        inputClassName="dark:bg-gray-900 w-min-[10rem]"
                         onChange={(e) => setUniversityPlusCampus(e.target.value)}
                         setUniversityPlusCampusDomain={setUniversityPlusCampusDomain}
                         setUniversityPlusCampusDepartments={setUniversityPlusCampusDepartments}
@@ -182,7 +182,7 @@ export default function SignUpR() {
                         label="Select your department"
                         placeholder="Computer Science"
                         width="w-[100%]"
-                        inputClassName="w-min-[10rem]"
+                        inputClassName="dark:bg-gray-900 w-min-[10rem]"
                         onChange={(e) => setCampusDepartment(e.target.value)}
                     />
 
@@ -296,8 +296,8 @@ export default function SignUpR() {
                 <div className=" text-center my-3 max-w-[24rem]">
                     <p className="text-[#c4c3c3] ">
                         By clicking continue, you agree to our{" "}
-                        <a className="text-black"> Terms of Service</a> and{" "}
-                        <a className="text-black">Privacy Policy</a>
+                        <a className="dark:text-[#f7f7f7] text-black"> Terms of Service</a> and{" "}
+                        <a className="dark:text-[#f3f3f3] text-black">Privacy Policy</a>
                     </p>
                 </div>
             </div>
