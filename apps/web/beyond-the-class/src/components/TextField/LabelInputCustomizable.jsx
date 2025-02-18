@@ -466,7 +466,7 @@ export function LabelDropDownSearchableInputCustomizable({
                         <div
                             key={option._id}
                             onClick={() => handleSelect(option)}
-                            className="p-2 hover:bg-blue-100 cursor-pointer"
+                            className="p-2 dark:bg-gray-900 hover:bg-blue-100 cursor-pointer"
                         >
                             {option.name}
                         </div>

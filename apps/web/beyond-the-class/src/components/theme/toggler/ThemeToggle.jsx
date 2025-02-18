@@ -3,10 +3,10 @@ import { Sun, Moon, Settings } from "lucide-react";
 import { useTheme } from "../ThemeContext";
 
 const THEME_OPTIONS = {
-    SYSTEM: "System",
-    TIME_BASED: "Auto (Night Mode)",
-    DARK: "Dark",
-    LIGHT: "Light",
+    // system: "System",
+    time_based: "Auto",
+    dark: "Dark",
+    light: "Light",
 };
 
 const ThemeToggle = () => {

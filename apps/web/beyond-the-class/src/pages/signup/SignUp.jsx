@@ -155,7 +155,9 @@ export default function SignUpR() {
 
                 </div>
                 {/* {roleError && <div className="p-2 my-1 border rounded-lg bg-red-200 text-center border-red-500 text-red-500"><p>Select a role</p></div>} */}
-                <form className="w-full" onSubmit={handleSubmit}>
+                <form
+                    noValidate={true}
+                    className="w-full" onSubmit={handleSubmit}>
                     <LabelDropDownSearchableInputCustomizable
                         fetchOptions={fetchUniversities}
                         type="text"

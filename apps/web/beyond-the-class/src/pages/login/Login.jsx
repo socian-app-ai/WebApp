@@ -61,6 +61,7 @@ export default function Login() {
       </div>
 
       <form
+        noValidate={true}
         className="flex flex-col justify-center items-center my-5"
         onSubmit={handleSubmit}
       >

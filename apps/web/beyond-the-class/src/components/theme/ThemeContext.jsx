@@ -4,7 +4,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 const ThemeContext = createContext();
 
 const THEME_OPTIONS = {
-    SYSTEM: "system",
+    // SYSTEM: "system",
     TIME_BASED: "time_based",
     DARK: "dark",
     LIGHT: "light",
@@ -20,9 +20,10 @@ export const ThemeProvider = ({ children }) => {
     const applyTheme = (selectedTheme) => {
         let finalTheme = selectedTheme;
 
-        if (selectedTheme === THEME_OPTIONS.SYSTEM) {
-            finalTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-        } else if (selectedTheme === THEME_OPTIONS.TIME_BASED) {
+        // if (selectedTheme === THEME_OPTIONS.SYSTEM) {
+        //     finalTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        // } else 
+        if (selectedTheme === THEME_OPTIONS.TIME_BASED) {
             const hour = new Date().getHours();
             console.log("THE HOUR IS", hour)
             finalTheme = (hour >= 18 || hour < 6) ? "dark" : "light"; // Night 6pm to 6 AM -> dark

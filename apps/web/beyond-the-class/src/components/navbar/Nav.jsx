@@ -14,15 +14,16 @@ import routesForLinks from "../../utils/routes/routesForLinks";
 
 
 // Navbar.js
-import ThemeSwitcher from "../ThemeSwitcher";
 import { useSetSideBarState } from "../../state_management/zustand/useSideBar";
 import useWindowDimensions from "../../hooks/useWindowDimensions";
-import ThemeSwitcherButton from "../ThemeSwitcherButton";
 import SearchBar from "./search/SearchBar";
 import { RefreshCw } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { GraduationCap } from "lucide-react";
 import { MonitorCog } from "lucide-react";
+import ThemeSwitcherButton from "../theme/ThemeSwitcherButton";
+// import ThemeSwitcher from "../theme/ThemeSwitcher";
+import { memo } from "react";
 
 export function LeftSection() {
     const { width } = useWindowDimensions();
@@ -70,7 +71,7 @@ export function RightSection() {
 
     useEffect(() => {
         const handleClickOutside = (event) => {
-            if (modalRef.current && !modalRef.current.contains(event.target)) {
+            if (modalRef.current && !modalRef.current.contains(event.target) && !event.target.closest(".theme-switcher-container")) {
                 setDropdownOpen(false);
             }
         };
@@ -112,16 +113,26 @@ export function RightSection() {
                             >
                                 Profile
                             </Link>
-                            <ThemeSwitcherButton />
-                            <li className="px-4 py-2 hover:bg-gray-200 dark:hover:bg-[#2B3236] cursor-pointer">
+                            <Link to='#' className="theme-switcher-container"
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    setDropdownOpen(true);
+                                }}
+                            >
+                                <ThemeSwitcherButton />
+                            </Link>
+
+
+                            <Link className="px-4 block py-2 hover:bg-gray-200 dark:hover:bg-[#2B3236] cursor-pointer">
                                 Settings
-                            </li>
-                            <li
-                                className="px-4 py-2 hover:bg-gray-200 dark:hover:bg-[#2B3236] cursor-pointer text-red-600"
+                            </Link>
+                            <Link
+                                className="px-4 block py-2 hover:bg-gray-200 dark:hover:bg-[#2B3236] cursor-pointer text-red-600"
                                 onClick={logout}
                             >
                                 Logout
-                            </li>
+                            </Link>
                         </ul>
                     </div>
                 )}
@@ -177,15 +188,15 @@ function Navbar() {
         <nav className="w-full fixed z-50 bg-white text-black dark:bg-[#101011] dark:text-white flex items-center justify-between px-4 py-2 shadow-md">
             <LeftSection />
             <SearchBar />
-            <div className="hidden md:block">
+            {/* <div className="hidden md:block">
                 <ThemeSwitcher />
-            </div>
+            </div> */}
             <RightSection />
         </nav>
     );
 }
 
-export default Navbar;
+export default memo(Navbar);
 
 
 
