@@ -319,7 +319,7 @@ function RoleSelectionBox({ handleRoleChange, roleType, role, roleError, setRole
                 handleRoleChange(roleType)
                 setRoleError(false)
             }}
-            className={`${roleType === role ? 'bg-stone-400 border-black dark:text-black  ' : roleError ? 'border-red-500 border' : 'bg-transparent  border-white dark:text-white dark:text-text-primary-dark text-text-primary '} relative inline-block px-6 py-3 font-medium  
+            className={`${roleType === role ? 'bg-[#e2e2e2] border-[#2f2f2f] dark:text-[#3c3c3c]  ' : roleError ? 'border-red-500 border' : 'bg-transparent  border-[#b4b4b4] dark:text-white dark:text-text-primary-dark text-text-primary '} relative inline-block px-6 py-3 font-medium  
              border-2 rounded-lg overflow-hidden group 
               
             focus:outline-none`}

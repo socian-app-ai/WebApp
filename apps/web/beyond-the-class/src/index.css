@@ -66,9 +66,20 @@ body {
 
 
 /* ? BUTTTON CSS */
-  --radial-gradient-background: 250, 250, 250;
+
+  --btn-radial-gradient-background: 250, 250, 250;
+  --btn-solid-color-background: 15, 15, 15;
+  --btn-overlay-color: 255, 255, 255;
+
+
+  /* ? BACKGROUND CSS */
+  --dark-radial-gradient-background: 250, 250, 250;
+  --dark-solid-color-background: 15, 15, 15;
+  
+
+  --radial-gradient-background: 218, 211, 115;
   --solid-color-background: 15, 15, 15;
-  --overlay-color: 255, 255, 255;
+  
 }
 
 .auth_page_style{
@@ -80,12 +91,19 @@ body {
   height: 10vh;
 }
 
-.auth_page_style-gradient {
+.dark .auth_page_style-gradient {
   background: radial-gradient(
           circle at 50% 0%,
-          rgba(var(--radial-gradient-background), 0.05) 0%,
+          rgba(var(--dark-radial-gradient-background), 0.05) 0%,
           transparent 60%
       )
+      rgba(var(--dark-solid-color-background), 1);
+}
+
+.auth_page_style-gradient {
+  background: radial-gradient(
+    circle at 0% 39%, rgb(255 255 255 / 50%) 15%, transparent 52%
+    ) rgb(243 243 243)
       rgba(var(--solid-color-background), 1);
 }
 
@@ -221,10 +239,10 @@ label {
 .radial-gradient{
     background: radial-gradient(
             circle at 50% 0%,
-            rgba(var(--radial-gradient-background), 0.05) 0%,
+            rgba(var(--btn-radial-gradient-background), 0.05) 0%,
             transparent 60%
         )
-        rgba(var(--solid-color-background), 1);
+        rgba(var(--btn-solid-color-background), 1);
 }
 
 .linear-mask {
@@ -245,9 +263,9 @@ label {
 .linear-overlay {
     background-image: linear-gradient(
         -75deg,
-        rgba(var(--overlay-color), 0.1) calc(var(--x) + 20%),
-        rgba(var(--overlay-color), 0.5) calc(var(--x) + 25%),
-        rgba(var(--overlay-color), 0.1) calc(var(--x) + 100%)
+        rgba(var(--btn-overlay-color), 0.1) calc(var(--x) + 20%),
+        rgba(var(--btn-overlay-color), 0.5) calc(var(--x) + 25%),
+        rgba(var(--btn-overlay-color), 0.1) calc(var(--x) + 100%)
     );
     mask:
         linear-gradient(black, black) content-box,
