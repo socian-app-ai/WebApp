@@ -1,25 +1,10 @@
 const express = require('express');
-const { getCafeUserDetails } = require('../../../../utils/utils');
-const Cafe = require('../../../../models/cafes_campus/Cafe.model');
-const FoodCategory = require('../../../../models/cafes_campus/category.food.item.model');
-const FoodItem = require('../../../../models/cafes_campus/food.item.model');
 const router = express.Router();
 const { body, validationResult } = require('express-validator');
-
-
-router.get('/test', async (req, res) => {
-    try {
-        console.log("Inside")
-    } catch (error) {
-        console.error("ERROR")
-    }
-})
-// cafeProtect,
-
-
-
-
-
+const Cafe = require('../../../models/cafes_campus/Cafe.model');
+const { getUserDetails } = require('../../../utils/utils');
+const FoodCategory = require('../../../models/cafes_campus/category.food.item.model');
+const FoodItem = require('../../../models/cafes_campus/food.item.model');
 
 
 // Cafe admin might be able to read and write. translate the reviews to them. or Speak the revies. Or just make app view in URDU
@@ -33,7 +18,47 @@ const handleValidationErrors = (req, res, next) => {
     next();
 };
 
+// @route   POST /api/cafes/create
+// @desc    Create a new cafe
+// @access  Private
+router.post('/create',
+    [
+        body('name').notEmpty().withMessage('Cafe name is required'),
+        body('attachedCafeAdmin').notEmpty().withMessage('Cafe admin is required'),
+    ],
+    handleValidationErrors,
+    async (req, res) => {
+        try {
+            const { name, attachedCafeAdmin, contact, information, coordinates } = req.body;
+            const { userId, universityOrigin, campusOrigin } = getUserDetails(req);
 
+            const newCafe = new Cafe({
+                name,
+                attachedCafeAdmin,
+                contact: contact || '',
+                information: information || '',
+                coordinates: {
+                    _id: undefined,
+                    latitude: coordinates?.latitude || 0,
+                    longitude: coordinates?.longitude || 0,
+                    locationInText: coordinates?.locationInText || ''
+                },
+                createdBy: { user: userId },
+                references: {
+                    universityId: universityOrigin,
+                    campusId: campusOrigin
+                }
+            });
+
+            await newCafe.save();
+            res.status(201).json({ message: 'Cafe created successfully', cafe: newCafe });
+
+        } catch (error) {
+            console.error("Error creating Cafe:", error);
+            res.status(500).json({ message: "Internal Server Error" });
+        }
+    }
+);
 
 // Generic Update Handler
 const updateCafeField = (field) => async (req, res) => {
@@ -42,7 +67,7 @@ const updateCafeField = (field) => async (req, res) => {
     updateData[field] = req.body[field];
 
     try {
-        const { campusId } = getCafeUserDetails(req);
+        const { campusOrigin } = getUserDetails(req);
         const updatedCafe = await Cafe.findByIdAndUpdate(cafeId, {
             $set: updateData,
             $push: {
@@ -50,14 +75,15 @@ const updateCafeField = (field) => async (req, res) => {
                     whatUpdated: `${field}`,
                     cafeId,
                     userId: cafeUserId,
-                    userType: 'CafeUser',
+                    userType: 'User',
                     updatedAt: new Date()
                 }
             }
+
         }, { new: true });
 
         if (!updatedCafe) return res.status(404).json({ message: "Cafe not found" });
-        if (updatedCafe.references.campusId !== campusId) {
+        if (updatedCafe.references.campusId !== campusOrigin) {
             console.warn(`Unauthorized attempt to update cafe outside of campus`);
         }
 
@@ -87,7 +113,7 @@ router.patch('/update/:cafeId/coordinates',
         const { latitude, longitude, locationInText } = req.body;
 
         try {
-            const { campusId, cafeUserId } = getCafeUserDetails(req);
+            const { campusOrigin } = getUserDetails(req);
             const updatedCafe = await Cafe.findByIdAndUpdate(
                 cafeId,
                 {
@@ -98,7 +124,7 @@ router.patch('/update/:cafeId/coordinates',
                             whatUpdated: `Coordinates`,
                             cafeId,
                             userId: cafeUserId,
-                            userType: 'CafeUser',
+                            userType: 'User',
                             updatedAt: new Date()
                         }
                     }
@@ -107,7 +133,7 @@ router.patch('/update/:cafeId/coordinates',
             );
 
             if (!updatedCafe) return res.status(404).json({ message: "Cafe not found" });
-            if (updatedCafe.references.campusId !== campusId) {
+            if (updatedCafe.references.campusId !== campusOrigin) {
                 console.warn(`Unauthorized attempt to update cafe coordinates outside of campus`);
             }
 
@@ -138,7 +164,7 @@ router.post('/:cafeId/category', async (req, res) => {
     try {
         const { name, description, imageUrl } = req.body;
         const cafeId = req.params.cafeId;
-        const { cafeUserId, universityId, campusId } = getCafeUserDetails(req);
+        const { userId, campusOrigin, universityOrigin } = getUserDetails(req);
 
 
         const newCategory = new FoodCategory({
@@ -146,11 +172,11 @@ router.post('/:cafeId/category', async (req, res) => {
             description,
             imageUrl: imageUrl || '',
             attachedCafe: cafeId,
-            categoryAddedBy: cafeUserId,
-            categoryAddedByModel: 'CafeUser',
+            categoryAddedBy: userId,
+            categoryAddedByModel: 'User',
             references: {
-                universityId: universityId,
-                campusId: campusId,
+                universityId: universityOrigin,
+                campusId: campusOrigin,
             },
         });
 
@@ -163,11 +189,10 @@ router.post('/:cafeId/category', async (req, res) => {
                     whatUpdated: `Category-${newCategory._id}`,
                     cafeId,
                     userId: cafeUserId,
-                    userType: 'CafeUser',
+                    userType: 'User',
                     updatedAt: new Date()
                 }
-            },
-
+            }
         })
 
         await newCategory.save();
@@ -309,7 +334,7 @@ router.post('/:cafeId/items', async (req, res) => {
             volume, discount, references } = req.body;
         const cafeId = req.params.cafeId;
 
-        const { cafeUserId, universityId, campusId } = getCafeUserDetails(req);
+        const { userId, campusOrigin, universityOrigin } = getUserDetails(req);
 
 
         const foodItemData = {
@@ -322,12 +347,12 @@ router.post('/:cafeId/items', async (req, res) => {
             volume,
             discount,
             attachedCafe: cafeId,
-            foodItemAddedBy: cafeUserId,
-            foodItemAddedByModel: 'CafeUser',
+            foodItemAddedBy: userId,
+            foodItemAddedByModel: 'User',
             references: {
-                universityId: universityId,
-                campusId: campusId,
-            },
+                universityId: universityOrigin,
+                campusId: campusOrigin
+            }
         };
         // Validate category existence
         if (category) {
@@ -339,6 +364,7 @@ router.post('/:cafeId/items', async (req, res) => {
 
         const newItem = new FoodItem(foodItemData);
 
+
         const cafe = await Cafe.findByIdAndUpdate(cafeId, {
             $addToSet: {
                 foodItems: newItem._id
@@ -348,7 +374,7 @@ router.post('/:cafeId/items', async (req, res) => {
                     whatUpdated: `FoodItem-${newItem._id}`,
                     cafeId,
                     userId: cafeUserId,
-                    userType: 'CafeUser',
+                    userType: 'User',
                     updatedAt: new Date()
                 }
             }
@@ -405,6 +431,7 @@ const updateFoodItemField = (field) => async (req, res) => {
     updateData[field] = req.body[field];
 
     try {
+        // const { campusOrigin } = getUserDetails(req);
         const updatedFoodItem = await FoodItem.findByIdAndUpdate(
             { _id: itemId, attachedCafe: cafeId, deleted: false },
             { $set: updateData },
@@ -458,8 +485,6 @@ router.delete('/:cafeId/items/:itemId', async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 });
-
-
 
 
 module.exports = router;
