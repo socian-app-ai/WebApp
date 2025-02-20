@@ -1,7 +1,7 @@
 
 export default function ModDashboard() {
     return (
-        <div className="pt-10 px-2">
+        <div className="pt-10 px-2 min-h-screen">
             This is Mod Dashboard (You can only select your campus informatio)
         </div>
     )

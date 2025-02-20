@@ -110,9 +110,9 @@ const EmailVerification = () => {
 
     return (
         <div className="auth_page_style-gradient flex items-center justify-center min-h-screen bg-gray-100">
-            <div className="bg-white p-8 rounded-2xl shadow-md w-full max-w-md">
-                <h2 className="text-2xl font-semibold mb-4">Verify your email</h2>
-                <p className="text-gray-700 mb-6">
+            <div className=" dark:bg-[#181818] dark:border-[#ffffff33] border-[0.01rem]  border-[#cccccc] bg-[#f9f9f9]  p-8 rounded-2xl shadow-md w-full max-w-md">
+                <h2 className="dark:text-white text-2xl font-semibold mb-4">Verify your email</h2>
+                <p className="dark:text-white text-gray-700 mb-6">
                     We sent you a six digit confirmation code to
                     <br />
                     <span className="font-medium">{email}</span>. Please enter it below to
@@ -127,16 +127,22 @@ const EmailVerification = () => {
                     value={code}
                     onChange={handleInputChange}
                     placeholder="Enter 6-digit code"
-                    className="w-full p-3 border rounded-md mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="
+                    text-gray-900 dark:text-white text-sm 
+                        bg-gray-100 dark:bg-gray-900  border-gray-300 dark:border-gray-600 
+
+                    dark:text-[#fbfbfbc7] shadow-sm w-full p-3 
+                    border rounded-md mb-4 focus:outline-none focus:ring-2
+                     focus:ring-blue-500"
                     disabled={loading}
                 />
 
-                <p className="text-sm text-gray-500 mt-4">
+                <p className="text-sm dark:text-[#ffffffb4] text-gray-500 mt-4">
                     Didn&apos;t receive a code?{" "}
                     <button
                         onClick={handleResendCode}
                         className={`${canResend
-                            ? "text-blue-500 hover:underline focus:outline-none"
+                            ? "dark:text-white text-black hover:underline focus:outline-none"
                             : "text-gray-400 cursor-not-allowed"
                             }`}
                         disabled={!canResend}

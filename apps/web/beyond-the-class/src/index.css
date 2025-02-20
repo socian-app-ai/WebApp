@@ -107,6 +107,16 @@ body {
       rgba(var(--solid-color-background), 1);
 }
 
+
+.dark .bg-gradient-style-r-d{
+  background: radial-gradient(
+           at 100% 100%,
+          rgba(var(--dark-radial-gradient-background), 0.05) 0%,
+          transparent 60%
+      )
+      rgba(var(--dark-solid-color-background), 1);
+}
+
 /* .dark h1,
 .dark h2,
 .dark h3,
