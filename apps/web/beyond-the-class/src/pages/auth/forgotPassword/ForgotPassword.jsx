@@ -324,18 +324,18 @@ export default function ForgotPassword() {
 
 
     return (
-        <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+        <div className="auth_page_style-gradient  min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
             <div className="sm:mx-auto sm:w-full sm:max-w-md">
-                <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+                <h2 className="mt-6 text-center text-3xl font-extrabold dark:text-white text-gray-900">
                     Reset your password
                 </h2>
-                <p className="mt-2 text-center text-sm text-gray-600">
+                <p className="dark:text-[#fbfbfbc7] mt-2 text-center text-sm text-gray-600">
                     We&apos;ll help you get back into your account
                 </p>
             </div>
 
             <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-                <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+                <div className="dark:bg-[#181818] dark:border-[#ffffff33] border-[0.01rem]  border-[#b4b4b4] bg-[#e6e6e6]  py-8 px-4 shadow sm:rounded-lg sm:px-10">
                     {responseState && (
                         <div className={`mb-4 p-4 rounded-md ${passwordUpdated ? 'text-green-700 bg-green-400' : 'text-blue-700 bg-blue-50'}`}>
                             {responseState}
@@ -344,13 +344,14 @@ export default function ForgotPassword() {
                     )}
 
                     {/* Email Input Section */}
-                    <div className={`space-y-6 ${!hide || confirmedOTP ? 'opacity-50' : ''}`}>
-                        <div className="relative">
-                            <Mail className="absolute left-3 top-10 h-5 w-5 text-gray-400" />
+                    <div className={`w-full space-y-6  ${!hide || confirmedOTP ? 'opacity-50' : ''}`}>
+                        <div className="w-full relative shadow-none">
+                            <Mail className="hidden md:block absolute left-3 top-10 h-5 w-5 dark:text-[#fbfbfbc7] text-gray-800" />
                             <LabelInputCustomizable
                                 type={inputType === "email" ? "email" : "text"}
                                 name={inputType === "email" ? "email" : "username"}
-                                className="pl-10 w-full rounded-md border-gray-300 shadow-sm"
+                                className="dark:text-[#fbfbfbc7] md:pl-10 w-full rounded-md border-gray-300 shadow-sm"
+                                inputClassName="dark:text-[#fbfbfbc7]"
                                 value={email}
                                 label="Email/Username"
                                 placeholder="fa21-bcs-000@cuilahore.pk"
@@ -383,7 +384,8 @@ export default function ForgotPassword() {
                                     type="text"
                                     name="otp"
                                     disabled={disableOTP}
-                                    className="pl-10 w-full rounded-md border-gray-300 shadow-sm"
+                                    className="dark:text-[#fbfbfbc7] pl-10 w-full rounded-md border-gray-300 shadow-sm"
+                                    inputClassName="dark:text-[#fbfbfbc7]"
                                     value={otp}
                                     label="Enter OTP"
                                     placeholder="* * * *"
@@ -425,7 +427,8 @@ export default function ForgotPassword() {
                                     type="password"
                                     name="new-password"
                                     disabled={confirmedPassword}
-                                    className="pl-10 w-full rounded-md border-gray-300 shadow-sm"
+                                    className="dark:text-[#fbfbfbc7] pl-10 w-full rounded-md border-gray-300 shadow-sm"
+                                    inputClassName="dark:text-[#fbfbfbc7]"
                                     value={newPassword}
                                     label="New Password"
                                     placeholder="Minimum 8 characters"

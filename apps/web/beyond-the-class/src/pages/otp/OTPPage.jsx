@@ -109,7 +109,7 @@ const EmailVerification = () => {
     }, [resendTimer, canResend]);
 
     return (
-        <div className="flex items-center justify-center min-h-screen bg-gray-100">
+        <div className="auth_page_style-gradient flex items-center justify-center min-h-screen bg-gray-100">
             <div className="bg-white p-8 rounded-2xl shadow-md w-full max-w-md">
                 <h2 className="text-2xl font-semibold mb-4">Verify your email</h2>
                 <p className="text-gray-700 mb-6">
