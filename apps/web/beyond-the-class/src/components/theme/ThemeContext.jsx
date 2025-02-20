@@ -11,7 +11,7 @@ const THEME_OPTIONS = {
 };
 
 export const ThemeProvider = ({ children }) => {
-    const [theme, setTheme] = useState(localStorage.getItem("theme") || THEME_OPTIONS.TIME_BASED);
+    const [theme, setTheme] = useState(localStorage.getItem("theme-btc") || THEME_OPTIONS.DARK);
 
     useEffect(() => {
         applyTheme(theme);
@@ -31,7 +31,7 @@ export const ThemeProvider = ({ children }) => {
 
         document.documentElement.classList.remove("light", "dark");
         document.documentElement.classList.add(finalTheme);
-        localStorage.setItem("theme", selectedTheme);
+        localStorage.setItem("theme-btc", selectedTheme);
     };
 
     return (
