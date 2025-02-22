@@ -26,6 +26,7 @@ import { UsersRound } from "lucide-react";
 import { User } from "lucide-react";
 import { Handshake } from "lucide-react";
 import { Coffee } from "lucide-react";
+import { Trash } from "lucide-react";
 
 function Sidebar() {
   const { sideBarState, setSideBarState } = useSetSideBarState();
@@ -88,6 +89,11 @@ function Sidebar() {
     {
       name: "Societies",
       path: `/student/societies`,
+      icon: <FaMedapps className="w-5" />,
+    },
+    {
+      name: "Rules Log",
+      path: `/student/rules`,
       icon: <FaMedapps className="w-5" />,
     },
   ];
@@ -420,6 +426,11 @@ function Sidebar() {
           name: 'Cafe Discounts',
           path: '/mod/cafe/discounts',
           icon: <Coffee className="w-5" />,
+        },
+        {
+          name: 'Cafe History/Deletes',
+          path: '/mod/cafe/deletes',
+          icon: <Trash className="w-5" />,
         }
       ]
     },

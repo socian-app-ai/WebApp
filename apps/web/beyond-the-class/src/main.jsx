@@ -49,6 +49,8 @@ import ModDashboard from './pages/home/mod/ModDashboard.jsx';
 import CafeManage from './pages/mod/cafe/CafeManage.jsx';
 import CafeNew from './pages/mod/cafe/CafeNew.jsx';
 import { ThemeProvider } from './components/theme/ThemeContext.jsx';
+import CafeDeletes from './pages/mod/cafe/CafeDeletes.jsx';
+import CafeEdit from './pages/mod/cafe/CafeEdit.jsx';
 
 const router = createBrowserRouter([
   {
@@ -150,7 +152,10 @@ const router = createBrowserRouter([
           { path: 'users', element: <Layout><UsersView /></Layout> },
           // CafeConsole
           { path: 'cafe/manage', element: <Layout><CafeManage /></Layout> },
-          { path: 'cafe/new', element: <Layout><CafeNew /></Layout> }
+          { path: 'cafe/new', element: <Layout><CafeNew /></Layout> },
+          { path: 'cafe/deletes', element: <Layout><CafeDeletes /></Layout> },
+          { path: 'cafe/:cafeId', element: <Layout><CafeEdit /></Layout> },
+
 
           // { path: "campus/edit/:campusId", element: <Layout> <AddDepartmentAndSubjects /></Layout> },
           // { path: "campus/pastpapers/:campusId", element: <Layout> <AddPastPapers /></Layout> },

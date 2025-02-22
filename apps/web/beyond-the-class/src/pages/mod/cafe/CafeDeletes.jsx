@@ -1,21 +1,21 @@
+
 import { useEffect, useState } from "react";
 import axiosInstance from "../../../config/users/axios.instance";
 import { buildDynamicRoute, routesForApi } from "../../../utils/routes/routesForLinks";
 import formatTimeDifference, { formatTimeDifference2 } from "../../../utils/formatDate";
-import { Link } from "react-router-dom";
 
-const CafeManage = () => {
+const CafeDeletes = () => {
     const [sortConfig, setSortConfig] = useState({ key: 'name', direction: 'asc' });
 
 
     const [cafes, setCafes] = useState(null);
     const [selectedCafe, setSelectedCafe] = useState(null);
-    const [deleteConfirmation, setDeleteConfirmation] = useState({ isOpen: false, cafeId: null, cafeName: '' });
+    const [unDeleteConfirmation, setUnDeleteConfirmation] = useState({ isOpen: false, cafeId: null, cafeName: '' });
 
     useEffect(() => {
         const fetchCafes = async () => {
             try {
-                const response = await axiosInstance.get(routesForApi.mod.cafe.all);
+                const response = await axiosInstance.get(routesForApi.mod.cafe.deletes);
                 console.log("Cafes:", response.data.cafes);
                 setCafes(response.data.cafes);
             } catch (error) {
@@ -26,23 +26,24 @@ const CafeManage = () => {
     }, []);
 
     const changeCafeStatus = async (cafeId, status) => {
-        try {
-            console.log("CAFEID", cafeId)
-            // buildDynamicRoute(routesForApi.mod.cafe.update[`${cafeId}`].status, { cafeId: cafeId })
-            const response = await axiosInstance.patch(`/api/mod/cafe/update/${cafeId}/status`, {
-                status: status === 'active' ? 'deactive' : 'active'
-            });
-            console.log("Cafes:", response.data.cafe);
-            const updatedCafe = response.data.cafe;
+        return;
+        // try {
+        //     console.log("CAFEID", cafeId)
+        //     // buildDynamicRoute(routesForApi.mod.cafe.update[`${cafeId}`].status, { cafeId: cafeId })
+        //     const response = await axiosInstance.patch(`/api/mod/cafe/update/${cafeId}/status`, {
+        //         status: status === 'active' ? 'deactive' : 'active'
+        //     });
+        //     console.log("Cafes:", response.data.cafe);
+        //     const updatedCafe = response.data.cafe;
 
-            setCafes((prevCafes) =>
-                prevCafes.map((cafe) =>
-                    cafe._id === updatedCafe._id ? { ...cafe, status: updatedCafe.status, updatedAt: updatedCafe.updatedAt } : cafe
-                )
-            );
-        } catch (error) {
-            console.error("Error fetching cafes:", error);
-        }
+        //     setCafes((prevCafes) =>
+        //         prevCafes.map((cafe) =>
+        //             cafe._id === updatedCafe._id ? { ...cafe, status: updatedCafe.status, updatedAt: updatedCafe.updatedAt } : cafe
+        //         )
+        //     );
+        // } catch (error) {
+        //     console.error("Error fetching cafes:", error);
+        // }
     };
 
 
@@ -55,7 +56,7 @@ const CafeManage = () => {
 
 
     const handleDeleteClick = (cafe) => {
-        setDeleteConfirmation({
+        setUnDeleteConfirmation({
             isOpen: true,
             cafeId: cafe._id,
             cafeName: cafe.name
@@ -63,20 +64,20 @@ const CafeManage = () => {
         setSelectedCafe(null);
     };
 
-    const handleDeleteConfirm = async () => {
+    const handleUnDeleteConfirm = async () => {
         try {
-            await axiosInstance.delete(`/api/mod/cafe/${deleteConfirmation.cafeId}/delete`);
+            await axiosInstance.put(`/api/mod/cafe/${unDeleteConfirmation.cafeId}/undelete`);
             setCafes((prevCafes) =>
-                prevCafes.filter(cafe => cafe._id !== deleteConfirmation.cafeId)
+                prevCafes.filter(cafe => cafe._id !== unDeleteConfirmation.cafeId)
             );
-            setDeleteConfirmation({ isOpen: false, cafeId: null, cafeName: '' });
+            setUnDeleteConfirmation({ isOpen: false, cafeId: null, cafeName: '' });
         } catch (error) {
-            console.error("Error deleting cafe:", error);
+            console.error("Error un-deleting cafe:", error);
         }
     };
 
-    const handleDeleteCancel = () => {
-        setDeleteConfirmation({ isOpen: false, cafeId: null, cafeName: '' });
+    const handleUnDeleteCancel = () => {
+        setUnDeleteConfirmation({ isOpen: false, cafeId: null, cafeName: '' });
     };
 
 
@@ -85,7 +86,8 @@ const CafeManage = () => {
         <div className="p-6 dark:bg-[#181818] bg-gray-300 min-h-screen">
             <div className="mb-6">
                 <h2 className="text-2xl font-bold dark:text-white text-gray-800">Cafe Management Dashboard</h2>
-                <p className="dark:text-white text-gray-600">Manage and monitor all registered cafes</p>
+                <p className="dark:text-white text-gray-600">Recover All Deleted Cafe from Here</p>
+                <p className="dark:text-gray-400 text-gray-600 text-xs font-sans">All actions are recorded based on user Id</p>
             </div>
 
             <div className="dark:bg-[#3e3e3e] bg-[#f7f7f7] rounded-lg shadow overflow-hidden min-h-screen">
@@ -165,16 +167,16 @@ const CafeManage = () => {
                                             {selectedCafe === cafe._id && (
                                                 <div className="z-20 absolute right-0 mt-2 w-48 rounded-md shadow-lg dark:bg-[#1d1d1d] bg-white ring-1 ring-black ring-opacity-5">
                                                     <div className="py-1">
-                                                        <Link to={`/mod/cafe/${cafe._id}`} className="block px-4 py-2 text-sm dark:text-white text-gray-700 dark:hover:bg-gray-500 hover:bg-gray-100 w-full text-left">
+                                                        <button className="block px-4 py-2 text-sm dark:text-white text-gray-700 dark:hover:bg-gray-500 hover:bg-gray-100 w-full text-left">
                                                             Edit Details
-                                                        </Link>
+                                                        </button>
                                                         <button onClick={() => changeCafeStatus(cafe._id, cafe.status)} className="block px-4 py-2 text-sm dark:text-white text-gray-700 dark:hover:bg-gray-500 hover:bg-gray-100 w-full text-left">
                                                             Change Status
                                                         </button>
                                                         <button
                                                             onClick={() => handleDeleteClick(cafe)}
-                                                            className="block px-4 py-2 text-sm text-red-600 dark:hover:bg-red-100 hover:bg-red-50 w-full text-left">
-                                                            Delete Cafe
+                                                            className="block px-4 py-2 text-sm text-green-600 dark:hover:bg-green-100 hover:bg-green-50 w-full text-left">
+                                                            Un Delete Cafe
                                                         </button>
                                                     </div>
                                                 </div>
@@ -188,7 +190,7 @@ const CafeManage = () => {
                 </div>
             </div>
 
-            {deleteConfirmation.isOpen && (
+            {unDeleteConfirmation.isOpen && (
                 <div className="fixed inset-0 z-50 overflow-y-auto">
                     <div className="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
                         {/* Background overlay */}
@@ -200,8 +202,8 @@ const CafeManage = () => {
                         <div className="inline-block align-bottom dark:bg-[#1d1d1d] bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
                             <div className="px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                                 <div className="sm:flex sm:items-start">
-                                    <div className="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
-                                        <svg className="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <div className="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-green-100 sm:mx-0 sm:h-10 sm:w-10">
+                                        <svg className="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                                         </svg>
                                     </div>
@@ -211,7 +213,8 @@ const CafeManage = () => {
                                         </h3>
                                         <div className="mt-2">
                                             <p className="text-sm dark:text-gray-300 text-gray-500">
-                                                Are you sure you want to delete <bold className="font-bold">&quot;{deleteConfirmation.cafeName}&quot;</bold>? <br />This action cannot be undone.
+                                                Are you sure you want to Recover &quot;{unDeleteConfirmation.cafeName}&quot;?
+                                                No History will be recovered
                                             </p>
                                         </div>
                                     </div>
@@ -219,13 +222,13 @@ const CafeManage = () => {
                             </div>
                             <div className="px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
                                 <button
-                                    onClick={handleDeleteConfirm}
-                                    className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm"
+                                    onClick={handleUnDeleteConfirm}
+                                    className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-green-600 text-base font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 sm:ml-3 sm:w-auto sm:text-sm"
                                 >
-                                    Delete
+                                    Un-Delete
                                 </button>
                                 <button
-                                    onClick={handleDeleteCancel}
+                                    onClick={handleUnDeleteCancel}
                                     className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 dark:bg-gray-700 bg-white text-base font-medium dark:text-white text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
                                 >
                                     Cancel
@@ -239,4 +242,4 @@ const CafeManage = () => {
     );
 };
 
-export default CafeManage;
+export default CafeDeletes;

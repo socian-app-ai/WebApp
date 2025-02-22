@@ -75,7 +75,7 @@ const ToastCustom = ({ message, id, index, onClose }) => {
                 opacity: 1 - (index * 0.2)
             }}
         >
-            <div className="bg-white dark:border-gray-800 border border-gray-300 text-black dark:bg-black dark:text-white px-6 py-4 rounded-lg shadow-lg flex items-center justify-between gap-4 min-w-[320px]">
+            <div className="whitespace-pre bg-white dark:border-gray-800 border border-gray-300 text-black dark:bg-black dark:text-white px-6 py-4 rounded-lg shadow-lg flex items-center justify-between gap-4 min-w-[320px]">
                 <p className="text-sm">{message}</p>
                 <button
                     onClick={() => onClose(id)}
