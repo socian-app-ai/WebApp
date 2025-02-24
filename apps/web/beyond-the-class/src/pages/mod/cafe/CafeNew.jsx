@@ -1,4 +1,4 @@
-/* eslint-disable react/prop-types */
+
 import { useState, useEffect } from "react";
 import LabelInputCustomizable, { LabelDropDownSearchableInputCustomizable, LabelDropDownSearchableInputCustomizableSecond } from "../../../components/TextField/LabelInputCustomizable";
 import { Button, MenuItem, Select } from "@mui/material";
@@ -149,14 +149,14 @@ export default function CafeNew() {
 
                 <div className="mb-4 h-64 w-full mx-2">
                     <label className="block dark:text-white text-gray-700 text-sm font-bold mb-2">Set Cafe Location</label>
-                    {/* <div className="h-full w-full border rounded-lg overflow-hidden">
+                    <div className="h-full w-full border rounded-lg overflow-hidden">
                         <GoogleMapReact
                             bootstrapURLKeys={{ key: import.meta.env.VITE_GOOGLE_MAPS_API_KEY }}
                             defaultCenter={{ lat: 31.5204, lng: 74.3587 }}
                             defaultZoom={14}
                             onClick={handleMapClick}
                         />
-                    </div> */}
+                    </div>
                     <p className="text-sm mt-2">Latitude: {newCafe.coordinates.latitude}, Longitude: {newCafe.coordinates.longitude}</p>
                 </div>
 
@@ -168,7 +168,7 @@ export default function CafeNew() {
 
 
 
-            <MapComponent
+            {/* <MapComponent
                 setNewCafe={setNewCafe}
                 coordinates={newCafe.coordinates}
                 onLocationSelect={({ lat, lng }) => {
@@ -177,7 +177,7 @@ export default function CafeNew() {
                         coordinates: { latitude: lat, longitude: lng }
                     }));
                 }}
-            />
+            /> */}
         </div>
     );
 }
@@ -216,20 +216,51 @@ export default function CafeNew() {
 
 
 
-// Custom Pin Component
-// const MapPin = () => (
-//     <div className="relative -translate-x-1/2 -translate-y-full">
-//         <div className="w-6 h-6 bg-red-500 rounded-full animate-bounce">
-//             <div className="absolute bottom-0 left-1/2 w-2 h-2 bg-red-500 transform rotate-45 -translate-x-1/2 translate-y-1/2" />
-//         </div>
-//     </div>
-// );
+// // Custom Pin Component
+// // const MapPin = () => (
+// //     <div className="relative -translate-x-1/2 -translate-y-full">
+// //         <div className="w-6 h-6 bg-red-500 rounded-full animate-bounce">
+// //             <div className="absolute bottom-0 left-1/2 w-2 h-2 bg-red-500 transform rotate-45 -translate-x-1/2 translate-y-1/2" />
+// //         </div>
+// //     </div>
+// // );
 
-// // Search Box Component
+// // // Search Box Component
+// // const SearchBox = ({ onSearch }) => {
+// //     const [query, setQuery] = useState("");
+
+// //     const handleSearch = async (e) => {
+// //         e.preventDefault();
+// //         if (query.trim()) {
+// //             onSearch(query);
+// //         }
+// //     };
+
+// //     return (
+// //         <form onSubmit={handleSearch} className="absolute top-4 left-4 z-10 flex">
+// //             <input
+// //                 type="text"
+// //                 value={query}
+// //                 onChange={(e) => setQuery(e.target.value)}
+// //                 placeholder="Search location..."
+// //                 className="px-4 py-2 w-64 dark:bg-gray-900 dark:text-white text-black border rounded-l-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+// //             />
+// //             <button
+// //                 type="submit"
+// //                 className="px-4 py-2 bg-blue-500 dark:bg-gray-900 dark:text-white text-black rounded-r-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+// //             >
+// //                 <Search className="w-5 h-5" />
+// //             </button>
+// //         </form>
+// //     );
+// // };
+
+
+
 // const SearchBox = ({ onSearch }) => {
 //     const [query, setQuery] = useState("");
 
-//     const handleSearch = async (e) => {
+//     const handleSearchSubmit = (e) => {
 //         e.preventDefault();
 //         if (query.trim()) {
 //             onSearch(query);
@@ -237,7 +268,7 @@ export default function CafeNew() {
 //     };
 
 //     return (
-//         <form onSubmit={handleSearch} className="absolute top-4 left-4 z-10 flex">
+//         <form onSubmit={handleSearchSubmit} className="absolute top-4 left-4 z-10 flex">
 //             <input
 //                 type="text"
 //                 value={query}
@@ -256,194 +287,92 @@ export default function CafeNew() {
 // };
 
 
-
-const SearchBox = ({ onSearch }) => {
-    const [query, setQuery] = useState("");
-
-    const handleSearchSubmit = (e) => {
-        e.preventDefault();
-        if (query.trim()) {
-            onSearch(query);
-        }
-    };
-
-    return (
-        <form onSubmit={handleSearchSubmit} className="absolute top-4 left-4 z-10 flex">
-            <input
-                type="text"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search location..."
-                className="px-4 py-2 w-64 dark:bg-gray-900 dark:text-white text-black border rounded-l-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <button
-                type="submit"
-                className="px-4 py-2 bg-blue-500 dark:bg-gray-900 dark:text-white text-black rounded-r-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-                <Search className="w-5 h-5" />
-            </button>
-        </form>
-    );
-};
-
-
-const MapPin = ({ lat, lng }) => (
-    <div className="relative -translate-x-1/2 -translate-y-full">
-        <div className="w-6 h-6 bg-red-500 rounded-full animate-bounce border border-white shadow-lg">
-            <div className="absolute bottom-0 left-1/2 w-2 h-2 bg-red-500 transform rotate-45 -translate-x-1/2 translate-y-1/2" />
-        </div>
-    </div>
-);
+// const MapPin = ({ lat, lng }) => (
+//     <div className="relative -translate-x-1/2 -translate-y-full">
+//         <div className="w-6 h-6 bg-red-500 rounded-full animate-bounce border border-white shadow-lg">
+//             <div className="absolute bottom-0 left-1/2 w-2 h-2 bg-red-500 transform rotate-45 -translate-x-1/2 translate-y-1/2" />
+//         </div>
+//     </div>
+// );
 
 
 
 
 
-const MapComponent = ({ coordinates, onLocationSelect, setNewCafe }) => {
-    const [map, setMap] = useState(null);
-    const [maps, setMaps] = useState(null);
-    const [searchError, setSearchError] = useState("");
-    const [searchedLocation, setSearchedLocation] = useState(null);
-
-    const defaultCenter = {
-        lat: coordinates.latitude || 31.5204,
-        lng: coordinates.longitude || 74.3587
-    };
-
-    // const handleSearch = async (query) => {
-    //     if (!maps || !map) return;
-
-    //     const geocoder = new maps.Geocoder();
-    //     try {
-    //         const result = await new Promise((resolve, reject) => {
-    //             geocoder.geocode({ address: query }, (results, status) => {
-    //                 console.log("GEO", results, "status", status)
-    //                 if (status === "OK") {
-    //                     resolve(results[0]);
-    //                 } else {
-    //                     reject(new Error(`Geocoding failed: ${status}`));
-    //                 }
-    //             });
-    //         });
-
-    //         const { lat, lng } = result.geometry.location;
-    //         const latitude = lat();
-    //         const longitude = lng();
-
-    //         map.panTo({ lat: latitude, lng: longitude });
-    //         map.setZoom(15);
-
-    //         onLocationSelect({ lat: latitude, lng: longitude });
-
-    //         // Store the searched location to display a pin
-    //         setSearchedLocation({ latitude, longitude });
-
-    //         setSearchError("");
-    //     } catch (error) {
-    //         setSearchError("Location not found. Please try again.");
-    //         console.error("Geocoding error:", error);
-    //     }
-    // };
-
-
-    const handleSearch = async (query, setNewCafe) => {
-        try {
-            const response = await axiosInstance.get(`https://maps.googleapis.com/maps/api/geocode/json`, {
-                params: {
-                    address: query,
-                    key: import.meta.env.VITE_GOOGLE_MAPS_API_KEY
-                }
-            });
-
-            if (response.data.status === "OK") {
-                const location = response.data.results[0].geometry.location;
-                console.log("Location Found:", location);
-
-                setNewCafe((prev) => ({
-                    ...prev,
-                    coordinates: {
-                        latitude: location.lat,
-                        longitude: location.lng
-                    }
-                }));
-            } else {
-                console.error("Geocode API Error:", response.data.status);
-            }
-        } catch (error) {
-            console.error("Error fetching location:", error);
-        }
-    };
-    const handleApiLoaded = (map, maps) => {
-        setMap(map);
-        setMaps(maps);
-    };
-
-    return (
-        <div className="relative h-full w-full">
-            <SearchBox onSearch={handleSearch} />
-            {searchError && <p className="text-red-500">{searchError}</p>}
-            <div className="h-full w-full border rounded-lg overflow-hidden">
-                <GoogleMapReact
-                    bootstrapURLKeys={{ key: import.meta.env.VITE_GOOGLE_MAPS_API_KEY }}
-                    defaultCenter={defaultCenter}
-                    defaultZoom={14}
-                    onClick={({ lat, lng }) => onLocationSelect({ lat, lng })}
-                    yesIWantToUseGoogleMapApiInternals
-                    onGoogleApiLoaded={({ map, maps }) => handleApiLoaded(map, maps)}
-                >
-                    {/* Display the marker when a place is searched */}
-                    {searchedLocation && (
-                        <MapPin lat={searchedLocation.latitude} lng={searchedLocation.longitude} />
-                    )}
-                </GoogleMapReact>
-            </div>
-        </div>
-    );
-};
-
-
-
-
-// const MapComponent = ({ coordinates, onLocationSelect }) => {
+// const MapComponent = ({ coordinates, onLocationSelect, setNewCafe }) => {
 //     const [map, setMap] = useState(null);
 //     const [maps, setMaps] = useState(null);
 //     const [searchError, setSearchError] = useState("");
+//     const [searchedLocation, setSearchedLocation] = useState(null);
 
 //     const defaultCenter = {
 //         lat: coordinates.latitude || 31.5204,
 //         lng: coordinates.longitude || 74.3587
 //     };
 
-//     const handleSearch = async (query) => {
-//         if (!maps || !map) return;
+//     // const handleSearch = async (query) => {
+//     //     if (!maps || !map) return;
 
-//         const geocoder = new maps.Geocoder();
+//     //     const geocoder = new maps.Geocoder();
+//     //     try {
+//     //         const result = await new Promise((resolve, reject) => {
+//     //             geocoder.geocode({ address: query }, (results, status) => {
+//     //                 console.log("GEO", results, "status", status)
+//     //                 if (status === "OK") {
+//     //                     resolve(results[0]);
+//     //                 } else {
+//     //                     reject(new Error(`Geocoding failed: ${status}`));
+//     //                 }
+//     //             });
+//     //         });
+
+//     //         const { lat, lng } = result.geometry.location;
+//     //         const latitude = lat();
+//     //         const longitude = lng();
+
+//     //         map.panTo({ lat: latitude, lng: longitude });
+//     //         map.setZoom(15);
+
+//     //         onLocationSelect({ lat: latitude, lng: longitude });
+
+//     //         // Store the searched location to display a pin
+//     //         setSearchedLocation({ latitude, longitude });
+
+//     //         setSearchError("");
+//     //     } catch (error) {
+//     //         setSearchError("Location not found. Please try again.");
+//     //         console.error("Geocoding error:", error);
+//     //     }
+//     // };
+
+
+//     const handleSearch = async (query, setNewCafe) => {
 //         try {
-//             const result = await new Promise((resolve, reject) => {
-//                 geocoder.geocode({ address: query }, (results, status) => {
-//                     console.log("GEO", results, "status", status)
-//                     if (status === 'OK') {
-//                         resolve(results[0]);
-//                     } else {
-//                         reject(new Error(`Geocoding failed: ${status}`));
-//                     }
-//                 });
+//             const response = await axiosInstance.get(`https://maps.googleapis.com/maps/api/geocode/json`, {
+//                 params: {
+//                     address: query,
+//                     key: import.meta.env.VITE_GOOGLE_MAPS_API_KEY
+//                 }
 //             });
 
-//             const { lat, lng } = result.geometry.location;
-//             const latitude = lat();
-//             const longitude = lng();
+//             if (response.data.status === "OK") {
+//                 const location = response.data.results[0].geometry.location;
+//                 console.log("Location Found:", location);
 
-//             map.panTo({ lat: latitude, lng: longitude });
-//             map.setZoom(15);
-//             onLocationSelect({ lat: latitude, lng: longitude });
-//             setSearchError("");
+//                 setNewCafe((prev) => ({
+//                     ...prev,
+//                     coordinates: {
+//                         latitude: location.lat,
+//                         longitude: location.lng
+//                     }
+//                 }));
+//             } else {
+//                 console.error("Geocode API Error:", response.data.status);
+//             }
 //         } catch (error) {
-//             setSearchError("Location not found. Please try again.");
-//             console.error("Geocoding error:", error);
+//             console.error("Error fetching location:", error);
 //         }
 //     };
-
 //     const handleApiLoaded = (map, maps) => {
 //         setMap(map);
 //         setMaps(maps);
@@ -452,29 +381,100 @@ const MapComponent = ({ coordinates, onLocationSelect, setNewCafe }) => {
 //     return (
 //         <div className="relative h-full w-full">
 //             <SearchBox onSearch={handleSearch} />
-//             {searchError && (
-//                 <div className="absolute top-16 left-4 z-10 bg-red-100 text-red-700 px-4 py-2 rounded-lg">
-//                     {searchError}
-//                 </div>
-//             )}
-//             <GoogleMapReact
-//                 bootstrapURLKeys={{
-//                     key: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
-//                     libraries: ['places', 'geometry']
-//                 }}
-//                 defaultCenter={defaultCenter}
-//                 defaultZoom={14}
-//                 onClick={onLocationSelect}
-//                 yesIWantToUseGoogleMapApiInternals
-//                 onGoogleApiLoaded={({ map, maps }) => handleApiLoaded(map, maps)}
-//             >
-//                 {coordinates.latitude !== 0 && coordinates.longitude !== 0 && (
-//                     <MapPin
-//                         lat={coordinates.latitude}
-//                         lng={coordinates.longitude}
-//                     />
-//                 )}
-//             </GoogleMapReact>
+//             {searchError && <p className="text-red-500">{searchError}</p>}
+//             <div className="h-full w-full border rounded-lg overflow-hidden">
+//                 <GoogleMapReact
+//                     bootstrapURLKeys={{ key: import.meta.env.VITE_GOOGLE_MAPS_API_KEY }}
+//                     defaultCenter={defaultCenter}
+//                     defaultZoom={14}
+//                     onClick={({ lat, lng }) => onLocationSelect({ lat, lng })}
+//                     yesIWantToUseGoogleMapApiInternals
+//                     onGoogleApiLoaded={({ map, maps }) => handleApiLoaded(map, maps)}
+//                 >
+//                     {/* Display the marker when a place is searched */}
+//                     {searchedLocation && (
+//                         <MapPin lat={searchedLocation.latitude} lng={searchedLocation.longitude} />
+//                     )}
+//                 </GoogleMapReact>
+//             </div>
 //         </div>
 //     );
 // };
+
+
+
+
+// // const MapComponent = ({ coordinates, onLocationSelect }) => {
+// //     const [map, setMap] = useState(null);
+// //     const [maps, setMaps] = useState(null);
+// //     const [searchError, setSearchError] = useState("");
+
+// //     const defaultCenter = {
+// //         lat: coordinates.latitude || 31.5204,
+// //         lng: coordinates.longitude || 74.3587
+// //     };
+
+// //     const handleSearch = async (query) => {
+// //         if (!maps || !map) return;
+
+// //         const geocoder = new maps.Geocoder();
+// //         try {
+// //             const result = await new Promise((resolve, reject) => {
+// //                 geocoder.geocode({ address: query }, (results, status) => {
+// //                     console.log("GEO", results, "status", status)
+// //                     if (status === 'OK') {
+// //                         resolve(results[0]);
+// //                     } else {
+// //                         reject(new Error(`Geocoding failed: ${status}`));
+// //                     }
+// //                 });
+// //             });
+
+// //             const { lat, lng } = result.geometry.location;
+// //             const latitude = lat();
+// //             const longitude = lng();
+
+// //             map.panTo({ lat: latitude, lng: longitude });
+// //             map.setZoom(15);
+// //             onLocationSelect({ lat: latitude, lng: longitude });
+// //             setSearchError("");
+// //         } catch (error) {
+// //             setSearchError("Location not found. Please try again.");
+// //             console.error("Geocoding error:", error);
+// //         }
+// //     };
+
+// //     const handleApiLoaded = (map, maps) => {
+// //         setMap(map);
+// //         setMaps(maps);
+// //     };
+
+// //     return (
+// //         <div className="relative h-full w-full">
+// //             <SearchBox onSearch={handleSearch} />
+// //             {searchError && (
+// //                 <div className="absolute top-16 left-4 z-10 bg-red-100 text-red-700 px-4 py-2 rounded-lg">
+// //                     {searchError}
+// //                 </div>
+// //             )}
+// //             <GoogleMapReact
+// //                 bootstrapURLKeys={{
+// //                     key: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
+// //                     libraries: ['places', 'geometry']
+// //                 }}
+// //                 defaultCenter={defaultCenter}
+// //                 defaultZoom={14}
+// //                 onClick={onLocationSelect}
+// //                 yesIWantToUseGoogleMapApiInternals
+// //                 onGoogleApiLoaded={({ map, maps }) => handleApiLoaded(map, maps)}
+// //             >
+// //                 {coordinates.latitude !== 0 && coordinates.longitude !== 0 && (
+// //                     <MapPin
+// //                         lat={coordinates.latitude}
+// //                         lng={coordinates.longitude}
+// //                     />
+// //                 )}
+// //             </GoogleMapReact>
+// //         </div>
+// //     );
+// // };
