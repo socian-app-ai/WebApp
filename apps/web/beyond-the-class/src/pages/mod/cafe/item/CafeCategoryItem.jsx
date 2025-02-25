@@ -1,47 +1,89 @@
+/* eslint-disable react/prop-types */
 import { useEffect } from "react";
 import { useState } from "react";
 import axiosInstance from "../../../../config/users/axios.instance";
 import { routesForApi } from "../../../../utils/routes/routesForLinks";
 import { formatTimeDifference2 } from "../../../../utils/formatDate";
 import { Link } from "react-router-dom";
+import DarkButton from "../../../../components/Buttons/DarkButton";
+import { useParams } from "react-router-dom";
+import { startTransition } from "react";
+import LabelInputCustomizable, { LabelDropDownSearchableInputCustomizable } from "../../../../components/TextField/LabelInputCustomizable";
+import LabelFileInputCustomizable from "../../../../components/Upload/LabelFileInputCustomizable";
+import { useTransition } from "react";
+import { X } from "lucide-react";
 
 
 const CafeCategoryItem = () => {
     const [sortConfig, setSortConfig] = useState({ key: 'name', direction: 'asc' });
 
 
-    const [cafes, setCafes] = useState(null);
-    const [selectedCafe, setSelectedCafe] = useState(null);
-    const [deleteConfirmation, setDeleteConfirmation] = useState({ isOpen: false, cafeId: null, cafeName: '' });
+    const { cafeId } = useParams()
+
+
+    const [foodItems, setFoodItems] = useState(null);
+    const [selectedItem, setSelectedItem] = useState(null);
+    const [deleteConfirmation, setDeleteConfirmation] = useState({ isOpen: false, name: '', foodItemId: '' });
+    // const [categories, setCategories] = useState([]);
+
+
+    const [foodItemDialog, setFoodItemDialog] = useState(false);
+    const [newFoodItem, setNewFoodItem] = useState({
+        categoryId: '',
+        name: '',
+        description: '',
+        imageUrl: '',
+        price: 0,
+        takeAwayStatus: "false",
+        takeAwayPrice: 0
+        //   flavours,
+        // volume,
+        //  discount,
+    });
+
+    const [isPending, startTransition] = useTransition();
 
     useEffect(() => {
-        const fetchCafes = async () => {
+        const fetchFoodItems = async () => {
             try {
-                const response = await axiosInstance.get(routesForApi.mod.cafe.all);
-                console.log("Cafes:", response.data.cafes);
-                setCafes(response.data.cafes);
+                const response = await axiosInstance.get('/api/mod/cafe/' + cafeId + '/items');
+                console.log("Items:", response.data.items);
+                setFoodItems(response.data.items);
             } catch (error) {
-                console.error("Error fetching cafes:", error);
+                console.error("Error fetching Items:", error);
             }
         };
-        fetchCafes();
-    }, []);
+        fetchFoodItems();
+    }, [cafeId]);
 
-    const changeCafeStatus = async (cafeId, status) => {
+
+    const fetchCategories = async () => {
         try {
-            console.log("CAFEID", cafeId)
+            const response = await axiosInstance.get('/api/mod/cafe/' + cafeId + "/categories");
+            console.log("Categories:", response.data.categories);
+            // setCategories(response.data.categories);
+            return response.data.categories;
+        } catch (error) {
+            console.error("Error fetching categories:", error);
+        }
+    };
+
+    const changeCafeStatus = async (itemId, status) => {
+        try {
+            console.log("CAFEID", itemId)
             // buildDynamicRoute(routesForApi.mod.cafe.update[`${cafeId}`].status, { cafeId: cafeId })
-            const response = await axiosInstance.patch(`/api/mod/cafe/update/${cafeId}/status`, {
+            const response = await axiosInstance.patch(`/api/mod/cafe/update/${cafeId}/item/${itemId}/status`, {
                 status: status === 'active' ? 'deactive' : 'active'
             });
-            console.log("Cafes:", response.data.cafe);
-            const updatedCafe = response.data.cafe;
+            console.log("Cafes:", response.data.item);
+            const updatedItem = response.data.item;
 
-            setCafes((prevCafes) =>
-                prevCafes.map((cafe) =>
-                    cafe._id === updatedCafe._id ? { ...cafe, status: updatedCafe.status, updatedAt: updatedCafe.updatedAt } : cafe
+            setFoodItems((prevItems) =>
+                prevItems.map((item) =>
+                    item._id === updatedItem._id ? { ...item, status: updatedItem.status, updatedAt: updatedItem.updatedAt } : item
                 )
             );
+
         } catch (error) {
             console.error("Error fetching cafes:", error);
         }
@@ -56,40 +98,167 @@ const CafeCategoryItem = () => {
 
 
 
-    const handleDeleteClick = (cafe) => {
+    const handleDeleteClick = (foodItem) => {
         setDeleteConfirmation({
             isOpen: true,
-            cafeId: cafe._id,
-            cafeName: cafe.name
+            foodItemId: foodItem._id,
+            name: foodItem.name
         });
-        setSelectedCafe(null);
+        setSelectedItem(null);
     };
 
     const handleDeleteConfirm = async () => {
         try {
-            await axiosInstance.delete(`/api/mod/cafe/${deleteConfirmation.cafeId}/delete`);
-            setCafes((prevCafes) =>
-                prevCafes.filter(cafe => cafe._id !== deleteConfirmation.cafeId)
+            await axiosInstance.delete(`/api/mod/cafe/${cafeId}/item/${deleteConfirmation.foodItemId}/delete`);
+            setFoodItems((foodItems) =>
+                foodItems.filter(foodItem => foodItem._id !== deleteConfirmation.foodItemId)
             );
-            setDeleteConfirmation({ isOpen: false, cafeId: null, cafeName: '' });
+            setDeleteConfirmation({ isOpen: false, name: null, foodItemId: '' });
         } catch (error) {
             console.error("Error deleting cafe:", error);
         }
     };
 
     const handleDeleteCancel = () => {
-        setDeleteConfirmation({ isOpen: false, cafeId: null, cafeName: '' });
+        setDeleteConfirmation({ isOpen: false, name: null, foodItemId: '' });
     };
 
+
+    const handleFoodItemDialog = () => {
+        setFoodItemDialog(!foodItemDialog);
+    }
+
+    const handleFoodItemCreate = async () => {
+        try {
+            const foodItemBody = {
+                name: newFoodItem.name,
+                description: newFoodItem.description,
+                imageUrl: newFoodItem.imageUrl,
+                price: newFoodItem.price
+            };
+            if (newFoodItem.takeAwayStatus === 'true') {
+                foodItemBody.takeAwayStatus = true,
+                    foodItemBody.takeAwayPrice = newFoodItem.takeAwayPrice
+            }
+
+
+            const response = await axiosInstance.post(`/api/mod/cafe/${cafeId}/category/${newFoodItem.categoryId}/item/create`, foodItemBody)
+
+            if (response.data) {
+                startTransition(() => {
+                    setFoodItems(prevFoodItem => [...prevFoodItem, response.data.item]);
+                });
+            }
+            setFoodItemDialog(false);
+
+        } catch (error) {
+            console.error("Error in creating Cafe Category", error)
+        }
+    }
 
 
     return (
 
         <div>
-            <h2 className="text-2xl mb-5 font-bold dark:text-white text-gray-800">Food Item Manage</h2>
-            <div className="dark:bg-[#3e3e3e] bg-[#f7f7f7] rounded-lg shadow overflow-hidden min-h-screen">
+            <div className="flex flex-row justify-between">
+                <h2 className="text-2xl mb-5 font-bold dark:text-white text-gray-800">Food Item Manage</h2>
 
-                <div className="">
+                <DarkButton
+                    onClick={handleFoodItemDialog}
+                    className="w-max px-2"
+                    text={"Add Food Item"}
+                />
+
+
+                {foodItemDialog
+                    && (
+                        <div className="fixed inset-0 z-50 overflow-y-auto">
+                            <div className=" flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                                {/* Background overlay */}
+                                <div className="fixed inset-0 transition-opacity" aria-hidden="true">
+                                    <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
+                                </div>
+
+
+
+
+                                {/* Modal panel */}
+                                <div className="relative inline-block align-bottom dark:bg-[#1d1d1d] bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                                    <div className="absolute top-2 right-2">
+                                        <X className="dark:text-white text-black" onClick={handleFoodItemDialog} />
+                                    </div>
+                                    <div className="px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                                        <h2>Add Category Detail here</h2>
+
+                                        <div className="sm:flex sm:items-start flex-col">
+                                            <LabelInputCustomizable
+                                                required={true}
+                                                value={newFoodItem.name}
+                                                onChange={(e) => setNewFoodItem({ ...newFoodItem, name: e.target.value })}
+                                                type="text"
+                                                label={"Name"}
+                                            />
+
+                                            <LabelInputCustomizable
+                                                required={true}
+                                                value={newFoodItem.description}
+                                                onChange={(e) => setNewFoodItem({ ...newFoodItem, description: e.target.value })}
+                                                type="text"
+                                                label={"Description"}
+                                            />
+
+                                            <LabelInputCustomizable
+                                                required={true}
+                                                value={newFoodItem.price}
+                                                onChange={(e) => setNewFoodItem({ ...newFoodItem, price: e.target.value })}
+                                                type="number"
+                                                min={0}
+                                                label={"Price"}
+                                            />
+                                            <TakeAwayOption setTakeAway={setNewFoodItem} takeAway={newFoodItem} />
+                                            {newFoodItem.takeAwayStatus === 'true' && <LabelInputCustomizable
+                                                required={true}
+                                                value={newFoodItem.takeAwayPrice}
+                                                onChange={(e) => setNewFoodItem({ ...newFoodItem, takeAwayPrice: e.target.value })}
+                                                type="number"
+                                                min={0}
+                                                label={"TakeAway Price"}
+                                            />}
+
+                                            <LabelDropDownSearchableInputCustomizable
+                                                fetchOptions={fetchCategories}
+                                                value={newFoodItem.categoryId}
+                                                onChange={(e) => setNewFoodItem({ ...newFoodItem, categoryId: e.target.value })}
+
+                                                label="Categories"
+                                            />
+                                            <LabelFileInputCustomizable
+                                                label={'imageUrl'}
+
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                                        <DarkButton
+                                            text={'Create'}
+                                            loading={isPending}
+                                            onClick={handleFoodItemCreate}
+                                            className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-gray-600 text-base font-medium text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 sm:ml-3 sm:w-auto sm:text-sm"
+                                        />
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+
+
+            </div>
+
+            <div className="dark:bg-[#3e3e3e] bg-[#f7f7f7] rounded-lg shadow overflow-hidden min-h-screen ">
+
+                <div className="overflow-x-scroll overflow-y-visible min-h-screen">
                     <table className="min-w-full divide-y divide-gray-200">
                         <thead className="dark:bg-[#333] bg-gray-50">
                             <tr>
@@ -134,63 +303,83 @@ const CafeCategoryItem = () => {
                             </tr>
                         </thead>
                         <tbody className="dark:bg-[#1b1b1b] bg-white divide-y divide-gray-200">
-                            {cafes && cafes.map((cafe) => (
-                                <tr key={cafe._id} className="dark:hover:bg-gray-500 hover:bg-gray-50  dark:border-[#adadad] border-[#b4b4b4] border-b">
+                            {foodItems && foodItems.map((foodItem) => (
+                                <tr key={foodItem._id} className="dark:hover:bg-gray-500 hover:bg-gray-50  dark:border-[#adadad] border-[#b4b4b4] border-b">
                                     <td className="px-6 py-4 whitespace-nowrap">
-                                        <div className="text-sm font-medium dark:text-white text-gray-900">{cafe.name}</div>
-                                        <div className="text-sm dark:text-white text-gray-500">{cafe.categories?.join(", ")}</div>
+                                        <div className="text-sm font-medium dark:text-white text-gray-900">{foodItem.name}</div>
+                                        <div className="text-sm dark:text-white text-gray-500">{foodItem.categories?.join(", ")}</div>
                                     </td>
                                     <td className="px-6 py-4">
-                                        <div className="text-sm dark:text-white text-gray-900 line-clamp-2">{cafe.information}</div>
+                                        <div className="text-sm dark:text-white text-gray-900 line-clamp-2">{foodItem.description}</div>
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        <div className="text-sm dark:text-white text-gray-900 line-clamp-2">{foodItem?.category?.name ?? 'None'}</div>
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        <div className="text-sm dark:text-white text-gray-900 line-clamp-2">{foodItem.price[0]} Rs.</div>
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        <div className="text-sm dark:text-white text-gray-900 line-clamp-2">{foodItem.takeAwayStatus ? foodItem.takeAwayPrice[0] : 'Nil'}</div>
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap">
+                                        <span className={`px-2 py-1 text-xs font-semibold rounded-full ${foodItem.status === 'active' ? 'bg-green-100 text-green-800' :
+                                            foodItem.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                                                'bg-red-100 text-red-800'
+                                            }`}>
+                                            {foodItem.status}
+                                        </span>
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap">
+                                        <div className="text-sm dark:text-white text-gray-900">{foodItem.user?.name}</div>
+                                        <div className="text-xs dark:text-white text-gray-500">{foodItem.user?.super_role}</div>
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        <div className="text-sm dark:text-white text-gray-900 line-clamp-2">{foodItem.discountStatus === 'active' ? foodItem.discount[0] : 'Nil'}</div>
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         <div className="text-sm dark:text-white text-gray-900">
-                                            {cafe.accumulatedRating ? (
+                                            {foodItem.accumulatedRating ? (
                                                 <span className="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
-                                                    {cafe.accumulatedRating} ★
+                                                    {foodItem.accumulatedRating} ★
                                                 </span>
                                             ) : (
                                                 <span className="dark:text-white text-gray-500">No rating</span>
                                             )}
                                         </div>
                                     </td>
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        <span className={`px-2 py-1 text-xs font-semibold rounded-full ${cafe.status === 'active' ? 'bg-green-100 text-green-800' :
-                                            cafe.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                                                'bg-red-100 text-red-800'
-                                            }`}>
-                                            {cafe.status}
-                                        </span>
+                                    <td className="px-6 py-4">
+                                        <div className="text-sm dark:text-white text-gray-900 line-clamp-2">{foodItem.favouritebByUsersCount.size ? foodItem.favouritebByUsersCount.size : 0}</div>
                                     </td>
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        <div className="text-sm dark:text-white text-gray-900">{cafe.user?.name}</div>
-                                        <div className="text-xs dark:text-white text-gray-500">{cafe.user?.super_role}</div>
-                                    </td>
+
+
                                     <td className="px-6 py-4 whitespace-nowrap text-sm dark:text-white text-gray-500">
-                                        {formatTimeDifference2(cafe.updatedAt)}
+                                        {formatTimeDifference2(foodItem.updatedAt)}
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                         <div className="relative">
                                             <button
-                                                onClick={() => setSelectedCafe(selectedCafe === cafe._id ? null : cafe._id)}
+                                                onClick={() =>
+                                                    setSelectedItem((prev) => (prev === foodItem._id ? null : foodItem._id))
+
+                                                }
                                                 className="text-blue-600 hover:text-blue-900"
                                             >
                                                 Actions
                                             </button>
 
-                                            {selectedCafe === cafe._id && (
+                                            {selectedItem === foodItem._id && (
                                                 <div className="z-20 absolute right-0 mt-2 w-48 rounded-md shadow-lg dark:bg-[#1d1d1d] bg-white ring-1 ring-black ring-opacity-5">
                                                     <div className="py-1">
-                                                        <Link to={`/mod/cafe/${cafe._id}`} className="block px-4 py-2 text-sm dark:text-white text-gray-700 dark:hover:bg-gray-500 hover:bg-gray-100 w-full text-left">
+                                                        <Link to={`/mod/foodItem/${foodItem._id}`} className="block px-4 py-2 text-sm dark:text-white text-gray-700 dark:hover:bg-gray-500 hover:bg-gray-100 w-full text-left">
                                                             Edit Details
                                                         </Link>
-                                                        <button onClick={() => changeCafeStatus(cafe._id, cafe.status)} className="block px-4 py-2 text-sm dark:text-white text-gray-700 dark:hover:bg-gray-500 hover:bg-gray-100 w-full text-left">
+                                                        <button onClick={() => changeCafeStatus(foodItem._id, foodItem.status)} className="block px-4 py-2 text-sm dark:text-white text-gray-700 dark:hover:bg-gray-500 hover:bg-gray-100 w-full text-left">
                                                             Change Status
                                                         </button>
                                                         <button
-                                                            onClick={() => handleDeleteClick(cafe)}
+                                                            onClick={() => handleDeleteClick(foodItem)}
                                                             className="block px-4 py-2 text-sm text-red-600 dark:hover:bg-red-100 hover:bg-red-50 w-full text-left">
-                                                            Delete Cafe
+                                                            Delete Item
                                                         </button>
                                                     </div>
                                                 </div>
@@ -227,7 +416,7 @@ const CafeCategoryItem = () => {
                                         </h3>
                                         <div className="mt-2">
                                             <p className="text-sm dark:text-gray-300 text-gray-500">
-                                                Are you sure you want to delete <bold className="font-bold">&quot;{deleteConfirmation.cafeName}&quot;</bold>? <br />This action cannot be undone.
+                                                Are you sure you want to delete <bold className="font-bold">&quot;{deleteConfirmation.foodItemId}&quot;</bold>? <br />This action cannot be undone.
                                             </p>
                                         </div>
                                     </div>
@@ -256,3 +445,45 @@ const CafeCategoryItem = () => {
 };
 
 export default CafeCategoryItem;
+
+
+
+
+
+const TakeAwayOption = ({ takeAway, setTakeAway }) => {
+
+
+    return (
+        <div>
+            <p>Has TakeAway Option</p>
+            {/* {console.log(typeof takeAway.takeAwayStatus, takeAway)} */}
+            <form>
+                <label>
+                    <input
+                        type="radio"
+                        name="takeAwayStatus"
+                        value="true"
+                        checked={takeAway.takeAwayStatus === "true"}
+                        onChange={(e) => setTakeAway({ ...takeAway, takeAwayStatus: e.target.value })}
+
+                    // onChange={(e) => setTakeAway(e.target.value)}
+                    />
+                    Yes
+                </label>
+                <label>
+                    <input
+                        type="radio"
+                        name="takeAwayStatus"
+                        value="false"
+                        checked={takeAway.takeAwayStatus === "false"}
+                        // onChange={(e) => setTakeAway(e.target.value)}
+                        onChange={(e) => setTakeAway({ ...takeAway, takeAwayStatus: e.target.value })}
+
+                    />
+                    No
+                </label>
+            </form>
+        </div>
+    );
+};
+

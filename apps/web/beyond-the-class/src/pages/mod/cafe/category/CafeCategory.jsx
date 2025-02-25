@@ -5,43 +5,63 @@ import { Link } from "react-router-dom";
 import { routesForApi } from "../../../../utils/routes/routesForLinks";
 import { formatTimeDifference2 } from "../../../../utils/formatDate";
 import axiosInstance from "../../../../config/users/axios.instance";
+import DarkButton from "../../../../components/Buttons/DarkButton";
+import { useParams } from "react-router-dom";
+import LabelFileInputCustomizable from "../../../../components/Upload/LabelFileInputCustomizable";
+import LabelInputCustomizable from "../../../../components/TextField/LabelInputCustomizable";
+import { useTransition } from "react";
+import { X } from "lucide-react";
 
 const CafeCategory = () => {
     const [sortConfig, setSortConfig] = useState({ key: 'name', direction: 'asc' });
 
+    const { cafeId } = useParams()
 
-    const [cafes, setCafes] = useState(null);
-    const [selectedCafe, setSelectedCafe] = useState(null);
-    const [deleteConfirmation, setDeleteConfirmation] = useState({ isOpen: false, cafeId: null, cafeName: '' });
+
+    const [categories, setCategories] = useState([]);
+    const [selectedCategory, setSelectedCategory] = useState(null);
+    const [deleteConfirmation, setDeleteConfirmation] = useState({ isOpen: false, name: null, categoryId: '' });
+
+    const [isPending, startTransition] = useTransition();
+
+    const [newCategory, setNewCategory] = useState({
+        name: '',
+        description: '',
+        imageUrl: ''
+    })
+
+
+    const [categoryDialog, setCategoryDialog] = useState(false);
 
     useEffect(() => {
-        const fetchCafes = async () => {
+        const fetchCategories = async () => {
             try {
-                const response = await axiosInstance.get(routesForApi.mod.cafe.all);
-                console.log("Cafes:", response.data.cafes);
-                setCafes(response.data.cafes);
+                const response = await axiosInstance.get('/api/mod/cafe/' + cafeId + "/categories");
+                console.log("Categories:", response.data.categories);
+                setCategories(response.data.categories);
             } catch (error) {
-                console.error("Error fetching cafes:", error);
+                console.error("Error fetching categories:", error);
             }
         };
-        fetchCafes();
-    }, []);
+        fetchCategories();
+    }, [cafeId]);
 
-    const changeCafeStatus = async (cafeId, status) => {
+    const changeCafeStatus = async (categoryId, status) => {
         try {
-            console.log("CAFEID", cafeId)
+            console.log("category id", categoryId, status)
             // buildDynamicRoute(routesForApi.mod.cafe.update[`${cafeId}`].status, { cafeId: cafeId })
-            const response = await axiosInstance.patch(`/api/mod/cafe/update/${cafeId}/status`, {
+            const response = await axiosInstance.put(`/api/mod/cafe/update/${cafeId}/categories/${categoryId}/status`, {
                 status: status === 'active' ? 'deactive' : 'active'
             });
-            console.log("Cafes:", response.data.cafe);
-            const updatedCafe = response.data.cafe;
+            console.log("Category:", response.data.category);
+            const updatedCategory = response.data.category;
 
-            setCafes((prevCafes) =>
-                prevCafes.map((cafe) =>
-                    cafe._id === updatedCafe._id ? { ...cafe, status: updatedCafe.status, updatedAt: updatedCafe.updatedAt } : cafe
+            setCategories((prevCategories) =>
+                prevCategories.map((category) =>
+                    category._id === categoryId ? { ...category, status: updatedCategory.status, updatedAt: updatedCategory.updatedAt } : category
                 )
             );
+
         } catch (error) {
             console.error("Error fetching cafes:", error);
         }
@@ -56,38 +76,131 @@ const CafeCategory = () => {
 
 
 
-    const handleDeleteClick = (cafe) => {
+    const handleDeleteClick = (category) => {
         setDeleteConfirmation({
             isOpen: true,
-            cafeId: cafe._id,
-            cafeName: cafe.name
+            categoryId: category._id,
+            name: category.name
         });
-        setSelectedCafe(null);
+        setSelectedCategory(null);
     };
 
     const handleDeleteConfirm = async () => {
         try {
-            await axiosInstance.delete(`/api/mod/cafe/${deleteConfirmation.cafeId}/delete`);
-            setCafes((prevCafes) =>
-                prevCafes.filter(cafe => cafe._id !== deleteConfirmation.cafeId)
+            await axiosInstance.delete(`/api/mod/cafe/${cafeId}/categories/${deleteConfirmation.categoryId}/delete`);
+
+            setCategories((prevCategories) =>
+                prevCategories.filter(category => category._id !== deleteConfirmation.categoryId)
             );
-            setDeleteConfirmation({ isOpen: false, cafeId: null, cafeName: '' });
+
+            setDeleteConfirmation({ isOpen: false, name: null, categoryId: '' });
         } catch (error) {
             console.error("Error deleting cafe:", error);
         }
     };
 
     const handleDeleteCancel = () => {
-        setDeleteConfirmation({ isOpen: false, cafeId: null, cafeName: '' });
+        setDeleteConfirmation({ isOpen: false, name: null, categoryId: '' });
     };
 
 
+    const handleCategoryDialog = () => {
+        setCategoryDialog(!categoryDialog);
+    }
+
+    const handleCategoryCreate = async () => {
+        try {
+
+
+            const response = await axiosInstance.post(`/api/mod/cafe/${cafeId}/category`, {
+                name: newCategory.name,
+                description: newCategory.description,
+                imageUrl: newCategory.imageUrl,
+            })
+
+            if (response.data) {
+                startTransition(() => {
+                    setCategories(prevCategory => [...prevCategory, response.data.category]);
+                });
+            }
+
+        } catch (error) {
+            console.error("Error in creating Cafe Category", error)
+        } finally {
+            setCategoryDialog(false);
+        }
+    }
 
     return (
 
 
         <div>
-            <h2 className="text-2xl mb-5 font-bold dark:text-white text-gray-800">Category Manage</h2>
+            <div className="flex flex-row justify-between">
+                <h2 className="text-2xl mb-5 font-bold dark:text-white text-gray-800">Category Manage</h2>
+
+                <DarkButton
+                    className="w-max px-2"
+                    text={"Add Category"}
+                    onClick={handleCategoryDialog}
+                />
+
+                {categoryDialog
+                    && (
+                        <div className="fixed inset-0 z-50 overflow-y-auto">
+                            <div className=" flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                                {/* Background overlay */}
+                                <div className="fixed inset-0 transition-opacity" aria-hidden="true">
+                                    <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
+                                </div>
+
+
+
+
+                                {/* Modal panel */}
+                                <div className="relative inline-block align-bottom dark:bg-[#1d1d1d] bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                                    <div className="absolute top-2 right-2">
+                                        <X className="dark:text-white text-black" onClick={handleCategoryDialog} />
+                                    </div>
+                                    <div className="px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                                        <h2>Add Category Detail here</h2>
+                                        <div className="sm:flex sm:items-start flex-col">
+                                            <LabelInputCustomizable
+                                                required={true}
+                                                value={newCategory.name}
+                                                onChange={(e) => setNewCategory({ ...newCategory, name: e.target.value })}
+                                                type="text"
+                                                label={"Name"}
+                                            />
+
+                                            <LabelInputCustomizable
+                                                required={true}
+                                                value={newCategory.description}
+                                                onChange={(e) => setNewCategory({ ...newCategory, description: e.target.value })}
+                                                type="text"
+                                                label={"Description"}
+                                            />
+                                            <LabelFileInputCustomizable
+                                                label={'imageUrl'}
+
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                                        <DarkButton
+                                            text={'Create'}
+                                            loading={isPending}
+                                            onClick={handleCategoryCreate}
+                                            className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-gray-600 text-base font-medium text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 sm:ml-3 sm:w-auto sm:text-sm"
+                                        />
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+            </div>
+
             <div className="dark:bg-[#3e3e3e] bg-[#f7f7f7] rounded-lg shadow overflow-hidden min-h-screen">
                 <div className="">
                     <table className="min-w-full divide-y divide-gray-200">
@@ -101,17 +214,14 @@ const CafeCategory = () => {
                                     Description
                                 </th>
                                 <th className="px-6 py-3 text-left text-xs font-medium dark:text-white text-gray-500 uppercase tracking-wider">
-                                    Image-
-                                </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium dark:text-white text-gray-500 uppercase tracking-wider">
                                     Status
                                 </th>
                                 <th className="px-6 py-3 text-left text-xs font-medium dark:text-white text-gray-500 uppercase tracking-wider">
                                     Items
                                 </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium dark:text-white text-gray-500 uppercase tracking-wider">
+                                {/* <th className="px-6 py-3 text-left text-xs font-medium dark:text-white text-gray-500 uppercase tracking-wider">
                                     Creator
-                                </th>
+                                </th> */}
                                 <th className="px-6 py-3 text-left text-xs font-medium dark:text-white text-gray-500 uppercase tracking-wider">
                                     Last Updated
                                 </th>
@@ -121,63 +231,58 @@ const CafeCategory = () => {
                             </tr>
                         </thead>
                         <tbody className="dark:bg-[#1b1b1b] bg-white divide-y divide-gray-200">
-                            {cafes && cafes.map((cafe) => (
-                                <tr key={cafe._id} className="dark:hover:bg-gray-500 hover:bg-gray-50  dark:border-[#adadad] border-[#b4b4b4] border-b">
+                            {categories && categories.map((category) => (
+                                <tr key={category._id} className="dark:hover:bg-gray-500 hover:bg-gray-50  dark:border-[#adadad] border-[#b4b4b4] border-b">
                                     <td className="px-6 py-4 whitespace-nowrap">
-                                        <div className="text-sm font-medium dark:text-white text-gray-900">{cafe.name}</div>
-                                        <div className="text-sm dark:text-white text-gray-500">{cafe.categories?.join(", ")}</div>
+                                        <div className="text-sm font-medium dark:text-white text-gray-900">{category.name}</div>
+                                        <div className="text-sm dark:text-white text-gray-500">{category.categories?.join(", ")}</div>
                                     </td>
                                     <td className="px-6 py-4">
-                                        <div className="text-sm dark:text-white text-gray-900 line-clamp-2">{cafe.information}</div>
+                                        <div className="text-sm dark:text-white text-gray-900 line-clamp-2">{category.description}</div>
                                     </td>
+
                                     <td className="px-6 py-4 whitespace-nowrap">
-                                        <div className="text-sm dark:text-white text-gray-900">
-                                            {cafe.accumulatedRating ? (
-                                                <span className="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
-                                                    {cafe.accumulatedRating} ★
-                                                </span>
-                                            ) : (
-                                                <span className="dark:text-white text-gray-500">No rating</span>
-                                            )}
-                                        </div>
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        <span className={`px-2 py-1 text-xs font-semibold rounded-full ${cafe.status === 'active' ? 'bg-green-100 text-green-800' :
-                                            cafe.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                                        <span className={`px-2 py-1 text-xs font-semibold rounded-full ${category.status === 'active' ? 'bg-green-100 text-green-800' :
+                                            category.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
                                                 'bg-red-100 text-red-800'
                                             }`}>
-                                            {cafe.status}
+                                            {category.status}
                                         </span>
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap">
-                                        <div className="text-sm dark:text-white text-gray-900">{cafe.user?.name}</div>
-                                        <div className="text-xs dark:text-white text-gray-500">{cafe.user?.super_role}</div>
+                                        <div className="text-sm dark:text-white text-gray-900">{category?.itemsInIt?.length ?? 0}</div>
                                     </td>
+
+                                    {/* <td className="px-6 py-4 whitespace-nowrap">
+                                        <div className="text-sm dark:text-white text-gray-900">{category.user?.name}</div>
+                                        <div className="text-xs dark:text-white text-gray-500">{category.user?.super_role}</div>
+                                    </td> */}
                                     <td className="px-6 py-4 whitespace-nowrap text-sm dark:text-white text-gray-500">
-                                        {formatTimeDifference2(cafe.updatedAt)}
+                                        {formatTimeDifference2(category.updatedAt)}
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                         <div className="relative">
                                             <button
-                                                onClick={() => setSelectedCafe(selectedCafe === cafe._id ? null : cafe._id)}
+                                                onClick={() =>
+                                                    setSelectedCategory(selectedCategory === category._id ? null : category._id)}
                                                 className="text-blue-600 hover:text-blue-900"
                                             >
                                                 Actions
                                             </button>
 
-                                            {selectedCafe === cafe._id && (
+                                            {selectedCategory === category._id && (
                                                 <div className="z-20 absolute right-0 mt-2 w-48 rounded-md shadow-lg dark:bg-[#1d1d1d] bg-white ring-1 ring-black ring-opacity-5">
                                                     <div className="py-1">
-                                                        <Link to={`/mod/cafe/${cafe._id}`} className="block px-4 py-2 text-sm dark:text-white text-gray-700 dark:hover:bg-gray-500 hover:bg-gray-100 w-full text-left">
+                                                        <Link to={`/mod/category/${category._id}`} className="block px-4 py-2 text-sm dark:text-white text-gray-700 dark:hover:bg-gray-500 hover:bg-gray-100 w-full text-left">
                                                             Edit Details
                                                         </Link>
-                                                        <button onClick={() => changeCafeStatus(cafe._id, cafe.status)} className="block px-4 py-2 text-sm dark:text-white text-gray-700 dark:hover:bg-gray-500 hover:bg-gray-100 w-full text-left">
+                                                        <button onClick={() => changeCafeStatus(category._id, category.status)} className="block px-4 py-2 text-sm dark:text-white text-gray-700 dark:hover:bg-gray-500 hover:bg-gray-100 w-full text-left">
                                                             Change Status
                                                         </button>
                                                         <button
-                                                            onClick={() => handleDeleteClick(cafe)}
+                                                            onClick={() => handleDeleteClick(category)}
                                                             className="block px-4 py-2 text-sm text-red-600 dark:hover:bg-red-100 hover:bg-red-50 w-full text-left">
-                                                            Delete Cafe
+                                                            Delete Category
                                                         </button>
                                                     </div>
                                                 </div>
@@ -210,11 +315,13 @@ const CafeCategory = () => {
                                     </div>
                                     <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
                                         <h3 className="text-lg leading-6 font-medium dark:text-white text-gray-900">
-                                            Delete Cafe
+                                            Delete Category
                                         </h3>
                                         <div className="mt-2">
                                             <p className="text-sm dark:text-gray-300 text-gray-500">
-                                                Are you sure you want to delete <bold className="font-bold">&quot;{deleteConfirmation.cafeName}&quot;</bold>? <br />This action cannot be undone.
+                                                Are you sure you want to delete <bold className="font-bold">&quot;{deleteConfirmation.name}&quot;</bold>? <br />This action cannot be undone.
+
+                                                If parent category is deleted, All food items will be set <p className="font-semibold">Deactived</p>
                                             </p>
                                         </div>
                                     </div>
