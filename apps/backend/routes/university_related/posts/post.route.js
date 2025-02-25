@@ -272,6 +272,88 @@ router.post("/create", upload.array('file'), async (req, res) => {
 });
 
 
+
+
+//////////////////////////////////////////////////////////////
+
+router.post("/create-indiv", upload.array('file'), async (req, res) => {
+    const session = await mongoose.startSession();
+    session.startTransaction();
+
+    try {
+        const { userId, campusOrigin, universityOrigin, role } = getUserDetails(req);
+        const { title, body, author } = req.body;
+        const files = req.files;
+
+        console.log("/create-indiv ", { title, body, files, author });
+
+        if (!title || !author) {
+            return res.status(400).json("Title and author are required");
+        }
+        if (!body && !files) {
+            return res.status(400).json({ message: 'Body or image/video is required' });
+        }
+
+        let postContent = {
+            title: title,
+            author: author,
+            "references.role": role,
+            "references.campusOrigin": campusOrigin,
+            "references.universityOrigin": universityOrigin,
+        };
+
+        if (body) {
+            postContent.body = body;
+        }
+        if (files && files.length > 0) {
+            let mediaArray = [];
+            for (let file of files) {
+                const { url, type } = await uploadPostMedia(userId, file, req);
+                mediaArray.push({ type, url });
+            }
+            postContent.media = mediaArray;
+        }
+
+        const post = new Post(postContent);
+        await post.save({ session });
+
+        const postCommentId = new SocietyPostAndCommentVote({
+            postId: post._id,
+        });
+        await postCommentId.save({ session });
+        post.voteId = postCommentId._id;
+
+        const postCommentCollection = new PostCommentCollection({
+            _id: post._id,
+        });
+        await postCommentCollection.save({ session });
+        post.comments = postCommentCollection._id;
+
+        await post.save({ session });
+
+        const user = await User.findByIdAndUpdate(
+            { _id: userId },
+            { $addToSet: { "profile.posts": post._id } },
+            { new: true, session }
+        );
+        if (!user) return res.status(409).json({ error: "User not found" });
+
+        await session.commitTransaction();
+        session.endSession();
+
+        res.status(200).json({ message: "Post Created", postId: post._id, postTitle: post.title });
+    } catch (error) {
+        console.error("Error in /create-indiv", error);
+        await session.abortTransaction();
+        session.endSession();
+        res.status(500).json("Internal Server Error");
+    }
+});
+
+
+
+//////////////////////////////////////////////////////////////
+
 /**
  * post in a sub society
  */
