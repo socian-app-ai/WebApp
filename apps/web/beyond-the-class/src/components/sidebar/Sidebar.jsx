@@ -423,6 +423,11 @@ function Sidebar() {
           icon: <Coffee className="w-5" />,
         },
         {
+          name: 'Cafe User',
+          path: '/mod/cafe/users',
+          icon: <Coffee className="w-5" />,
+        },
+        {
           name: 'Cafe Discounts',
           path: '/mod/cafe/discounts',
           icon: <Coffee className="w-5" />,

@@ -122,7 +122,7 @@ const CafeManage = () => {
                                 <tr key={cafe._id} className="dark:hover:bg-gray-500 hover:bg-gray-50  dark:border-[#adadad] border-[#b4b4b4] border-b">
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         <div className="text-sm font-medium dark:text-white text-gray-900">{cafe.name}</div>
-                                        <div className="text-sm dark:text-white text-gray-500">{cafe.categories?.join(", ")}</div>
+                                        <div className="text-sm dark:text-white text-gray-500">{cafe.categories?.map(d => d.name).join(", ")}</div>
                                     </td>
                                     <td className="px-6 py-4">
                                         <div className="text-sm dark:text-white text-gray-900 line-clamp-2">{cafe.information}</div>
