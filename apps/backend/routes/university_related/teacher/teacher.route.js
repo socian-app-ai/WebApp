@@ -14,6 +14,11 @@ const { sessionSaveHandler } = require("../../../utils/save.session");
 const redisClient = require('../../../db/reddis');
 const FeedBackCommentTeacher = require("../../../models/university/teacher/feedback.rating.teacher.model");
 
+const aiFeedback= require("../../../services/aifeedback.service.js")
+const axios = require('axios');
+
+
+
 // router.get("/teachers-by-campus", async (req, res) => {
 //   try {
 //     const user = req.session.user;
@@ -497,66 +502,66 @@ router.get("/reviews/feedbacks", async (req, res) => {
 
 
 
-router.post("/rate", async (req, res) => {
-  const { teacherId, userId, rating, feedback, hideUser = false } = req.body;
+// router.post("/rate", async (req, res) => {
+//   const { teacherId, userId, rating, feedback, hideUser = false } = req.body;
 
-  if (!teacherId || !userId || rating === undefined) {
-    return res.status(400).json({ message: "Missing required fields" });
-  }
+//   if (!teacherId || !userId || rating === undefined) {
+//     return res.status(400).json({ message: "Missing required fields" });
+//   }
 
-  try {
-    const teacher = await Teacher.findById(teacherId);
-    if (!teacher) {
-      return res.status(404).json({ message: "Teacher not found" });
-    }
+//   try {
+//     const teacher = await Teacher.findById(teacherId);
+//     if (!teacher) {
+//       return res.status(404).json({ message: "Teacher not found" });
+//     }
 
-    let existingRating = await TeacherRating.findOne({ teacherId, userId });
-    console.log("existing?", existingRating);
-    if (existingRating) {
-      existingRating.rating = rating;
-      existingRating.feedback = feedback;
-      existingRating.__v += 1;
-      existingRating.hideUser = hideUser;
-      existingRating.upVotesCount = 0;
-      existingRating.downVotesCount = 0;
-      existingRating.replies = []
-      existingRating.userVotes = {}
-      existingRating.isFeedbackEdited.timestamp = Date.now()
-      existingRating.isFeedbackEdited.bool = true;
-      await existingRating.save();
-      teacher.ratingsByStudentsMap.clear()
-      // teacher.save()
-    } else {
-      existingRating = new TeacherRating({
-        teacherId,
-        userId,
-        rating,
-        feedback,
-        hideUser,
-        userVotes: { userId: 'upVote' }
-      });
-      existingRating.save();
-      teacher.ratingsByStudents.push(existingRating._id);
-      teacher.ratingsByStudentsMap.set(userId, rating)
-      // await teacher.save();
-    }
+//     let existingRating = await TeacherRating.findOne({ teacherId, userId });
+//     console.log("existing?", existingRating);
+//     if (existingRating) {
+//       existingRating.rating = rating;
+//       existingRating.feedback = feedback;
+//       existingRating.__v += 1;
+//       existingRating.hideUser = hideUser;
+//       existingRating.upVotesCount = 0;
+//       existingRating.downVotesCount = 0;
+//       existingRating.replies = []
+//       existingRating.userVotes = {}
+//       existingRating.isFeedbackEdited.timestamp = Date.now()
+//       existingRating.isFeedbackEdited.bool = true;
+//       await existingRating.save();
+//       teacher.ratingsByStudentsMap.clear()
+//       // teacher.save()
+//     } else {
+//       existingRating = new TeacherRating({
+//         teacherId,
+//         userId,
+//         rating,
+//         feedback,
+//         hideUser,
+//         userVotes: { userId: 'upVote' }
+//       });
+//       existingRating.save();
+//       teacher.ratingsByStudents.push(existingRating._id);
+//       teacher.ratingsByStudentsMap.set(userId, rating)
+//       // await teacher.save();
+//     }
 
-    const ratingsArray = Array.from(teacher.ratingsByStudentsMap.values());
-    const totalRatings = ratingsArray.reduce((acc, curr) => acc + curr, 0);
-    const averageRating = ratingsArray.length > 0 ? totalRatings / ratingsArray.length : 0;
+//     const ratingsArray = Array.from(teacher.ratingsByStudentsMap.values());
+//     const totalRatings = ratingsArray.reduce((acc, curr) => acc + curr, 0);
+//     const averageRating = ratingsArray.length > 0 ? totalRatings / ratingsArray.length : 0;
 
-    teacher.rating = parseFloat(averageRating.toFixed(2));
+//     teacher.rating = parseFloat(averageRating.toFixed(2));
 
-    // console.log("This is Teacher rating:", teacher.rating, "and average: ", averageRating, "sum ", sumRatings)
+//     // console.log("This is Teacher rating:", teacher.rating, "and average: ", averageRating, "sum ", sumRatings)
 
-    await teacher.save();
+//     await teacher.save();
 
-    res.status(200).json({ message: "Rating processed successfully" });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ "Server error": err.message });
-  }
-});
+//     res.status(200).json({ message: "Rating processed successfully" });
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ "Server error": err.message });
+//   }
+// });
 
 
 // router.post('/reply/feedback', async (req, res) => {
@@ -585,6 +590,89 @@ router.post("/rate", async (req, res) => {
 //     res.status(500).json({ message: "Internal Server Error" })
 //   }
 // })
+
+
+
+router.post("/rate", async (req, res) => {
+  const { teacherId, userId, rating, feedback, hideUser = false } = req.body;
+
+  // Check for missing required fields
+  if (!teacherId || !userId || rating === undefined) {
+    return res.status(400).json({ message: "Missing required fields" });
+  }
+
+  try {
+    // Find the teacher
+    const teacher = await Teacher.findById(teacherId);
+    if (!teacher) {
+      return res.status(404).json({ message: "Teacher not found" });
+    }
+
+    // Check if the user has already rated the teacher
+    let existingRating = await TeacherRating.findOne({ teacherId, userId });
+    console.log("existing?", existingRating);
+
+    if (existingRating) {
+      // Update existing rating
+      existingRating.rating = rating;
+      existingRating.feedback = feedback;
+      existingRating.__v += 1;
+      existingRating.hideUser = hideUser;
+      existingRating.upVotesCount = 0;
+      existingRating.downVotesCount = 0;
+      existingRating.replies = [];
+      existingRating.userVotes = {};
+      existingRating.isFeedbackEdited.timestamp = Date.now();
+      existingRating.isFeedbackEdited.bool = true;
+      await existingRating.save();
+      teacher.ratingsByStudentsMap.clear();
+    } else {
+      // Create a new rating
+      existingRating = new TeacherRating({
+        teacherId,
+        userId,
+        rating,
+        feedback,
+        hideUser,
+        userVotes: { userId: 'upVote' }
+      });
+      await existingRating.save();
+      teacher.ratingsByStudents.push(existingRating._id);
+      teacher.ratingsByStudentsMap.set(userId, rating);
+    }
+
+    // Calculate the teacher's average rating
+    const ratingsArray = Array.from(teacher.ratingsByStudentsMap.values());
+    const totalRatings = ratingsArray.reduce((acc, curr) => acc + curr, 0);
+    const averageRating = ratingsArray.length > 0 ? totalRatings / ratingsArray.length : 0;
+
+    teacher.rating = parseFloat(averageRating.toFixed(2));
+    await teacher.save();
+
+    // Call the AI service directly for feedback analysis
+    try {
+      const aiAnalysis = await aiFeedback(feedback); // Use the imported aiFeedback service
+      console.log("AI analysis response:", aiAnalysis);
+
+      // Save the AI analysis in the database or process as needed
+      existingRating.aiAnalysis = aiAnalysis;
+      await existingRating.save();
+
+      res.status(200).json({ 
+        message: "Rating processed successfully", 
+        aiAnalysis: aiAnalysis  // Send back AI analysis with response
+      });
+    } catch (aiError) {
+      console.error("Error calling AI service:", aiError);
+      res.status(500).json({ message: "Error analyzing feedback with AI" });
+    }
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ "Server error": err.message });
+  }
+});
+
 
 
 router.post('/reply/feedback', async (req, res) => {
