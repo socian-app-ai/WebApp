@@ -15,6 +15,7 @@ const model = genAI.getGenerativeModel({
 
 
 async function generateContent(prompt) {
+  console.log("inside gemini generate function")
   const result = await model.generateContent(prompt);
   return result.response.text();
 }
