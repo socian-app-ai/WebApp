@@ -33,22 +33,22 @@ const FeedBackReply = ({ reply, commentId }) => {
     };
 
     return (
-        <div className="border-l-2 border-border pl-4">
+        <div className="border-l-2 border-border pl-4 dark:border-gray-700">
             <div className="flex items-start space-x-2">
-                <div className="h-6 w-6 rounded-full bg-accent/50 flex items-center justify-center">
-                    <span className="text-xs font-medium text-accent-foreground">
+                <div className="h-6 w-6 rounded-full bg-secondary/50 dark:bg-gray-700 flex items-center justify-center">
+                    <span className="text-xs font-medium text-secondary-foreground dark:text-gray-200">
                         {reply.user.username.charAt(0).toUpperCase()}
                     </span>
                 </div>
                 <div className="flex-1 space-y-1">
-                    <p className="text-sm font-medium text-foreground">@{reply.user.username}</p>
-                    <p className="text-sm text-muted-foreground">{reply.comment}</p>
+                    <p className="text-sm font-medium text-primary dark:text-gray-200">@{reply.user.username}</p>
+                    <p className="text-sm text-muted-foreground dark:text-gray-400">{reply.comment}</p>
                 </div>
             </div>
 
             <div className="ml-8 mt-2">
                 <button
-                    className="inline-flex items-center justify-center rounded-md text-xs font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 hover:bg-accent hover:text-accent-foreground h-7 px-3"
+                    className="inline-flex items-center justify-center rounded-md text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background hover:bg-accent hover:text-accent-foreground dark:hover:bg-gray-700 h-7 px-3 bg-secondary dark:bg-gray-800 text-secondary-foreground dark:text-gray-200"
                     onClick={() => setShowReplyBox(!showReplyBox)}
                 >
                     Reply
@@ -60,13 +60,13 @@ const FeedBackReply = ({ reply, commentId }) => {
                     <div className="flex space-x-2">
                         <input
                             type="text"
-                            className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                            className="flex h-9 w-full rounded-md border border-input bg-background dark:bg-gray-800 dark:border-gray-700 px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground dark:placeholder:text-gray-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 dark:text-gray-200"
                             value={replyText}
                             onChange={(e) => setReplyText(e.target.value)}
                             placeholder={`Reply to @${reply.user.username}...`}
                         />
                         <button
-                            className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-9 px-4"
+                            className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background bg-primary dark:bg-gray-700 text-primary-foreground dark:text-gray-200 hover:bg-primary/90 dark:hover:bg-gray-600 h-9 px-4"
                             onClick={handleReply}
                             disabled={isLoading}
                         >
@@ -89,4 +89,4 @@ FeedBackReply.propTypes = {
     commentId: PropTypes.string.isRequired
 };
 
-export default FeedBackReply; 
+export default FeedBackReply;

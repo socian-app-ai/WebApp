@@ -20,13 +20,16 @@ const FeedbackComment = ({ feedbackCommentId }) => {
     }, [feedbackCommentId]);
 
     return (
-        comments && comments.length > 0 &&
-        comments.map((cmt) => (
-            <SeperateComment key={cmt._id} comment={cmt} />
-        ))
+        <div className="dark:bg-gray-800 dark:text-white">
+            {comments && comments.length > 0 &&
+                comments.map((cmt) => (
+                    <SeperateComment key={cmt._id} comment={cmt} />
+                ))
+            }
+        </div>
     );
 };
 
 
 
-export default FeedbackComment; 
+export default FeedbackComment;

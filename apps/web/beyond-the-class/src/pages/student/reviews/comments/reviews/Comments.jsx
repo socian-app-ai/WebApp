@@ -1,5 +1,3 @@
-
-
 import { useEffect, useState } from 'react';
 import { Card, CardMedia, CardHeader, IconButton, Rating, Avatar, Skeleton, Menu, MenuItem } from '@mui/material';
 import { MoreVertOutlined, Star } from '@mui/icons-material';
@@ -140,10 +138,10 @@ export default function Reviews() {
             : (t.userId?.personalEmail || t.userId?.universityEmail || t.userId?.email || '[deleted]');
 
         return (
-            <Card key={t._id} className="bg-card border border-border rounded-lg shadow-sm mb-4">
+            <Card key={t._id} className="bg-card dark:bg-gray-800 border border-border dark:border-gray-700 rounded-lg shadow-sm mb-4">
                 <CardHeader
                     avatar={
-                        <Avatar className="border border-border">
+                        <Avatar className="border border-border dark:border-gray-700">
                             <CardMedia
                                 className="w-10 h-10 object-cover"
                                 component="img"
@@ -154,20 +152,20 @@ export default function Reviews() {
                     }
                     action={
                         <div className="flex items-center space-x-2">
-                            <IconButton aria-label="ratings" className="text-muted-foreground">
+                            <IconButton aria-label="ratings" className="text-muted-foreground dark:text-gray-400">
                                 <div className="text-base">
                                     <Rating
                                         value={t.rating}
                                         readOnly
                                         precision={0.5}
                                         size="small"
-                                        emptyIcon={<Star className="opacity-90 text-muted-foreground/20" fontSize="inherit" />}
+                                        emptyIcon={<Star className="opacity-90 text-muted-foreground/20 dark:text-gray-600" fontSize="inherit" />}
                                     />
                                 </div>
                             </IconButton>
                             <IconButton
                                 aria-label="settings"
-                                className="text-muted-foreground hover:text-foreground"
+                                className="text-muted-foreground hover:text-foreground dark:text-gray-400 dark:hover:text-white"
                                 onClick={(e) => {
                                     setAnchorEl(e.currentTarget);
                                     setSelectedFeedback(t);
@@ -178,19 +176,19 @@ export default function Reviews() {
                         </div>
                     }
                     title={
-                        <p className="text-sm font-medium text-foreground">
+                        <p className="text-sm font-medium text-primary dark:text-white">
                             {t.userId?.name ? (t.hideUser ? maskName(t.userId?.name) : t.userId?.name) : '[deleted]'}
-                            {t.__v > 0 && <span className="ml-2 text-xs text-muted-foreground">(Edited)</span>}
+                            {t.__v > 0 && <span className="ml-2 text-xs text-muted-foreground dark:text-gray-400">(Edited)</span>}
                         </p>
                     }
                     subheader={
-                        <p className="text-xs text-muted-foreground">
+                        <p className="text-xs text-muted-foreground dark:text-gray-400">
                             {displayEmail}
                         </p>
                     }
                 />
                 <div className="px-6 pb-4">
-                    <p className="text-sm text-foreground whitespace-pre-line mb-4">
+                    <p className="text-sm text-foreground dark:text-gray-300 whitespace-pre-line mb-4">
                         {t.feedback}
                     </p>
 
@@ -209,7 +207,7 @@ export default function Reviews() {
                                         setIsLoading(prev => ({ ...prev, [t._id]: false }));
                                     }}
                                     disabled={isLoading[t._id]}
-                                    className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 hover:bg-accent hover:text-accent-foreground h-8 px-3 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background hover:bg-accent hover:text-accent-foreground dark:hover:bg-gray-700 dark:hover:text-white h-8 px-3 bg-secondary dark:bg-gray-600 text-secondary-foreground dark:text-gray-200"
                                 >
                                     <Plus className="h-4 w-4 mr-1" />
                                     <span>{isLoading[t._id] ? 'Loading...' : 'View Replies'}</span>
@@ -219,7 +217,7 @@ export default function Reviews() {
                                         ...prev,
                                         [t._id]: !prev[t._id]
                                     }))}
-                                    className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 hover:bg-accent hover:text-accent-foreground h-8 px-3"
+                                    className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background hover:bg-accent hover:text-accent-foreground dark:hover:bg-gray-700 dark:hover:text-white h-8 px-3 bg-secondary dark:bg-gray-600 text-secondary-foreground dark:text-gray-200"
                                 >
                                     <MessageSquareMore className="h-4 w-4 mr-1" />
                                     <span>Reply</span>
@@ -228,13 +226,13 @@ export default function Reviews() {
                         </div>
 
                         {replyState[t._id] && (
-                            <div className="pl-4 border-l-2 border-border">
+                            <div className="pl-4 border-l-2 border-border dark:border-gray-700">
                                 <FeedbackReplyBox feedbackReviewId={t._id} isRootReply={true} teacherId={id} />
                             </div>
                         )}
 
                         {showFeedBackReplies[t._id] && (
-                            <div className="pl-4 border-l-2 border-border mt-4">
+                            <div className="pl-4 border-l-2 border-border dark:border-gray-700 mt-4">
                                 <FeedbackComment feedbackCommentId={t._id} />
                             </div>
                         )}
@@ -245,7 +243,7 @@ export default function Reviews() {
                         open={Boolean(anchorEl)}
                         onClose={() => setAnchorEl(null)}
                         PaperProps={{
-                            className: "bg-popover border border-border rounded-md shadow-md"
+                            className: "bg-popover dark:bg-gray-800 border border-border dark:border-gray-700 rounded-md shadow-md"
                         }}
                     >
                         {selectedFeedback?.userId._id === authUser._id ? (
@@ -255,7 +253,7 @@ export default function Reviews() {
                                         handleEditFeedback(selectedFeedback);
                                         setAnchorEl(null);
                                     }}
-                                    className="text-sm hover:bg-accent hover:text-accent-foreground px-4 py-2"
+                                    className="text-sm hover:bg-accent hover:text-accent-foreground dark:hover:bg-gray-700 dark:hover:text-white px-4 py-2"
                                 >
                                     Edit
                                 </MenuItem>
@@ -264,14 +262,14 @@ export default function Reviews() {
                                         handleDeleteFeedback();
                                         setAnchorEl(null);
                                     }}
-                                    className="text-sm text-destructive hover:bg-destructive/10 px-4 py-2"
+                                    className="text-sm text-destructive hover:bg-destructive/10 dark:hover:bg-red-900/30 px-4 py-2"
                                 >
                                     Delete
                                 </MenuItem>
                             </>
                         ) : (
                             <MenuItem
-                                className="text-sm hover:bg-accent hover:text-accent-foreground px-4 py-2"
+                                className="text-sm hover:bg-accent hover:text-accent-foreground dark:hover:bg-gray-700 dark:hover:text-white px-4 py-2"
                             >
                                 Report
                             </MenuItem>
@@ -285,12 +283,12 @@ export default function Reviews() {
     return (
         <div className="p-4">
             <div className="flex w-full items-center justify-end mb-3 pr-4">
-                <label htmlFor="rating-filter" className="mr-1 text-sm">Filter by:</label>
+                <label htmlFor="rating-filter" className="mr-1 text-sm text-muted-foreground dark:text-gray-400">Filter by:</label>
                 <select
                     id="rating-filter"
                     value={selectedRating}
                     onChange={(e) => setSelectedRating(Number(e.target.value))}
-                    className="text-sm py-1 px-2 border dark:bg-[#151515] rounded-3xl shadow-sm shadow-[#3f3f3fba]"
+                    className="text-sm py-1 px-2 border rounded-md bg-background dark:bg-gray-800 text-foreground dark:text-white border-input dark:border-gray-700 hover:bg-accent dark:hover:bg-gray-700 hover:text-accent-foreground dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
                 >
                     <option value={-1}>All Ratings</option>
                     {[0, 1, 2, 3, 4, 5].map(rating => (
@@ -300,7 +298,7 @@ export default function Reviews() {
             </div>
             {loading
                 ? Array.from({ length: 3 }).map((_, index) => (
-                    <Card key={index} className="bg-gray-100 dark:bg-[#222222] mx-4 mb-2">
+                    <Card key={index} className="bg-card dark:bg-gray-800 border border-border dark:border-gray-700 mx-4 mb-2">
                         <div className="p-4 flex justify-between">
                             <div className="flex items-center">
                                 <Skeleton variant="circular" width={43} height={43} />
@@ -316,37 +314,37 @@ export default function Reviews() {
                         </div>
                     </Card>
                 ))
-                : (feedbacks.length === 0 ? (<Card className='mx-4 mb-2 flex justify-center bg-gray-100 dark:bg-[#222222]'>
-                    <CardHeader subheader={<p className='text-gray-600 dark:text-white'>No Feedbacks</p>} />
-                </Card>) :
-                    filteredFeedbacks.map(renderFeedbackCard)
-                )
+                : (feedbacks.length === 0 ? (
+                    <Card className="mx-4 mb-2 flex justify-center bg-card dark:bg-gray-800 border border-border dark:border-gray-700">
+                        <CardHeader subheader={<p className="text-muted-foreground dark:text-gray-400">No Feedbacks</p>} />
+                    </Card>
+                ) : filteredFeedbacks.map(renderFeedbackCard))
             }
             {isDialogOpen && (
-                <div className="fixed inset-0 flex w-full items-center justify-center bg-black bg-opacity-50 z-40" onClick={() => setIsDialogOpen(false)}>
-                    <div className="bg-white w-full dark:bg-[#333333] p-6 rounded-lg max-w-lg" onClick={(e) => e.stopPropagation()}>
-                        <h2 className="text-lg font-bold mb-4 dark:text-white">Edit Feedback</h2>
+                <div className="fixed inset-0 flex w-full items-center justify-center bg-background/80 dark:bg-gray-900/80 backdrop-blur-sm z-40" onClick={() => setIsDialogOpen(false)}>
+                    <div className="bg-card dark:bg-gray-800 w-full max-w-lg p-6 rounded-lg border border-border dark:border-gray-700 shadow-lg" onClick={(e) => e.stopPropagation()}>
+                        <h2 className="text-lg font-bold mb-4 text-foreground dark:text-white">Edit Feedback</h2>
                         <textarea
-                            className="w-full p-2 mb-4 border rounded dark:bg-[#444444] dark:text-white"
+                            className="w-full p-2 mb-4 rounded-md border border-input dark:border-gray-700 bg-background dark:bg-gray-900 text-foreground dark:text-white placeholder:text-muted-foreground dark:placeholder:text-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                             rows="4"
                             value={editFeedbackText}
                             onChange={(e) => setEditFeedbackText(e.target.value)}
                         />
-                        <div className="flex -mt-[0.4rem] items-center">
-                            <p className="text-xs md:text-md  text-gray-600 dark:text-gray-400">Submit anonymously?</p>
+                        <div className="flex items-center mb-4">
+                            <p className="text-sm text-muted-foreground dark:text-gray-400">Submit anonymously?</p>
                             <BpCheckbox
                                 value={editAnonymous}
                                 onClick={() => setEditAnonymous(prev => !prev)}
                             />
                         </div>
                         <div className="mb-4">
-                            <label className="block mb-2 text-sm dark:text-white">Rating</label>
+                            <label className="block mb-2 text-sm text-foreground dark:text-white">Rating</label>
                             <div className="flex items-center">
                                 {[...Array(5).keys()].map((value) => (
                                     <button
                                         key={value}
                                         onClick={() => setEditRating(value + 1)}
-                                        className={`p-1 ${value < editRating ? 'text-yellow-500' : 'text-gray-400'}`}
+                                        className={`p-1 ${value < editRating ? 'text-yellow-500' : 'text-muted-foreground dark:text-gray-400'}`}
                                     >
                                         <Star />
                                     </button>
@@ -356,13 +354,13 @@ export default function Reviews() {
                         <div className="flex justify-end space-x-2">
                             <button
                                 onClick={() => setIsDialogOpen(false)}
-                                className="px-4 py-2 rounded-3xl bg-[#343434d3] brightness-75 text-white hover:bg-[#343434d3] hover:brightness-110"
+                                className="px-4 py-2 rounded-md bg-secondary dark:bg-gray-700 text-secondary-foreground dark:text-gray-200 hover:bg-secondary/80 dark:hover:bg-gray-600"
                             >
                                 Cancel
                             </button>
                             <button
                                 onClick={handleUpdateFeedback}
-                                className="px-4 py-2 rounded-3xl bg-[#262626] brightness-75 text-white hover:bg-[#262626] hover:brightness-110"
+                                className="px-4 py-2 rounded-md bg-primary dark:bg-blue-600 text-primary-foreground dark:text-white hover:bg-primary/90 dark:hover:bg-blue-700"
                             >
                                 Update
                             </button>

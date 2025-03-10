@@ -46,14 +46,14 @@ export default function FeedbackReplyBox({ feedbackReviewId, isRootReply, teache
 
     return (
         <form onSubmit={handleSubmit} className="p-4">
-            <div className="bg-background rounded-lg">
+            <div className="bg-background dark:bg-gray-800 rounded-lg">
                 <div className="space-y-4">
                     <textarea
                         onClick={() => setShowFeedbackBox(true)}
                         ref={textAreaRef}
                         placeholder="Add a feedback..."
                         rows={1}
-                        className="w-full min-h-[80px] rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                        className="w-full min-h-[80px] rounded-md border border-input dark:border-gray-700 bg-background dark:bg-gray-800 px-3 py-2 text-sm ring-offset-background dark:text-gray-200 placeholder:text-muted-foreground dark:placeholder:text-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                         value={feedback}
                         onChange={(e) => setFeedback(e.target.value)}
                     />
@@ -66,14 +66,14 @@ export default function FeedbackReplyBox({ feedbackReviewId, isRootReply, teache
                                 setShowFeedbackBox(false);
                                 setFeedback('');
                             }}
-                            className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 px-4 py-2"
+                            className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input dark:border-gray-700 bg-background dark:bg-gray-800 hover:bg-accent dark:hover:bg-gray-700 hover:text-accent-foreground dark:text-gray-200 h-9 px-4 py-2"
                         >
                             Cancel
                         </button>
                         <button
                             type="submit"
                             disabled={isLoading}
-                            className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-9 px-4 py-2"
+                            className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary dark:bg-gray-700 text-primary-foreground dark:text-gray-200 hover:bg-primary/90 dark:hover:bg-gray-600 h-9 px-4 py-2"
                         >
                             {isLoading ? (
                                 <span className="flex items-center space-x-2">
