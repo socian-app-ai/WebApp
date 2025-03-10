@@ -14,7 +14,7 @@ const { sessionSaveHandler } = require("../../../utils/save.session");
 const redisClient = require('../../../db/reddis');
 const FeedBackCommentTeacher = require("../../../models/university/teacher/feedback.rating.teacher.model");
 
-const aiFeedback= require("../../../services/aifeedback.service.js")
+const aiFeedback = require("../../../services/aifeedback.service.js")
 const axios = require('axios');
 
 
@@ -30,8 +30,8 @@ async function updateTeacherFeedbackSummary(teacherId) {
     }
 
     // Extract feedback texts
-    const feedbackTexts = teacher.ratingsByStudents.map(rating => rating.feedbackText);
-    
+    const feedbackTexts = teacher.ratingsByStudents.map(rating => rating.feedback);
+
     if (feedbackTexts.length === 0) {
       teacher.feedbackSummary = "No feedback available yet.";
     } else {
@@ -704,11 +704,11 @@ router.post('/reply/feedback', async (req, res) => {
 
     })
 
-    const teacher = await Teacher.findByIdAndUpdate({teacherId}, {
+    const teacher = await Teacher.findByIdAndUpdate({ teacherId }, {
       $push: {
         replies: [commentedOnaFeedback]
       }
-    }, {upsert: true})
+    }, { upsert: true })
 
   } catch (error) {
     console.error("Error in /feedback/reply: ", error)
