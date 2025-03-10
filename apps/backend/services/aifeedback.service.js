@@ -6,7 +6,7 @@ const model = genAI.getGenerativeModel({
   systemInstruction:
     `
     You are a reviewer of feedbacks given by students to a teacher 
-    and will generate a response summarizing what the students have said about the teacher
+    and will generate a response summarizing what the students have said about the teacher and will make it concise and professional
 
     `
 

@@ -1,4 +1,4 @@
-import { Chip, Rating } from "@mui/material";
+import { Rating } from "@mui/material";
 import { Star } from "@mui/icons-material";
 import { Link } from 'react-router-dom';
 
@@ -6,60 +6,76 @@ import { Link } from 'react-router-dom';
 export default function TeacherCard({ teacher }) {
     // console.log("teacher", teacher)
     return (
-        <Link to={`/student/teacher/comments/${teacher._id}`} className="bg-gray-100 dark:bg-[#222222] rounded-lg shadow-xl p-4 mt-5 mx-2">
-            <div className="flex items-center mb-4">
-                <div className="w-10 h-10 overflow-hidden rounded-full">
-                    {teacher.imageUrl !== '' ? <img
-                        className="object-cover w-full h-full"
-                        src={teacher.imageUrl}
-                        alt={`${teacher.name}'s photo`}
-                    />
-                        :
-                        <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
-                            <span className="text-white text-sm font-medium">
+        <Link
+            to={`/student/teacher/comments/${teacher._id}`}
+            className="block p-6 transition-all duration-200 hover:shadow-lg rounded-lg border border-border bg-card hover:bg-accent/5"
+        >
+            <div className="flex items-center space-x-4">
+                <div className="relative">
+                    {teacher.imageUrl !== '' ? (
+                        <img
+                            className="h-12 w-12 rounded-full object-cover border border-border"
+                            src={teacher.imageUrl}
+                            alt={`${teacher.name}'s photo`}
+                        />
+                    ) : (
+                        <div className="h-12 w-12 rounded-full bg-gradient-to-br from-primary/80 to-primary flex items-center justify-center">
+                            <span className="text-primary-foreground text-sm font-medium">
                                 {teacher.name.charAt(0).toUpperCase() || 'D'}
                             </span>
-                        </div>}
-                </div>
-                <div className="ml-3">
-                    <h2 className="text-md font-semibold dark:text-white">{teacher.name}</h2>
-                    <p className="text-gray-600 dark:text-gray-400">{teacher?.designation || 'designation'}</p>
+                        </div>
+                    )}
+                    {teacher.onLeave && (
+                        <span className="absolute -top-1 -right-1 h-3 w-3">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-destructive opacity-75"></span>
+                            <span className="relative inline-flex rounded-full h-3 w-3 bg-destructive"></span>
+                        </span>
+                    )}
                 </div>
 
+                <div className="flex-1 min-w-0">
+                    <h2 className="text-lg font-semibold text-foreground truncate">
+                        {teacher.name}
+                    </h2>
+                    <p className="text-sm text-muted-foreground">
+                        {teacher?.designation || 'designation'}
+                    </p>
+                </div>
             </div>
-            <div className="">
-                <div className="flex my-2">
 
-
-                    <p>Raitngs: </p><Rating
+            <div className="mt-4 space-y-3">
+                <div className="flex items-center space-x-2">
+                    <span className="text-sm text-muted-foreground">Rating:</span>
+                    <Rating
                         readOnly
-                        className="mx-2 "
                         value={teacher.rating}
-                        // defaultValue={2}
-
                         precision={0.5}
-                        emptyIcon={<Star className=" opacity-90 text-[#BABBBD] " fontSize="inherit" />}
-                        size="medium"
+                        size="small"
+                        emptyIcon={<Star className="opacity-90 text-muted-foreground/20" fontSize="inherit" />}
                     />
                 </div>
-                {teacher.onLeave && <Chip
 
-                    label="on leave"
-                    variant="outlined"
-                    size="small"
-                    className="dark:text-white dark:border-white"
-                />
-                }
-                {teacher?.topComment && <div className="w-full min-h-10 max-h-20 bg-[#222B3F] rounded-md p-1">
-                    <p className="line-clamp-3">{teacher.topComment}</p>
-                </div>}
+                {teacher?.topComment && (
+                    <div className="p-3 rounded-lg bg-muted/50">
+                        <p className="text-sm text-muted-foreground line-clamp-3">
+                            {teacher.topComment}
+                        </p>
+                    </div>
+                )}
+
+                <div className="space-y-1">
+                    <p className="text-sm font-medium text-foreground">Feedback Summary</p>
+                    <p className="text-sm text-muted-foreground">
+                        {teacher.feedbackSummary || "No summary available."}
+                    </p>
+                </div>
+
+                {teacher.onLeave && (
+                    <div className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border border-destructive/50 text-destructive">
+                        Currently on leave
+                    </div>
+                )}
             </div>
-            <div>
-                <p className="text-sm text-gray-500">Feedback Summary</p>
-                <p className="text-gray-700">{teacher.feedbackSummary || "No summary available."}</p>
-            </div>
-
-
         </Link>
     );
 }

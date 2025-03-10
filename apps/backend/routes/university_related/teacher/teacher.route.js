@@ -33,13 +33,13 @@ async function updateTeacherFeedbackSummary(teacherId) {
     const feedbackTexts = teacher.ratingsByStudents.map(rating => rating.feedback);
 
     if (feedbackTexts.length === 0) {
-      teacher.feedbackSummary = "No feedback available yet.";
+      teacher.feedbackSummary[0] = "No feedback available yet.";
     } else {
       // Generate AI summary
       const summary = await aiFeedback(feedbackTexts.join("\n"));
-      console.log(`summary is -> ${teacher.feedbackSummary}`);
+      // console.log(`summary is -> ${teacher.feedbackSummary}`);
 
-      teacher.feedbackSummary = summary;
+      teacher.feedbackSummary.push(summary);
     }
 
     await teacher.save();
@@ -691,32 +691,33 @@ router.post("/rate", async (req, res) => {
 });
 
 
-router.post('/reply/feedback', async (req, res) => {
-  try {
-    const { feedbackComment, gifUrl, feedbackId, teacherId, mentions } = req.body;
-    const { userId } = getUserDetails(req)
+// router.post('/reply/feedback', async (req, res) => {
+//   try {
+//     const { feedbackComment, gifUrl, feedbackId, teacherId, mentions } = req.body;
+//     const { userId } = getUserDetails(req)
+//     console.log("DAADAADA\n ", { feedbackComment, gifUrl, feedbackId, teacherId, mentions })
 
-    const commentedOnaFeedback = await FeedBackCommentTeacher.create({
-      teacherId: teacherId,
-      parentTeacherRatingCommentId: feedbackId,
-      user: userId,
-      comment: feedbackComment,
-      gifUrl: gifUrl || '',
-      mentions: mentions || []
+//     const commentedOnaFeedback = await FeedBackCommentTeacher.create({
+//       teacherId: teacherId,
+//       parentTeacherRatingCommentId: feedbackId,
+//       user: userId,
+//       comment: feedbackComment,
+//       gifUrl: gifUrl || '',
+//       mentions: mentions || []
 
-    })
+//     })
 
-    const teacher = await Teacher.findByIdAndUpdate({ teacherId }, {
-      $push: {
-        replies: [commentedOnaFeedback]
-      }
-    }, { upsert: true })
+//     const teacher = await Teacher.findByIdAndUpdate({ teacherId }, {
+//       $push: {
+//         replies: [commentedOnaFeedback]
+//       }
+//     }, { upsert: true })
 
-  } catch (error) {
-    console.error("Error in /feedback/reply: ", error)
-    res.status(500).json({ message: "Internal Server Error" })
-  }
-})
+//   } catch (error) {
+//     console.error("Error in /feedback/reply: ", error)
+//     res.status(500).json({ message: "Internal Server Error" })
+//   }
+// })
 
 
 

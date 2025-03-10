@@ -119,7 +119,7 @@ const teacherSchema = new Schema({
         }, //user._id : rating
         default: {}
     },
-    feedbackSummary: { type: String, default: "" } 
+    feedbackSummary: [{ type: String, default: "" }]
 
 });
 

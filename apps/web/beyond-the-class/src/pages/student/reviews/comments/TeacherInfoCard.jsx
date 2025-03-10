@@ -31,90 +31,107 @@ export default function TeacherInfoCard() {
         fetchTeacher();
     }, [location.search, triggerReRender]);
     return (
-        <Box className="bg-gray-100 dark:bg-[#222222] min-h-[fit] max-h-min rounded-lg shadow-lg  mt-10  pt-3  m-2 lg:sticky lg:top-7 ">
-
-            <div className=" mx-auto p-2 ">
-                <div className="flex flex-row sm:flex-row lg:flex-col p-4 xl:flex-row">
-                    {/* {teacher ? <img className="border w-32 h-40" src={teacher ? teacher.imageUrl : 'https://avatar.iran.liara.run/username?username=[Unknown]'} /> : <Skeleton variant="rounded" sx={{ fontSize: '1rem', marginTop: '-0.2rem' }} width={130} height={150} />} */}
+        <Box className="bg-card dark:bg-card/95 rounded-lg border border-border shadow-lg mt-6 lg:sticky lg:top-7">
+            <div className="p-6">
+                <div className="flex flex-col space-y-4 sm:flex-row sm:space-x-6 sm:space-y-0">
                     {teacher ? (
-                        <img
-                            className="border w-32 h-40"
-                            src={teacher.imageUrl ? teacher.imageUrl : 'https://via.placeholder.com/130x150'}
-                            alt={teacher.name || "Unknown Teacher"}
-                        />
+                        <div className="relative w-32 h-40 overflow-hidden rounded-md border border-border">
+                            <img
+                                className="object-cover w-full h-full"
+                                src={teacher.imageUrl ? teacher.imageUrl : 'https://via.placeholder.com/130x150'}
+                                alt={teacher.name || "Unknown Teacher"}
+                            />
+                        </div>
                     ) : (
                         <Skeleton
                             variant="rounded"
-                            sx={{ fontSize: '1rem', marginTop: '-0.2rem' }}
+                            sx={{ fontSize: '1rem' }}
                             width={130}
                             height={150}
                         />
                     )}
 
-                    <div className="ml-2 lg:ml-0 xl:ml-2">
-                        <h1 className="text-2xl font-bold dark:text-white">{teacher ? teacher.name : <Skeleton variant="text" sx={{ fontSize: '1rem', marginTop: '-0.2rem' }} width={200} height={40} />}</h1>
-                        <p className="text-gray-600 dark:text-gray-400">{teacher ? teacher.designation : <Skeleton variant="text" sx={{ fontSize: '1rem', marginTop: '-0.2rem' }} width={200} height={30} />}</p>
-                        <div className="flex items-center -mt-1 mb-2">
-                            <p className="flex mr-2 items-center">Best Rating: {teacher ? Number(teacher.rating).toFixed(2) : <Skeleton variant="text" sx={{ fontSize: '1rem', marginLeft: 1 }} width={20} height={30} />} </p>
-
+                    <div className="flex-1 space-y-2">
+                        <h1 className="text-2xl font-bold tracking-tight">
+                            {teacher ? teacher.name : <Skeleton variant="text" width={200} height={40} />}
+                        </h1>
+                        <p className="text-muted-foreground">
+                            {teacher ? teacher.designation : <Skeleton variant="text" width={200} height={30} />}
+                        </p>
+                        <div className="flex items-center space-x-2">
+                            <span className="text-muted-foreground">Best Rating:</span>
+                            <span className="font-medium">
+                                {teacher ? Number(teacher.rating).toFixed(2) : <Skeleton variant="text" width={20} height={30} />}
+                            </span>
                             <CustomStarRating rating={teacher ? teacher.rating : 0} />
-
                         </div>
-                        {teacher && teacher?.campusOrigin && (
-                            <p>Location: {teacher.campusOrigin.location}</p>
+                        {teacher?.campusOrigin && (
+                            <p className="text-sm text-muted-foreground">
+                                <span className="inline-flex items-center">
+                                    📍 {teacher.campusOrigin.location}
+                                </span>
+                            </p>
                         )}
                     </div>
                 </div>
-                <div className="p-2">
-                    <p>{teacher && teacher.onLeave && (
-                        <p className="text-red-600">This teacher is currently on leave.</p>
-                    )}</p>
 
-                    <div className="mt-4 m-1">
-                        {!teacher ? (
-                            <>
-                                <p className="text-gray-700 dark:text-white mb-2">
-                                    <span className="font-semibold text-lg dark:text-gray-300">Area of Interest:<br /></span>
-                                    <Skeleton variant="text" sx={{ fontSize: '1rem' }} width={300} height={20} />
-                                </p>
-                                <p className="text-gray-700 dark:text-white mb-2">
-                                    <span className="font-semibold text-lg dark:text-gray-300">Department:</span>
-                                    <Skeleton variant="text" sx={{ fontSize: '1rem' }} width={300} height={20} />
-                                </p>
-                                <p className="text-gray-700 dark:text-white mb-2">
-                                    <span className="font-semibold text-lg dark:text-gray-300">Supervisor Status:</span>
-                                    <Skeleton variant="text" sx={{ fontSize: '1rem' }} width={300} height={20} />
-                                </p>
-                                <Skeleton variant="text" sx={{ fontSize: '1rem' }} width={200} height={20} />
-                            </>
-                        ) : (
-                            <>
-                                {teacher?.areaOfInterest && <p className="text-gray-700 dark:text-white mb-2">
-                                    <span className="font-semibold text-lg dark:text-gray-300">Area of Interest:<br /></span>
-                                    {teacher.areaOfInterest}
-                                </p>}
-                                <p className="text-gray-700 dark:text-white mb-2">
-                                    <span className="font-semibold text-lg dark:text-gray-300">Department:</span>
-                                    {teacher.department.name}
-                                </p>
-                                {teacher?.supervisorStatus && <p className="text-gray-700 dark:text-white mb-2">
-                                    <span className="font-semibold text-lg dark:text-gray-300">Supervisor Status:</span>
-                                    {teacher.supervisorStatus}
-                                </p>}
-                                <a
-                                    target="_blank"
-                                    href={teacher.imageUrl}
-                                    className="text-blue-500 dark:text-blue-400 hover:underline"
-                                >
-                                    Comsats Web Profile
-                                </a>
-                            </>
-                        )}
+                {teacher?.onLeave && (
+                    <div className="mt-4 p-3 bg-destructive/10 text-destructive rounded-md">
+                        <p>This teacher is currently on leave.</p>
                     </div>
+                )}
 
+                <div className="mt-6 space-y-4">
+                    {!teacher ? (
+                        <>
+                            <div className="space-y-2">
+                                <h3 className="font-semibold text-foreground">Area of Interest</h3>
+                                <Skeleton variant="text" width={300} height={20} />
+                            </div>
+                            <div className="space-y-2">
+                                <h3 className="font-semibold text-foreground">Department</h3>
+                                <Skeleton variant="text" width={300} height={20} />
+                            </div>
+                            <div className="space-y-2">
+                                <h3 className="font-semibold text-foreground">Supervisor Status</h3>
+                                <Skeleton variant="text" width={300} height={20} />
+                            </div>
+                        </>
+                    ) : (
+                        <>
+                            {teacher?.areaOfInterest && (
+                                <div className="space-y-1.5">
+                                    <h3 className="font-semibold text-foreground">Area of Interest</h3>
+                                    <p className="text-muted-foreground">{teacher.areaOfInterest}</p>
+                                </div>
+                            )}
+                            <div className="space-y-1.5">
+                                <h3 className="font-semibold text-foreground">Department</h3>
+                                <p className="text-muted-foreground">{teacher.department.name}</p>
+                            </div>
+                            {teacher?.supervisorStatus && (
+                                <div className="space-y-1.5">
+                                    <h3 className="font-semibold text-foreground">Supervisor Status</h3>
+                                    <p className="text-muted-foreground">{teacher.supervisorStatus}</p>
+                                </div>
+                            )}
+                            <a
+                                target="_blank"
+                                href={teacher.imageUrl}
+                                className="inline-flex items-center text-primary hover:underline mt-2"
+                            >
+                                Comsats Web Profile →
+                            </a>
+                        </>
+                    )}
 
+                    <div className="border-t border-border mt-6 pt-4">
+                        <h3 className="font-semibold text-foreground mb-2">Feedback Summary</h3>
+                        <p className="text-muted-foreground text-sm">
+                            {teacher?.feedbackSummary || "No summary available."}
+                        </p>
+                    </div>
                 </div>
-
             </div>
         </Box>
     )
