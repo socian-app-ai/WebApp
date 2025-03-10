@@ -1,12 +1,12 @@
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GEMINI_KEY);
-const model = genAI.getGenerativeModel({ 
-    model: "gemini-2.0-flash", 
-    systemInstruction:
+const model = genAI.getGenerativeModel({
+  model: "gemini-2.0-flash",
+  systemInstruction:
     `
     You are a reviewer of feedbacks given by students to a teacher 
-    and will generate a response summarizing what the students have said about the treacher
+    and will generate a response summarizing what the students have said about the teacher
 
     `
 
