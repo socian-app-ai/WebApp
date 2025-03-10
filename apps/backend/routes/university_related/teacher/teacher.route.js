@@ -19,6 +19,36 @@ const axios = require('axios');
 
 
 
+////////////////////////////Teacher feedback updates////////////////////////////////////
+async function updateTeacherFeedbackSummary(teacherId) {
+  try {
+    const teacher = await Teacher.findById(teacherId).populate("ratingsByStudents");
+
+    if (!teacher) {
+      console.error("Teacher not found");
+      return;
+    }
+
+    // Extract feedback texts
+    const feedbackTexts = teacher.ratingsByStudents.map(rating => rating.feedbackText);
+    
+    if (feedbackTexts.length === 0) {
+      teacher.feedbackSummary = "No feedback available yet.";
+    } else {
+      // Generate AI summary
+      const summary = await aiFeedback(feedbackTexts.join("\n"));
+      teacher.feedbackSummary = summary;
+    }
+
+    await teacher.save();
+    console.log("Feedback summary updated for", teacher.name);
+  } catch (error) {
+    console.error("Error updating feedback summary:", error);
+  }
+}
+
+////////////////////////////
+
 // router.get("/teachers-by-campus", async (req, res) => {
 //   try {
 //     const user = req.session.user;
@@ -502,132 +532,36 @@ router.get("/reviews/feedbacks", async (req, res) => {
 
 
 
-// router.post("/rate", async (req, res) => {
-//   const { teacherId, userId, rating, feedback, hideUser = false } = req.body;
-
-//   if (!teacherId || !userId || rating === undefined) {
-//     return res.status(400).json({ message: "Missing required fields" });
-//   }
-
-//   try {
-//     const teacher = await Teacher.findById(teacherId);
-//     if (!teacher) {
-//       return res.status(404).json({ message: "Teacher not found" });
-//     }
-
-//     let existingRating = await TeacherRating.findOne({ teacherId, userId });
-//     console.log("existing?", existingRating);
-//     if (existingRating) {
-//       existingRating.rating = rating;
-//       existingRating.feedback = feedback;
-//       existingRating.__v += 1;
-//       existingRating.hideUser = hideUser;
-//       existingRating.upVotesCount = 0;
-//       existingRating.downVotesCount = 0;
-//       existingRating.replies = []
-//       existingRating.userVotes = {}
-//       existingRating.isFeedbackEdited.timestamp = Date.now()
-//       existingRating.isFeedbackEdited.bool = true;
-//       await existingRating.save();
-//       teacher.ratingsByStudentsMap.clear()
-//       // teacher.save()
-//     } else {
-//       existingRating = new TeacherRating({
-//         teacherId,
-//         userId,
-//         rating,
-//         feedback,
-//         hideUser,
-//         userVotes: { userId: 'upVote' }
-//       });
-//       existingRating.save();
-//       teacher.ratingsByStudents.push(existingRating._id);
-//       teacher.ratingsByStudentsMap.set(userId, rating)
-//       // await teacher.save();
-//     }
-
-//     const ratingsArray = Array.from(teacher.ratingsByStudentsMap.values());
-//     const totalRatings = ratingsArray.reduce((acc, curr) => acc + curr, 0);
-//     const averageRating = ratingsArray.length > 0 ? totalRatings / ratingsArray.length : 0;
-
-//     teacher.rating = parseFloat(averageRating.toFixed(2));
-
-//     // console.log("This is Teacher rating:", teacher.rating, "and average: ", averageRating, "sum ", sumRatings)
-
-//     await teacher.save();
-
-//     res.status(200).json({ message: "Rating processed successfully" });
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).json({ "Server error": err.message });
-//   }
-// });
-
-
-// router.post('/reply/feedback', async (req, res) => {
-//   try {
-//     const { feedbackComment, gifUrl, feedbackId, teacherId, mentions } = req.body;
-//     const { userId } = getUserDetails(req)
-
-//     const commentedOnaFeedback = await FeedBackCommentTeacher.create({
-//       teacherId: teacherId,
-//       parentTeacherRatingCommentId: feedbackId,
-//       user: userId,
-//       comment: feedbackComment,
-//       gifUrl: gifUrl || '',
-//       mentions: mentions || []
-
-//     })
-
-//     const teacher = await Teacher.findByIdAndUpdate({teacherId}, {
-//       $push: {
-//         replies: [commentedOnaFeedback]
-//       }
-//     }, {upsert: true})
-
-//   } catch (error) {
-//     console.error("Error in /feedback/reply: ", error)
-//     res.status(500).json({ message: "Internal Server Error" })
-//   }
-// })
-
-
-
 router.post("/rate", async (req, res) => {
   const { teacherId, userId, rating, feedback, hideUser = false } = req.body;
 
-  // Check for missing required fields
   if (!teacherId || !userId || rating === undefined) {
     return res.status(400).json({ message: "Missing required fields" });
   }
 
   try {
-    // Find the teacher
     const teacher = await Teacher.findById(teacherId);
     if (!teacher) {
       return res.status(404).json({ message: "Teacher not found" });
     }
 
-    // Check if the user has already rated the teacher
     let existingRating = await TeacherRating.findOne({ teacherId, userId });
     console.log("existing?", existingRating);
-
     if (existingRating) {
-      // Update existing rating
       existingRating.rating = rating;
       existingRating.feedback = feedback;
       existingRating.__v += 1;
       existingRating.hideUser = hideUser;
       existingRating.upVotesCount = 0;
       existingRating.downVotesCount = 0;
-      existingRating.replies = [];
-      existingRating.userVotes = {};
-      existingRating.isFeedbackEdited.timestamp = Date.now();
+      existingRating.replies = []
+      existingRating.userVotes = {}
+      existingRating.isFeedbackEdited.timestamp = Date.now()
       existingRating.isFeedbackEdited.bool = true;
       await existingRating.save();
-      teacher.ratingsByStudentsMap.clear();
+      teacher.ratingsByStudentsMap.clear()
+      // teacher.save()
     } else {
-      // Create a new rating
       existingRating = new TeacherRating({
         teacherId,
         userId,
@@ -636,42 +570,140 @@ router.post("/rate", async (req, res) => {
         hideUser,
         userVotes: { userId: 'upVote' }
       });
-      await existingRating.save();
+      existingRating.save();
       teacher.ratingsByStudents.push(existingRating._id);
-      teacher.ratingsByStudentsMap.set(userId, rating);
+      teacher.ratingsByStudentsMap.set(userId, rating)
+      // await teacher.save();
     }
 
-    // Calculate the teacher's average rating
     const ratingsArray = Array.from(teacher.ratingsByStudentsMap.values());
     const totalRatings = ratingsArray.reduce((acc, curr) => acc + curr, 0);
     const averageRating = ratingsArray.length > 0 ? totalRatings / ratingsArray.length : 0;
 
     teacher.rating = parseFloat(averageRating.toFixed(2));
+
+    // console.log("This is Teacher rating:", teacher.rating, "and average: ", averageRating, "sum ", sumRatings)
+
     await teacher.save();
 
-    // Call the AI service directly for feedback analysis
-    try {
-      const aiAnalysis = await aiFeedback(feedback); // Use the imported aiFeedback service
-      console.log("AI analysis response:", aiAnalysis);
+    updateTeacherFeedbackSummary(teacherId); //this will update the summary
 
-      // Save the AI analysis in the database or process as needed
-      existingRating.aiAnalysis = aiAnalysis;
-      await existingRating.save();
-
-      res.status(200).json({ 
-        message: "Rating processed successfully", 
-        aiAnalysis: aiAnalysis  // Send back AI analysis with response
-      });
-    } catch (aiError) {
-      console.error("Error calling AI service:", aiError);
-      res.status(500).json({ message: "Error analyzing feedback with AI" });
-    }
-
+    res.status(200).json({ message: "Rating processed successfully" });
   } catch (err) {
     console.error(err);
     res.status(500).json({ "Server error": err.message });
   }
 });
+
+
+router.post('/reply/feedback', async (req, res) => {
+  try {
+    const { feedbackComment, gifUrl, feedbackId, teacherId, mentions } = req.body;
+    const { userId } = getUserDetails(req)
+
+    const commentedOnaFeedback = await FeedBackCommentTeacher.create({
+      teacherId: teacherId,
+      parentTeacherRatingCommentId: feedbackId,
+      user: userId,
+      comment: feedbackComment,
+      gifUrl: gifUrl || '',
+      mentions: mentions || []
+
+    })
+
+    const teacher = await Teacher.findByIdAndUpdate({teacherId}, {
+      $push: {
+        replies: [commentedOnaFeedback]
+      }
+    }, {upsert: true})
+
+  } catch (error) {
+    console.error("Error in /feedback/reply: ", error)
+    res.status(500).json({ message: "Internal Server Error" })
+  }
+})
+
+
+
+// router.post("/rate", async (req, res) => {
+//   const { teacherId, userId, rating, feedback, hideUser = false } = req.body;
+
+//   // Check for missing required fields
+//   if (!teacherId || !userId || rating === undefined) {
+//     return res.status(400).json({ message: "Missing required fields" });
+//   }
+
+//   try {
+//     // Find the teacher
+//     const teacher = await Teacher.findById(teacherId);
+//     if (!teacher) {
+//       return res.status(404).json({ message: "Teacher not found" });
+//     }
+
+//     // Check if the user has already rated the teacher
+//     let existingRating = await TeacherRating.findOne({ teacherId, userId });
+//     console.log("existing?", existingRating);
+
+//     if (existingRating) {
+//       // Update existing rating
+//       existingRating.rating = rating;
+//       existingRating.feedback = feedback;
+//       existingRating.__v += 1;
+//       existingRating.hideUser = hideUser;
+//       existingRating.upVotesCount = 0;
+//       existingRating.downVotesCount = 0;
+//       existingRating.replies = [];
+//       existingRating.userVotes = {};
+//       existingRating.isFeedbackEdited.timestamp = Date.now();
+//       existingRating.isFeedbackEdited.bool = true;
+//       await existingRating.save();
+//       teacher.ratingsByStudentsMap.clear();
+//     } else {
+//       // Create a new rating
+//       existingRating = new TeacherRating({
+//         teacherId,
+//         userId,
+//         rating,
+//         feedback,
+//         hideUser,
+//         userVotes: { userId: 'upVote' }
+//       });
+//       await existingRating.save();
+//       teacher.ratingsByStudents.push(existingRating._id);
+//       teacher.ratingsByStudentsMap.set(userId, rating);
+//     }
+
+//     // Calculate the teacher's average rating
+//     const ratingsArray = Array.from(teacher.ratingsByStudentsMap.values());
+//     const totalRatings = ratingsArray.reduce((acc, curr) => acc + curr, 0);
+//     const averageRating = ratingsArray.length > 0 ? totalRatings / ratingsArray.length : 0;
+
+//     teacher.rating = parseFloat(averageRating.toFixed(2));
+//     await teacher.save();
+
+//     // Call the AI service directly for feedback analysis
+//     try {
+//       const aiAnalysis = await aiFeedback(feedback); // Use the imported aiFeedback service
+//       console.log("AI analysis response:", aiAnalysis);
+
+//       // Save the AI analysis in the database or process as needed
+//       existingRating.aiAnalysis = aiAnalysis;
+//       await existingRating.save();
+
+//       res.status(200).json({ 
+//         message: "Rating processed successfully", 
+//         aiAnalysis: aiAnalysis  // Send back AI analysis with response
+//       });
+//     } catch (aiError) {
+//       console.error("Error calling AI service:", aiError);
+//       res.status(500).json({ message: "Error analyzing feedback with AI" });
+//     }
+
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ "Server error": err.message });
+//   }
+// });
 
 
 
