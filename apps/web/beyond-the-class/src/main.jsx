@@ -51,6 +51,8 @@ import CafeNew from './pages/mod/cafe/CafeNew.jsx';
 import { ThemeProvider } from './components/theme/ThemeContext.jsx';
 import CafeDeletes from './pages/mod/cafe/CafeDeletes.jsx';
 import CafeEdit from './pages/mod/cafe/CafeEdit.jsx';
+import CafeFeedBacks from './pages/mod/cafe/feedbacks/CafeFeedBacks.jsx';
+import CafeUsers from './pages/mod/cafe/user_admin_employee/CafeUsers.jsx';
 
 const router = createBrowserRouter([
   {
@@ -155,6 +157,9 @@ const router = createBrowserRouter([
           { path: 'cafe/new', element: <Layout><CafeNew /></Layout> },
           { path: 'cafe/deletes', element: <Layout><CafeDeletes /></Layout> },
           { path: 'cafe/:cafeId', element: <Layout><CafeEdit /></Layout> },
+          { path: 'cafe/feedbacks', element: <Layout><CafeFeedBacks /></Layout> },
+          { path: 'cafe/users', element: <Layout><CafeUsers /></Layout> },
+
 
 
           // { path: "campus/edit/:campusId", element: <Layout> <AddDepartmentAndSubjects /></Layout> },
