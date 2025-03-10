@@ -37,7 +37,8 @@ const Loading = () => (
 
 // new TeacherProfileCard Component with summary added
 const TeacherProfileCard = ({ teacher }) => (
-    <div className="bg-white dark:bg-[#121212] rounded-lg shadow p-6">
+    // <div className="bg-white dark:bg-[#121212] rounded-lg shadow p-6">
+    <div className="bg-blue dark:bg-[#121212] rounded-lg shadow p-6">
         <h3 className="text-xl font-semibold mb-2">{teacher.name}</h3>
         <div className="grid gap-4">
             <div>

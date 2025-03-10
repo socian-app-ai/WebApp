@@ -54,6 +54,10 @@ export default function TeacherCard({ teacher }) {
                     <p className="line-clamp-3">{teacher.topComment}</p>
                 </div>}
             </div>
+            <div>
+                <p className="text-sm text-gray-500">Feedback Summary</p>
+                <p className="text-gray-700">{teacher.feedbackSummary || "No summary available."}</p>
+            </div>
 
 
         </Link>

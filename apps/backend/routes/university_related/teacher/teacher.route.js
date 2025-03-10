@@ -37,6 +37,8 @@ async function updateTeacherFeedbackSummary(teacherId) {
     } else {
       // Generate AI summary
       const summary = await aiFeedback(feedbackTexts.join("\n"));
+      console.log(`summary is -> ${teacher.feedbackSummary}`);
+
       teacher.feedbackSummary = summary;
     }
 
