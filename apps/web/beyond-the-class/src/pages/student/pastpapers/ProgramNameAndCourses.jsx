@@ -144,86 +144,50 @@ export default function ProgramNameAndCourses() {
     const [departments, setDepartments] = useState([]);
     const [courses, setCourses] = useState([]);
     const [filteredCourses, setFilteredCourses] = useState([]);
-
-    const { authUser } = useAuthContext()
+    const { authUser } = useAuthContext();
     const [currentDepartment, setCurrentDepartment] = useState([]);
-
-
-
     const { infoBarState, setInfoBarState } = useSetInfoBarState();
 
     useEffect(() => {
         if (infoBarState === true) {
             setInfoBarState(false);
         }
-
-        // if (departments.length > 0 && authUser?.university?.departmentId?._id) {
-        //     const userDepartment = departments.find(
-        //         (dept) => dept._id === authUser.university.departmentId._id
-        //     );
-
-        //     if (userDepartment) {
-        //         setCurrentDepartment(userDepartment);
-        //     }
-        // }
-    }, []);
+    }, [infoBarState, setInfoBarState]);
 
     useEffect(() => {
-
         const fetch = async () => {
             try {
-
-                // console.log(routesForApi.department.campusWithSubjects)
-                const response = await axiosInstance.get(routesForApi.department.campusWithSubjects)
-                // console.log(JSON.stringify(response.data))
-
+                const response = await axiosInstance.get(routesForApi.department.campusWithSubjects);
                 const allDepartments = response.data.flatMap(campus => campus.departments);
-                // console.log("Flattened Departments:", allDepartments);
-
                 setDepartments(allDepartments);
 
                 if (authUser?.university?.departmentId?._id) {
-
                     const userDepartment = allDepartments.find(
-                        (dept) => {
-                            // console.log("dept id", dept);
-                            return dept._id === authUser.university.departmentId._id
-                        }
+                        (dept) => dept._id === authUser.university.departmentId._id
                     );
 
                     if (userDepartment) {
-                        // console.log("here", userDepartment.name, userDepartment.subjects)
                         setCurrentDepartment(userDepartment?.name);
-                        setFilteredCourses(userDepartment?.subjects)
+                        setFilteredCourses(userDepartment?.subjects);
                     }
                 }
-                // setCourses(allDepartments[3].subjects.map(v => v))
-                // console.log("Departments: ", departments)
             } catch (error) {
-                console.error(error)
+                console.error(error);
             }
-        }
-        fetch()
-
-    }, []);
-
-
-
+        };
+        fetch();
+    }, [authUser?.university?.departmentId?._id]);
 
     const handleDepartmentChange = (event, value) => {
-        // console.log("value", value)
-        setCurrentDepartment(value.name)
-        // console.log("courses: --", value.subjects.map(_ => console.log(_)))
+        setCurrentDepartment(value.name);
         if (value) {
-            const courseList = value.subjects.map(subject => subject);
+            const courseList = value.subjects;
             setCourses(courseList);
             setFilteredCourses(courseList);
-
-            // console.log("Selected Courses:", courseList);
         } else {
             setCourses([]);
             setFilteredCourses([]);
-            setCurrentDepartment([])
+            setCurrentDepartment([]);
         }
     };
 
@@ -254,9 +218,6 @@ export default function ProgramNameAndCourses() {
                         </div>
                     </Box>
 
-
-
-
                     <Box className="flex flex-col lg:flex-row w-full lg:items-center py-2">
                         <Typography variant="h5" sx={{ marginRight: 2, marginLeft: 2 }}>
                             Courses:
@@ -269,27 +230,25 @@ export default function ProgramNameAndCourses() {
                                 onInputChange={handleFilter}
                                 onBlur={(event) => handleFilter(event, event.target.value)}
                                 isOptionEqualToValue={(option, value) => option._id === value._id}
-
                             />
                         </div>
                     </Box>
-
                 </div>
-                <Divider className="bg-gray-300  dark:bg-white" />
-                <h5 className="px-4 py-1 flex ">Default Deparment: <p className="font-semibold ml-2">{authUser?.university?.departmentId?.name}</p></h5>
+
+                <Divider className="bg-gray-300 dark:bg-white" />
+                <h5 className="px-4 py-1 flex">
+                    Default Department: <p className="font-semibold ml-2">{authUser?.university?.departmentId?.name}</p>
+                </h5>
 
                 <Box className="p-2 md:p-10">
                     <Grid container spacing={3}>
-                        {filteredCourses && filteredCourses.map((course, index) => (
-                            <Grid item xs={12} sm={6} md={4} lg={3} key={index} >
-                                <Link key={course._id} to={`/student/course-info/${course._id}`}
-                                    className="flex text-sm bg-gray-50 border border-gray-300 text-gray-900 rounded-lg p-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                        {filteredCourses && filteredCourses.map((course) => (
+                            <Grid item xs={12} sm={6} md={4} lg={3} key={course._id}>
+                                <Link
+                                    to={`/student/course-info/${course._id}`}
+                                    className="flex text-sm bg-gray-50 border border-gray-300 text-gray-900 rounded-lg p-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                                >
                                     {course.name}
-                                    {/* <PastPaper
-                                        courseName={course.name}
-                                        subjectId={course._id}
-                                        department={currentDepartment}
-                                    /> */}
                                 </Link>
                             </Grid>
                         ))}
@@ -305,15 +264,10 @@ export default function ProgramNameAndCourses() {
 
 const filterOptionsDepartment = createFilterOptions({
     matchFrom: 'start',
-    stringify: (option) => {
-        // console.log("Options: ", option)
-        return option.name
-    },
+    stringify: (option) => option.name,
 });
+
 const filterOptionsCouses = createFilterOptions({
     matchFrom: 'start',
-    stringify: (option) => {
-        // console.log("Options: ", option)
-        return option.name
-    },
+    stringify: (option) => option.name,
 });

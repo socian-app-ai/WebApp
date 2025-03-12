@@ -1,16 +1,11 @@
 /* eslint-disable react/prop-types */
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-// import CustomAccordianPastPaper from "../../../../components/MaterialUI/CustomAccordianPastPaper";
-import { MoreVertical } from "lucide-react";
-import { DownloadIcon } from "lucide-react";
-
+import { MoreVertical, DownloadIcon, FolderKanban } from "lucide-react";
 import { Document, Page, pdfjs } from "react-pdf";
 import axiosInstance from "../../../../config/users/axios.instance";
-import { FolderKanban } from "lucide-react";
 import { ArrowBack } from "@mui/icons-material";
-
 
 pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
@@ -26,45 +21,18 @@ const LoadingAnimation = () => (
           </div>
         </div>
       </div>
-      <div className="space-y-3">
-        <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4"></div>
-        <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-full"></div>
-        <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-1/4"></div>
-      </div>
-      <div className="flex justify-between mt-4">
-        <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded-lg w-28"></div>
-        <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded-full w-10"></div>
-      </div>
-    </div>
-    <div className="m-2 animate-pulse w-60">
-      <div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 mb-2">
-        <div className="border border-gray-200 dark:border-gray-700 rounded-sm p-2">
-          <div className="space-y-2">
-            <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded-full w-3/4"></div>
-            <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded-full w-1/2"></div>
-            <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded-full w-2/3"></div>
-          </div>
-        </div>
-      </div>
-      <div className="space-y-3">
-        <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4"></div>
-        <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-full"></div>
-        <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-1/4"></div>
-      </div>
-      <div className="flex justify-between mt-4">
-        <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded-lg w-28"></div>
-        <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded-full w-10"></div>
-      </div>
     </div>
   </div>
 );
+
 export default function TypeCourse() {
   const { courseType, subjectId } = useParams();
-  const [data, setData] = useState({});
+  const [searchParams] = useSearchParams();
+  const selectedYear = searchParams.get('year');
+  const [papers, setPapers] = useState(null);
   const [subjectName, setSubjectName] = useState("");
   const [error, setError] = useState(null);
   const navigate = useNavigate();
-
 
   useEffect(() => {
     const fetchData = async () => {
@@ -72,9 +40,9 @@ export default function TypeCourse() {
         const res = await axiosInstance.get(
           `/api/pastpaper/${courseType}/${subjectId}`
         );
-        setData(res.data.finalResult);
+        console.log("APst ", res.data.papers)
+        setPapers(res.data.papers);
         setSubjectName(res.data.subjectName);
-        // console.log(res.data);
       } catch (error) {
         console.error("Error fetching data", error);
         setError("Error loading data.");
@@ -83,121 +51,75 @@ export default function TypeCourse() {
     fetchData();
   }, [courseType, subjectId]);
 
+  if (error) return <p className="text-center text-red-500 mt-4">{error}</p>;
+  if (!papers) return <LoadingAnimation />;
 
-  if (error) return <p>{error}</p>;
-  if (!data || Object.keys(data).length === 0) return <LoadingAnimation />;
+  // Group papers by year
+  const papersByYear = papers.reduce((acc, yearGroup) => {
+    const year = yearGroup.academicYear;
+    const papersOfType = yearGroup.papers.filter(p =>
+      p.type.toLowerCase() === courseType.toLowerCase()
+    );
+    if (papersOfType.length > 0) {
+      acc[year] = papersOfType;
+    }
+    return acc;
+  }, {});
 
-  const renderPaper = (paper) => (
-    <FilePreviewCard
-      keyVal={paper._id}
-      title={paper.name}
-      content={""}
-      link={`${import.meta.env.VITE_BACKEND_API_URL}/api/uploads/${paper.file.pdf}`}
-      t={paper}
-      years={data}
-      subject={subjectName}
-    />
-  );
+  // Sort years in descending order
+  const sortedYears = Object.keys(papersByYear).sort((a, b) => b - a);
 
-  // console.log("DATA", data)
+  // If a year is selected, move it to the top
+  if (selectedYear && sortedYears.includes(selectedYear)) {
+    sortedYears.splice(sortedYears.indexOf(selectedYear), 1);
+    sortedYears.unshift(selectedYear);
+  }
+
   return (
-    <div className="min-h-screen w-full px-2 pt-8">
-      <ArrowBack onClick={() => navigate(-1)} className="cursor-pointer mr-2" />
+    <div className="min-h-screen w-full px-4 pt-8">
+      <div className="flex items-center mb-6">
+        <ArrowBack onClick={() => navigate(-1)} className="cursor-pointer mr-2" />
+        <h2 className="text-2xl font-semibold text-gray-800 dark:text-gray-200">
+          {courseType.charAt(0).toUpperCase() + courseType.slice(1).toLowerCase()} Papers for {subjectName}
+        </h2>
+      </div>
 
-      <h2 className="text-2xl font-semibold mb-4">
-        {courseType.charAt(0).toUpperCase() +
-          courseType.slice(1).toString().toLowerCase()}{" "}
-        for Subject {subjectName}
-      </h2>
-      <div className="space-y-1">
-        {Object.keys(data).map((year) => (
-
-          <div key={year} >
-            {(data[year]?.length > 0) && <h3 className="text-xl font-bold mb-2  border-b  w-full">Year: {year}</h3>}
-
-            <div className="flex flex-col xs:flex-row flex-wrap" >
-              {data[year].map((item, index) => {
-
-                // console.log(index, year)
-                return (
-                  <div key={index} className="flex flex-col xs:flex-row flex-wrap">
-
-                    {item?.quizzes &&
-                      (item.quizzes.map((doc) => renderPaper(doc))
-                      )}
-
-                    {item?.assignments &&
-                      (item.assignments.map((doc) => renderPaper(doc)))}
-
-                    {item?.sessional &&
-                      (item.sessional.map((doc) => renderPaper(doc)
-                      )
-                      )}
-
-                    {item?.mid && (
-
-                      <div className="flex flex-col xs:flex-row flex-wrap">
-                        <ul>
-                          <h5 className="font-semibold text-sm px-2">
-                            Midterm ({item.term}) ({item.type})
-                          </h5>
-                          {item.mid.map((doc, docIndex) => (
-                            <li className="flex flex-col xs:flex-row flex-wrap" key={docIndex}>{renderPaper(doc)}</li>
-                          )
-                          )}
-                        </ul>
-                      </div>
-                    )}
-                    {item?.final && (
-
-                      <div >
-                        <h5 className="font-semibold text-sm px-2">
-                          Final ({item.term}) ({item.type})
-                        </h5>
-                        <ul className="flex flex-col xs:flex-row flex-wrap">
-
-                          {item.final.map((doc, docIndex) =>
-                            (<li className="flex flex-col xs:flex-row flex-wrap" key={docIndex}>{renderPaper(doc)}</li>)
-                          )}
-                        </ul>
-                      </div>
-
-                    )}
-                    {item?.sessional && (
-                      <div>
-                        <h5 className="font-semibold text-sm">
-                          Sessional
-                        </h5>
-                        <ul >
-                          {item.sessional.map((doc, docIndex) => (
-                            <li key={docIndex}>{renderPaper(doc)}</li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                  </div>
-                )
-              })}
+      <div className="space-y-8">
+        {sortedYears.map(year => (
+          <div key={year} className="border dark:border-gray-700 rounded-lg p-4">
+            <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-4">
+              {year} {selectedYear === year && "(Selected Year)"}
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {papersByYear[year].map((paper) => (
+                <FilePreviewCard
+                  key={paper._id}
+                  keyVal={paper._id}
+                  title={paper.name}
+                  content={`${paper.term || ''} ${paper.category || ''}`}
+                  link={`${import.meta.env.VITE_BACKEND_API_URL}/api/uploads/${paper.file.url}`}
+                  paper={paper}
+                  subject={subjectName}
+                />
+              ))}
             </div>
           </div>
-
         ))}
       </div>
-    </div >
+    </div>
   );
 }
 
 const FilePreviewCard = ({
   keyVal,
-  title = "",
-  content = "",
-  link = "",
-  t,
-  years,
+  title,
+  content,
+  link,
+  paper,
   subject,
 }) => {
   const [numPages, setNumPages] = useState(null);
-  const [pageNumber] = useState(1);
+  const navigate = useNavigate();
 
   const onDocumentLoadSuccess = ({ numPages }) => {
     setNumPages(numPages);
@@ -208,61 +130,49 @@ const FilePreviewCard = ({
     anchor.href = url;
     anchor.download = url.split("/").pop();
     anchor.style.display = "none";
-
     document.body.appendChild(anchor);
     anchor.click();
     document.body.removeChild(anchor);
   };
 
-  const navigate = useNavigate();
-
   const handleDiscussClick = (item) => {
     navigate(`/student/discussion/${item._id}`, {
-      state: { years, subject, t },
+      state: { subject, paper },
     });
   };
 
-  // console.log(link)
   return (
     <div
       key={keyVal}
-      className="max-w-xs w-fit m-1 bg-white dark:bg-[#2a3c56] rounded-md shadow-md p-3 font-sans"
+      className="bg-white dark:bg-[#2a3c56] rounded-md shadow-md p-3 font-sans"
     >
-      {/* PDF Preview */}
-      <div className={`${numPages ? ' p-1' : ' p-3'} bg-gray-50 dark:bg-[#111827] rounded-lg mb-1`}>
-        <div className={`${numPages ? 'w-full h-36 ' : 'p-2 '} border  border-gray-200 dark:border-gray-700 rounded-sm overflow-hidden`} >
+      <div className={`${numPages ? 'p-1' : 'p-3'} bg-gray-50 dark:bg-[#111827] rounded-lg mb-1`}>
+        <div className={`${numPages ? 'w-full h-36' : 'p-2'} border border-gray-200 dark:border-gray-700 rounded-sm overflow-hidden`}>
           {numPages ? (
             <>
-
-              <Document className="rounded-lg" file={link} onLoadSuccess={onDocumentLoadSuccess}>
-                {Array.apply(null, Array(numPages)).map((x, i) => i + 1).map((page, idx) => {
-                  return (<Page className=" " key={idx} pageNumber={page} renderTextLayer={false} renderAnnotationLayer={false} />)
-
-                })}
-
+              <Document file={link} onLoadSuccess={onDocumentLoadSuccess}>
+                <Page pageNumber={1} renderTextLayer={false} renderAnnotationLayer={false} />
               </Document>
               <p className="text-sm text-gray-500 mt-2">
-                Page 1 of {numPages || "Loading..."}
+                Page 1 of {numPages}
               </p>
             </>
           ) : (
-            <>
-              <div className="h-3 my-1 bg-gray-200 dark:bg-[#1F2937] rounded-full w-3/4"></div>
-              <div className="h-3 my-1 bg-gray-200 dark:bg-[#1F2937] rounded-full w-1/2"></div>
-              <div className="h-3 my-1 bg-gray-200 dark:bg-[#1F2937] rounded-full w-2/3"></div>
-            </>
+            <div className="space-y-2">
+              <div className="h-3 bg-gray-200 dark:bg-[#1F2937] rounded-full w-3/4"></div>
+              <div className="h-3 bg-gray-200 dark:bg-[#1F2937] rounded-full w-1/2"></div>
+              <div className="h-3 bg-gray-200 dark:bg-[#1F2937] rounded-full w-2/3"></div>
+            </div>
           )}
         </div>
       </div>
 
-      {/* Document Info */}
       <div className="space-y-1">
         <h3 className="font-medium dark:text-white text-gray-900">{title}</h3>
         <p className="text-sm dark:text-white text-gray-500 leading-tight">{content}</p>
-        <p className="text-sm dark:text-white text-gray-500">PDF - 5.2 MB</p>
+        <p className="text-sm dark:text-white text-gray-500">PDF</p>
       </div>
 
-      {/* Action Buttons */}
       <div className="flex space-x-1 justify-between mt-4">
         <button
           onClick={() => downloadFile(link)}
@@ -273,7 +183,7 @@ const FilePreviewCard = ({
         </button>
 
         <button
-          onClick={() => handleDiscussClick(t)}
+          onClick={() => handleDiscussClick(paper)}
           className="flex items-center gap-1 px-4 py-2 bg-gray-900 text-white dark:bg-[#4B5563] rounded-lg hover:bg-gray-800 transition-colors"
         >
           <FolderKanban className="w-4 h-4" />
@@ -281,7 +191,7 @@ const FilePreviewCard = ({
         </button>
 
         <button
-          className="p-2 text-black dark:text-white  hover:bg-gray-100 rounded-full transition-colors"
+          className="p-2 text-black dark:text-white hover:bg-gray-100 rounded-full transition-colors"
           aria-label="More options"
         >
           <MoreVertical className="w-4 h-4" />

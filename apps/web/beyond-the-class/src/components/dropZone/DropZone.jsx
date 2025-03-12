@@ -25,7 +25,7 @@ const DropZone = ({ onFilesAdded }) => {
     return (
         <div
             {...getRootProps()}
-            className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer ${isDragActive ? 'border-blue-500 bg-blue-50' : 'border-gray-300 bg-gray-50'
+            className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer ${isDragActive ? 'border-blue-500 bg-blue-50' : 'border-gray-300 bg-gray-50 dark:bg-gray-900'
                 }`}
         >
             <input {...getInputProps()} />
