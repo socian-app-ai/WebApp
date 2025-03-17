@@ -1,7 +1,7 @@
 const express = require("express");
 const geolib = require("geolib");
-const UserLocation = require("../../models/userLocation.model");
-const CampusBoundary = require("../../models/campusBoundary.model");
+const UserLocation= require('../../models/gps/user.location.model')
+const CampusBoundary = require("../../models/gps/campus.boundary.model");
 
 const router = express.Router();
 
