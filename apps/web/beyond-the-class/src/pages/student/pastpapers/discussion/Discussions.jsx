@@ -12,6 +12,7 @@ export default function Discussions({ toBeDisccusedId }) {
     const [discussionId, setDiscussionId] = useState('');
     const [comments, setComments] = useState([]);
     const [sortMethod, setSortMethod] = useState('votes');
+    const [isLoading, setIsLoading] = useState(true);
     const { authUser } = useAuthContext()
 
     const { addToast } = useToast();
@@ -21,11 +22,12 @@ export default function Discussions({ toBeDisccusedId }) {
     useEffect(() => {
         const fetchDiscussion = async () => {
             try {
+                setIsLoading(true);
                 const response = await axiosInstance.post(`/api/discussion/create-get?toBeDisccusedId=${toBeDisccusedId}`);
                 setDiscussionId(response.data.discussion._id);
                 // console.log(response)
                 // console.log("DI", discussionId)
-                setComments(response.data.discussion.discussioncomments);
+                setComments(response.data.discussion.discussioncomments || []);
             } catch (error) {
                 // toast.error('Failed to fetch discussion');
                 // toast.custom("Be the first to discuss", {
@@ -33,9 +35,11 @@ export default function Discussions({ toBeDisccusedId }) {
                 //     position: 'bottom-right',
                 //     duration: 2000
                 // })
-                addToast("Be the first to discuss");
+                addToast(error.response?.data?.error || "Failed to fetch discussion");
 
 
+            } finally {
+                setIsLoading(false);
             }
         };
         fetchDiscussion();
@@ -64,9 +68,9 @@ export default function Discussions({ toBeDisccusedId }) {
         try {
             const response = await axiosInstance.post('/api/discussion/comment/reply-to-comment', {
                 commentId,
-                userId: authUser._id,
-                replyContent: replyContent,
+                ...replyContent
             });
+
             const updatedComments = comments.map(comment => {
                 if (comment._id === commentId) {
                     return { ...comment, replies: [response.data, ...comment.replies] };
@@ -74,9 +78,20 @@ export default function Discussions({ toBeDisccusedId }) {
                 return comment;
             });
             setComments(updatedComments);
+            addToast("Reply added successfully");
         } catch (error) {
             // toast.error('Failed to submit reply');
-            addToast("Retry Submiting Reply");
+            addToast(error.response?.data?.error || "Failed to submit reply");
+        }
+    };
+
+    const handleDeleteComment = async (commentId) => {
+        try {
+            await axiosInstance.delete(`/api/discussion/comment/${commentId}`);
+            setComments(prevComments => prevComments.filter(comment => comment._id !== commentId));
+            addToast("Comment deleted successfully");
+        } catch (error) {
+            addToast(error.response?.data?.error || "Failed to delete comment");
         }
     };
 
@@ -84,13 +99,29 @@ export default function Discussions({ toBeDisccusedId }) {
 
     const sortComments = (comments, method) => {
         if (method === 'votes') {
-            return [...comments].sort((a, b) => (b.upvotes.length - b.downvotes.length) - (a.upvotes.length - a.downvotes.length));
+            return [...comments].sort((a, b) => {
+                const aVotes = a.voteId.upVotesCount - a.voteId.downVotesCount;
+                const bVotes = b.voteId.upVotesCount - b.voteId.downVotesCount;
+                if (a.questionTag?.isAnswer !== b.questionTag?.isAnswer) {
+                    return b.questionTag?.isAnswer ? 1 : -1;
+                }
+                return bVotes - aVotes;
+            });
         } else if (method === 'newest') {
             return [...comments].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
         }
         return comments;
     };
 
+    if (isLoading) {
+        return (
+            <div className="min-h-screen w-full p-2 flex items-center justify-center">
+                <div className="animate-pulse text-gray-500 dark:text-gray-400">
+                    Loading discussion...
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen w-full p-2">
@@ -99,16 +130,16 @@ export default function Discussions({ toBeDisccusedId }) {
             </div>
 
             <CommentBox discussionId={toBeDisccusedId} onComment={handleNewComment} />
-            <div className="flex justify-between">
-                <h6 className="text-md font-semibold m-2">The Discussions</h6>
+            <div className="flex justify-between items-center mb-4">
+                <h6 className="text-md font-semibold">The Discussions</h6>
 
-                <div className="flex  items-center justify-center w-40  mb-2 ">
-                    <label htmlFor="sort" className="mr-1 text-sm">Sort by:</label>
+                <div className="flex items-center">
+                    <label htmlFor="sort" className="mr-2 text-sm">Sort by:</label>
                     <select
                         id="sort"
                         value={sortMethod}
                         onChange={(e) => setSortMethod(e.target.value)}
-                        className="text-sm py-1 px-2  border  dark:bg-[#151515] rounded-3xl shadow-sm  shadow-[#3f3f3fba]"
+                        className="text-sm py-1 px-3 border dark:bg-[#151515] rounded-3xl shadow-sm"
                     >
                         <option value="votes">Top Votes</option>
                         <option value="newest">Newest</option>
@@ -116,23 +147,22 @@ export default function Discussions({ toBeDisccusedId }) {
                 </div>
             </div>
 
-
-
-            <div className="flex flex-col">
-
-                {comments.length !== 0 ? sortComments(comments, sortMethod).map((comment) => (
-                    <div key={comment._id} >
-                        {/* className="border-b-[0.05rem]" */}
+            <div className="flex flex-col gap-4">
+                {comments.length > 0 ? (
+                    sortComments(comments, sortMethod).map((comment) => (
                         <Comment
                             key={comment._id}
                             comment={comment}
                             onReply={handleReply}
-
+                            onDelete={handleDeleteComment}
+                            currentUserId={authUser._id}
                         />
-                    </div>
-                )) :
-                    <p className="w-full p-2">No Comments to Show</p>
-                }
+                    ))
+                ) : (
+                    <p className="text-center text-gray-500 dark:text-gray-400 py-4">
+                        No comments yet. Be the first to discuss!
+                    </p>
+                )}
             </div>
         </div>
     );
