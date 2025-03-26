@@ -9,7 +9,7 @@
 }
 .dark body {
   /* background-color: #80a1cd; */
-  background-color: #151515e3;
+  background-color: #1d1d1d;
   @apply transition-colors duration-1000 ease-in-out;
 }
 
@@ -74,11 +74,11 @@ body {
 
   /* ? BACKGROUND CSS */
   --dark-radial-gradient-background: 250, 250, 250;
-  --dark-solid-color-background: 15, 15, 15;
+  --dark-solid-color-background: 29, 29, 29; /* Added a touch of #1d1d1d */
   
 
   --radial-gradient-background: 218, 211, 115;
-  --solid-color-background: 15, 15, 15;
+  --solid-color-background: 29, 29, 29; /* Added a touch of #1d1d1d */
   
 }
 

@@ -56,19 +56,20 @@ export default function Login() {
   return (
     <div className="select-none flex flex-col justify-center items-center min-h-svh  w-full auth_page_style auth_page_style-gradient" >
       <div className=" flex flex-col justify-center items-center">
-        <h1 className="dark:text-white text-3xl md:text-4xl lg:text-6xl font-bold my-4 select-none">Login to your account</h1>
-        <p className="dark:text-white text-lg p-2">Open gate to Opportunities</p>
+        <h1 className="dark:text-white text-lg md:text-xl lg:text-2xl font-bold my-4 select-none">Login to your account</h1>
+        <p className="dark:text-white text-sm px-2">Open gate to Opportunities</p>
       </div>
 
       <form
         noValidate={true}
-        className="flex flex-col justify-center items-center my-5"
+        className="flex flex-col justify-center items-center"
+        // my-5 border-2 border-[#838383] rounded-lg p-4 pb-6 bg-white dark:bg-[#1d1d1d]
         onSubmit={handleSubmit}
       >
         <LabelInputCustomizable
           type={inputType === "email" ? "email" : "text"}
           name={inputType === "email" ? "email" : "username"}
-          className="my-2 dark:text-white"
+          className="my-3 dark:text-white"
           value={email}
           label={"Email/Username"}
           placeholder="fa21-bcs-000@cuilahore.pk"
