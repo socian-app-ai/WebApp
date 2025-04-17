@@ -21,6 +21,7 @@ const initSocketIO = (app, server) => {
 
     /** ---------------- DISCUSSION EVENTS ---------------- **/
     socket.on("joinDiscussion", (discussionId) => {
+      console.log(`User joined discussion: ${discussionId}`);
       socket.join(discussionId);
 
       if (!discussionUsers[discussionId]) {
@@ -28,8 +29,18 @@ const initSocketIO = (app, server) => {
       }
 
       discussionUsers[discussionId].add(socket.id);
+      console.log("discussionUsers", discussionUsers);
       io.to(discussionId).emit("users", discussionUsers);
       io.to(discussionId).emit("usersCount", discussionUsers[discussionId].size);
+      
+    });
+
+    socket.on("removeUserFromDiscussion", (discussionId) => {
+      console.log(`User removed from discussion: ${discussionId}`);
+      socket.leave(discussionId);
+      discussionUsers[discussionId]?.delete(socket.id);
+      io.to(discussionId).emit("users", discussionUsers);
+      io.to(discussionId).emit("usersCount", discussionUsers[discussionId]?.size?? 0);
     });
 
     socket.on("message", (discussionId, message, user) => {
@@ -55,11 +66,11 @@ const initSocketIO = (app, server) => {
       eventAttendees[socket.id] = { userId, name, latitude, longitude, radius };
 
       // Save or update location in the database
-      await UserLocation.findOneAndUpdate(
-        { userId },
-        { latitude, longitude, timestamp: new Date() },
-        { upsert: true }
-      );
+      // await UserLocation.findOneAndUpdate(
+      //   { userId },
+      //   { latitude, longitude, timestamp: new Date() },
+      //   { upsert: true }
+      // );
 
       // Broadcast updated location to all clients
       io.emit("attendeeLocationUpdate", {
