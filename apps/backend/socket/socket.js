@@ -1,5 +1,5 @@
 const { Server } = require("socket.io");
-const UserLocation=require("../../backend/")
+const UserLocation=require("../../backend/models/gps/user.location.model")
 
 let io;
 
