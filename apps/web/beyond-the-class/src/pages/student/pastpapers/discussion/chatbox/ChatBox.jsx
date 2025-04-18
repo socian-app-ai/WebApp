@@ -125,7 +125,7 @@ const ChatBox = ({ discussionId }) => {
                 username: authUser.username,
                 picture: authUser.profile.picture,
             };
-            socket.emit('message', discussionId, newMessage, user);
+            socket.emit('message', { discussionId, message: newMessage, user });
             setNewMessage('');
         }
     };
