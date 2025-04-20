@@ -1,0 +1,10 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+
+# Your rule content
+if code is in React or Flutter, always read theme data
+- You can @ files here
+- You can use markdown but dont have to

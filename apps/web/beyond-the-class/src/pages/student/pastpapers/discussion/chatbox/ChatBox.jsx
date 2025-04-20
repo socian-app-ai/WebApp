@@ -212,6 +212,7 @@ const ChatBox = ({ discussionId }) => {
                     <div className="flex-1 h-[260px] md:h-[400px] lg:h-[460px] overflow-y-auto p-4 bg-gray-50 dark:bg-gray-900">
                         <div className="space-y-4">
                             {groupedMessages.map((group, index) => {
+                                console.log("GRO-- ", group)
                                 if (group.type === 'date') {
                                     return (
                                         <div key={`date-${index}`} className="flex justify-center my-6">
@@ -222,7 +223,7 @@ const ChatBox = ({ discussionId }) => {
                                     );
                                 }
 
-                                // console.log("GROUP", group)
+                                console.log("GROUP", group)
                                 return (
                                     <MessageGroup
                                         key={`msg-${index}`}
