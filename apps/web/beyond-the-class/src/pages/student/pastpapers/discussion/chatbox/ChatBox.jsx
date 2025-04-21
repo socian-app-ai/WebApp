@@ -105,6 +105,11 @@ const ChatBox = ({ discussionId }) => {
                 setMessages((prevMessages) => [...prevMessages, message]);
             });
 
+            socket.on('prevMessages', (messages)=>{
+                console.log("->",messages)
+                setMessages((prevMsg)=> [messages,...prevMsg])
+            })
+
             socket.on('usersCount', (count) => {
                 setUsersCount(count);
             });
