@@ -11,6 +11,13 @@ class SocketServer {
     this.eventAttendees = {};
     this.subscriber = new valkeyClient('subscriber');
     this.publisher = new valkeyClient('publisher');
+
+    //fyi this will help centralize the socket communitcation. 
+    // e.g server running on 2 machine with different port have different socket map.
+    //  thus only users in that map can communicate while others can not.
+    // this.gpsSubscriber = new valkeyClient('gpsSubscriber');
+    // this.gpsPublisher = new valkeyClient('gpsPublisher');
+
     this.streamConsumers = {};
     
     // Initialize Redis connections
@@ -122,6 +129,8 @@ class SocketServer {
       this.setupLocationEvents(socket);
       this.handleDisconnect(socket);
     });
+
+    // this.gpsSubscriber.on('')
 
     // Enhanced subscriber event handling
     // this.subscriber.on("message", async (channel, message) => {
@@ -243,9 +252,16 @@ class SocketServer {
     });
   }
 
+  
+
   setupLocationEvents(socket) {
     socket.on("updateLocation", async (data) => {
-      const { userId, name, latitude, longitude, radius } = data;
+      const { userId, name, latitude, longitude, radius, campusId } = data;
+      // this.gpsSubscriber(campusId);  //? will apply this after discussion and refactoring with you.
+
+      // Why is there 2 different .on ? 
+      // why attendeneeLocationUpdate within updateLocation?
+      // Changing this would optimize the code as right now 2 kinds of functions are being done when only one funcion is required
 
       this.eventAttendees[socket.id] = { userId, name, latitude, longitude, radius };
 
