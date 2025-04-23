@@ -34,17 +34,19 @@ router.post("/", [
 
 // Get all upcoming gatherings
 router.get("/upcoming", async (req, res) => {
-  try {
-    const gatherings = await Gathering.find({
-      startTime: { $gt: new Date() }
-    }).sort({ startTime: 1 });
-
-    res.json(gatherings);
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send("Server error");
-  }
-});
+    console.log('Upcoming gatherings endpoint hit'); // Add this line
+    try {
+      const gatherings = await Gathering.find({
+        startTime: { $gt: new Date() }
+      }).sort({ startTime: 1 });
+  
+      console.log(`Found ${gatherings.length} gatherings`); // Add this line
+      res.json(gatherings);
+    } catch (err) {
+      console.error('Error in upcoming gatherings:', err.message); // Enhanced logging
+      res.status(500).send("Server error");
+    }
+  });
 
 // Mark attendance for a gathering
 router.post("/:id/attend", [
