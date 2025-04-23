@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const Gathering = require("../models/Gathering");
+const Gathering = require("../../models/gps/user.gathering.model");
 const { check, validationResult } = require("express-validator");
 const geolib = require('geolib');
 
