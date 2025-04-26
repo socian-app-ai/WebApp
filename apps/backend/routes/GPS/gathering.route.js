@@ -3,6 +3,9 @@ const router = express.Router();
 const Gathering = require("../../models/gps/user.gathering.model");
 const { check, validationResult } = require("express-validator");
 const geolib = require('geolib');
+const User = require("../../models/user/user.model") 
+
+
 
 // Create a new gathering
 router.post("/", [
@@ -70,56 +73,72 @@ router.get("/upcoming", async (req, res) => {
   });
 
 // Mark attendance for a gathering
-router.post("/:id/attend", [
-  check('latitude', 'Valid latitude is required').isFloat({ min: -90, max: 90 }),
-  check('longitude', 'Valid longitude is required').isFloat({ min: -180, max: 180 })
-], async (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
-  }
-
+// routes/gatherings.js
+router.post('/:id/attend', async (req, res) => {
   try {
+    if (!req.user) {
+      return res.status(401).json({ message: 'User not authenticated' });
+    }
+
+    const { latitude, longitude } = req.body;
+    if (!latitude || !longitude) {
+      return res.status(400).json({ message: 'Location data required' });
+    }
+
     const gathering = await Gathering.findById(req.params.id);
     if (!gathering) {
-      return res.status(404).json({ msg: "Gathering not found" });
+      return res.status(404).json({ message: 'Gathering not found' });
     }
 
-    // Check if gathering is currently active
-    const now = new Date();
-    if (now < gathering.startTime || now > gathering.endTime) {
-      return res.status(400).json({ msg: "Gathering is not active" });
-    }
-
-    // Check if user is within radius
-    const distance = geolib.getDistance(
-      { latitude: gathering.location.latitude, longitude: gathering.location.longitude },
-      { latitude: req.body.latitude, longitude: req.body.longitude }
+    // Check existing attendance
+    const existingIndex = gathering.attendees.findIndex(
+      a => a.userId.toString() === req.user._id.toString()
     );
 
-    if (distance > gathering.radius) {
-      return res.status(400).json({ msg: "You are not within the gathering radius" });
+    if (existingIndex >= 0) {
+      // Update existing attendance
+      gathering.attendees[existingIndex] = {
+        userId: req.user._id,
+        name: req.user.name,
+        location: { latitude, longitude },
+        timestamp: new Date()
+      };
+    } else {
+      // Add new attendance
+      gathering.attendees.push({
+        userId: req.user._id,
+        name: req.user.name,
+        location: { latitude, longitude },
+        timestamp: new Date()
+      });
     }
-
-    // Remove existing attendance if any
-    gathering.attendees = gathering.attendees.filter(
-      attendee => attendee.userId.toString() !== req.user.id
-    );
-
-    // Add new attendance
-    gathering.attendees.push({
-      userId: req.user.id,
-      location: {
-        latitude: req.body.latitude,
-        longitude: req.body.longitude
-      }
-    });
 
     await gathering.save();
-    res.json(gathering);
+
+    // Safely emit socket event if available
+    try {
+      const io = req.app.get('io');
+      if (io) {
+        io.emit('attendanceUpdate', {
+          gatheringId: gathering._id,
+          attendees: gathering.attendees
+        });
+      }
+    } catch (socketError) {
+      console.error('Socket emit error:', socketError);
+      // Continue even if socket fails
+    }
+
+    return res.json({ 
+      success: true,
+      attendees: gathering.attendees
+    });
+
   } catch (err) {
-    console.error(err.message);
-    res.status(500).send("Server error");
+    console.error('Attendance error:', err);
+    return res.status(500).json({ 
+      message: 'Server error: ' + err.message 
+    });
   }
 });
 
