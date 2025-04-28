@@ -347,7 +347,23 @@ router.get("/:id", async (req, res) => {
     }
 });
 
+router.get('/search', async (req, res) => {
+    const {societyName}= req.query;
+    try {
+        const { userId, role } = getUserDetails(req)
 
+        if(!societyName){
+            return res.status(404).json("societyName required for searching")
+        }
+
+        const user = await Society.find({role: role, name: societyName})
+
+        res.status(200).json(user.subscribedSocities)
+    } catch (error) {
+        console.error("Error in search society.route.js ", error);
+        res.status(500).json("Internal Server Error");
+    }
+})
 
 router.get('/user/subscribedSocieties', async (req, res) => {
     try {
@@ -357,6 +373,8 @@ router.get('/user/subscribedSocieties', async (req, res) => {
         const user = await User.findById({ _id: userId })
             // .select('-password subscribedSocities subscribedSubSocities')
             .populate("subscribedSocities subscribedSubSocities")
+
+        console.log("\n\nThe /user/subscribedSocieties has Data \n", user.subscribedSocities)
 
         res.status(200).json(user.subscribedSocities)
     } catch (error) {
@@ -382,9 +400,9 @@ router.get("/universities/all", async (req, res) => {
                 }
             },
             {
-                $sample: { size: 15 } // Adjust size to the number of random documents you want
+                $sample: { size: 5 } // Adjust size to the number of random documents you want
             }
-        ]);
+        ]).limit(5); // Limit to 5 random societies
 
         // Extract IDs of the random societies
         const societyIds = randomSocieties.map(society => society._id);
@@ -396,13 +414,16 @@ router.get("/universities/all", async (req, res) => {
                 populate: {
                     path: 'universityOrigin campusOrigin',
                     select: 'name location'
-                }
-            }
-        ]);
+                },
+            }, 
+                            
+        ]).select('-users').limit(5);
 
         if (!societies || societies.length === 0) {
             return res.status(404).json("No society found");
         }
+
+        console.log("\n\nThe /universities/all has Data \n", societies)
 
         res.status(200).json(societies);
     } catch (error) {
@@ -432,10 +453,13 @@ router.get("/campuses/all", async (req, res) => {
                 populate: 'universityOrigin campusOrigin',
                 select: 'name location'
             }
-        ]);
+        ]).limit(5);
         // console.log("hey yo", society);
 
         if (!society) return res.status(404).json("no society found");
+
+        console.log("\n\nThe /campuses/all has Data \n", society)
+
         res.status(200).json(society);
     } catch (error) {
         console.error("Error in society.route.js ", error);
@@ -463,7 +487,7 @@ router.get("/campus/all", async (req, res) => {
                 populate: 'universityOrigin campusOrigin',
                 select: 'name location'
             }
-        ]);
+        ]).limit(5);
         // path: 'postsCollectionRef',
         //                 populate: {
         //                     path: 'posts.postId',
@@ -472,6 +496,9 @@ router.get("/campus/all", async (req, res) => {
         //                         path: 'author
 
         if (!society) return res.status(404).json("no society found");
+
+        console.log("\n\nThe /campus/all has Data \n", society)
+
         res.status(200).json(society);
     } catch (error) {
         console.error("Error in society.route.js ", error);
@@ -864,6 +891,8 @@ router.get('/public/societies', async (req, res) => {
             society => society.societyType.societyType === 'public'
         );
         // console.log("Hi-soc2", filteredSocieties)
+
+        console.log("\n\nThe /public/societies has Data \n", societies)
 
         // setTimeout(() => {
         //     res.status(200).json(filteredSocieties);
