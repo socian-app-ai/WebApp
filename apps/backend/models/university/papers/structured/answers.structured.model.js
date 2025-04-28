@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const StructuredVote = require('./vote.answers.model');
 const { Schema } = mongoose;
 
 
@@ -25,6 +26,22 @@ const structuredAnswerSchema = new Schema({
     answeredAt: { type: Date, default: Date.now },
     isDeleted: { type: Boolean, default: false },
 }, { timestamps: true });
+
+structuredAnswerSchema.pre('save', async function (next) {
+    if (!this.voteId) {
+        try {
+            const vote = await StructuredVote.create({
+                answerId: this._id, // Link the vote to the answer
+            });
+            this.voteId = vote._id;
+            next();
+        } catch (error) {
+            next(error);
+        }
+    } else {
+        next();
+    }
+});
 
 const StructuredAnswer = mongoose.model('StructuredAnswer', structuredAnswerSchema);
 
