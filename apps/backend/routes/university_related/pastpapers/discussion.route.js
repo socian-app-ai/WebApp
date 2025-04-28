@@ -217,12 +217,14 @@ router.post('/questions/populated/all', async (req, res) => {
 
     try {
 
-        const questions = await StructuredQuestionCollection.findById(toBeDiscussedId).populate(
+        const questions = await StructuredQuestionCollection.findById(toBeDiscussedId, {isDeleted: false}).populate(
             [
                 {
                     path: "structuredQuestions",
+                    match: { isDeleted: false },
                     populate: [{
                         path: "answers",
+                        match: { isDeleted: false },
                         populate: [{ path: "voteId" }, { path: "answeredByUser", select: "name profile username" }]
                     },
                     { path: "createdBy", select: "name profile username" },
@@ -250,24 +252,24 @@ router.post('/questions/populated/all', async (req, res) => {
     }
 });
 
-async function populateSubQuestions(question, parentPrefix = '') {
-    const populated = await StructuredQuestion.findById(question._id).populate('subQuestions');
+// async function populateSubQuestions(question, parentPrefix = '') {
+//     const populated = await StructuredQuestion.findById(question._id).populate('subQuestions');
 
-    if (!populated) return question;
+//     if (!populated) return question;
 
-    const currentPrefix = parentPrefix
-        ? `${parentPrefix}.${populated.questionNumberOrAlphabet}`
-        : populated.questionNumberOrAlphabet;
+//     const currentPrefix = parentPrefix
+//         ? `${parentPrefix}.${populated.questionNumberOrAlphabet}`
+//         : populated.questionNumberOrAlphabet;
 
-    // Assign the full hierarchical prefix
-    populated.fullPath = currentPrefix;
+//     // Assign the full hierarchical prefix
+//     populated.fullPath = currentPrefix;
 
-    populated.subQuestions = await Promise.all(
-        populated.subQuestions.map(subQ => populateSubQuestions(subQ, currentPrefix))
-    );
+//     populated.subQuestions = await Promise.all(
+//         populated.subQuestions.map(subQ => populateSubQuestions(subQ, currentPrefix))
+//     );
 
-    return populated;
-}
+//     return populated;
+// }
 
 
 router.post('/parent-questions/populated/all', async (req, res) => {
@@ -276,21 +278,21 @@ router.post('/parent-questions/populated/all', async (req, res) => {
     try {
         const parentQuestions = await StructuredQuestion.find({
             structuredQuestionCollectionId: toBeDiscussedId,
-            parent: { $exists: false }
-        });
+            parent: { $exists: false }, isDeleted: false
+        }).populate({path:'subQuestions', match:{isDeleted:false}});
 
         if (!parentQuestions || parentQuestions.length === 0) {
             return res.status(404).json({ message: "Questions not found", data: [] });
         }
 
-        const fullyPopulated = await Promise.all(
-            parentQuestions.map(question => populateSubQuestions(question))
-        );
+        // const fullyPopulated = await Promise.all(
+        //     parentQuestions.map(question => populateSubQuestions(question))
+        // );
         // console.log("FULLY POPULATED ", JSON.stringify(fullyPopulated, null, 2))
 
         return res.status(200).json({
             message: "Questions fetched successfully",
-            data: fullyPopulated
+            data: parentQuestions
         });
 
     } catch (error) {
@@ -312,7 +314,7 @@ router.post('/parent-questions/all', async (req, res) => {
 
     try {
 
-        const questions = await StructuredQuestion.find({ structuredQuestionCollectionId: toBeDiscussedId, parent: { $exists: false } });
+        const questions = await StructuredQuestion.find({ structuredQuestionCollectionId: toBeDiscussedId, parent: { $exists: false }, isDeleted: false });
         // console.log("QUESTIONS ", questions)
         if (!questions) {
             return res.status(404).json({ message: "Questions not found", data: [] });
@@ -342,7 +344,7 @@ router.post('/sub-questions/all', async (req, res) => {
 
     try {
 
-        const questions = await StructuredQuestion.find({ parent: parentId })
+        const questions = await StructuredQuestion.find({ parent: parentId, isDeleted: false });
         if (!questions) {
             return res.status(404).json({ message: "Questions not found", data: [] });
         }
@@ -403,6 +405,62 @@ router.post('/create/answer', async (req, res) => {
         });
     }
 })
+
+router.post('/answer/edit', async (req, res) => {
+    const {  answerId, editedContent, userIdRef } = req.body;
+    const { userId } = getUserDetails(req);
+
+    try {
+        if(userIdRef !== userId) {
+            return res.status(403).json({ message: "You are not authorized to edit this answer" });
+        }
+        const answer = await StructuredAnswer.findByIdAndUpdate(answerId, { content: editedContent, isEdited: true }, { new: true });
+        if (!answer) {
+            return res.status(404).json({ message: "Answer not found or could't edit" });
+        }
+
+
+        return res.status(200).json({
+            message: "Answer added successfully",
+            data: answer
+        });
+    } catch (error) {
+        console.error("Error in adding answer to question:", error);
+        return res.status(500).json({
+            message: "Error adding answer to question",
+            error: error.message
+        });
+    }
+})
+
+
+router.post('/answer/delete', async (req, res) => {
+    const {  answerId, editedContent, userIdRef } = req.body;
+    const { userId } = getUserDetails(req);
+
+    try {
+        if(userIdRef !== userId) {
+            return res.status(403).json({ message: "You are not authorized to edit this answer" });
+        }
+        const answer = await StructuredAnswer.findByIdAndUpdate(answerId, { isDeleted: true }, { new: true });
+        
+        if (!answer) {
+            return res.status(404).json({ message: "Answer not found or could't delete" });
+        }
+
+        return res.status(200).json({
+            message: "Answer deleted successfully",
+        });
+    } catch (error) {
+        console.error("Error in adding answer to question:", error);
+        return res.status(500).json({
+            message: "Error adding answer to question",
+            error: error.message
+        });
+    }
+})
+
+
 
 // Add comment to discussion
 router.post('/comment/add-comment', async (req, res) => {
@@ -976,7 +1034,7 @@ router.get('/answer', async (req, res) => {
 
     try {
 
-        const answer = await StructuredAnswer.findById(answerId).populate([{path:'answeredByUser',  select:'name profile username'}, {path:'voteId'}]);
+        const answer = await StructuredAnswer.findById(answerId, {isDeleted: false}).populate([{path:'answeredByUser',  select:'name profile username'}, {path:'voteId'}]);
 
         console.log("fetched  ANSWER ", answer)
 
@@ -1007,8 +1065,12 @@ router.get('/answer/comments', async (req, res) => {
 
     try {
 
-        const answer = await StructuredAnswer.findById(answerId)
-            .populate({ path: "replies", populate: [{ path: "user", select: "name profile username" }, { path: "voteId" }] });
+        const answer = await StructuredAnswer.findById(answerId, {isDeleted: false})
+            .populate({ path: "replies",
+                
+                match: { isDeleted: false },
+                 populate: [{ path: "user", select: "name profile username", },
+                 { path: "voteId" }] });
 // console.log("ANSWER ", answer)
         if (!answer) {
             return res.status(404).json({ message: "Answer not found" });
@@ -1038,7 +1100,10 @@ router.get('/answer/comment/replies', async (req, res) => {
     try {
 
         const answer = await StructuredComment.findById(commentId)
-            .populate({ path: "replies", populate: [{ path: "user", select: "name profile username" }, { path: "voteId" }] });
+            .populate({ path: "replies",
+                
+                match: { isDeleted: false },
+                 populate: [{ path: "user", select: "name profile username" }, { path: "voteId" }] });
 
         if (!answer) {
             return res.status(404).json({ message: "Answer not found" });
@@ -1047,7 +1112,7 @@ router.get('/answer/comment/replies', async (req, res) => {
 
         // Return populated comment
         return res.status(201).json({
-            message: "Comment fetched successfully",
+            message: "replies fetched successfully",
             comment: answer.replies
         });
 

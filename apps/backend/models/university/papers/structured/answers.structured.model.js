@@ -22,6 +22,7 @@ const structuredAnswerSchema = new Schema({
     isApproved: { type: Boolean, default: false },
     isCorrect: { type: Boolean, default: false },
 
+    isEdited: { type: Boolean, default: false },
     answeredByUser: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     answeredAt: { type: Date, default: Date.now },
     isDeleted: { type: Boolean, default: false },

@@ -11,6 +11,9 @@ const structuredCommenSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "StructuredVote",
     },
+    isDeleted: { type: Boolean, default: false },
+    isEdited: { type: Boolean, default: false },
+    isReported: { type: Boolean, default: false },
     replies: [{ type: mongoose.Schema.Types.ObjectId, ref: 'StructuredComment' }],
     mentions: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }], 
     replyToUser: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, // User being replied to
