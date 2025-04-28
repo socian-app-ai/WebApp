@@ -904,5 +904,156 @@ router.get('/public/societies', async (req, res) => {
     }
 });
 
+/**
+ * PAGINATED: Get all-uni[all parents] societies (paginated)
+ */
+router.get("/paginated/universities/all", async (req, res) => {
+    try {
+        const { role } = getUserDetails(req);
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const skip = (page - 1) * limit;
+        const match = { "references.role": role };
+        console.log("[/paginated/universities/all] match:", match, "page:", page, "limit:", limit, "skip:", skip);
+        const total = await Society.countDocuments(match);
+        const societies = await Society.find(match)
+            .populate([
+                {
+                    path: 'references',
+                    populate: {
+                        path: 'universityOrigin campusOrigin',
+                        select: 'name location'
+                    },
+                }
+            ])
+            .select('-users')
+            .skip(skip)
+            .limit(limit);
+        console.log("[/paginated/universities/all] societies:", societies.length, "total:", total);
+        res.status(200).json({
+            data: societies,
+            total,
+            page,
+            limit,
+        });
+    } catch (error) {
+        console.error("Error in society.route.js /paginated/universities/all", error);
+        res.status(500).json("Internal Server Error");
+    }
+});
+
+/**
+ * PAGINATED: Get all-campus[parent and child] societies (paginated)
+ */
+router.get("/paginated/campuses/all", async (req, res) => {
+    try {
+        const { universityOrigin, role } = getUserDetails(req);
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const skip = (page - 1) * limit;
+        const match = {
+            "references.role": role,
+            "references.universityOrigin": universityOrigin,
+        };
+        console.log("[/paginated/campuses/all] match:", match, "page:", page, "limit:", limit, "skip:", skip);
+        const total = await Society.countDocuments(match);
+        const societies = await Society.find(match)
+            .populate([
+                {
+                    path: 'references',
+                    populate: 'universityOrigin campusOrigin',
+                    select: 'name location'
+                }
+            ])
+            .skip(skip)
+            .limit(limit);
+        console.log("[/paginated/campuses/all] societies:", societies.length, "total:", total);
+        res.status(200).json({
+            data: societies,
+            total,
+            page,
+            limit,
+        });
+    } catch (error) {
+        console.error("Error in society.route.js /paginated/campuses/all", error);
+        res.status(500).json("Internal Server Error");
+    }
+});
+
+/**
+ * PAGINATED: Get one[single-child] campus-societies (paginated)
+ */
+router.get("/paginated/campus/all", async (req, res) => {
+    try {
+        const { universityOrigin, campusOrigin, role } = getUserDetails(req);
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const skip = (page - 1) * limit;
+        const match = {
+            "references.role": role,
+            "references.universityOrigin": universityOrigin,
+            "references.campusOrigin": campusOrigin,
+        };
+        console.log("[/paginated/campus/all] match:", match, "page:", page, "limit:", limit, "skip:", skip);
+        const total = await Society.countDocuments(match);
+        const societies = await Society.find(match)
+            .populate([
+                {
+                    path: 'references',
+                    populate: 'universityOrigin campusOrigin',
+                    select: 'name location'
+                }
+            ])
+            .skip(skip)
+            .limit(limit);
+        console.log("[/paginated/campus/all] societies:", societies.length, "total:", total);
+        res.status(200).json({
+            data: societies,
+            total,
+            page,
+            limit,
+        });
+    } catch (error) {
+        console.error("Error in society.route.js /paginated/campus/all", error);
+        res.status(500).json("Internal Server Error");
+    }
+});
+
+/**
+ * PAGINATED: finds public societies basis on your role (paginated)
+ */
+router.get('/paginated/public/societies', async (req, res) => {
+    let { role, universityOrigin, campusOrigin } = getUserDetails(req);
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+    try {
+        const match = {
+            "references.role": role,
+            "references.universityOrigin": universityOrigin,
+            "references.campusOrigin": campusOrigin
+        };
+        console.log("[/paginated/public/societies] match:", match, "page:", page, "limit:", limit, "skip:", skip);
+        const total = await Society.countDocuments(match);
+        const societies = await Society.find(match)
+            .select('name _id societyType')
+            .populate('societyType')
+            .skip(skip)
+            .limit(limit);
+        const filteredSocieties = societies.filter(
+            society => society.societyType.societyType === 'public'
+        );
+        console.log("[/paginated/public/societies] societies:", societies.length, "filtered:", filteredSocieties.length, "total:", total);
+        res.status(200).json({
+            data: filteredSocieties,
+            total,
+            page,
+            limit,
+        });
+    } catch (error) {
+        console.error("Error in society.route.js /paginated/public/societies", error);
+        res.status(500).json("Internal Server Error");
+    }
+});
 
 module.exports = router;
