@@ -196,6 +196,8 @@ const TeacherFeedback = () => {
         <div className="mt-10 px-4 mx-auto">
             <h2 className="text-2xl font-bold mb-6">Teacher Feedbacks</h2>
 
+         
+
             {message && (
                 <div className="bg-blue-50 text-blue-700 p-4 rounded-lg mb-4">{message}</div>
             )}
@@ -221,6 +223,11 @@ const TeacherFeedback = () => {
                     <CreateTeacherButton onCreate={handleCreateTeacherProfile} />
                 </div>
             )}
+
+{!selectedTeacher && (<div className="text-center p-4">
+                    <p className="mb-4">Couldn't find your profile? You can create a new one</p>
+                    <CreateTeacherButton onCreate={handleCreateTeacherProfile} />
+                </div>)}
         </div>
     );
 };
