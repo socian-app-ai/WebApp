@@ -107,21 +107,22 @@ const CreatePostButton = () => {
         // console.log(title, body)
         // console.log("file", file)
         // console.log("videoFiles", videoFiles)
-        if (!title || (body === '' && !file && videoFiles.length === 0) || !selectedSociety) {
-            setError('Please fill in all fields and select a society.');
+        if (!title || body === '' || !selectedSociety) {
+            setError('Please fill in title, body and select a society.');
             return;
         }
 
 
         const formDataU = new FormData();
         formDataU.append("title", title);
-        if (body) {
+        // if (body) {
             formDataU.append("body", body);
-        }
-        else if (videoFiles.length > 0) {
+        // }
+        // else 
+        if (videoFiles?.length > 0) {
             videoFiles.forEach((f) => formDataU.append("file", f));
         }
-        else if (file.length > 0) {
+        else if (file?.length > 0) {
             // formDataU.append("file", file);
             file.forEach(f => formDataU.append("file", f))
 
@@ -328,15 +329,7 @@ const CreatePostButton = () => {
                                 />
                             </div>
 
-                            <div className='flex justify-evenly  bg-[#131313]'>
-                                <button className={`px-2 my-1 rounded-md ${doing === 'body' && 'bg-[#333]'}`} onClick={(e) => handleDoingChange(e, 'body')}>Body</button>
-                                <button className={`px-2 my-1 rounded-md ${doing === 'image' && 'bg-[#333]'}`} onClick={(e) => handleDoingChange(e, 'image')}>Image</button>
-                                <button className={`px-2 my-1 rounded-md ${doing === 'video' && 'bg-[#333]'}`} onClick={(e) => handleDoingChange(e, 'video')}>Video</button>
-                            </div>
-
-                            {
-                                doing === 'body' && (
-                                    <div>
+                            <div>
                                         <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                                             Body
                                         </label>
@@ -350,8 +343,14 @@ const CreatePostButton = () => {
                                             className="whitespace-pre-line w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-[#2f2f2f] dark:text-white resize-none"
                                         />
                                     </div>
-                                )
-                            }
+
+                            <div className='flex justify-evenly  bg-[#131313]'>
+                                {/* <button className={`px-2 my-1 rounded-md ${doing === 'body' && 'bg-[#333]'}`} onClick={(e) => handleDoingChange(e, 'body')}>Body</button> */}
+                                <button className={`px-2 my-1 rounded-md ${doing === 'image' && 'bg-[#333]'}`} onClick={(e) => handleDoingChange(e, 'image')}>Image</button>
+                                <button className={`px-2 my-1 rounded-md ${doing === 'video' && 'bg-[#333]'}`} onClick={(e) => handleDoingChange(e, 'video')}>Video</button>
+                            </div>
+
+                            
 
 
                             {/* {
