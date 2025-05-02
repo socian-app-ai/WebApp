@@ -284,7 +284,7 @@ router.post("/create", upload.array('file'), async (req, res) => {
 
     try {
         const { userId, campusOrigin, universityOrigin, role } = getUserDetails(req);
-        const { title, body, author } = req.body;
+        const { title, body, author=userId } = req.body;
         const files = req.files;
 
         console.log("/create-indiv ", { title, body, files, author });
@@ -315,6 +315,7 @@ router.post("/create", upload.array('file'), async (req, res) => {
             }
             postContent.media = mediaArray;
         }
+        postContent.isPersonalPost = true; // Mark as personal post
 
         const post = new Post(postContent);
         await post.save({ session });

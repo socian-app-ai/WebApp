@@ -46,6 +46,7 @@ const postSchema = new Schema(
             "image/png",
             "image/gif",
             "image/*",
+             "audio", "audio/opus", "audio/webm", "audio/*"
           ], //add youtube url later
           default: "text",
         },
@@ -143,6 +144,7 @@ const postSchema = new Schema(
   {
     validate: {
       validator: function () {
+        if(this.isPersonalPost) return true; // Skip validation for personal posts
         return !(this.society && this.subSociety);
       },
       message: "You cannot set both Society and subSociety. Choose one.",
