@@ -60,29 +60,116 @@ const TeacherProfileCard = ({ teacher }) => (
 
 
 // FeedbackList Component
-const FeedbackList = ({ feedbacks }) => (
-    <div className="mt-6">
-        <h3 className="text-xl font-semibold mb-4">Recent Feedbacks</h3>
-        {feedbacks.length > 0 ? (
-            feedbacks.map((feedback) => (
-                <div key={feedback._id} className="bg-white dark:bg-[#121212] rounded-lg shadow p-4 mb-4">
-                    <p className="text-gray-700">{feedback.feedback}</p>
-                    <div className="mt-2 text-sm text-gray-500">Rating: {feedback.rating}/5</div>
-                    <div className="inline-flex items-center space-x-2 mt-2">
-                        <div className='inline-flex justify-center items-center'>
-                            <ArrowUp size={18} /> {feedback.upVotesCount}
+const FeedbackList = ({ feedbacks, setFeedbacks }) => {
+    const [ratingId, setRatingId] = useState('');
+    const [isCommentingOrEditing, setIsCommentingOrEditing] = useState(false);
+    const [commentOrEditMessage, setCommentOrEditMessage] = useState('');
+
+    const submitMessage = async () => {
+        try {
+            const response = await axiosInstance.post('/api/teacher/feedback/comment/teacher', {
+                comment: commentOrEditMessage,
+                ratingId: ratingId
+            });
+            
+            // Update the feedbacks state with the new comment
+            setFeedbacks(prevFeedbacks => 
+                prevFeedbacks.map(feedback => {
+                    console.log("DEEF back dTa", feedback, ratingId)
+                    if (feedback._id === ratingId) {
+                        return {
+                            ...feedback,
+                            teacherDirectComment: {
+                                comment: commentOrEditMessage,
+                                createdAt: new Date().toISOString()
+                            }
+                        };
+                    }
+                    return feedback;
+                })
+            );
+        } catch (error) {
+            console.error('Error submitting comment:', error);
+        }
+    }
+
+    return (
+        <div className="mt-6">
+            <h3 className="text-xl font-semibold mb-4">Recent Feedbacks</h3>
+            {feedbacks.length > 0 ? (
+                feedbacks.map((feedback) => (
+                    <div key={feedback._id} className="bg-white dark:bg-[#121212] rounded-lg shadow p-4 mb-4">
+                        <p className="text-gray-200">{feedback.feedback}</p>
+                        <div className="mt-2 text-sm text-gray-400">Rating: {feedback.rating}/5</div>
+                        <div className="text-gray-700 inline-flex items-center space-x-2 mt-2">
+                            <div className='text-gray-400 inline-flex justify-center items-center'>
+                                <ArrowUp size={18} /> {feedback.upVotesCount}
+                            </div>
+                            <div className='text-gray-400 inline-flex justify-center items-center'>
+                                <ArrowDown size={18} /> {feedback.downVotesCount}
+                            </div>
                         </div>
-                        <div className='inline-flex justify-center items-center'>
-                            <ArrowDown size={18} /> {feedback.downVotesCount}
-                        </div>
+                        {feedback?.teacherDirectComment?.comment && (
+                            <div className="border rounded-md p-1 px-2 border-[#333333] mt-2">
+                                <p className="text-md font-semi-bold text-gray-500">Your Reply</p>
+                                <p className="text-gray-300">{feedback.teacherDirectComment.comment}</p>
+                                <p className="text-xs text-gray-400 mt-1">
+                                    {new Date(feedback.teacherDirectComment.createdAt).toLocaleDateString()}
+                                </p>
+                            </div>
+                        )}
+                        <button
+                            onClick={() => {
+                                if (feedback?.teacherDirectComment?.comment) {
+                                    setCommentOrEditMessage(feedback.teacherDirectComment.comment)
+                                }
+                                setRatingId(feedback._id)
+                                setIsCommentingOrEditing(true)
+                            }}
+                            className="mt-2 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                        >
+                            {feedback?.teacherDirectComment?.comment ? 'Edit Reply' : 'Reply'}
+                        </button>
+
+                        {isCommentingOrEditing && ratingId === feedback._id && (
+                            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+                                <div className="bg-white dark:bg-[#121212] p-6 rounded-lg shadow-lg w-96">
+                                    <h3 className="text-xl font-semibold mb-4">Reply to Feedback</h3>
+                                    <textarea
+                                        value={commentOrEditMessage}
+                                        onChange={(e) => setCommentOrEditMessage(e.target.value)}
+                                        className="w-full p-2 border rounded mb-4 dark:bg-[#121212] bg-white"
+                                        rows="4"
+                                        placeholder="Write your reply..."
+                                    />
+                                    <div className="flex justify-end space-x-2">
+                                        <button
+                                            onClick={() => setIsCommentingOrEditing(false)}
+                                            className="px-4 py-2 border rounded"
+                                        >
+                                            Cancel
+                                        </button>
+                                        <button
+                                            onClick={() => {
+                                                submitMessage();
+                                                setIsCommentingOrEditing(false);
+                                            }}
+                                            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                                        >
+                                            Submit
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
                     </div>
-                </div>
-            ))
-        ) : (
-            <p className="text-gray-500">No feedbacks available yet.</p>
-        )}
-    </div>
-);
+                ))
+            ) : (
+                <p className="text-gray-500">No feedbacks available yet.</p>
+            )}
+        </div>
+    );
+};
 
 // TeacherList Component
 const TeacherList = ({ teachers, onSelect }) => (
@@ -208,7 +295,7 @@ const TeacherFeedback = () => {
             {selectedTeacher ? (
                 <div className="space-y-4">
                     <TeacherProfileCard teacher={selectedTeacher} />
-                    <FeedbackList feedbacks={feedbacks} />
+                    <FeedbackList feedbacks={feedbacks} setFeedbacks={setFeedbacks} />
                 </div>
             ) : teachers?.length > 0 ? (
                 <div>
