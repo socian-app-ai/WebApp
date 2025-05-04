@@ -128,7 +128,7 @@ export default function TeacherInfoCard() {
                     <div className="border-t border-border mt-6 pt-4">
                         <h3 className="font-semibold text-foreground mb-2">Feedback Summary</h3>
                         <p className="text-muted-foreground text-sm">
-                            {teacher?.feedbackSummary || "No summary available."}
+                            {teacher?.feedbackSummary[0]?.summary || "No summary available."}
                         </p>
                     </div>
                 </div>
