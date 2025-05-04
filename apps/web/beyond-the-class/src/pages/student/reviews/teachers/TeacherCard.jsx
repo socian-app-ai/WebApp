@@ -66,7 +66,7 @@ export default function TeacherCard({ teacher }) {
                 <div className="space-y-1">
                     <p className="text-sm font-medium text-foreground">Feedback Summary</p>
                     <p className="text-sm text-muted-foreground">
-                        {teacher.feedbackSummary || "No summary available."}
+                        {teacher?.feedbackSummary[0]?.summary || "No summary available."}
                     </p>
                 </div>
 
