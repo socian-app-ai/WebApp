@@ -46,7 +46,7 @@ export default function CafeUsers() {
             //     message: err.message,
             //     type: 'error'
             // });
-            addToast(err.message);
+            addToast(err?.response?.data?.message);
         } finally {
             setLoading(false);
         }
@@ -74,7 +74,8 @@ export default function CafeUsers() {
             }
         } catch (err) {
             console.log(err);
-            addToast(err.message);
+            addToast(err?.response?.data?.message);
+            // addToast(err.message);
 
             // setError(err.message);
         }

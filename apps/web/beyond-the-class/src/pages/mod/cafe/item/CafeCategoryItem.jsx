@@ -12,6 +12,7 @@ import LabelInputCustomizable, { LabelDropDownSearchableInputCustomizable } from
 import LabelFileInputCustomizable from "../../../../components/Upload/LabelFileInputCustomizable";
 import { useTransition } from "react";
 import { X } from "lucide-react";
+import { useToast } from "../../../../components/toaster/ToastCustom";
 
 
 const CafeCategoryItem = () => {
@@ -20,6 +21,7 @@ const CafeCategoryItem = () => {
 
     const { cafeId } = useParams()
 
+    const {addToast} = useToast();
 
     const [foodItems, setFoodItems] = useState(null);
     const [selectedItem, setSelectedItem] = useState(null);
@@ -50,6 +52,7 @@ const CafeCategoryItem = () => {
                 console.log("Items:", response.data.items);
                 setFoodItems(response.data.items);
             } catch (error) {
+                addToast(error?.response?.data?.error);
                 console.error("Error fetching Items:", error);
             }
         };
@@ -64,6 +67,7 @@ const CafeCategoryItem = () => {
             // setCategories(response.data.categories);
             return response.data.categories;
         } catch (error) {
+            addToast(error?.response?.data?.error);
             console.error("Error fetching categories:", error);
         }
     };
@@ -85,6 +89,7 @@ const CafeCategoryItem = () => {
             );
 
         } catch (error) {
+            addToast(error?.response?.data?.error);
             console.error("Error fetching cafes:", error);
         }
     };
@@ -210,7 +215,10 @@ const CafeCategoryItem = () => {
                                             <LabelInputCustomizable
                                                 required={true}
                                                 value={newFoodItem.price}
-                                                onChange={(e) => setNewFoodItem({ ...newFoodItem, price: e.target.value })}
+                                                onChange={(e) => {
+                                                    const value = Math.max(0, Number(e.target.value));
+                                                    setNewFoodItem({ ...newFoodItem, price: value });
+                                                }}
                                                 type="number"
                                                 min={0}
                                                 label={"Price"}
@@ -219,7 +227,10 @@ const CafeCategoryItem = () => {
                                             {newFoodItem.takeAwayStatus === 'true' && <LabelInputCustomizable
                                                 required={true}
                                                 value={newFoodItem.takeAwayPrice}
-                                                onChange={(e) => setNewFoodItem({ ...newFoodItem, takeAwayPrice: e.target.value })}
+                                                onChange={(e) => {
+                                                    const value = Math.max(0, Number(e.target.value));
+                                                    setNewFoodItem({ ...newFoodItem, takeAwayPrice: value });
+                                                }}
                                                 type="number"
                                                 min={0}
                                                 label={"TakeAway Price"}
