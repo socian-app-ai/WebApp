@@ -87,6 +87,23 @@ const UserRoles = require('../../models/userRoles')
 //     }
 // })
 
+
+exports.getUserProfile = async (req, res) => {
+    try {
+      const userId = req.query.id;
+      const user = await User.findById(userId)
+        .select('name username email profile university joined subscribedSocities connections')
+        .populate('university.universityId', 'name');
+      if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+      res.json({ profile: user });
+    } catch (error) {
+      console.error('Error fetching profile:', error);
+      res.status(500).json({ error: 'Server error' });
+    }
+  };
+
 router.get('/profile', async (req, res) => {
     try {
         const { userId } = getUserDetails(req);
@@ -357,7 +374,8 @@ router.get('/connection/stream', async (req, res) => {
         console.error("Error in /connection/stream in user.route.js", error);
         res.status(500).json({ message: "Internal Server Error" });
     }
-})
+
+   })
 
 
 
@@ -788,6 +806,18 @@ router.get('/teacher/joinModel', async (req, res) => {
 })
 
 
-
+router.get("/me", async (req, res) => {
+    try {
+      const { userId } = getUserDetails(req);
+      const user = await User.findById(userId).select('_id');
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      res.status(200).json({ _id: user._id });
+    } catch (error) {
+      console.error("Error in /user/me", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  });
 
 module.exports = router
