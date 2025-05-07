@@ -61,14 +61,22 @@ router.get("/universities/all", async (req, res) => {
         })
             .sort({ createdAt: -1 })
             .populate([
-                "author",
+                {path: "author",
+                     select: 'name username role  super_role university profile.picture',
+                     populate: {
+                        path: 'university',
+                        populate:{
+                            path: 'universityId departmentId campusId ',
+                        select: 'name'}
+                     }
+                },
                 "society",
                 "subSociety",
                 "voteId"
             ]);
 
 
-        // console.log("posts", posts)
+        console.log("posts", JSON.stringify(posts, null, 2))
 
         if (!posts) return res.status(304).json("Posts Collection null");
 
@@ -93,7 +101,15 @@ router.get("/campuses/all", async (req, res) => {
         })
             .sort({ createdAt: -1 })
             .populate([
-                "author",
+                {path: "author",
+                    select: 'name username role  super_role university profile.picture',
+                    populate: {
+                       path: 'university',
+                       populate:{
+                           path: 'universityId departmentId campusId ',
+                       select: 'name'}
+                    }
+               },
                 "society",
                 "subSociety",
                 "voteId"
@@ -128,7 +144,15 @@ router.get("/campus/all", async (req, res) => {
         })
             .sort({ createdAt: -1 })
             .populate([
-                "author",
+                {path: "author",
+                    select: 'name username role  super_role university profile.picture',
+                    populate: {
+                       path: 'university',
+                       populate:{
+                           path: 'universityId departmentId campusId ',
+                       select: 'name'}
+                    }
+               },
                 "society",
                 "subSociety",
                 "voteId"
@@ -530,7 +554,15 @@ router.get("/single/post", async (req, res) => {
         })
             .sort({ createdAt: -1 })
             .populate([
-                "author",
+                {path: "author",
+                    select: 'name username role  super_role university profile.picture',
+                    populate: {
+                       path: 'university',
+                       populate:{
+                           path: 'universityId departmentId campusId ',
+                       select: 'name'}
+                    }
+               },
                 "society",
                 "subSociety",
                 "voteId",

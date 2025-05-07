@@ -3,7 +3,6 @@ const valkeyClient = require("../db/valkey.pubsub");
 const DiscussionChatMessage = require("../models/university/papers/discussion/chat/discussion.chat.message");
 const DiscussionChat = require("../models/university/papers/discussion/chat/discussion.chat");
 const Gathering = require("../models/gps/user.gathering.model");
-
 class SocketServer {
   constructor() {
     this.io = null;
@@ -107,6 +106,7 @@ class SocketServer {
         methods: ["GET", "POST"],
       },
     });
+
 
     if (this.io) {
       console.log("║ \x1b[33mSocket server\x1b[0m: \x1b[32minitialized\x1b[0m                    ║");
