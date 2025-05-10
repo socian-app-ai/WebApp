@@ -1,6 +1,6 @@
 const express = require('express');
 const Subject = require('../../../models/university/department/subject/subject.department.model');
-const { PastPaper, PastpapersCollectionByYear } = require('../../../models/university/papers/pastpaper.model.js');
+const { PastPaper } = require('../../../models/university/papers/pastpaper.model.js');
 const { PastPaperItem } = require('../../../models/university/papers/pastpaper.item.model');
 const { getUserDetails } = require('../../../utils/utils');
 const router = express.Router();
@@ -9,7 +9,8 @@ const mongoose = require('mongoose');
 const { DiscussionComment, PastPaperQuestion } = require('../../../models/university/papers/discussion/discussion.comment');
 const s3Service = require('../../../utils/aws/aws.js');
 const {upload}= require('../../../utils/multer.utils.js');
-
+const { PastpapersCollectionByYear } = require('../../../models/university/papers/paper.collection.model.js');
+const fs = require('fs');
 // Cache configuration
 const CACHE_TTL = 3600; // 1 hour in seconds
 const CACHE_KEYS = {
@@ -193,8 +194,10 @@ router.post("/upload", upload.single('file'), async (req, res) => {
     const pdfUrl = `${universityOrigin}/${campusOrigin}/${role}/pastpapers/${year}/${departmentId}/${subjectId}${pathSegment}/${file.originalname}-${timestamp}`;
 
     console.log("PDF Path:", pdfUrl);
+        console.log("PDF FILE:", file);
 
-    await s3Service.putObject(pdfUrl, file.buffer, file.mimetype);
+        const fileBuffer = fs.readFileSync(file.path);
+    await s3Service.putObjectBuffer(pdfUrl, fileBuffer, file.mimetype);
 
     const session = await mongoose.startSession();
     session.startTransaction();
