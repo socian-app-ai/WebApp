@@ -1,1509 +1,3 @@
-// const express = require('express')
-// const User = require('../../models/user/user.model')
-// const router = express.Router()
-// const moment = require('moment')
-// const { getUserDetails, sendOtp, handlePlatformResponse } = require('../../utils/utils')
-// const { default: mongoose } = require('mongoose')
-// const Society = require('../../models/society/society.model')
-// const FriendRequest = require('../../models/user/friend.request.model')
-// const Teacher = require('../../models/university/teacher/teacher.model')
-// const UserRoles = require('../../models/userRoles')
-// const { upload, uploadImage } = require('../../utils/multer.utils')
-// const { uploadPictureMedia } = require('../../utils/aws.bucket.utils')
-// const { OTP } = require('../../models/otp/otp')
-// const { resendEmailConfirmation } = require('../../utils/email.util')
-// const bcryptjs = require('bcryptjs');
-// const jwt = require('jsonwebtoken');
-// const Department = require('../../models/university/department/department.university.model')
-
-// // No create user search field
-
-
-// // // Search a user for profile page
-// // router.get('/profile', async (req, res) => {
-// //     try {
-// //         // console.log("here", req.query.id, req.params.id)
-
-// //         // 67629d6fe10288ec95375ee0
-// //         const userExists = await User.findById({ _id: req.query.id }).select("-password")
-// //             .populate([
-// //                 {
-// //                     path: 'subscribedSocities subscribedSubSocities',
-// //                     select: 'name _id'
-// //                 },
-// //                 {
-// //                     path: 'profile.posts',
-// //                     model: 'Post',
-// //                     populate: [{
-// //                         path: 'author',
-// //                         select: 'name username profile'
-// //                     },
-// //                     {
-// //                         path: 'voteId',
-// //                     },
-// //                     {
-// //                         path: 'society',
-// //                         select: 'name _id'
-// //                     }
-
-
-// //                     ],
-// //                     options: { sort: { createdAt: -1 } }
-// //                 }])
-// //         // console.log("user>", userExists)
-// //         if (!userExists) return res.status(404).json({ message: "User Not Found", error: "User Not Found" })
-
-// //         // console.log("use>>>", userExists.profile.posts)
-
-
-// //         const user = {
-// //             _id: userExists._id,
-// //             name: userExists.name,
-// //             email:
-// //                 userExists?.universityEmail ||
-// //                 userExists?.personalEmail ||
-// //                 userExists?.secondaryPersonalEmail,
-// //             username: userExists.username,
-// //             profile: userExists.profile,
-// //             university: (userExists.role !== 'ext_org') ? userExists.university : undefined,
-// //             super_role: userExists.super_role,
-// //             role: userExists.role,
-// //             joined: moment(userExists.createdAt).format('MMMM DD, YYYY'),
-// //             joinedSocieties: userExists.subscribedSocities,
-// //             // joinedSubSocieties: userExists.subscribedSubSocities,
-// //             verified: userExists.universityEmailVerified,
-// //             // posts: userExists.posts,
-// //             // references: {
-// //             //   university: {
-// //             //     name: userExists.university.universityId.name,
-// //             //     _id: userExists.university.universityId._id,
-// //             //   },
-// //             //   campus: {
-// //             //     name: userExists.university.campusId.name,
-// //             //     _id: userExists.university.campusId._id,
-// //             //   },
-// //             // },
-// //         };
-
-
-// //         // console.log("use>>", user)
-// //         return res.status(200).json(user)
-// //     } catch (error) {
-// //         console.error("Error", error)
-// //         res.status(500).json("Internal Server Error")
-// //     }
-// // })
-
-
-// exports.getUserProfile = async (req, res) => {
-//     try {
-//         const userId = req.query.id;
-//         const user = await User.findById(userId)
-//             .select('name username email profile university joined subscribedSocities connections')
-//             .populate('university.universityId', 'name');
-//         if (!user) {
-//             return res.status(404).json({ error: 'User not found' });
-//         }
-//         res.json({ profile: user });
-//     } catch (error) {
-//         console.error('Error fetching profile:', error);
-//         res.status(500).json({ error: 'Server error' });
-//     }
-// };
-
-// router.get('/profile', async (req, res) => {
-//     try {
-//         const { userId } = getUserDetails(req);
-//         // Fetch user data from the database
-//         const userExists = await User.findById({ _id: req.query.id })
-//             .select("-password")
-//             .populate([
-//                 {
-//                     path: 'subscribedSocities subscribedSubSocities',
-//                     select: 'name _id'
-//                 },
-//                 {
-//                     path: 'profile.posts',
-//                     model: 'Post',
-//                     populate: [
-//                         {
-//                             path: 'author',
-//                             select: 'name username profile'
-//                         },
-//                         {
-//                             path: 'voteId',
-//                         },
-//                         {
-//                             path: 'society',
-//                             select: 'name _id'
-//                         }
-//                     ],
-//                     options: { sort: { createdAt: -1 } }
-//                 },
-//                 // {
-//                 //     path: 'profile.connections.friends',
-//                 //     select: 'name _id profile.picture status',
-//                 // }
-//             ]);
-
-//         if (!userExists || userExists.profile.connections.blocked.includes(userId)) return res.status(404).json({ message: "User Not Found", error: "User Not Found" });
-
-//         // Check friend status
-//         let friendStatus = null;
-//         let friendConnection
-//         friendConnection = await FriendRequest.findOne({
-//             user: userExists._id,
-//             requestedBy: userId
-//         })
-//         if (!friendConnection) {
-//             friendConnection = await FriendRequest.findOne({
-//                 user: userId,
-//                 requestedBy: userExists._id
-//             })
-//         }
-//         friendStatus = friendConnection?.status || null;
-
-//         if (friendConnection) {
-//             if (friendConnection.status === 'requested' && friendConnection.requestedBy.toString() === userId) {
-//                 friendStatus = 'canCancel'; // User can cancel their sent request
-//             } else if (friendConnection.status === 'requested') {
-//                 friendStatus = 'accept/reject'; // User can accept or reject the received request
-//             } else if (friendConnection.status === 'accepted') {
-//                 friendStatus = 'friends'; // They are friends
-//             }
-//         } else {
-//             friendStatus = 'connect'; // No connection exists
-//         }
-
-
-
-//         // Construct the user profile response
-//         const user = {
-//             _id: userExists._id,
-//             name: userExists.name,
-//             email: userExists?.universityEmail ||
-//                 userExists?.personalEmail ||
-//                 userExists?.secondaryPersonalEmail,
-//             username: userExists.username,
-//             profile: userExists.profile,
-//             university: (userExists.role !== 'ext_org') ? userExists.university : undefined,
-//             super_role: userExists.super_role,
-//             role: userExists.role,
-//             joined: moment(userExists.createdAt).format('MMMM DD, YYYY'),
-//             joinedSocieties: userExists.subscribedSocities,
-//             verified: userExists.universityEmailVerified,
-//             connections: userExists.profile.connections.friends, // Adding friend connections
-//             friendStatus
-//         };
-
-//         // Return the user profile
-//         return res.status(200).json(user);
-//     } catch (error) {
-//         console.error("Error", error);
-//         res.status(500).json("Internal Server Error");
-//     }
-// });
-
-
-
-// router.get('/subscribedSocieties', async (req, res) => {
-//     try {
-//         // console.log("here", req.query.id, req.params.id)
-
-//         // 67629d6fe10288ec95375ee0
-//         const userExists = await User.findById({ _id: req.query.id }).select("-password")
-//             .populate({
-//                 path: 'subscribedSocities subscribedSubSocities',
-//                 select: 'name _id'
-
-//             })
-//         // console.log("user>", userExists)
-//         if (!userExists) return res.status(404).json({ message: "User Not Found", error: "User Not Found" })
-
-//         // console.log("use>>>", userExists)
-
-
-//         const user = {
-
-//             joinedSocieties: userExists.subscribedSocities,
-//             joinedSubSocieties: userExists.subscribedSubSocities,
-
-//         };
-
-
-//         // console.log("use>>", user)
-//         return res.status(200).json(user)
-//     } catch (error) {
-//         console.error("Error", error)
-//         res.status(500).json("Internal Server Error")
-//     }
-// })
-
-
-// //USE THIS FOR OWN PROFILE SETTINGS PAGE
-// // router.get('/connections', async (req, res) => {
-// //     try {
-// //         const userId = req.query.id;
-
-// //         // Fetch the user by ID and only retrieve the connections field
-// //         const userExists = await User.findById({ _id: userId })
-// //             .select('profile.connections.friends -_id -password')
-// //             .populate({
-// //                 path: 'profile.connections.friends',
-// //                 populate: 'user'
-// //                 // select: ''
-// //             })
-
-// //         if (!userExists) {
-// //             return res.status(404).json({ message: "User Not Found", error: "User Not Found" });
-// //         }
-
-// //         // Extract friend user connections from the array
-// //         const friendsArray = userExists.profile?.connections?.friends || [];
-
-// //         if (friendsArray.length === 0) {
-// //             return res.status(200).json({ connections: [], message: "No Connections" }); // No connections
-// //         }
-
-// //         // Create an array of friend user IDs
-// //         const friendUserIds = friendsArray.map(conn => conn.user.toString());
-
-// //         // Fetch details of friends using their IDs
-// //         const friendsDetails = await User.find({ _id: { $in: friendUserIds } })
-// //             .select('name _id profile.picture');
-
-// //         // Filter out blocked users by checking the current user's blocked list
-// //         const blockedUsers = userExists.profile?.connections?.blocked || [];
-
-// //         const filteredConnections = friendsDetails.filter(friend => {
-// //             // Check if the friend is blocked by the current user
-// //             return !blockedUsers.includes(friend._id.toString());
-// //         });
-
-// //         // Map statuses and other details back to the filtered friends
-// //         const connections = filteredConnections.map(friend => {
-// //             // Find the connection status in the original array
-// //             const connection = friendsArray.find(conn => conn.user.toString() === friend._id.toString());
-// //             return {
-// //                 _id: friend._id,
-// //                 name: friend.name,
-// //                 picture: friend.profile?.picture,
-// //                 status: connection ? connection.status : 'unknown', // Default to 'unknown' if no status
-// //             };
-// //         });
-
-// //         return res.status(200).json({ connections });
-// //     } catch (error) {
-// //         console.error("Error in /connections route:", error);
-// //         res.status(500).json({ message: "Internal Server Error" });
-// //     }
-// // });
-
-// // Updated /connections route
-// router.get('/connections', async (req, res) => {
-//     try {
-//         const { userId } = getUserDetails(req);
-//         const user = await User.findById(userId, 'friends').lean();
-//         if (!user) {
-//             return res.status(404).json({ message: 'User not found' });
-//         }
-//         const friendIds = user.friends || [];
-//         const friends = await User.find(
-//             { _id: { $in: friendIds } },
-//             { name: 1, username: 1, 'profile.picture': 1, _id: 1 } // Include only needed fields
-//         ).lean();
-//         res.status(200).json({ connections: friends });
-//     } catch (error) {
-//         console.error('Error in /connections route:', error);
-//         res.status(500).json({ message: 'Internal Server Error' });
-//     }
-// });
-
-// // Friend action routes (unchanged, included for completeness)
-// router.post('/add-friend', async (req, res) => {
-//     try {
-//         const { userId } = getUserDetails(req);
-//         const { toFriendUser } = req.body;
-//         // Add friend request logic
-//         res.status(200).json({ message: 'Friend request sent' });
-//     } catch (error) {
-//         console.error('Error adding friend:', error);
-//         res.status(500).json({ message: 'Internal Server Error' });
-//     }
-// });
-
-
-
-// router.get('/connection/stream', async (req, res) => {
-//     try {
-
-//         const { userId } = getUserDetails(req)
-
-//         const user = await User.findById({ _id: userId }).populate({
-//             path: "profile.connections.friends",
-//             populate: {
-//                 path: "user requestedBy", // Populate the `user` field in `FriendRequest`
-//                 model: "User", // Specify the model
-//             },
-//         })
-
-//         // .select('profile.connections.friend').populate('profile.connections.friend.user');
-
-//         if (!user || !user.profile?.connections?.friends) {
-//             return res.status(404).json({ message: "No connections yet", connections: [] });
-//         }
-//         const connections = user.profile.connections.friends.map(friend => {
-//             // console.log(
-//             //     // friend,
-//             //     friend.user.name,
-//             //     friend.user.profile.picture,
-//             //     friend.status,
-
-//             //     friend.requestedBy,
-//             //     friend.requestedBy.toHexString()
-//             // )
-//             console.log(friend.user._id === userId,
-//                 friend.user._id.toString(), userId
-//             )
-//             const friendUser = friend.user._id.toString() === userId ? friend.requestedBy : friend.user;
-
-//             return {
-//                 status: friend.status === 'requested' ? (friend.requestedBy.toHexString() === userId ? 'outgoing' : 'incoming') : 'friends',
-//                 name: friendUser.name,
-//                 picture: friendUser.profile.picture,
-//             }
-//         })
-
-
-//         return res.status(200).json({ connections });
-
-//     } catch (error) {
-//         console.error("Error in /connection/stream in user.route.js", error);
-//         res.status(500).json({ message: "Internal Server Error" });
-//     }
-
-// })
-// ///////////////////////////////////////////////////////////////////////////////////////
-
-
-// router.post('/add-friend', async (req, res) => {
-//   try {
-//     const { toFriendUser } = req.body;
-//     const { userId } = getUserDetails(req);
-//     const toFriendUserExists = await User.findById(toFriendUser);
-//     if (!toFriendUserExists) {
-//       return res.status(404).json({ message: "User Not Found" });
-//     }
-//     const currentUser = await User.findById(userId);
-//     if (!currentUser) {
-//       return res.status(404).json({ message: "User Not Found" });
-//     }
-//     if (currentUser.profile.connections.blocked.includes(toFriendUser)) {
-//       return res.status(400).json({ message: "You have blocked this user." });
-//     }
-//     if (toFriendUserExists.profile.connections.blocked.includes(userId)) {
-//       return res.status(400).json({ message: "This user has house full." });
-//     }
-//     const friendRequestExists = await FriendRequest.findOne({
-//       user: toFriendUser,
-//       requestedBy: userId
-//     });
-//     if (friendRequestExists) {
-//       return res.status(400).json({ message: "Friend request already sent" });
-//     }
-//     const createNewRequest = await FriendRequest.create({
-//       user: toFriendUser,
-//       status: 'requested',
-//       requestedBy: userId
-//     });
-//     if (!createNewRequest) return res.status(304).json({ error: "New Request could not be created" });
-//     currentUser.profile.connections.friends.push(createNewRequest._id);
-//     await currentUser.save();
-//     toFriendUserExists.profile.connections.friends.push(createNewRequest._id);
-//     await toFriendUserExists.save();
-//     return res.status(200).json({ requested: true, message: "Friend request sent" });
-//   } catch (error) {
-//     console.error("Error in add-friend route:", error);
-//     return res.status(500).json({ message: "Internal Server Error" });
-//   }
-// });
-
-// router.post('/reject-friend-request', async (req, res) => {
-//   try {
-//     const { toRejectUser } = req.body;
-//     const { userId } = getUserDetails(req);
-//     const currentUser = await User.findById(userId);
-//     const toRejectFriendship = await User.findById(toRejectUser);
-//     if (!currentUser || !toRejectFriendship) {
-//       return res.status(404).json({ message: "User Not Found" });
-//     }
-//     const friendRequestExists = await FriendRequest.findOneAndDelete({
-//       user: userId,
-//       status: 'requested',
-//       requestedBy: toRejectUser
-//     });
-//     if (!friendRequestExists) {
-//       return res.status(400).json({ message: "Friend request does not Exists" });
-//     }
-//     const currentUserUpdate = await User.findByIdAndUpdate(userId, {
-//       $pull: { 'profile.connections.friends': friendRequestExists._id }
-//     });
-//     const toRejectFriendshipUpdate = await User.findByIdAndUpdate(toRejectUser, {
-//       $pull: { 'profile.connections.friends': friendRequestExists._id }
-//     });
-//     return res.status(200).json({ message: "Friend request rejected" });
-//   } catch (error) {
-//     console.error("Error in cancel-friend-request route:", error);
-//     return res.status(500).json({ message: "Internal Server Error" });
-//   }
-// });
-
-// router.post('/accept-friend-request', async (req, res) => {
-//   try {
-//     const { toAcceptFriendUser } = req.body;
-//     const { userId } = getUserDetails(req);
-//     const currentUser = await User.findById(userId);
-//     const toAcceptFriendship = await User.findById(toAcceptFriendUser);
-//     if (!currentUser || !toAcceptFriendship) {
-//       return res.status(404).json({ message: "User Not Found" });
-//     }
-//     const friendRequestExists = await FriendRequest.findOneAndUpdate({
-//       user: userId,
-//       status: 'requested',
-//       requestedBy: toAcceptFriendUser
-//     }, {
-//       status: 'accepted'
-//     });
-//     if (!friendRequestExists) {
-//       return res.status(400).json({ message: "Friend request does not Exists" });
-//     }
-//     return res.status(200).json({ message: "Friend request accepted" });
-//   } catch (error) {
-//     console.error("Error in cancel-friend-request route:", error);
-//     return res.status(500).json({ message: "Internal Server Error" });
-//   }
-// });
-
-
-
-
-// // Get pending friend requests for the current user
-// router.get('/friend-requests', async (req, res) => {
-//   try {
-//     const { userId } = getUserDetails(req);
-
-//     const requests = await FriendRequest.find({
-//       user: userId,
-//       status: 'requested',
-//     })
-//       .populate('requestedBy', 'name username profile.picture')
-//       .sort({ createdAt: -1 });
-
-//     const formattedRequests = requests.map((req) => ({
-//       _id: req._id,
-//       fromUser: {
-//         _id: req.requestedBy._id,
-//         name: req.requestedBy.name,
-//         username: req.requestedBy.username,
-//         profilePicture: req.requestedBy.profile.picture,
-//       },
-//       createdAt: req.createdAt,
-//     }));
-
-//     res.status(200).json({ requests: formattedRequests });
-//   } catch (error) {
-//     console.error('Error fetching friend requests:', error);
-//     res.status(500).json({ message: 'Internal Server Error' });
-//   }
-// });
-
-// /////////////////////////////////////////////////////////////////////////////////////
-
-
-// router.post('/unfriend-request', async (req, res) => {
-//     try {
-//         const { toUn_FriendUser } = req.body;
-//         const { userId } = getUserDetails(req);
-
-//         const currentUser = await User.findById(userId);
-//         const toUn_FriendUserExists = await User.findById(toUn_FriendUser);
-
-//         if (!currentUser || !toUn_FriendUserExists) {
-//             return res.status(404).json({ message: "User Not Found" });
-//         }
-
-//         // Remove the friend request if it exists
-//         let friendRequestExists;
-//         friendRequestExists = await FriendRequest.findOneAndDelete({
-//             user: toUn_FriendUser,
-//             requestedBy: userId
-//         })
-//         if (!friendRequestExists) {
-//             friendRequestExists = await FriendRequest.findOneAndDelete({
-//                 user: userId,
-//                 requestedBy: toUn_FriendUser
-//             })
-//         }
-
-//         if (!friendRequestExists) {
-//             return res.status(400).json({ message: "Friend request does not Exists" });
-//         }
-
-//         const currentUserUpdate = await User.findByIdAndUpdate(userId, {
-
-//             $pull: {
-//                 'profile.connections.friends': friendRequestExists._id
-//             }
-
-//         });
-//         const toUn_FriendUserExistsUpdate = await User.findByIdAndUpdate(toUn_FriendUser, {
-//             $pull: {
-//                 'profile.connections.friends': friendRequestExists._id
-//             }
-//         });
-
-//         return res.status(200).json({ message: "Friend request canceled" });
-
-//     } catch (error) {
-//         console.error("Error in cancel-friend-request route:", error);
-//         return res.status(500).json({ message: "Internal Server Error" });
-//     }
-// });
-
-
-// router.post('/cancel-friend-request', async (req, res) => {
-//     try {
-//         const { toFriendUser } = req.body;
-//         const { userId } = getUserDetails(req);
-
-//         const currentUser = await User.findById(userId);
-//         const toFriendUserExists = await User.findById(toFriendUser);
-
-//         if (!currentUser || !toFriendUserExists) {
-//             return res.status(404).json({ message: "User Not Found" });
-//         }
-
-//         // Remove the friend request if it exists
-//         const friendRequestExists = await FriendRequest.findOneAndDelete({
-//             user: toFriendUser,
-//             status: 'requested',
-//             requestedBy: userId
-//         })
-
-//         if (!friendRequestExists) {
-//             return res.status(400).json({ message: "Friend request does not Exists" });
-//         }
-
-//         const currentUserUpdate = await User.findByIdAndUpdate(userId, {
-
-//             $pull: {
-//                 'profile.connections.friends': friendRequestExists._id
-//             }
-
-//         });
-//         const toFriendUserExistsUpdate = await User.findByIdAndUpdate(toFriendUser, {
-//             $pull: {
-//                 'profile.connections.friends': friendRequestExists._id
-//             }
-//         });
-
-//         return res.status(200).json({ message: "Friend request canceled" });
-
-//     } catch (error) {
-//         console.error("Error in cancel-friend-request route:", error);
-//         return res.status(500).json({ message: "Internal Server Error" });
-//     }
-// });
-
-
-// router.post('/add-friend', async (req, res) => {
-//     try {
-//         const { toFriendUser } = req.body;
-//         const { userId } = getUserDetails(req);
-
-//         // Find the user to send the friend request to
-//         const toFriendUserExists = await User.findById(toFriendUser);
-//         if (!toFriendUserExists) {
-//             return res.status(404).json({ message: "User Not Found" });
-//         }
-
-//         // Find the current user
-//         const currentUser = await User.findById(userId);
-//         if (!currentUser) {
-//             return res.status(404).json({ message: "User Not Found" });
-//         }
-
-//         // Ensure neither user is blocked
-//         if (currentUser.profile.connections.blocked.includes(toFriendUser)) {
-//             return res.status(400).json({ message: "You have blocked this user." });
-//         }
-//         if (toFriendUserExists.profile.connections.blocked.includes(userId)) {
-//             return res.status(400).json({ message: "This user has house full." });
-//         }
-
-
-
-//         // Check if a friend request already exists
-//         const friendRequestExists = await FriendRequest.findOne({
-//             user: toFriendUser,
-//             requestedBy: userId
-//         })
-
-//         if (friendRequestExists) {
-//             return res.status(400).json({ message: "Friend request already sent" });
-//         }
-
-
-//         const createNewRequest = await FriendRequest.create(
-//             {
-//                 user: toFriendUser,
-//                 status: 'requested',
-//                 requestedBy: userId
-//             }
-//         )
-//         if (!createNewRequest) return res.status(304).json({ error: "New Request could not be created" })
-//         // Create a new friend request
-//         currentUser.profile.connections.friends.push(createNewRequest._id);
-//         await currentUser.save();
-
-//         toFriendUserExists.profile.connections.friends.push(createNewRequest._id);
-//         await toFriendUserExists.save();
-
-//         return res.status(200).json({ requested: true, message: "Friend request sent" });
-
-//     } catch (error) {
-//         console.error("Error in add-friend route:", error);
-//         return res.status(500).json({ message: "Internal Server Error" });
-//     }
-// });
-
-
-
-// // old paths code
-
-// // router.post('/reject-friend-request', async (req, res) => {
-// //     try {
-// //         const { toRejectUser } = req.body;
-// //         const { userId } = getUserDetails(req);
-
-// //         const currentUser = await User.findById(userId);
-// //         const toRejectFriendship = await User.findById(toRejectUser);
-
-// //         if (!currentUser || !toRejectFriendship) {
-// //             return res.status(404).json({ message: "User Not Found" });
-// //         }
-
-// //         // Remove the friend request if it exists
-// //         const friendRequestExists = await FriendRequest.findOneAndDelete({
-// //             user: userId,
-// //             status: 'requested',
-// //             requestedBy: toRejectUser
-// //         })
-
-// //         if (!friendRequestExists) {
-// //             return res.status(400).json({ message: "Friend request does not Exists" });
-// //         }
-
-// //         const currentUserUpdate = await User.findByIdAndUpdate(userId, {
-
-// //             $pull: {
-// //                 'profile.connections.friends': friendRequestExists._id
-// //             }
-
-// //         });
-// //         const toRejectFriendshipUpdate = await User.findByIdAndUpdate(toRejectUser, {
-// //             $pull: {
-// //                 'profile.connections.friends': friendRequestExists._id
-// //             }
-// //         });
-
-// //         return res.status(200).json({ message: "Friend request rejected" });
-
-// //     } catch (error) {
-// //         console.error("Error in cancel-friend-request route:", error);
-// //         return res.status(500).json({ message: "Internal Server Error" });
-// //     }
-// // });
-
-
-
-
-
-// // router.post('/accept-friend-request', async (req, res) => {
-// //     try {
-// //         const { toAcceptFriendUser } = req.body;
-// //         const { userId } = getUserDetails(req);
-
-// //         const currentUser = await User.findById(userId);
-// //         const toAcceptFriendship = await User.findById(toAcceptFriendUser);
-
-// //         if (!currentUser || !toAcceptFriendship) {
-// //             return res.status(404).json({ message: "User Not Found" });
-// //         }
-
-// //         // Remove the friend request if it exists
-// //         const friendRequestExists = await FriendRequest.findOneAndUpdate({
-// //             user: userId,
-// //             status: 'requested',
-// //             requestedBy: toAcceptFriendUser
-// //         }, {
-// //             status: 'accepted'
-// //         })
-
-// //         if (!friendRequestExists) {
-// //             return res.status(400).json({ message: "Friend request does not Exists" });
-// //         }
-
-
-
-// //         return res.status(200).json({ message: "Friend request accepted" });
-
-// //     } catch (error) {
-// //         console.error("Error in cancel-friend-request route:", error);
-// //         return res.status(500).json({ message: "Internal Server Error" });
-// //     }
-// // });
-
-
-
-
-// router.get('/societies-top', async (req, res) => {
-//     try {
-//         const { campusOrigin } = getUserDetails(req)
-//         const societies = await Society.find(
-//             {
-//                 'references.campusOrigin': campusOrigin
-//             }
-//         )
-//             .populate({
-//                 path: 'postsCollectionRef',
-//                 populate: {
-//                     path: 'posts.postId',
-//                     select: 'createdAt',
-//                 },
-//             })
-//             .sort({ 'postsCollectionRef.posts.createdAt': -1 }) // Sorting by most recent posts
-//             .limit(4)
-//             .select('name postsCollectionRef'); // Selecting only necessary fields
-
-//         // console.log("scoeies", societies, campusOrigin)
-
-//         if (!societies || societies.length === 0) {
-//             return res.status(404).json({ message: "No societies found", error: "Societies Not Found" });
-//         }
-
-//         // Format the response
-//         const formattedSocieties = societies.map(society => ({
-//             _id: society._id,
-//             name: society.name,
-//             postsToday: (society.postsCollectionRef?.posts || [])
-//                 .filter(post => new Date(post.createdAt).toDateString() === new Date().toDateString())
-//                 .length, // Count posts created today
-//         }));
-
-//         return res.status(200).json(formattedSocieties);
-//     } catch (error) {
-//         console.error("Error fetching societies-top:", error);
-//         res.status(500).json({ message: "Internal Server Error" });
-//     }
-// });
-
-
-
-// router.get('/teacher/attachUser', async (req, res) => {
-//     try {
-//         const { userId, platform } = getUserDetails(req);
-//         console.log("CHecking platform ", platform)
-//         const user = await User.findById(userId);
-//         const response = await setTeacherModal(req, user, platform)
-//         console.log("DOG", response)
-//         res.status(response.status).json({
-//             message: response.message,
-//             teacher: response.teacher || null,
-//             attached: response.attached || false,
-//             teachers: response.teachers || null,
-//             teacherConnectivities: response?.teacherConnectivities || null,
-//             error: response.error || null,
-//         });
-//     } catch (error) {
-//         res.status(500).json({ error: "Internal Server Error" })
-//         console.error("Error in /teacher/attachUser in user.route.js", error.message)
-//     }
-// })
-
-// const setTeacherModal = async function (req, user, platform) {
-//     console.log("Platform->", platform)
-//     try {
-
-//         if (user.role === UserRoles.teacher) {
-//             const teacherModalExists = await Teacher.findOne({ email: user.universityEmail })
-
-//             // if(!teacherModalExists) return res.status(404).json({message: 'No Teacher With This Model Yet'})
-//             if (!teacherModalExists) {
-
-//                 const campusOrigin = user.university.campusId
-//                 const universityOrigin = user.university.universityId
-//                 const similarTeacherModals = await Teacher.findSimilarTeachers(campusOrigin, universityOrigin)
-
-//                 // console.log("TEACHER MODALS", similarTeacherModals, campusOrigin, universityOrigin)
-
-//                 if (!similarTeacherModals || similarTeacherModals.length === 0) {
-//                     return { message: 'No similar teachers to show yet', status: 204 };
-//                 }
-
-//                 return {
-//                     status: 200,
-//                     teachers: similarTeacherModals.map((teacher) => ({
-//                         _id: teacher._id,
-//                         name: teacher.name,
-//                         email: teacher.email,
-//                         userAttachedBool: teacher.userAttachedBool,
-//                         imageUrl: teacher.imageUrl,
-//                         onLeave: teacher.onLeave,
-//                         hasLeft: teacher.hasLeft,
-//                         rating: teacher.rating,
-//                         userAttachedBool: teacher.userAttachedBool,
-//                         department: teacher.department.departmentId.name
-//                     })),
-//                     attached: false
-//                 };
-
-//             } else {
-
-//                 if (!teacherModalExists.userAttached && !teacherModalExists.userAttachedBool) {
-//                     teacherModalExists.userAttached = user._id
-//                     teacherModalExists.userAttachedBool = true;
-//                     teacherModalExists.userAttachedBy.userType = UserRoles.teacher
-//                     teacherModalExists.userAttachedBy.by = user._id
-//                     await teacherModalExists.save()
-//                     user.teacherConnectivities.teacherModal = teacherModalExists._id;
-//                     user.teacherConnectivities.attached = true;
-
-//                     await user.save()
-
-
-//                     req.session.user.teacherConnectivities = {
-//                         attached: user.teacherConnectivities.attached,
-//                         teacherModal: user.teacherConnectivities.teacherModal
-//                     }
-
-//                     const teacherConnectivities = {
-//                         attached: user.teacherConnectivities.attached,
-//                         teacherModal: user.teacherConnectivities.teacherModal
-//                     }
-
-//                     // req.session.save((err) => {
-//                     //   if (err) {
-//                     //     console.error("Session save error:", err);
-//                     //     return res.status(500).json({ error: "Internal Server Error" });
-//                     //   }
-//                     // })
-//                     const resolvedData = { status: 201, message: 'User with role teacher attached with Modal successfully' };
-//                     if (platform === "app") { resolvedData.teacherConnectivities = teacherConnectivities }
-
-//                     return new Promise((resolve, reject) => {
-//                         req.session.save((err) => {
-//                             if (err) {
-//                                 console.error("Session save error:", err);
-//                                 reject({ status: 500, message: "Internal Server Error" });
-//                             } else {
-//                                 resolve(resolvedData);
-//                             }
-//                         });
-//                     });
-
-
-//                     // return { status: 200, message: 'User with role teacher attached with Modal successfully', teacher: teacherModalExists, attached: true }
-//                 } else {
-//                     return { status: 200, message: 'User already attached with another modal, Please verify before Modifyng', attached: false }
-//                 }
-
-//             }
-//         }
-//     } catch (error) {
-//         console.error("Error in setTeacherModal method in user.model.js", error)
-//         return { status: 500, message: "Internal Server Error", error: error.message };
-
-//     }
-// }
-
-
-// router.get('/teacher/joinModel', async (req, res) => {
-//     try {
-//         const { teacherId } = req.query;
-//         console.log("E", teacherId)
-//         if (!teacherId) return res.status(404).json({ error: "Teacher Id not Sent" })
-//         const { userId } = getUserDetails(req);
-
-//         const user = await User.findById(userId)
-//         const response = await user.setJoinATeacherModal(teacherId, req)
-
-//         console.log(response)
-
-//         res.status(response.status).json({
-//             message: response.message || null,
-//             error: response.error || null,
-//         });
-//     } catch (error) {
-//         res.status(500).json({ error: "Internal Server Error" })
-//         console.error("Error in /teacher/joinModel in user.route.js", error.message)
-
-//     }
-// })
-
-
-// router.get("/me", async (req, res) => {
-//     try {
-//         const { userId } = getUserDetails(req);
-//         const user = await User.findById(userId).select('_id');
-//         if (!user) {
-//             return res.status(404).json({ message: "User not found" });
-//         }
-//         res.status(200).json({ _id: user._id });
-//     } catch (error) {
-//         console.error("Error in /user/me", error);
-//         res.status(500).json({ error: "Internal Server Error" });
-//     }
-// });
-
-// // router.put('/update/name');
-// // router.put('/update/personalEmail');a
-// router.put('/update/picture', uploadImage.single('file'), async (req, res) => {
-//     try {
-//         if (!req.file) {
-//             return res.status(400).json({ error: "No file uploaded" });
-//         }
-
-//         const { userId } = getUserDetails(req);
-//         const { url, type } = await uploadPictureMedia(req.file, req);
-
-//         if (!url) {
-//             return res.status(500).json({ error: "Failed to upload image" });
-//         }
-
-//         const user = await User.findByIdAndUpdate(
-//             userId,
-//             {
-//                 $set: { 'profile.picture': url },
-//                 $push: {
-//                     'profile.pictureList': {
-//                         image: url,
-//                         timestamp: new Date()
-//                     }
-//                 }
-//             },
-//             { new: true, projection: { 'profile.picture': 1 } }
-//         );
-
-//         if (!user) {
-//             return res.status(404).json({ error: "User Not Found" });
-//         }
-
-//         if (req?.session?.user) {
-//             req.session?.user?.profile?.picture.push(newImageUrl);
-//             req.session?.save(); // Save to MongoDB
-//         }
-
-
-//         return res.status(200).json({
-//             message: "Profile Picture Added",
-//             picture: user.profile.picture
-//         });
-
-//     } catch (error) {
-//         console.error("Error in /update/picture:", error);
-//         return res.status(500).json({ error: "Internal Server Error" });
-//     }
-// });
-
-
-
-// router.put('/update/name', async (req, res) => {
-//     try {
-//         const { name } = req.body;
-//         const { userId } = getUserDetails(req);
-
-//         if (!name) {
-//             return res.status(400).json({ error: "Name is required" });
-//         }
-
-//         const user = await User.findByIdAndUpdate(
-//             userId,
-//             { $set: { name } },
-//             { new: true, projection: { name: 1 } }
-//         );
-
-//         if (!user) {
-//             return res.status(404).json({ error: "User Not Found" });
-//         }
-
-//         return res.status(200).json({
-//             message: "Name Updated",
-//             name: user.name
-//         });
-
-//     } catch (error) {
-//         console.error("Error in /update/name:", error);
-//         return res.status(500).json({ error: "Internal Server Error" });
-//     }
-// });
-
-// // this would not be used.
-// // router.put('/update/universityEmail', async (req, res) => {
-// //     try {
-// //         const { universityEmail } = req.body;
-// //         const { userId } = getUserDetails(req);
-
-// //         if (!universityEmail) {
-// //             return res.status(400).json({ error: "University Email is required" });
-// //         }
-
-// //         const user = await User.findByIdAndUpdate(
-// //             userId,
-// //             { $set: { universityEmail } },
-// //             { new: true, projection: { universityEmail: 1 } }
-// //         );
-
-// //         if (!user) {
-// //             return res.status(404).json({ error: "User Not Found" });
-// //         }
-
-// //         return res.status(200).json({
-// //             message: "University Email Updated",
-// //             universityEmail: user.universityEmail
-// //         });
-
-// //     } catch (error) {
-// //         console.error("Error in /update/universityEmail:", error);
-// //         return res.status(500).json({ error: "Internal Server Error" });
-// //     }
-// // });
-
-// router.put('/update/personalEmail', async (req, res) => {
-//     try {
-//         const { personalEmail } = req.body;
-//         const { userId, name, role } = getUserDetails(req);
-//         if (role !== UserRoles.student) {
-//             return res.status(403).json({ error: "Only students can update secondary personal email" });
-//         }
-
-
-//         const isUserAttached = await User.findOne({
-//             _id: userId, $or:
-//                 [{ personalEmail },
-//                 { universityEmail: personalEmail },
-
-//                 { secondaryPersonalEmail: personalEmail }]
-//         }
-//         );
-//         if (isUserAttached) {
-//             return res.status(400).json({ error: "Email already attached to this account" });
-//         }
-
-//         const isUserAttachedToOtherPeopleAccount = await User.findOne({
-//             $or:
-//                 [{ personalEmail },
-//                 { secondaryPersonalEmail: personalEmail }]
-//         });
-//         if (isUserAttachedToOtherPeopleAccount) {
-//             return res.status(400).json({ error: "Email already attached to someother account" });
-//         }
-
-//         if (!personalEmail) {
-//             return res.status(400).json({ error: "Personal Email is required" });
-//         }
-
-//         deliverOTP({ _id: userId, name: name }, personalEmail, resendEmailConfirmation, req, res)
-
-//         return res.status(200).json({
-//             message: "Email Sent",
-//             requireUniversityOtp: false
-//         });
-
-//     } catch (error) {
-//         console.error("Error in /update/personalEmail:", error);
-//         return res.status(500).json({ error: "Internal Server Error" });
-//     }
-// });
-
-
-// router.post("/verify/personalEmail/otp", async (req, res) => {
-//     const { email, phoneNumber, otp, purpose } = req.body;
-//     const { userId, role } = getUserDetails(req);
-//     const personalEmail = email;
-
-//     // Validate inputs
-//     if ((!email && !phoneNumber) || !otp) {
-//         return res
-//             .status(400)
-//             .json({ message: "Email or phoneNumber and OTP are required." });
-//     }
-
-//     // console.log()
-//     try {
-//         const query = email ? { email, purpose, used: false } : { phoneNumber, used: false };
-
-//         // Find the OTP entry
-//         const otpEntry = await OTP.findOne(query);
-
-
-//         if (!otpEntry) {
-//             return res
-//                 .status(404)
-//                 .json({ message: "No OTP found for the provided details." });
-//         }
-
-//         if (otpEntry.used === true) {
-//             await OTP.findByIdAndDelete({ _id: otpEntry._id })
-//             return res.status(404)
-//                 .json({ message: "OTP used already." });
-//         }
-
-
-
-//         const isOTPMatched = await bcryptjs.compare(
-//             otp,
-//             otpEntry.otp || ""
-//         );
-
-
-//         if (!isOTPMatched) {
-//             return res.status(401).json({ message: "Invalid OTP." });
-//         }
-
-//         if (moment().isAfter(moment(otpEntry.otpExpiration))) {
-//             return res.status(401).json({ message: "OTP has expired." });
-//         }
-//         console.log("Id", otpEntry.ref)
-
-//         // OTP is valid
-//         // const token = jwt.sign(
-//         //   { email, token_id: otpEntry.ref },
-//         //   process.env.JWT_SECRET,
-//         //   { expiresIn: "10m" } // Token valid for 10 minutes
-//         // );
-
-
-//         otpEntry.used = true;
-//         // delete after this: abhi ni. abhi tou hash k andr expiry time bhi dalna h
-//         await otpEntry.save();
-
-//         const user = await User.findByIdAndUpdate(
-//             userId,
-//             { $set: { personalEmail, personalEmailVerified: true } },
-//             { new: true, projection: { personalEmail: 1 } }
-//         );
-
-//         if (!user) {
-//             return res.status(404).json({ error: "User Not Found" });
-//         }
-
-//         return res.status(200).json({
-//             message: "Personal Email Verified",
-//             personalEmail: user.personalEmail
-//         });
-
-
-//         // res.status(200).json({ message: "OTP verified successfully.", token: token });
-//     } catch (error) {
-//         console.error("Error in verify-otp:", error.message);
-//         res.status(500).json({ message: "Internal Server Error" });
-//     }
-// });
-
-
-
-
-
-
-
-
-
-
-
-
-
-// router.put('/update/secondaryPersonalEmail', async (req, res) => {
-//     try {
-//         const { secondaryPersonalEmail } = req.body;
-//         const { userId, name, role } = getUserDetails(req);
-//         // if(role !== UserRoles.alumni) {
-//         //     return res.status(403).json({ error: "Only alumni can update secondary personal email" });
-//         // }
-//         console.log("DATA", userId, name, role)
-//         const isUserAttached = await User.findOne({
-//             _id: userId, $or:
-//                 [{ secondaryPersonalEmail },
-//                 { universityEmail: secondaryPersonalEmail },
-//                 { personalEmail: secondaryPersonalEmail }]
-//         }
-//         );
-//         if (isUserAttached) {
-//             return res.status(400).json({ error: "Email already attached to this account" });
-//         }
-
-//         const isUserAttachedToOtherPeopleAccount = await User.findOne({
-//             $or:
-//                 [{ secondaryPersonalEmail },
-//                 { personalEmail: secondaryPersonalEmail }]
-//         });
-//         if (isUserAttachedToOtherPeopleAccount) {
-//             return res.status(400).json({ error: "Email already attached to someother account" });
-//         }
-
-//         if (!secondaryPersonalEmail) {
-//             return res.status(400).json({ error: "Personal Email is required" });
-//         }
-
-//         deliverOTP({ _id: userId, name: name }, secondaryPersonalEmail, resendEmailConfirmation, req, res)
-
-//         return res.status(200).json({
-//             message: "Email Sent",
-//             requireUniversityOtp: false
-//         });
-
-//     } catch (error) {
-//         console.error("Error in /update/secondaryPersonalEmail:", error);
-//         return res.status(500).json({ error: "Internal Server Error" });
-//     }
-// });
-
-
-// router.post("/verify/secondaryPersonalEmail/otp", async (req, res) => {
-//     const { email, phoneNumber, otp, purpose } = req.body;
-//     const { userId } = getUserDetails(req);
-//     const secondaryPersonalEmail = email;
-//     console.log("DATA", userId, email, phoneNumber, otp, purpose)
-//     // Validate inputs
-//     if ((!email && !phoneNumber) || !otp) {
-//         return res
-//             .status(400)
-//             .json({ message: "Email or phoneNumber and OTP are required." });
-//     }
-
-//     // console.log()
-//     try {
-//         const query = email ? { email, purpose, used: false } : { phoneNumber, used: false };
-
-//         // Find the OTP entry
-//         const otpEntry = await OTP.findOne(query);
-
-
-//         if (!otpEntry) {
-//             return res
-//                 .status(404)
-//                 .json({ message: "No OTP found for the provided details." });
-//         }
-
-//         if (otpEntry.used === true) {
-//             await OTP.findByIdAndDelete({ _id: otpEntry._id })
-//             return res.status(404)
-//                 .json({ message: "OTP used already." });
-//         }
-
-
-
-//         const isOTPMatched = await bcryptjs.compare(
-//             otp,
-//             otpEntry.otp || ""
-//         );
-
-
-//         if (!isOTPMatched) {
-//             return res.status(401).json({ message: "Invalid OTP." });
-//         }
-
-//         if (moment().isAfter(moment(otpEntry.otpExpiration))) {
-//             return res.status(401).json({ message: "OTP has expired." });
-//         }
-//         console.log("Id", otpEntry.ref)
-
-//         // OTP is valid
-//         // const token = jwt.sign(
-//         //   { email, token_id: otpEntry.ref },
-//         //   process.env.JWT_SECRET,
-//         //   { expiresIn: "10m" } // Token valid for 10 minutes
-//         // );
-
-
-//         otpEntry.used = true;
-//         // delete after this: abhi ni. abhi tou hash k andr expiry time bhi dalna h
-//         await otpEntry.save();
-
-//         const user = await User.findByIdAndUpdate(
-//             userId,
-//             { $set: { secondaryPersonalEmail, secondaryPersonalEmailVerified: true } },
-//             { new: true, projection: { secondaryPersonalEmail: 1 } }
-//         );
-
-//         if (!user) {
-//             return res.status(404).json({ error: "User Not Found" });
-//         }
-
-//         return res.status(200).json({
-//             message: "Personal Email Verified",
-//             secondaryPersonalEmail: user.secondaryPersonalEmail
-//         });
-
-
-//         // res.status(200).json({ message: "OTP verified successfully.", token: token });
-//     } catch (error) {
-//         console.error("Error in verify-otp:", error.message);
-//         res.status(500).json({ message: "Internal Server Error" });
-//     }
-// });
-
-
-
-// const deliverOTP = async (user, email, emailFunction, req, res) => {
-//     console.log("Deliver OTP", user, email)
-//     const { otp, otpResponse } = await sendOtp(
-//         null,
-//         email = email,
-//         user._id,
-//         user.name,
-//         purpose = 'emailVerification',
-//     );
-//     if (!otpResponse) {
-//         return res.status(500).json({ message: "Failed to generate OTP" });
-//     }
-//     // console.log("otp", otp, otpResponse);
-//     const datas = {
-//         name: user.name,
-//         email: email,
-//         otp,
-//     };
-//     emailFunction(datas, req, res)
-// }
-
-
-
-// router.put('/department/change-once', async (req, res) => {
-//   try {
-//     const { departmentId } = req.body;
-//     const { userId } = getUserDetails(req);
-
-//     const user = await User.findById(userId);
-
-//     if (!user) {
-//       return res.status(404).json({ error: "User not found" });
-//     }
-
-//     const departmentExists = await Department.findById(departmentId);
-//     if (!departmentExists) {
-//       return res.status(404).json({ error: "No such DepartmentId exists" });
-//     }
-
-//     // Only allow once
-//     if (user.changedDepartmentOnce) {
-//       return res.status(200).json({
-//         message: "You already availed One Time Department Change",
-//       });
-//     }
-
-//     // Update fields manually
-//     user.changedDepartmentOnce = true;
-//     user.university.departmentId = departmentId;
-//     await user.save();
-
-//     await user.populate([
-//       { path: "university.universityId", select: "name _id" },
-//       { path: "university.campusId", select: "name _id" },
-//       { path: "university.departmentId", select: "name _id" },
-//       { path: "subscribedSocities", select: "name _id" },
-//       { path: "subscribedSubSocities", select: "name _id" },
-//     ]);
-
-//     await handlePlatformResponse(user, res, req);
-
-//   } catch (e) {
-//     console.error("Error in /department/change-once", e);
-//     res.status(500).json({ error: "Internal server error" });
-//   }
-// });
-
-
-
-
-// router.put('/graduation-year/change', async (req, res) => {
-//   try {
-//     const { graduationYearDateTime } = req.body;
-//     const { userId } = getUserDetails(req);
-//     console.log("graduationYearDateTime",graduationYearDateTime)
-
-//     const user = await User.findById(userId);
-
-//     if (!user) {
-//       return res.status(404).json({ error: "User not found" });
-//     }
-
-//     // Only allow once
-//     if (user.changedGraduationYearOnce) {
-//       return res.status(200).json({
-//         message: "You already availed One Time Department Change",
-//       });
-//     }
-
-//     // Update fields manually
-//     user.changedGraduationYearOnce = true;
-//     user.profile.graduationYear = graduationYearDateTime;
-//     await user.save();
-
-//     await user.populate([
-//       { path: "university.universityId", select: "name _id" },
-//       { path: "university.campusId", select: "name _id" },
-//       { path: "university.departmentId", select: "name _id" },
-//       { path: "subscribedSocities", select: "name _id" },
-//       { path: "subscribedSubSocities", select: "name _id" },
-//     ]);
-
-//     await handlePlatformResponse(user, res, req);
-
-//   } catch (e) {
-//     console.error("Error in /department/change-once", e);
-//     res.status(500).json({ error: "Internal server error" });
-//   }
-// });
-
-// module.exports = router
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 const express = require('express');
 const User = require('../../models/user/user.model');
 const router = express.Router();
@@ -1644,16 +138,38 @@ router.get('/subscribedSocieties', async (req, res) => {
 router.get('/connections', async (req, res) => {
     try {
         const { userId } = getUserDetails(req);
-        const user = await User.findById(userId, 'friends').lean();
+        const user = await User.findById(userId)
+            .select('profile.connections.friends')
+            .populate({
+                path: 'profile.connections.friends',
+                match: { status: 'accepted' },
+                populate: [
+                    { path: 'user', select: '_id name username profile.picture' },
+                    { path: 'requestedBy', select: '_id name username profile.picture' },
+                ],
+            })
+            .lean();
+
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
-        const friendIds = user.friends || [];
-        const friends = await User.find(
-            { _id: { $in: friendIds } },
-            { name: 1, username: 1, 'profile.picture': 1, _id: 1 }
-        ).lean();
-        res.status(200).json({ connections: friends });
+
+        const connections = user.profile.connections.friends
+            .filter((friendRequest) => friendRequest.status === 'accepted')
+            .map((friendRequest) => {
+                const otherUser =
+                    friendRequest.user._id.toString() === userId
+                        ? friendRequest.requestedBy
+                        : friendRequest.user;
+                return {
+                    _id: otherUser._id,
+                    name: otherUser.name,
+                    username: otherUser.username,
+                    picture: otherUser.profile.picture,
+                };
+            });
+
+        res.status(200).json({ connections });
     } catch (error) {
         console.error('Error in /connections route:', error);
         res.status(500).json({ message: 'Internal Server Error' });
@@ -1690,257 +206,268 @@ router.get('/connection/stream', async (req, res) => {
     }
 });
 
-// Friend action routes (updated)
+// Friend action routes
 router.post('/add-friend', async (req, res) => {
-  try {
-    const { toFriendUser } = req.body;
-    const { userId } = getUserDetails(req);
-    console.log('add-friend: userId=', userId, 'toFriendUser=', toFriendUser);
+    try {
+        const { toFriendUser } = req.body;
+        const { userId } = getUserDetails(req);
+        console.log('add-friend: userId=', userId, 'toFriendUser=', toFriendUser);
 
-    if (!toFriendUser) {
-      console.error('add-friend: Missing toFriendUser');
-      return res.status(400).json({ message: 'Recipient user ID is required' });
+        if (!toFriendUser) {
+            console.error('add-friend: Missing toFriendUser');
+            return res.status(400).json({ message: 'Recipient user ID is required' });
+        }
+
+        const toFriendUserExists = await User.findById(toFriendUser);
+        if (!toFriendUserExists) {
+            console.error('add-friend: Recipient not found', toFriendUser);
+            return res.status(404).json({ message: 'Recipient user not found' });
+        }
+
+        const currentUser = await User.findById(userId);
+        if (!currentUser) {
+            console.error('add-friend: Current user not found', userId);
+            return res.status(404).json({ message: 'Current user not found' });
+        }
+
+        if (currentUser.profile.connections.blocked.includes(toFriendUser)) {
+            console.log('add-friend: Current user blocked recipient');
+            return res.status(400).json({ message: 'You have blocked this user' });
+        }
+        if (toFriendUserExists.profile.connections.blocked.includes(userId)) {
+            console.log('add-friend: Recipient blocked current user');
+            return res.status(400).json({ message: 'This user has blocked you' });
+        }
+
+        const friendRequestExists = await FriendRequest.findOne({
+            user: toFriendUser,
+            requestedBy: userId,
+            status: 'requested',
+        });
+        if (friendRequestExists) {
+            console.log('add-friend: Friend request already exists', friendRequestExists._id);
+            return res.status(400).json({ message: 'Friend request already sent' });
+        }
+
+        const createNewRequest = await FriendRequest.create({
+            user: toFriendUser,
+            status: 'requested',
+            requestedBy: userId,
+        });
+        console.log('add-friend: Created friend request', createNewRequest._id);
+
+        return res.status(200).json({
+            requested: true,
+            message: 'Friend request sent',
+            requestId: createNewRequest._id,
+        });
+    } catch (error) {
+        console.error('add-friend: Error:', error.message);
+        return res.status(500).json({ message: 'Internal Server Error' });
     }
-
-    const toFriendUserExists = await User.findById(toFriendUser);
-    if (!toFriendUserExists) {
-      console.error('add-friend: Recipient not found', toFriendUser);
-      return res.status(404).json({ message: 'Recipient user not found' });
-    }
-
-    const currentUser = await User.findById(userId);
-    if (!currentUser) {
-      console.error('add-friend: Current user not found', userId);
-      return res.status(404).json({ message: 'Current user not found' });
-    }
-
-    if (currentUser.profile.connections.blocked.includes(toFriendUser)) {
-      console.log('add-friend: Current user blocked recipient');
-      return res.status(400).json({ message: 'You have blocked this user' });
-    }
-    if (toFriendUserExists.profile.connections.blocked.includes(userId)) {
-      console.log('add-friend: Recipient blocked current user');
-      return res.status(400).json({ message: 'This user has blocked you' });
-    }
-
-    const friendRequestExists = await FriendRequest.findOne({
-      user: toFriendUser,
-      requestedBy: userId,
-      status: 'requested',
-    });
-    if (friendRequestExists) {
-      console.log('add-friend: Friend request already exists', friendRequestExists._id);
-      return res.status(400).json({ message: 'Friend request already sent' });
-    }
-
-    const createNewRequest = await FriendRequest.create({
-      user: toFriendUser,
-      status: 'requested',
-      requestedBy: userId,
-    });
-    console.log('add-friend: Created friend request', createNewRequest._id);
-
-    currentUser.profile.connections.friends.push(createNewRequest._id);
-    await currentUser.save();
-    toFriendUserExists.profile.connections.friends.push(createNewRequest._id);
-    await toFriendUserExists.save();
-
-    console.log('add-friend: Updated users’ friends arrays');
-    return res.status(200).json({
-      requested: true,
-      message: 'Friend request sent',
-      requestId: createNewRequest._id,
-    });
-  } catch (error) {
-    console.error('add-friend: Error:', error.message);
-    return res.status(500).json({ message: 'Internal Server Error' });
-  }
 });
 
 router.post('/reject-friend-request', async (req, res) => {
-  try {
-    const { toRejectUser } = req.body;
-    const { userId } = getUserDetails(req);
-    console.log('reject-friend-request: userId=', userId, 'toRejectUser=', toRejectUser);
+    try {
+        const { toRejectUser } = req.body;
+        const { userId } = getUserDetails(req);
+        console.log('reject-friend-request: userId=', userId, 'toRejectUser=', toRejectUser);
 
-    const currentUser = await User.findById(userId);
-    const toRejectFriendship = await User.findById(toRejectUser);
-    if (!currentUser || !toRejectFriendship) {
-      console.error('reject-friend-request: User not found');
-      return res.status(404).json({ message: 'User Not Found' });
+        const currentUser = await User.findById(userId);
+        const toRejectFriendship = await User.findById(toRejectUser);
+        if (!currentUser || !toRejectFriendship) {
+            console.error('reject-friend-request: User not found');
+            return res.status(404).json({ message: 'User Not Found' });
+        }
+
+        const friendRequestExists = await FriendRequest.findOneAndDelete({
+            user: userId,
+            status: 'requested',
+            requestedBy: toRejectUser,
+        });
+        if (!friendRequestExists) {
+            console.log('reject-friend-request: Friend request does not exist');
+            return res.status(400).json({ message: 'Friend request does not exist' });
+        }
+
+        await User.findByIdAndUpdate(userId, {
+            $pull: { 'profile.connections.friends': friendRequestExists._id },
+        });
+        await User.findByIdAndUpdate(toRejectUser, {
+            $pull: { 'profile.connections.friends': friendRequestExists._id },
+        });
+
+        console.log('reject-friend-request: Friend request deleted', friendRequestExists._id);
+        return res.status(200).json({ message: 'Friend request rejected' });
+    } catch (error) {
+        console.error('reject-friend-request: Error:', error.message);
+        return res.status(500).json({ message: 'Internal Server Error' });
     }
-
-    const friendRequestExists = await FriendRequest.findOneAndDelete({
-      user: userId,
-      status: 'requested',
-      requestedBy: toRejectUser,
-    });
-    if (!friendRequestExists) {
-      console.log('reject-friend-request: Friend request does not exist');
-      return res.status(400).json({ message: 'Friend request does not exist' });
-    }
-
-    await User.findByIdAndUpdate(userId, {
-      $pull: { 'profile.connections.friends': friendRequestExists._id },
-    });
-    await User.findByIdAndUpdate(toRejectUser, {
-      $pull: { 'profile.connections.friends': friendRequestExists._id },
-    });
-
-    console.log('reject-friend-request: Friend request deleted', friendRequestExists._id);
-    return res.status(200).json({ message: 'Friend request rejected' });
-  } catch (error) {
-    console.error('reject-friend-request: Error:', error.message);
-    return res.status(500).json({ message: 'Internal Server Error' });
-  }
 });
 
 router.post('/accept-friend-request', async (req, res) => {
-  try {
-    const { toAcceptFriendUser } = req.body;
-    const { userId } = getUserDetails(req);
-    console.log('accept-friend-request: userId=', userId, 'toAcceptFriendUser=', toAcceptFriendUser);
+    try {
+        const { toAcceptFriendUser } = req.body;
+        const { userId } = getUserDetails(req);
+        console.log('accept-friend-request: userId=', userId, 'toAcceptFriendUser=', toAcceptFriendUser);
 
-    const currentUser = await User.findById(userId);
-    const toAcceptFriendship = await User.findById(toAcceptFriendUser);
-    if (!currentUser || !toAcceptFriendship) {
-      console.error('accept-friend-request: User not found');
-      return res.status(404).json({ message: 'User Not Found' });
+        const currentUser = await User.findById(userId);
+        const toAcceptFriendship = await User.findById(toAcceptFriendUser);
+        if (!currentUser || !toAcceptFriendship) {
+            console.error('accept-friend-request: User not found');
+            return res.status(404).json({ message: 'User Not Found' });
+        }
+
+        const friendRequestExists = await FriendRequest.findOneAndUpdate(
+            {
+                user: userId,
+                status: 'requested',
+                requestedBy: toAcceptFriendUser,
+            },
+            { status: 'accepted' },
+            { new: true }
+        );
+        if (!friendRequestExists) {
+            console.log('accept-friend-request: Friend request does not exist');
+            return res.status(400).json({ message: 'Friend request does not exist' });
+        }
+
+        // Add FriendRequest ID to both users' profile.connections.friends
+         await User.updateOne(
+            { _id: userId },
+            { $addToSet: { 'profile.connections.friends': friendRequestExists._id } }
+        );
+        await User.updateOne(
+            { _id: toAcceptFriendUser },
+            { $addToSet: { 'profile.connections.friends': friendRequestExists._id } }
+        );
+        await User.updateOne(
+            { _id: toAcceptFriendUser },
+            { $addToSet: { 'profile.connections.friends': friendRequestExists._id } }
+        );
+
+        console.log('accept-friend-request: Friend request accepted', friendRequestExists._id);
+        return res.status(200).json({ message: 'Friend request accepted' });
+    } catch (error) {
+        console.error('accept-friend-request: Error:', error.message);
+        return res.status(500).json({ message: 'Internal Server Error' });
     }
-
-    const friendRequestExists = await FriendRequest.findOneAndUpdate(
-      {
-        user: userId,
-        status: 'requested',
-        requestedBy: toAcceptFriendUser,
-      },
-      { status: 'accepted' }
-    );
-    if (!friendRequestExists) {
-      console.log('accept-friend-request: Friend request does not exist');
-      return res.status(400).json({ message: 'Friend request does not exist' });
-    }
-
-    console.log('accept-friend-request: Friend request accepted', friendRequestExists._id);
-    return res.status(200).json({ message: 'Friend request accepted' });
-  } catch (error) {
-    console.error('accept-friend-request: Error:', error.message);
-    return res.status(500).json({ message: 'Internal Server Error' });
-  }
 });
 
 router.get('/friend-requests', async (req, res) => {
-  try {
-    const { userId } = getUserDetails(req);
-    console.log('friend-requests: Fetching for userId=', userId);
+    try {
+        const { userId } = getUserDetails(req);
+        console.log('friend-requests: Fetching for userId=', userId);
 
-    const requests = await FriendRequest.find({
-      user: userId,
-      status: 'requested',
-    })
-      .populate('requestedBy', 'name username profile.picture')
-      .sort({ createdAt: -1 });
+        const requests = await FriendRequest.find({
+            user: userId,
+            status: 'requested',
+        })
+            .populate('requestedBy', 'name username profile.picture')
+            .sort({ createdAt: -1 });
 
-    console.log('friend-requests: Found', requests.length, 'requests', JSON.stringify(requests, null, 2));
+        console.log('friend-requests: Found', requests.length, 'requests', JSON.stringify(requests, null, 2));
 
-    const formattedRequests = requests.map((req) => ({
-      _id: req._id,
-      fromUser: {
-        _id: req.requestedBy._id,
-        name: req.requestedBy.name,
-        username: req.requestedBy.username,
-        profilePicture: req.requestedBy.profile.picture,
-      },
-      createdAt: req.createdAt,
-    }));
+        const formattedRequests = requests.map((req) => ({
+            _id: req._id,
+            fromUser: {
+                _id: req.requestedBy._id,
+                name: req.requestedBy.name,
+                username: req.requestedBy.username,
+                profilePicture: req.requestedBy.profile.picture,
+            },
+            createdAt: req.createdAt,
+        }));
 
-    res.status(200).json({ requests: formattedRequests });
-  } catch (error) {
-    console.error('friend-requests: Error:', error.message);
-    res.status(500).json({ message: 'Internal Server Error' });
-  }
+        res.status(200).json({ requests: formattedRequests });
+    } catch (error) {
+        console.error('friend-requests: Error:', error.message);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
 });
 
 router.post('/cancel-friend-request', async (req, res) => {
-  try {
-    const { toFriendUser } = req.body;
-    const { userId } = getUserDetails(req);
-    console.log('cancel-friend-request: userId=', userId, 'toFriendUser=', toFriendUser);
+    try {
+        const { toFriendUser } = req.body;
+        const { userId } = getUserDetails(req);
+        console.log('cancel-friend-request: userId=', userId, 'toFriendUser=', toFriendUser);
 
-    const currentUser = await User.findById(userId);
-    const toFriendUserExists = await User.findById(toFriendUser);
-    if (!currentUser || !toFriendUserExists) {
-      console.error('cancel-friend-request: User not found');
-      return res.status(404).json({ message: 'User Not Found' });
+        const currentUser = await User.findById(userId);
+        const toFriendUserExists = await User.findById(toFriendUser);
+        if (!currentUser || !toFriendUserExists) {
+            console.error('cancel-friend-request: User not found');
+            return res.status(404).json({ message: 'User Not Found' });
+        }
+
+        const friendRequestExists = await FriendRequest.findOneAndDelete({
+            user: toFriendUser,
+            status: 'requested',
+            requestedBy: userId,
+        });
+        if (!friendRequestExists) {
+            console.log('cancel-friend-request: Friend request does not exist');
+            return res.status(400).json({ message: 'Friend request does not exist' });
+        }
+
+        await User.findByIdAndUpdate(userId, {
+            $pull: { 'profile.connections.friends': friendRequestExists._id },
+        });
+        await User.findByIdAndUpdate(toFriendUser, {
+            $pull: { 'profile.connections.friends': friendRequestExists._id },
+        });
+
+        console.log('cancel-friend-request: Friend request deleted', friendRequestExists._id);
+        return res.status(200).json({ message: 'Friend request canceled' });
+    } catch (error) {
+        console.error('cancel-friend-request: Error:', error.message);
+        return res.status(500).json({ message: 'Internal Server Error' });
     }
-
-    const friendRequestExists = await FriendRequest.findOneAndDelete({
-      user: toFriendUser,
-      status: 'requested',
-      requestedBy: userId,
-    });
-    if (!friendRequestExists) {
-      console.log('cancel-friend-request: Friend request does not exist');
-      return res.status(400).json({ message: 'Friend request does not exist' });
-    }
-
-    await User.findByIdAndUpdate(userId, {
-      $pull: { 'profile.connections.friends': friendRequestExists._id },
-    });
-    await User.findByIdAndUpdate(toFriendUser, {
-      $pull: { 'profile.connections.friends': friendRequestExists._id },
-    });
-
-    console.log('cancel-friend-request: Friend request deleted', friendRequestExists._id);
-    return res.status(200).json({ message: 'Friend request canceled' });
-  } catch (error) {
-    console.error('cancel-friend-request: Error:', error.message);
-    return res.status(500).json({ message: 'Internal Server Error' });
-  }
 });
 
 router.post('/unfriend-request', async (req, res) => {
-  try {
-    const { toUn_FriendUser } = req.body;
-    const { userId } = getUserDetails(req);
-    console.log('unfriend-request: userId=', userId, 'toUn_FriendUser=', toUn_FriendUser);
+    try {
+        const { toUn_FriendUser } = req.body;
+        const { userId } = getUserDetails(req);
+        console.log('unfriend-request: userId=', userId, 'toUn_FriendUser=', toUn_FriendUser);
 
-    const currentUser = await User.findById(userId);
-    const toUn_FriendUserExists = await User.findById(toUn_FriendUser);
-    if (!currentUser || !toUn_FriendUserExists) {
-      console.error('unfriend-request: User not found');
-      return res.status(404).json({ message: 'User Not Found' });
+        const currentUser = await User.findById(userId);
+        const toUn_FriendUserExists = await User.findById(toUn_FriendUser);
+        if (!currentUser || !toUn_FriendUserExists) {
+            console.error('unfriend-request: User not found');
+            return res.status(404).json({ message: 'User Not Found' });
+        }
+
+        let friendRequestExists = await FriendRequest.findOneAndDelete({
+            user: toUn_FriendUser,
+            requestedBy: userId,
+            status: 'accepted',
+        });
+        if (!friendRequestExists) {
+            friendRequestExists = await FriendRequest.findOneAndDelete({
+                user: userId,
+                requestedBy: toUn_FriendUser,
+                status: 'accepted',
+            });
+        }
+
+        if (!friendRequestExists) {
+            console.log('unfriend-request: Friend request does not exist');
+            return res.status(400).json({ message: 'Friend request does not exist' });
+        }
+
+        await User.findByIdAndUpdate(userId, {
+            $pull: { 'profile.connections.friends': friendRequestExists._id },
+        });
+        await User.findByIdAndUpdate(toUn_FriendUser, {
+            $pull: { 'profile.connections.friends': friendRequestExists._id },
+        });
+
+        console.log('unfriend-request: Friend request deleted', friendRequestExists._id);
+        return res.status(200).json({ message: 'Friend connection ended' });
+    } catch (error) {
+        console.error('unfriend-request: Error:', error.message);
+        return res.status(500).json({ message: 'Internal Server Error' });
     }
-
-    let friendRequestExists = await FriendRequest.findOneAndDelete({
-      user: toUn_FriendUser,
-      requestedBy: userId,
-    });
-    if (!friendRequestExists) {
-      friendRequestExists = await FriendRequest.findOneAndDelete({
-        user: userId,
-        requestedBy: toUn_FriendUser,
-      });
-    }
-
-    if (!friendRequestExists) {
-      console.log('unfriend-request: Friend request does not exist');
-      return res.status(400).json({ message: 'Friend request does not exist' });
-    }
-
-    await User.findByIdAndUpdate(userId, {
-      $pull: { 'profile.connections.friends': friendRequestExists._id },
-    });
-    await User.findByIdAndUpdate(toUn_FriendUser, {
-      $pull: { 'profile.connections.friends': friendRequestExists._id },
-    });
-
-    console.log('unfriend-request: Friend request deleted', friendRequestExists._id);
-    return res.status(200).json({ message: 'Friend request canceled' });
-  } catch (error) {
-    console.error('unfriend-request: Error:', error.message);
-    return res.status(500).json({ message: 'Internal Server Error' });
-  }
 });
 
 router.get('/societies-top', async (req, res) => {
