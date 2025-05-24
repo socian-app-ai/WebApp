@@ -82,6 +82,58 @@ const PrivacyPolicy = () => {
           <p>Website: <a href="https://socian.app/privacy" className="underline">https://socian.app/privacy</a></p>
           <p>Country: Pakistan</p>
         </section>
+
+        <section>
+  <h2 className="text-2xl font-semibold border-b border-gray-700 pb-2 mb-4">9. Use of PostHog Analytics</h2>
+  <div className="space-y-2">
+    <p>
+      Socian uses <span className="font-semibold">PostHog Analytics</span> to understand how users interact with our app and to improve features, usability, and performance.
+    </p>
+    <p>
+      PostHog may collect aggregated, non-personal data such as device type, screen usage patterns, interaction flow, and performance events. No personally identifiable information (PII) is collected unless explicitly stated and consented to.
+    </p>
+    <p>
+      We do <span className="font-semibold">not</span> use PostHog for advertising or cross-app tracking. Data collected is solely for internal usage analytics and product improvement.
+    </p>
+    <p>
+      In compliance with Google Play and data protection regulations (including GDPR), users may opt out of analytics tracking where applicable. If session replay or behavioral tracking is enabled, it is anonymized by default and never records sensitive input fields.
+    </p>
+    <p>
+      You can learn more about PostHog’s privacy practices by visiting: <a href="https://posthog.com/privacy" target="_blank" rel="noopener noreferrer" className="underline text-gray-300">https://posthog.com/privacy</a>
+    </p>
+    <p>
+      Currently, We only capture website usage analytics through PostHog, which includes anonymous data about how users interact with the Socian website. This helps us improve our web presence and user experience. Where users content are hidden from posthog and us.
+    </p>
+  </div>
+</section>
+
+
+<section>
+  <h2 className="text-2xl font-semibold border-b border-gray-700 pb-2 mb-4">10. Analytics and Tracking</h2>
+  <div className="space-y-3 text-sm text-gray-300">
+    <p>
+      Socian uses <strong>PostHog</strong> to collect and analyze app usage data. This helps us understand how users interact with the app and improve functionality and performance.
+    </p>
+
+    <p>The following types of data may be collected by PostHog within the mobile app:</p>
+    <ul className="list-disc pl-6 space-y-1">
+      <li><strong>Device Information:</strong> model, OS version, screen size, manufacturer.</li>
+      <li><strong>App Information:</strong> app version, build number, session duration, events like "App Opened" and "App Installed".</li>
+      <li><strong>Interaction Data:</strong> taps, scrolls, screen transitions, and navigation (autocapture).</li>
+      <li><strong>Network Data:</strong> network type (Wi-Fi/cellular), carrier (not IP address).</li>
+      <li><strong>Session Recordings:</strong> Anonymous playback of app usage sessions (e.g., screen flow, UI interactions).</li>
+    </ul>
+
+    <p>
+      <strong>What We Don’t Collect:</strong> PostHog is configured not to collect personal identifiers such as your name, email address, or input data like passwords, form contents, or uploaded files. Session recordings are anonymized.
+    </p>
+
+    <p>
+      Data is processed in accordance with PostHog's <a href="https://posthog.com/docs/privacy" className="text-blue-400 underline">privacy policy</a>. You can contact us to opt out of analytics features.
+    </p>
+  </div>
+</section>
+
       </div>
     </div>
   );
