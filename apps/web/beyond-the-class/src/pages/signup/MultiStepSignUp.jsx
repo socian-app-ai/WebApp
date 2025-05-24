@@ -111,13 +111,15 @@ function Step1({ formData, setFormData, onNext }) {
                     <hr className="w-full " />
                 </div>
 
-                <GoogleButton onClick={() => auth()} />
-
+                
                 <ShinyButtonParam
                     onClick={handleNext}
-                    className="flex my-4 justify-center items-center w-full"
+                    className="flex my-4 mb-6 justify-center items-center w-full"
                     text="Next"
                 />
+
+                <GoogleButton onClick={() => auth()} />
+
 
                 <div className="text-center my-3 max-w-[24rem]">
                     <p className="text-[#c4c3c3]">

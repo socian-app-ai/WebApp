@@ -30,6 +30,7 @@ const useLogout = () => {
                 // toast.error(data.error)
                 throw new Error(data.error)
             }
+            localStorage.removeItem('preferedView');
 
         } catch (error) {
 
