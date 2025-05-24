@@ -172,6 +172,7 @@ export const bypassRoutes = [
     /^\/notUniversityMail$/,
     /^\/forgot-password$/,
     /^\/privacy$/,
+    /^\/delete-account$/,
 ]
 
 

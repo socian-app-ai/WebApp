@@ -52,6 +52,12 @@ const useLogin = () => {
 
       // secureLocalStorage.setItem("object", JSON.stringify(data))
       setAuthUser(res.data);
+
+       // Check if redirect to delete account
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("deleteAccount") === "true") {
+      return navigate("/delete-account");
+    }
       redirect("/");
     } catch (error) {
       const errorMessage =

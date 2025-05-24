@@ -7,6 +7,8 @@ import DarkButton from '../../components/Buttons/DarkButton';
 import GoogleButton from '../../components/Buttons/GoogleButton';
 import routesForLinks, { routesForApi } from "../../utils/routes/routesForLinks";
 import { ShinyButtonParam } from "../../components/Shinny/ShinnyButton";
+import { useLocation } from "react-router-dom";
+import { useEffect } from "react";
 
 
 export default function Login() {
@@ -16,6 +18,17 @@ export default function Login() {
   const [password, setPassword] = useState("");
   // console.log('in login')
   const { loading, login } = useLogin();
+
+  const location = useLocation();
+const [showRedirectMsg, setShowRedirectMsg] = useState(false);
+
+useEffect(() => {
+  const params = new URLSearchParams(location.search);
+  if (params.get("deleteAccount") === "true") {
+    setShowRedirectMsg(true);
+    setTimeout(() => setShowRedirectMsg(false), 6000); // hide after 6 seconds
+  }
+}, [location.search]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -59,6 +72,12 @@ export default function Login() {
         <h1 className="dark:text-white text-lg md:text-xl lg:text-2xl font-bold my-4 select-none">Login to your account</h1>
         <p className="dark:text-white text-sm px-2">Open gate to Opportunities</p>
       </div>
+      
+      {showRedirectMsg && (
+  <div className="bg-yellow-100 text-yellow-800 border border-yellow-300 dark:bg-yellow-900 dark:text-yellow-200 dark:border-yellow-600 px-4 py-3 rounded-lg mb-4 text-sm max-w-md mx-auto">
+    You were redirected here to log in before deleting your account. You'll be redirected to the delete account page after logging in.
+  </div>
+)}
 
       <form
         noValidate={true}

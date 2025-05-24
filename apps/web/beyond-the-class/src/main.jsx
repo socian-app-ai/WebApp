@@ -54,6 +54,7 @@ import CafeEdit from './pages/mod/cafe/CafeEdit.jsx';
 import CafeFeedBacks from './pages/mod/cafe/feedbacks/CafeFeedBacks.jsx';
 import CafeUsers from './pages/mod/cafe/user_admin_employee/CafeUsers.jsx';
 import PrivacyPage from './pages/privacy/Privacy.jsx';
+import DeleteAccountPage from './pages/auth/delete/DeleteAccountPage.jsx';
 
 const router = createBrowserRouter([
   {
@@ -86,6 +87,10 @@ const router = createBrowserRouter([
       {
         path: 'oauth',
         element: <OAuthRedirectHandler />
+      },
+      {
+        path: 'delete-account',
+        element: <DeleteAccountPage />
       },
       {
         path: 'notUniversityMail',
