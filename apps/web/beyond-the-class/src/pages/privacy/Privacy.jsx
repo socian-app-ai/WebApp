@@ -61,7 +61,7 @@ const PrivacyPolicy = () => {
             <li>Revoke device permissions (camera, location, etc.)</li>
             <li>Request opt-out from analytics</li>
           </ul>
-          <p className="mt-2">Email: <a href="mailto:privacy@beyondtheclass.me" className="underline">privacy@beyondtheclass.me</a></p>
+          <p className="mt-2">Email: <a href="mailto:privacy@socianapp.com" className="underline">privacy@socianapp.com</a></p>
         </section>
 
         <section>
@@ -78,8 +78,8 @@ const PrivacyPolicy = () => {
         <section>
           <h2 className="text-2xl font-semibold border-b border-gray-700 pb-2 mb-4">Contact Us</h2>
           <p>If you have questions about this Privacy Policy, contact:</p>
-          <p className="mt-1">Email: <a href="mailto:privacy@beyondtheclass.me" className="underline">privacy@beyondtheclass.me</a></p>
-          <p>Website: <a href="https://beyondtheclass.me/privacy" className="underline">https://beyondtheclass.me/privacy</a></p>
+          <p className="mt-1">Email: <a href="mailto:privacy@socianapp.com" className="underline">privacy@socianapp.com</a></p>
+          <p>Website: <a href="https://socianapp.com/privacy" className="underline">https://socianapp.com/privacy</a></p>
           <p>Country: Pakistan</p>
         </section>
       </div>
