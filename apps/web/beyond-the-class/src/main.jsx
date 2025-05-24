@@ -53,6 +53,7 @@ import CafeDeletes from './pages/mod/cafe/CafeDeletes.jsx';
 import CafeEdit from './pages/mod/cafe/CafeEdit.jsx';
 import CafeFeedBacks from './pages/mod/cafe/feedbacks/CafeFeedBacks.jsx';
 import CafeUsers from './pages/mod/cafe/user_admin_employee/CafeUsers.jsx';
+import PrivacyPage from './pages/privacy/Privacy.jsx';
 
 const router = createBrowserRouter([
   {
@@ -69,6 +70,10 @@ const router = createBrowserRouter([
       {
         path: "signup",
         element: <SignUp />
+      },
+      {
+        path: "privacy",
+        element: <PrivacyPage />
       },
       {
         path: "login",

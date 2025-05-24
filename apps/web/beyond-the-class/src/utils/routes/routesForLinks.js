@@ -170,7 +170,8 @@ export const bypassRoutes = [
     /^\/otp\/.*$/,
     /^\/oauth\.*/,
     /^\/notUniversityMail$/,
-    /^\/forgot-password$/
+    /^\/forgot-password$/,
+    /^\/privacy$/,
 ]
 
 
