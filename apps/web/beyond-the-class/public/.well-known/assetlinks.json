@@ -1,0 +1,15 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls",
+      "delegate_permission/common.get_login_creds"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "app.socian.community",
+      "sha256_cert_fingerprints": [
+        "CE:F3:E8:92:28:E1:E1:2A:B9:2F:82:C8:56:BC:23:33:C7:F4:00:01:B0:32:C5:2F:63:C3:77:1C:06:8B:44:BB"
+      ]
+    }
+  }
+]
