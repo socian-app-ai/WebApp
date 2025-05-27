@@ -167,13 +167,16 @@ const eventRouter = require('./routes/GPS/event.attendance.route.js')(io);
 const locationRouter= require('./routes/GPS/location.sharing.route.js')
 const gatheringRouter= require('./routes/GPS/gathering.route.js')
 
+const messagesRouter = require("./routes/1to1messages/messages.routes.js");
+
+
 
 
 
 app.use("/api/super", superProtect, superRouter);
 app.use("/api/admin", adminProtect, adminRouter);
 app.use("/api/mod", modProtect, modRouter); // ?
-
+app.use("/api/messages", protectRoute, messagesRouter);
 
 app.use("/api/auth", authRouter);
 // app.use("/api/mob/auth", mobAuthRouter); // will not use maybe
