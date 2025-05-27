@@ -966,7 +966,9 @@ router.put('/graduation-year/change', async (req, res) => {
 router.get('/moderated-societies',  async (req, res) => {
   try {
     // Get user ID from auth middleware (adjust based on your setup)
-    const userId = req.sessoin.user._id; // Or req.session.user._id if using sessions
+    // const userId = req.sessoin.user._id; // Or req.session.user._id if using sessions
+    //USe this, why are you making things complicated
+    const {userId} = getUserDetails(req);
 
     // Find user and populate moderated societies
     const user = await User.findById(userId)
