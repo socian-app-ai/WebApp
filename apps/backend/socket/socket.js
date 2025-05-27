@@ -463,7 +463,6 @@
 
 /////////////////////////////////////////////////////////////
 
-
 const { Server } = require("socket.io");
 const valkeyClient = require("../db/valkey.pubsub");
 const DiscussionChatMessage = require("../models/university/papers/discussion/chat/discussion.chat.message");
@@ -677,159 +676,158 @@ class SocketServer {
       }
     });
   }
-setupMessagingEvents(socket) {
-  socket.on("joinConversation", async ({ userId, recipientId }) => {
-    const conversationId = [userId, recipientId].sort().join(':');
-    socket.join(`conversation:${conversationId}`);
-    console.log(`User ${userId} joined conversation with ${recipientId} (ID: ${conversationId})`);
 
-    await this.startConversationStreamConsumer(conversationId);
+  setupMessagingEvents(socket) {
+    socket.on("joinConversation", async ({ userId, recipientId }) => {
+      const conversationId = [userId, recipientId].sort().join(':');
+      socket.join(`conversation:${conversationId}`);
+      console.log(`User ${userId} joined conversation with ${recipientId} (ID: ${conversationId})`);
 
-    try {
-      const messages = await Message.find({
-        $or: [
-          { senderId: userId, recipientId: recipientId },
-          { senderId: recipientId, recipientId: userId },
-        ],
-      })
-        .sort({ createdAt: 1 })
-        .limit(50);
+      await this.startConversationStreamConsumer(conversationId);
 
-      const recentMessages = await this.publisher.xRevRange(
-        `conversation:${conversationId}`,
-        '+',
-        '-',
-        { COUNT: 50 }
-      );
+      try {
+        const messages = await Message.find({
+          $or: [
+            { senderId: userId, recipientId: recipientId },
+            { senderId: recipientId, recipientId: userId },
+          ],
+        })
+          .sort({ createdAt: 1 })
+          .limit(50);
 
-      const parsedMessages = recentMessages.reverse().map(([id, fields]) => {
-        const messageData = { id };
-        for (let i = 0; i < fields.length; i += 2) {
-          const key = fields[i];
-          const value = fields[i + 1];
-          try {
-            messageData[key] = JSON.parse(value);
-          } catch {
-            messageData[key] = value;
+        const recentMessages = await this.publisher.xRevRange(
+          `conversation:${conversationId}`,
+          '+',
+          '-',
+          { COUNT: 50 }
+        );
+
+        const parsedMessages = recentMessages.reverse().map(([id, fields]) => {
+          const messageData = { id };
+          for (let i = 0; i < fields.length; i += 2) {
+            const key = fields[i];
+            const value = fields[i + 1];
+            try {
+              messageData[key] = JSON.parse(value);
+            } catch {
+              messageData[key] = value;
+            }
           }
+          return messageData;
+        });
+
+        const allMessages = [
+          ...messages.map(m => ({
+            _id: m._id.toString(),
+            senderId: m.senderId.toString(),
+            recipientId: m.recipientId.toString(),
+            content: m.content,
+            status: m.status,
+            timestamp: m.createdAt.toISOString(),
+          })),
+          ...parsedMessages,
+        ].sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+
+        socket.emit("prevMessages", allMessages);
+
+        if (!this.conversationUsers.has(conversationId)) {
+          this.conversationUsers.set(conversationId, new Set());
         }
-        return messageData;
-      });
+        this.conversationUsers.get(conversationId).add(socket.id);
 
-      const allMessages = [
-        ...messages.map(m => ({
-          _id: m._id.toString(),
-          senderId: m.senderId.toString(),
-          recipientId: m.recipientId.toString(),
-          content: m.content,
-          status: m.status,
-          timestamp: m.createdAt.toISOString(),
-        })),
-        ...parsedMessages,
-      ].sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
-
-      socket.emit("prevMessages", allMessages);
-
-      if (!this.conversationUsers.has(conversationId)) {
-        this.conversationUsers.set(conversationId, new Set());
+        await Message.updateMany(
+          { recipientId: userId, status: 'sent' },
+          { status: 'delivered' }
+        );
+        this.io.to(`conversation:${conversationId}`).emit("messageStatusUpdate", { status: 'delivered' });
+      } catch (error) {
+        console.error(`Error joining conversation ${conversationId}:`, error.message);
+        socket.emit('error', `Failed to join conversation: ${error.message}`);
       }
-      this.conversationUsers.get(conversationId).add(socket.id);
-
-      await Message.updateMany(
-        { recipientId: userId, status: 'sent' },
-        { status: 'delivered' }
-      );
-      this.io.to(`conversation:${conversationId}`).emit("messageStatusUpdate", { status: 'delivered' });
-    } catch (error) {
-      console.error(`Error joining conversation ${conversationId}:`, error.message);
-      socket.emit('error', `Failed to join conversation: ${error.message}`);
-    }
-  });
-
-socket.on("sendMessage", async (data) => {
-  try {
-    console.log('Received sendMessage:', data);
-    const { recipientId, content, user } = data;
-    const senderId = user?._id;
-    const conversationId = [senderId, recipientId].sort().join(':');
-
-    if (!recipientId || !content || !user || !senderId) {
-      const errorMsg = `Invalid message data`;
-      console.error(errorMsg);
-      socket.emit('error', errorMsg);
-      return;
-    }
-
-    // First save to MongoDB
-    const message = new Message({
-      senderId,
-      recipientId,
-      content,
-      status: 'sent',
-      createdAt: new Date(),
-    });
-    await message.save();
-    console.log(`Message saved to MongoDB: ${message._id}`);
-
-    // Then add to Redis stream
-    const streamMessage = {
-      _id: message._id.toString(),
-      senderId: senderId.toString(),
-      recipientId: recipientId.toString(),
-      content,
-      status: 'sent',
-      socketId: socket.id,
-      name: user.name || '',
-      username: user.username || '',
-      picture: user.picture || '',
-      timestamp: message.createdAt.toISOString(),
-    };
-
-    const messageId = await this.publisher.xAdd(`conversation:${conversationId}`, '*', {
-      ...streamMessage,
-      senderId: JSON.stringify(streamMessage.senderId),
-      recipientId: JSON.stringify(streamMessage.recipientId),
-      content: JSON.stringify(streamMessage.content),
-      status: JSON.stringify(streamMessage.status),
-      name: JSON.stringify(streamMessage.name),
-      username: JSON.stringify(streamMessage.username),
-      picture: JSON.stringify(streamMessage.picture),
-      timestamp: JSON.stringify(streamMessage.timestamp),
     });
 
-    // Emit the message with the MongoDB ID
-    this.io.to(`conversation:${conversationId}`).emit("newMessage", streamMessage);
+    socket.on("sendMessage", async (data) => {
+      try {
+        console.log('Received sendMessage:', data);
+        const { recipientId, content, user } = data;
+        const senderId = user?._id;
+        const conversationId = [senderId, recipientId].sort().join(':');
 
-    // Send notification
-    this.io.to(`user:${recipientId}`).emit("newNotification", {
-      type: "message",
-      sender: senderId,
-      message: content,
-      timestamp: message.createdAt,
+        if (!recipientId || !content || !user || !senderId) {
+          const errorMsg = `Invalid message data`;
+          console.error(errorMsg);
+          socket.emit('error', errorMsg);
+          return;
+        }
+
+        const createdAt = new Date().toISOString();
+        console.log(`Saving message with createdAt: ${createdAt}`);
+
+        const message = new Message({
+          senderId,
+          recipientId,
+          content,
+          status: 'sent',
+          createdAt: new Date(createdAt),
+        });
+        await message.save();
+        console.log(`Message saved to MongoDB: ${message._id}, createdAt: ${message.createdAt}`);
+
+        const streamMessage = {
+          _id: message._id.toString(),
+          senderId: senderId.toString(),
+          recipientId: recipientId.toString(),
+          content,
+          status: 'sent',
+          socketId: socket.id,
+          name: user.name || '',
+          username: user.username || '',
+          picture: user.picture || '',
+          timestamp: message.createdAt.toISOString(),
+        };
+
+        const messageId = await this.publisher.xAdd(`conversation:${conversationId}`, '*', {
+          ...streamMessage,
+          senderId: JSON.stringify(streamMessage.senderId),
+          recipientId: JSON.stringify(streamMessage.recipientId),
+          content: JSON.stringify(streamMessage.content),
+          status: JSON.stringify(streamMessage.status),
+          name: JSON.stringify(streamMessage.name),
+          username: JSON.stringify(streamMessage.username),
+          picture: JSON.stringify(streamMessage.picture),
+          timestamp: JSON.stringify(streamMessage.timestamp),
+        });
+
+        this.io.to(`conversation:${conversationId}`).emit("newMessage", streamMessage);
+
+        this.io.to(`user:${recipientId}`).emit("newNotification", {
+          type: "message",
+          sender: senderId,
+          message: content,
+          timestamp: message.createdAt.toISOString(),
+        });
+      } catch (error) {
+        console.error('Error processing message:', error);
+        socket.emit('error', `Failed to send message: ${error.message}`);
+      }
     });
-  } catch (error) {
-    console.error('Error processing message:', error);
-    socket.emit('error', `Failed to send message: ${error.message}`);
+
+    socket.on("markAsRead", async ({ conversationId, messageIds }) => {
+      try {
+        await Message.updateMany(
+          { _id: { $in: messageIds }, status: { $in: ['sent', 'delivered'] } },
+          { status: 'read' }
+        );
+        this.io.to(`conversation:${conversationId}`).emit("messageStatusUpdate", {
+          messageIds,
+          status: 'read',
+        });
+      } catch (error) {
+        console.error('Error marking messages as read:', error.message);
+        socket.emit('error', `Failed to mark as read: ${error.message}`);
+      }
+    });
   }
-});
-
-  socket.on("markAsRead", async ({ conversationId, messageIds }) => {
-    try {
-      await Message.updateMany(
-        { _id: { $in: messageIds }, status: { $in: ['sent', 'delivered'] } },
-        { status: 'read' }
-      );
-      this.io.to(`conversation:${conversationId}`).emit("messageStatusUpdate", {
-        messageIds,
-        status: 'read',
-      });
-    } catch (error) {
-      console.error('Error marking messages as read:', error.message);
-      socket.emit('error', `Failed to mark as read: ${error.message}`);
-    }
-  });
-}
-
 
   setupDiscussionEvents(socket) {
     socket.on("joinDiscussion", async (discussionId) => {
@@ -896,7 +894,7 @@ socket.on("sendMessage", async (data) => {
           name: user.name,
           username: user.username,
           picture: user.picture,
-          timestamp: timestamp.toISOString(),
+          timestamp: new Date(timestamp).toISOString(),
         };
 
         const messageId = await this.publisher.xAdd(`stream:${discussionId}`, '*', streamMessage);
@@ -1019,7 +1017,6 @@ socket.on("sendMessage", async (data) => {
     socket.on("disconnect", async () => {
       console.log(`User disconnected: ${socket.id}`);
 
-      // Handle discussion users
       for (const [discussionId, userSet] of this.discussionUsers.entries()) {
         if (userSet.has(socket.id)) {
           userSet.delete(socket.id);
@@ -1028,7 +1025,6 @@ socket.on("sendMessage", async (data) => {
         }
       }
 
-      // Handle conversation users
       for (const [conversationId, userSet] of this.conversationUsers.entries()) {
         if (userSet.has(socket.id)) {
           userSet.delete(socket.id);
@@ -1036,14 +1032,12 @@ socket.on("sendMessage", async (data) => {
         }
       }
 
-      // Handle event attendees
       if (this.eventAttendees[socket.id]) {
         const { userId } = this.eventAttendees[socket.id];
         this.io.emit("attendeeDisconnected", { userId });
         delete this.eventAttendees[socket.id];
       }
 
-      // Handle gathering attendees
       for (const [gatheringId, socketSet] of this.gatheringRooms.entries()) {
         if (socketSet.has(socket.id)) {
           socketSet.delete(socket.id);
