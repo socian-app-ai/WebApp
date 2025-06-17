@@ -154,6 +154,41 @@ router.post("/create", async (req, res) => {
     }
 });
 
+
+router.delete('/delete', async (req, res) => {
+  try {
+    const { societyId } = req.query;
+
+    const nowDeletedSociety = await Society.findByIdAndUpdate(
+      societyId,
+      { isDeleted: true },
+      { new: true }
+    );
+
+    if (!nowDeletedSociety) {
+      return res.status(400).json({ error: "Couldn't delete society" });
+    }
+
+    const users = nowDeletedSociety.moderators;
+
+    // Update all moderators to remove society reference
+    await Promise.all(users.map((usr) =>
+      User.findByIdAndUpdate(usr._id, {
+        $pull: {
+          'profile.moderatorTo.society': nowDeletedSociety._id,
+          subscribedSocities: nowDeletedSociety._id
+        }
+      })
+    ));
+
+    return res.status(200).json({ message: "Society deleted successfully" });
+
+  } catch (error) {
+    console.error("Error deleting society: ", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
 /**
  * @summary finds society based on id
  *  @todo  No_role_Required
@@ -311,7 +346,7 @@ router.get("/:id", async (req, res) => {
         // }
 
 
-        const society = await Society.findOne({ _id: id }).populate([
+        const society = await Society.findOne({ _id: id, isDeleted: false }).populate([
             'moderators',
             'president',
             'members',
@@ -368,7 +403,7 @@ router.get('/search', async (req, res) => {
             return res.status(404).json("societyName required for searching")
         }
 
-        const user = await Society.find({role: role, name: societyName})
+        const user = await Society.find({role: role, name: societyName, isDeleted: false})
 
         res.status(200).json(user.subscribedSocities)
     } catch (error) {
@@ -406,9 +441,11 @@ router.get("/universities/all", async (req, res) => {
 
         // Fetch random societies using aggregation
         const randomSocieties = await Society.aggregate([
+            
             {
                 $match: {
-                    "references.role": role
+                    "references.role": role,
+                    isDeleted: false
                 }
             },
             {
@@ -420,7 +457,7 @@ router.get("/universities/all", async (req, res) => {
         const societyIds = randomSocieties.map(society => society._id);
 
         // Use the IDs to fetch and populate society data
-        const societies = await Society.find({ _id: { $in: societyIds } }).populate([
+        const societies = await Society.find({ _id: { $in: societyIds }, isDeleted: false }).populate([
             {
                 path: 'references',
                 populate: {
@@ -457,6 +494,7 @@ router.get("/campuses/all", async (req, res) => {
 
         // console.log("hey", role);
         const society = await Society.find({
+            isDeleted: false,
             "references.role": role,
             "references.universityOrigin": universityOrigin,
         }).populate([
@@ -489,6 +527,7 @@ router.get("/campus/all", async (req, res) => {
         const { universityOrigin, campusOrigin, role } = getUserDetails(req)
 
         const society = await Society.find({
+            isDeleted: false,
             "references.role": role,
             "references.universityOrigin": universityOrigin,
             "references.campusOrigin": campusOrigin,
@@ -604,14 +643,16 @@ router.get("/with-company/all", async (req, res) => {
         const { role, universityOrigin, campusOrigin } = getUserDetails(req)
 
         const society = await Society.find(
+            
             role === "ext_org"
-                ? { companyReference: { isCompany: true } }
+                ? { companyReference: { isCompany: true },isDeleted: false, }
                 : {
                     references: {
                         role: role,
                         universityOrigin,
                         campusOrigin
                     },
+                    isDeleted: false,
                 }
         );
 
@@ -661,7 +702,7 @@ router.post("/request-verification", async (req, res) => {
 router.get("/sub-societies/:societyId", async (req, res) => {
     const societyId = req.params.societyId;
     try {
-        const society = await SubSociety.find({ societyId: societyId });
+        const society = await SubSociety.find({ societyId: societyId,isDeleted: false, });
 
         if (!society) return res.status(404).json("no sub society found");
         res.status(200).json(society);
@@ -682,7 +723,7 @@ router.post("/role-based/:id", async (req, res) => {
         const { role } = getUserDetails(req);
         const society = await Society.findOne(
             { _id: id },
-            { "references.role": role }
+            { "references.role": role , isDeleted: false,}
         );
 
         if (!society)
@@ -704,7 +745,7 @@ router.get("/ext-org/:id", async (req, res) => {
         // if (!(req.session.user.role === 'ext_org')) return res.status(404).json("role mismatch error")
         const society = await Society.findOne(
             { _id: id },
-            { "companyReference.isCompany": true }
+            { "companyReference.isCompany": true , isDeleted: false,}
         );
 
         if (!society) return res.status(404).json("no society found in ");
@@ -724,7 +765,7 @@ router.get("/ext-org/:companyId", async (req, res) => {
         // if (!(req.session.user.role === 'ext_org')) return res.status(404).json("role mismatch error")
         const society = await Society.findOne(
             { "companyReference.companyOrigin": companyId },
-            { "companyReference.isCompany": true }
+            { "companyReference.isCompany": true, isDeleted: false, }
         );
 
         if (!society) return res.status(404).json("no society found in " + type);
@@ -744,7 +785,7 @@ router.get("/join/:societyId", async (req, res) => {
 
         console.log(role, userId, "/;hhh", societyId)
         // Fetch the society and validate the role
-        const society = await Society.findOne({ _id: societyId });
+        const society = await Society.findOne({ _id: societyId, isDeleted: false, });
         if (!society) return res.status(404).json({ error: "Society not found" });
         if (!society.allows.includes(role) && !society.allows.includes("all"))
             return res.status(403).json({ message: `Society does not allow role: ${role}` });
@@ -766,7 +807,7 @@ router.get("/join/:societyId", async (req, res) => {
 
         // Update the society atomically
         const updatedSociety = await Society.findOneAndUpdate(
-            { _id: societyId },
+            { _id: societyId, },
             {
                 // $addToSet: { 'members.members': userId }, //{} Avoid duplicate members
                 $inc: { totalMembers: 1 },
@@ -891,6 +932,7 @@ router.get('/public/societies', async (req, res) => {
     try {
 
         const societies = await Society.find({
+            isDeleted: false,
             "references.role": role,
             "references.universityOrigin": universityOrigin,
             "references.campusOrigin": campusOrigin
@@ -925,7 +967,7 @@ router.get("/paginated/universities/all", async (req, res) => {
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 10;
         const skip = (page - 1) * limit;
-        const match = { "references.role": role };
+        const match = { "references.role": role, isDeleted: false, };
         console.log("[/paginated/universities/all] match:", match, "page:", page, "limit:", limit, "skip:", skip);
         const total = await Society.countDocuments(match);
         const societies = await Society.find(match)
@@ -966,6 +1008,7 @@ router.get("/paginated/campuses/all", async (req, res) => {
         const match = {
             "references.role": role,
             "references.universityOrigin": universityOrigin,
+            isDeleted: false,
         };
         console.log("[/paginated/campuses/all] match:", match, "page:", page, "limit:", limit, "skip:", skip);
         const total = await Society.countDocuments(match);
@@ -1005,6 +1048,7 @@ router.get("/paginated/campus/all", async (req, res) => {
             "references.role": role,
             "references.universityOrigin": universityOrigin,
             "references.campusOrigin": campusOrigin,
+            isDeleted: false,
         };
         console.log("[/paginated/campus/all] match:", match, "page:", page, "limit:", limit, "skip:", skip);
         const total = await Society.countDocuments(match);
@@ -1043,7 +1087,8 @@ router.get('/paginated/public/societies', async (req, res) => {
         const match = {
             "references.role": role,
             "references.universityOrigin": universityOrigin,
-            "references.campusOrigin": campusOrigin
+            "references.campusOrigin": campusOrigin,
+            isDeleted: false,
         };
         console.log("[/paginated/public/societies] match:", match, "page:", page, "limit:", limit, "skip:", skip);
         const total = await Society.countDocuments(match);

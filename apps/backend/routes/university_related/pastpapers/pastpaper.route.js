@@ -109,12 +109,13 @@ router.get('/all-pastpapers-in-subject/:subjectId',
 
 // Get papers by type for a subject
 router.get('/:type/:subjectId',
-    cacheMiddleware(req => CACHE_KEYS.PAPER_BY_TYPE(req.params.subjectId, req.params.type)),
+    // cacheMiddleware(req => CACHE_KEYS.PAPER_BY_TYPE(req.params.subjectId, req.params.type)),
     asyncHandler(async (req, res) => {
         const { type, subjectId } = req.params;
 
         // Get papers using the PastPaperItem model
         const papers = await PastPaperItem.findBySubjectAndType(subjectId, type);
+        console.log("PAPERS", papers[0].files)
 
         // Get the subject name
         const subject = await Subject.findById(subjectId).select('name');
