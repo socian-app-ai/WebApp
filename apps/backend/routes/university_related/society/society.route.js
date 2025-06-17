@@ -107,13 +107,13 @@ router.post("/create", async (req, res) => {
 
         const user = await User.findByIdAndUpdate(
             { _id: userId },
-       {     
-    $addToSet: {
-      'profile.moderatorTo.society': newSociety._id ,
-      subscribedSocities: newSociety._id ,
-    },
-},
-    {new: true}
+            {
+                $addToSet: {
+                    'profile.moderatorTo.society': newSociety._id,
+                    subscribedSocities: newSociety._id,
+                },
+            },
+            { new: true }
         );
 
         const postsCollectionRef = new PostsCollection({
@@ -156,37 +156,37 @@ router.post("/create", async (req, res) => {
 
 
 router.delete('/delete', async (req, res) => {
-  try {
-    const { societyId } = req.query;
+    try {
+        const { societyId } = req.query;
 
-    const nowDeletedSociety = await Society.findByIdAndUpdate(
-      societyId,
-      { isDeleted: true },
-      { new: true }
-    );
+        const nowDeletedSociety = await Society.findByIdAndUpdate(
+            societyId,
+            { isDeleted: true },
+            { new: true }
+        );
 
-    if (!nowDeletedSociety) {
-      return res.status(400).json({ error: "Couldn't delete society" });
-    }
-
-    const users = nowDeletedSociety.moderators;
-
-    // Update all moderators to remove society reference
-    await Promise.all(users.map((usr) =>
-      User.findByIdAndUpdate(usr._id, {
-        $pull: {
-          'profile.moderatorTo.society': nowDeletedSociety._id,
-          subscribedSocities: nowDeletedSociety._id
+        if (!nowDeletedSociety) {
+            return res.status(400).json({ error: "Couldn't delete society" });
         }
-      })
-    ));
 
-    return res.status(200).json({ message: "Society deleted successfully" });
+        const users = nowDeletedSociety.moderators;
 
-  } catch (error) {
-    console.error("Error deleting society: ", error);
-    res.status(500).json({ error: "Internal Server Error" });
-  }
+        // Update all moderators to remove society reference
+        await Promise.all(users.map((usr) =>
+            User.findByIdAndUpdate(usr._id, {
+                $pull: {
+                    'profile.moderatorTo.society': nowDeletedSociety._id,
+                    subscribedSocities: nowDeletedSociety._id
+                }
+            })
+        ));
+
+        return res.status(200).json({ message: "Society deleted successfully" });
+
+    } catch (error) {
+        console.error("Error deleting society: ", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
 });
 
 /**
@@ -324,6 +324,7 @@ router.get("/types", async (req, res) => {
 router.get("/:id", async (req, res) => {
     const { id } = req.params;
     const { page = 1, limit = 10 } = req.query; // Default to page 1 and 10 posts per page
+    const { userId } = getUserDetails(req);
 
     // const cacheKeySociety = `society_${id}`;
     // const cacheKeyPosts = `society_${id}_posts_page_${page}`;
@@ -384,10 +385,32 @@ router.get("/:id", async (req, res) => {
                 { path: 'voteId', model: 'SocietyPostAndCommentVote' },
             ]);
 
+
         // await redisClient.set(cacheKeyPosts, JSON.stringify(posts), 'EX', 600); // Shorter expiry for posts
 
+
+        const isMod = await Society.exists({
+            _id: id,
+            isDeleted: false,
+            moderators: userId
+        });
+
+        let isMember = false;
+
+        if (!isMod) {
+            const memberRef = await Society.findById(id).select('members').lean();
+            if (memberRef && memberRef.members) {
+                const memberDoc = await Members.findById(memberRef.members).select('members').lean();
+                isMember = memberDoc?.members?.some(uid => uid.toString() === userId);
+            }
+        }
+
+        const isJoined = !!(isMod || isMember);
+
+
+
         // console.log("\n\n\n\nsocity",society, "\n\nposts", posts )
-        res.status(200).json({ society: society, posts: posts });
+        res.status(200).json({ society: society, posts: posts, isJoined: isJoined });
     } catch (error) {
         console.error("Error in society.route.js /:id", error);
         res.status(500).json("Internal Server Error");
@@ -395,15 +418,15 @@ router.get("/:id", async (req, res) => {
 });
 
 router.get('/search', async (req, res) => {
-    const {societyName}= req.query;
+    const { societyName } = req.query;
     try {
         const { userId, role } = getUserDetails(req)
 
-        if(!societyName){
+        if (!societyName) {
             return res.status(404).json("societyName required for searching")
         }
 
-        const user = await Society.find({role: role, name: societyName, isDeleted: false})
+        const user = await Society.find({ role: role, name: societyName, isDeleted: false })
 
         res.status(200).json(user.subscribedSocities)
     } catch (error) {
@@ -441,7 +464,7 @@ router.get("/universities/all", async (req, res) => {
 
         // Fetch random societies using aggregation
         const randomSocieties = await Society.aggregate([
-            
+
             {
                 $match: {
                     "references.role": role,
@@ -464,8 +487,8 @@ router.get("/universities/all", async (req, res) => {
                     path: 'universityOrigin campusOrigin',
                     select: 'name location'
                 },
-            }, 
-                            
+            },
+
         ]).select('-users').limit(5);
 
         if (!societies || societies.length === 0) {
@@ -643,9 +666,9 @@ router.get("/with-company/all", async (req, res) => {
         const { role, universityOrigin, campusOrigin } = getUserDetails(req)
 
         const society = await Society.find(
-            
+
             role === "ext_org"
-                ? { companyReference: { isCompany: true },isDeleted: false, }
+                ? { companyReference: { isCompany: true }, isDeleted: false, }
                 : {
                     references: {
                         role: role,
@@ -702,7 +725,7 @@ router.post("/request-verification", async (req, res) => {
 router.get("/sub-societies/:societyId", async (req, res) => {
     const societyId = req.params.societyId;
     try {
-        const society = await SubSociety.find({ societyId: societyId,isDeleted: false, });
+        const society = await SubSociety.find({ societyId: societyId, isDeleted: false, });
 
         if (!society) return res.status(404).json("no sub society found");
         res.status(200).json(society);
@@ -723,7 +746,7 @@ router.post("/role-based/:id", async (req, res) => {
         const { role } = getUserDetails(req);
         const society = await Society.findOne(
             { _id: id },
-            { "references.role": role , isDeleted: false,}
+            { "references.role": role, isDeleted: false, }
         );
 
         if (!society)
@@ -745,7 +768,7 @@ router.get("/ext-org/:id", async (req, res) => {
         // if (!(req.session.user.role === 'ext_org')) return res.status(404).json("role mismatch error")
         const society = await Society.findOne(
             { _id: id },
-            { "companyReference.isCompany": true , isDeleted: false,}
+            { "companyReference.isCompany": true, isDeleted: false, }
         );
 
         if (!society) return res.status(404).json("no society found in ");
@@ -882,6 +905,7 @@ router.get("/leave/:societyId", async (req, res) => {
             { _id: userId },
             {
                 $pull: {
+                    'profile.moderatorTo.society': updatedSociety._id,
                     subscribedSocities: updatedSociety._id,
                 },
             }
