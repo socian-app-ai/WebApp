@@ -290,8 +290,8 @@ router.get("/:id", async (req, res) => {
     const { id } = req.params;
     const { page = 1, limit = 10 } = req.query; // Default to page 1 and 10 posts per page
 
-    const cacheKeySociety = `society_${id}`;
-    const cacheKeyPosts = `society_${id}_posts_page_${page}`;
+    // const cacheKeySociety = `society_${id}`;
+    // const cacheKeyPosts = `society_${id}_posts_page_${page}`;
 
 
 
@@ -300,15 +300,15 @@ router.get("/:id", async (req, res) => {
     try {
 
         // Try fetching cached society data
-        const cachedSociety = await redisClient.get(cacheKeySociety);
-        if (cachedSociety) {
-            const society = JSON.parse(cachedSociety);
-            // Fetch cached posts if available
-            const cachedPosts = await redisClient.get(cacheKeyPosts);
-            if (cachedPosts) {
-                return res.status(200).json({ society, posts: JSON.parse(cachedPosts) });
-            }
-        }
+        // const cachedSociety = await redisClient.get(cacheKeySociety);
+        // if (cachedSociety) {
+        //     const society = JSON.parse(cachedSociety);
+        //     // Fetch cached posts if available
+        //     const cachedPosts = await redisClient.get(cacheKeyPosts);
+        //     if (cachedPosts) {
+        //         return res.status(200).json({ society, posts: JSON.parse(cachedPosts) });
+        //     }
+        // }
 
 
         const society = await Society.findOne({ _id: id }).populate([
@@ -325,7 +325,7 @@ router.get("/:id", async (req, res) => {
 
         if (!society) return res.status(404).json("No society found");
 
-        await redisClient.set(cacheKeySociety, JSON.stringify(society), 'EX', 3600);
+        // await redisClient.set(cacheKeySociety, JSON.stringify(society), 'EX', 3600);
 
 
         const postsCollection = Array.isArray(society.postsCollectionRef?.posts)
@@ -349,7 +349,7 @@ router.get("/:id", async (req, res) => {
                 { path: 'voteId', model: 'SocietyPostAndCommentVote' },
             ]);
 
-        await redisClient.set(cacheKeyPosts, JSON.stringify(posts), 'EX', 600); // Shorter expiry for posts
+        // await redisClient.set(cacheKeyPosts, JSON.stringify(posts), 'EX', 600); // Shorter expiry for posts
 
         // console.log("\n\n\n\nsocity",society, "\n\nposts", posts )
         res.status(200).json({ society: society, posts: posts });
