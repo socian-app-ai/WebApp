@@ -1114,6 +1114,72 @@ router.get('/paginated/public/societies', async (req, res) => {
 });
 
 
+router.post("/delete/:societyId", async (req, res) => {
+    const { societyId } = req.params;
+    try {
+        const { userId } = getUserDetails(req);
 
+        // Find the society and check if the user is authorized
+        const society = await Society.findOne({ _id: societyId });
+        if (!society) {
+            return res.status(404).json({ error: "Society not found" });
+        }
+
+        // Check if the user is a moderator or creator
+        if (!society.moderators.includes(userId) && society.creator.toString() !== userId) {
+            return res.status(403).json({ error: "You are not authorized to delete this society" });
+        }
+
+        // Delete associated data
+        // 1. Delete members collection
+        await Members.deleteOne({ societyId: societyId });
+
+        // 2. Delete posts collection and individual posts
+        const postsCollection = await PostsCollection.findOne({ societyId: societyId });
+        if (postsCollection) {
+            await Post.deleteMany({ _id: { $in: postsCollection.posts.map(post => post.postId) } });
+            await PostsCollection.deleteOne({ societyId: societyId });
+        }
+
+        // 3. Delete verification requests
+        await VerificationRequest.deleteMany({ society: societyId });
+
+        // 4. Delete sub-societies
+        await SubSociety.deleteMany({ societyId: societyId });
+
+        // 5. Update users' subscribed societies and moderator roles
+        await User.updateMany(
+            { subscribedSocities: societyId },
+            { $pull: { subscribedSocities: societyId } }
+        );
+        await User.updateMany(
+            { 'profile.moderatorTo.society': societyId },
+            { $pull: { 'profile.moderatorTo.society': societyId } }
+        );
+
+        // 6. Delete the society itself
+        await Society.deleteOne({ _id: societyId });
+
+        // Invalidate Redis cache (handle gracefully)
+        try {
+            // Delete specific society cache
+            await redisClient.del(`society_${societyId}`);
+
+            // For node-redis v4+, use SCAN to find and delete post-related keys
+            const pattern = `society_${societyId}_posts_page_*`;
+            for await (const key of redisClient.scanIterator({ MATCH: pattern })) {
+                await redisClient.del(key);
+            }
+        } catch (redisError) {
+            console.error("Error invalidating Redis cache: ", redisError);
+            // Continue execution even if cache invalidation fails
+        }
+
+        return res.status(200).json({ message: "Society deleted successfully" });
+    } catch (error) {
+        console.error("Error in delete-society route: ", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+});
 
 module.exports = router;
