@@ -1206,4 +1206,43 @@ router.post("/delete/:societyId", async (req, res) => {
     }
 });
 
+
+
+router.post('/add-moderator/:societyId', async (req, res) => {
+  try {
+    const { societyId } = req.params;
+    const { userId } = req.body;
+    const { userId: authUserId } = getUserDetails(req); // Assuming getUserDetails extracts authenticated user
+
+    const society = await Society.findOne({ _id: societyId }).populate('moderators');
+    if (!society) {
+      return res.status(404).json({ error: 'Society not found' });
+    }
+
+    // Check if the authenticated user is a moderator
+    const isModerator = society.moderators.some(mod => mod._id.toString() === authUserId);
+    if (!isModerator) {
+      return res.status(403).json({ error: 'Only moderators can add moderators' });
+    }
+
+    // Check if the user is already a moderator
+    if (society.moderators.some(mod => mod._id.toString() === userId)) {
+      return res.status(400).json({ error: 'User is already a moderator' });
+    }
+
+    // Add the user to moderators
+    society.moderators.push(userId);
+    await society.save();
+
+    // Populate moderators for response
+    const updatedSociety = await Society.findOne({ _id: societyId }).populate('moderators');
+    res.status(200).json({ society: updatedSociety });
+  } catch (error) {
+    console.error('Error in add-moderator route:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+
+
 module.exports = router;
