@@ -123,6 +123,19 @@ const societySchema = new Schema({
   isDeleted: {
     type: Boolean,
     default: false
+  },
+
+  hiddenByMod:{
+    type: Boolean,
+    default: false
+  },
+   hiddenBySuper:{
+    type: Boolean,
+    default: false
+  },
+  reason: {
+    type: String,
+
   }
 });
 

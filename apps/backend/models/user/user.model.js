@@ -295,6 +295,7 @@ const userSchema = new mongoose.Schema({
   restrictions: {
     blocking: {
       isBlocked: { type: Boolean, default: false },
+      reason: {type:String},
       blockedBy: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",

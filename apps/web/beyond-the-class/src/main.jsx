@@ -8,8 +8,8 @@ import { PostHogProvider } from 'posthog-js/react'
 import { createBrowserRouter, RouterProvider, Navigate } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import Layout from "./pages/layout/Layout";
-import AddUniversityPage from "./pages/admin/add/AddUniversityPage";
-import AddCampusPage from './pages/admin/add/AddCampusPage';
+import AddUniversityPage from "./pages/admin/sidebar_pages/universities/AddUniversityPage.jsx";
+import AddCampusPage from './pages/admin/sidebar_pages/campuses/AddCampusPage.jsx';
 import Login from "./pages/login/Login";
 import RoleBasedRoute, { SuperRoleBasedRoute } from "./config/RoleBasedRoute";
 import AllHome from "./pages/home/AllHome";
@@ -35,9 +35,9 @@ import UniPosts from './pages/student/universities/UniPosts.jsx';
 import CampusesPosts from './pages/student/campuses/CampusesPosts.jsx';
 import ProfilePage from './pages/ProfilePage.jsx';
 import Feedback from './pages/teacher/feedback/Feedback.jsx';
-import AddDepartmentAndSubjects from './pages/admin/add/edit/AddDepartmentAndSubjects.jsx';
-import AddTeacher from './pages/admin/add/AddTeacher.jsx';
-import AddPastPapers from './pages/admin/add/AddPastPapers.jsx';
+import AddDepartmentAndSubjects from './pages/admin/sidebar_pages/campuses/departments_subjects/AddDepartmentAndSubjects.jsx';
+import AddTeacher from './pages/admin/sidebar_pages/teachers/AddTeacher.jsx';
+import AddPastPapers from './pages/admin/sidebar_pages/campuses/pastpapers/AddPastPapers.jsx';
 import { ToastProviders } from './components/toaster/ToastCustom.jsx';
 import OAuthRedirectHandler from './pages/auth/oAuthHandler.jsx';
 import CompleteYourInfo from './pages/noAccess/CompleteYourInfo.jsx';
@@ -55,6 +55,8 @@ import CafeFeedBacks from './pages/mod/cafe/feedbacks/CafeFeedBacks.jsx';
 import CafeUsers from './pages/mod/cafe/user_admin_employee/CafeUsers.jsx';
 import PrivacyPage from './pages/privacy/Privacy.jsx';
 import DeleteAccountPage from './pages/auth/delete/DeleteAccountPage.jsx';
+import Societies from './pages/admin/sidebar_pages/campuses/societies/Societies.jsx';
+import TeachersView from './pages/admin/pages/teachers/TeachersView.jsx';
 
 const router = createBrowserRouter([
   {
@@ -146,10 +148,12 @@ const router = createBrowserRouter([
           { path: "campus/pastpapers/:campusId", element: <Layout> <AddPastPapers /></Layout> },
 
 
-          { path: "teachers", element: <Layout> <AddTeacher /></Layout> },
-
+          { path: "teacher/create", element: <Layout> <AddTeacher /></Layout> },
+          { path: 'teachers/view', element: <Layout> <TeachersView /></Layout> },
 
           { path: "pastpapers/upload", element: <Layout> <UploadForm /></Layout> },
+
+          { path: "societies", element: <Layout> <Societies /></Layout> },
 
         ],
       },

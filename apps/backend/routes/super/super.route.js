@@ -14,6 +14,21 @@ const { getUserDetails } = require("../../utils/utils");
 const mongoose = require("mongoose");
 const { PastpapersCollectionByYear } = require("../../models/university/papers/paper.collection.model");
 
+const campusRouter = require('./campus.route');
+const univeristyRouter = require('./university.route');
+const societyRouter = require('./societies.route');
+const usersRouter = require('./users.route');
+const teachersRouter = require('./teachers.route')
+const Department = require("../../models/university/department/department.university.model");
+const Teacher = require("../../models/university/teacher/teacher.model");
+const FeedBackCommentTeacher = require("../../models/university/teacher/feedback.rating.teacher.model");
+const TeacherRating = require("../../models/university/teacher/rating.teacher.model");
+
+router.use('/campus', campusRouter);
+router.use('/university', univeristyRouter);
+router.use('/societies', societyRouter);
+router.use('/users', usersRouter)
+router.use('/teachers',teachersRouter)
 
 router.get("/all-users", async (req, res) => {
   try {
@@ -29,7 +44,7 @@ router.get("/all-users", async (req, res) => {
 router.get("/all-campuses", async (req, res) => {
   try {
     const campus = await Campus.find().populate("universityOrigin users departments society subSociety");
-
+console.log("DATA", JSON.stringify(campus, null, 2))
     return res.status(200).json(campus);
   } catch (error) {
     console.error("Error in ", error.message);
@@ -137,11 +152,14 @@ router.get("/:id", async (req, res) => {
 
 
 
-router.post("/pastpaper/upload/types", async (req, res) => {
-  const { year, type, term, termMode, paperName, pdfUrl, teachers, subjectId, departmentId, sessionType } = req.body;
-  const { universityOrigin, campusOrigin, userId } = getUserDetails(req);
 
-  console.log("Data: ", departmentId, subjectId, year, type, term, termMode, paperName, pdfUrl, teachers, sessionType)
+
+
+router.post("/pastpaper/upload/types", async (req, res) => {
+  const {universityOrigin, campusOrigin, userId,year, type, term, termMode, paperName, pdfUrl, teachers, subjectId, departmentId, sessionType } = req.body;
+  // const { universityOrigin, campusOrigin, userId } = getUserDetails(req);
+
+  console.log("Data: ",universityOrigin, campusOrigin, userId, departmentId, subjectId, year, type, term, termMode, paperName, pdfUrl, teachers, sessionType)
   // return res.status(200).json({message: "success"})
   try {
     const session = await mongoose.startSession();
@@ -294,6 +312,302 @@ router.post("/pastpaper/upload/types", async (req, res) => {
   } catch (error) {
     console.error('Error adding paper:', error);
     res.status(500).json({ message: error.message });
+  }
+});
+
+
+// ? DEPARTMENT
+router.post("/department/", async (req, res) => {
+  const { name, universityId, campusId } = req.body;
+  try {
+    if (!name || !universityId || !campusId)
+      return res
+        .status(400)
+        .json({ message: "name, universityId, campusId  are required" });
+    if (name === "" || universityId === "" || campusId === "")
+      return res
+        .status(400)
+        .json({ message: "name, universityId, campusId  are required" });
+
+    const findUni = await University.findOne({ _id: universityId });
+    if (!findUni)
+      return res.status(404).json({ message: "no such University found" });
+
+    const findCampus = await Campus.findOne({
+      _id: campusId,
+      universityOrigin: universityId,
+    });
+    if (!findCampus)
+      return res.status(404).json({ message: "no such Campus found" });
+
+    const department = await Department.findOne({
+      name: name,
+      "references.universityOrigin": universityId,
+      "references.campusOrigin": campusId,
+    });
+    if (department)
+      return res.status(300).json({ message: "Department already exists" });
+
+    const departmentCreated = await Department.create({
+      name: name,
+      "references.universityOrigin": universityId,
+      "references.campusOrigin": campusId,
+    });
+
+    departmentCreated.save();
+
+    findCampus.departments.push(departmentCreated);
+    findCampus.save();
+
+    const cacheKey = `campus_and_subjects-${campusId}`;
+    await redisClient.del(cacheKey);
+
+    res.status(200).json({ message: departmentCreated });
+  } catch (error) {
+    console.error("Error in department:", error);
+    res.status(500).json({ message: error.message });
+  }
+});
+
+
+// ? SUBJECT
+// creates a subject then create a pastpaper id and attach to subject [default]
+
+router.post("/subject/create", async (req, res) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+  try {
+    const { name, departmentId, universityOrigin, campusOrigin } = req.body;
+
+    const findUni = await University.findOne({ _id: universityOrigin }).session(session);
+    if (!findUni) {
+      await session.abortTransaction();
+      return res.status(404).json({ message: "No such University found" });
+    }
+
+    const findCampus = await Campus.findOne({
+      _id: campusOrigin,
+      universityOrigin: universityOrigin,
+    }).session(session);
+    if (!findCampus) {
+      await session.abortTransaction();
+      return res.status(404).json({ message: "No such Campus found" });
+    }
+
+    if (!findCampus.academic?.FormatType) {
+      await session.abortTransaction();
+      return res
+        .status(302)
+        .json({ message: "Please complete university academic format to continue" });
+    }
+
+    const findDepartment = await Department.findOne({
+      _id: departmentId,
+      "references.campusOrigin": campusOrigin,
+      "references.universityOrigin": universityOrigin,
+    }).session(session);
+    if (!findDepartment) {
+      await session.abortTransaction();
+      return res.status(404).json({ message: "No such Department found" });
+    }
+
+    const subject = await Subject.create([{
+      name: name,
+      "references.departmentId": departmentId,
+      "references.universityOrigin": universityOrigin,
+      "references.campusOrigin": campusOrigin,
+    }], { session });
+
+    const createPastpaperCollectionByYear =
+      await PastpapersCollectionByYear.create([{
+        _id: subject[0]._id,
+        type: findCampus.academic.FormatType,
+        references: {
+          universityOrigin: findUni._id,
+          subjectId: subject[0]._id,
+          campusOrigin: findCampus._id,
+        },
+      }], { session });
+
+    subject[0].pastpapersCollectionByYear = subject[0]._id;
+    await subject[0].save({ session });
+
+    findDepartment.subjects.push(subject[0]._id);
+    await findDepartment.save({ session });
+
+    await session.commitTransaction();
+    session.endSession();
+
+    return res.status(200).json(subject[0]);
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    console.error("Error in subject creation:", error);
+    return res.status(500).json({ message: error.message });
+  }
+});
+
+
+
+
+
+
+router.put("/teacher/reviews/feedbacks/hide", async (req, res) => {
+  const { teacherId, reviewId, reason } = req.body;
+  
+
+  if (!teacherId || !reviewId) {
+    return res.status(400).json({ message: "Missing required fields" });
+  }
+
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    const review = await TeacherRating.findOneAndUpdate({ teacherId, _id: reviewId }, {hiddenBySuper: true, reason: reason}).session(session);
+console.log("REVIEW ", review?._id)
+    if (!review) {
+      await session.abortTransaction();
+      session.endSession();
+      return res.status(404).json({ message: "Review not found" });
+    }
+
+    const teacher = await Teacher.findById(teacherId).session(session);
+    if (teacher) {
+      const reviewRating = review.rating;
+      const totalRatings = teacher.ratingsByStudents.length;
+
+      if (totalRatings > 1) {
+        const newRating =
+          (teacher.rating * totalRatings - reviewRating) / (totalRatings - 1);
+        teacher.ratingsByStudents = teacher.ratingsByStudents.filter(
+          (rating) => !rating.equals(review._id)
+        );
+        teacher.rating = newRating;
+      } else {
+        teacher.rating = 0;
+        teacher.ratingsByStudents = [];
+      }
+
+      await teacher.save({ session });
+
+      // Invalidate relevant Redis caches
+      // await Promise.all([
+      //   redisClient.del(`campus_teachers_${teacher.campusOrigin}`),
+      //   redisClient.del(`campus_teacher_${teacherId}`)
+      // ]);
+    }
+
+    await session.commitTransaction();
+    session.endSession();
+
+    res.status(200).json({ message: "Review hidden successfully" });
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    console.error("Error hiding review:", error);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+
+router.put("/teacher/hide", async (req, res) => {
+  const { teacherId } = req.query;
+  const {reason} = req.body;
+  try {
+
+    const teacher = await Teacher.findByIdAndUpdate(teacherId, {reason, hiddenBySuper: true});
+    if (!teacher) {
+      return res.status(404).json({ message: "Teacher not found" });
+    }
+
+    res.status(200).json({ message: "Teacher Hidden"});
+  } catch (error) {
+    console.error("Error In teacherSpeficicInfo", {
+      message: "Server error",
+      error: error.message,
+    });
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+});
+
+
+router.put("/teacher/un-hide", async (req, res) => {
+  const { teacherId } = req.query;
+  const {reason} = req.body;
+  try {
+
+    const teacher = await Teacher.findByIdAndUpdate(teacherId, {reason, hiddenBySuper: false});
+    if (!teacher) {
+      return res.status(404).json({ message: "Teacher not found" });
+    }
+
+    res.status(200).json({ message: "Teacher <UN>-Hidden"});
+  } catch (error) {
+    console.error("Error In teacherSpeficicInfo", {
+      message: "Server error",
+      error: error.message,
+    });
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+});
+
+
+
+
+router.put('/teacher/reply/feedback/hide', async (req, res) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    const { feedbackReviewId } = req.query;
+    const {reason} = req.body;
+
+    // Create feedback comment
+    const commentedOnaFeedback = await FeedBackCommentTeacher.findByIdAndUpdate(feedbackReviewId, {hiddenBySuper: true, reason: reason}, { session });
+    if(!commentedOnaFeedback){
+      return res.status(402).json({error: "Feedback could not be hidden"})
+    }
+    await session.commitTransaction();
+    session.endSession();
+
+    res.status(201).json({ message: "Feedback reply hidden successfully"});
+  } catch (error) {
+    // Rollback transaction in case of error
+    await session.abortTransaction();
+    session.endSession();
+
+    console.error("Error in /reply/feedback: ", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+router.put('/teacher/reply/reply/feedback/hide', async (req, res) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    const { feedbackCommentId } = req.query;
+    const {reason} = req.body;
+
+    // console.log("DATA", feedbackCommentId)
+
+    // Create feedback comment
+    const commentedOnaFeedback = await FeedBackCommentTeacher.findByIdAndUpdate(feedbackCommentId, {hiddenBySuper: true, reason: reason}, { session });
+    if(!commentedOnaFeedback){
+      return res.status(402).json({error: "Feedback could not be hidden"})
+    }
+    await session.commitTransaction();
+    session.endSession();
+
+    res.status(201).json({ message: "Feedback reply hidden successfully"});
+  } catch (error) {
+    // Rollback transaction in case of error
+    await session.abortTransaction();
+    session.endSession();
+
+    console.error("Error in /reply/feedback: ", error);
+    res.status(500).json({ message: "Internal Server Error" });
   }
 });
 

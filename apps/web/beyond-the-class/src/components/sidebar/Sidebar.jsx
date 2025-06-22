@@ -179,7 +179,11 @@ function Sidebar() {
       name: "Universities",
       path: "/super/universities",
       icon: <FaBuilding className="w-5" />,
+      submenu: [
+        { name: "Create", path: "/super/university/create" },
+      ],
     },
+    
     {
       name: "Campuses",
       path: "/super/campuses",
@@ -192,8 +196,11 @@ function Sidebar() {
     },
     {
       name: "Teachers",
-      path: "/super/teachers",
+      path: "/super/teachers/view",
       icon: <SettingsIcon className="w-5" />,
+      submenu: [
+        { name: "Create", path: "/super/teacher/create" },
+      ]
     },
     {
       name: "Users",
@@ -205,7 +212,27 @@ function Sidebar() {
       path: `/super/societies`,
       icon: <FaMedapps className="w-5" />,
     },
-
+    {
+      name: "Reports",
+      path: `/super/reports`,
+      icon: <FaMedapps className="w-5" />,
+      submenu: [
+        { name: "Teacher Reviews", path: "/super/reports/teacher-reviews" },
+        { name: "Posts", path: "/super/reports/posts" },
+        { name: "Comments", path: "/super/reports/comments" },
+        { name: "Profiles", path: "/super/reports/profiles" },
+        { name: "Societies", path: "/super/reports/societies" },
+      ]
+    },
+    {
+      name: "Post",
+      path: `/super/post`,
+      icon: <FaMedapps className="w-5" />,
+      submenu: [
+        { name: "Create", path: "/super/post/create" },
+        { name: "Manage", path: "/super/post/manage" },
+      ]
+    },
     {
       name: "Teachers",
       path: `/super/teachers`,

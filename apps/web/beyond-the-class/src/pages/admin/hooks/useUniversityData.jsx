@@ -29,7 +29,7 @@ export default function useUniversityData() {
         const fetch = async () => {
             try {
 
-                const response = await axiosInstance.get("/api/university/")
+                const response = await axiosInstance.get("/api/super/university/")
                 // console.log(response.data)
 
                 setUniversities(response.data);

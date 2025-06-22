@@ -3,7 +3,7 @@ import AlumniHome from "./alumni/AlumniDashboard";
 import TeacherDashboard from "./teacher/TeacherDashboard";
 import ExternalOrgDashboard from "./externalOrgranization/ExternalOrgDashboard";
 import StudentDashboard from "./student/StudentDashboard";
-import AddUniversityPage from "../admin/add/AddUniversityPage";
+import AddUniversityPage from "../admin/sidebar_pages/universities/AddUniversityPage";
 import CompleteYourInfo from "../noAccess/CompleteYourInfo";
 
 export default function AllHome() {
