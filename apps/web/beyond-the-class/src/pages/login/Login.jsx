@@ -162,6 +162,65 @@ useEffect(() => {
 
 
       </form>
+
+      {/* Mobile: Compact Better on the app section below login button */}
+      <div className="block md:hidden w-full max-w-md mx-auto mt-6 rounded-xl border bg-white dark:bg-[#18181b] shadow p-4 flex flex-col items-center">
+        <h2 className="font-semibold text-base mb-1 text-center dark:text-white">Better on the app</h2>
+        <p className="text-xs text-gray-600 dark:text-gray-300 mb-2 text-center">Connect, explore universities, access past papers & teacher reviews. One platform for all campus life.</p>
+        <a
+          href="https://linktr.ee/socian.app"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="dark:text-white text-black font-medium underline text-sm hover:text-blue-700 dark:hover:text-blue-400"
+        >
+          <p className="text-sm">Explore the app</p>
+        </a>
+      </div>
+
+      {/* Desktop: Floating QR code section */}
+      <div className="hidden md:fixed md:z-50 md:bottom-4 md:right-4 md:w-80 md:max-w-[90vw] md:rounded-xl md:border md:bg-white md:dark:bg-[#18181b] md:shadow-lg md:p-4 md:flex md:flex-col md:items-center md:transition-all md:duration-300"
+        style={{boxShadow: '0 4px 24px 0 rgba(0,0,0,0.12)'}}
+      >
+        <h2 className="font-semibold text-lg mb-2 text-center dark:text-white">Better on the app</h2>
+        <p className="text-sm text-gray-600 dark:text-gray-300 mb-4 text-center">Connect, explore universities, access past papers & teacher reviews. One platform for all campus life.</p>
+        <div className="flex flex-row gap-6 items-center justify-center w-full">
+          {/* LinkedIn QR */}
+          <div className="flex flex-col items-center">
+            <div className="bg-white dark:bg-black p-2 rounded-lg border mb-2">
+              <img
+                src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=https://www.linkedin.com/company/socian-app/"
+                alt="LinkedIn QR"
+                width={100}
+                height={100}
+                className="rounded"
+              />
+            </div>
+            <span className="text-xs text-gray-700 dark:text-gray-300">LinkedIn</span>
+          </div>
+          {/* App QR (SVG) */}
+          <div className="flex flex-col items-center">
+            <div className="bg-white dark:bg-white p-2 rounded-lg border mb-2">
+              <img
+                src={'/socian.app.svg'}
+                alt="Socian App QR"
+                width={100}
+                height={100}
+                className="rounded"
+              />
+            </div>
+            <span className="text-xs text-gray-700 dark:text-gray-300">@socian.app</span>
+          </div>
+        </div>
+        <a
+          href="https://linktr.ee/socian.app"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-4 dark:text-white text-black font-medium underline text-sm hover:text-blue-700 dark:hover:text-blue-400"
+        >
+          <p className="text-sm">Explore the app</p>
+        </a>
+      </div>
+
     </div>
   );
 }
