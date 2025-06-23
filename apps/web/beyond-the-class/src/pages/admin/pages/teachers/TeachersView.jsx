@@ -903,15 +903,15 @@ export default function TeachersView() {
                                                             src={teacher.imageUrl || "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg"}
                                                             alt={teacher.name}
                                                         />
-                                                    </div>
+                                                        </div>
                                                     <div className="ml-4">
                                                         <div className="text-sm font-medium text-gray-900 dark:text-white">
                                                             {teacher.name}
-                                                        </div>
+                                                    </div>
                                                         <div className="text-sm text-gray-500 dark:text-gray-400">
                                                             {teacher.email || "No email"}
-                                                        </div>
                                                     </div>
+                                                </div>
                                                 </div>
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap">

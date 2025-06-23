@@ -4,7 +4,7 @@ const router = express.Router();
 const University = require("../../models/university/university.register.model");
 const Campus = require("../../models/university/campus.university.model");
 const redisClient = require("../../db/reddis");
-const mongoose= require('mongoose')
+const mongoose = require('mongoose')
 //  Routes
 router.post("/register", async (req, res) => {
   const session = await mongoose.startSession();
@@ -156,6 +156,32 @@ router.get('/edit', async (req, res) => {
   }
 });
 
+router.get('/:campusId/departments', async (req, res) => {
+  try {
+    const id = req.params.campusId;
+
+    if (!id) {
+      return res.status(404).json("Requires Campus Origin");
+    }
+
+    const campus = await Campus.findById(id)
+      .populate([
+        {
+          path: 'departments',
+        }]);
+
+    if (!campus) {
+      return res.status(404).json("Not Found Campus Origin");
+    }
+
+    res.status(200).json({departments:campus.departments});
+  } catch (error) {
+    console.error(error);
+    res.status(500).json("Internal Server Error");
+  }
+});
+
+
 
 
 router.get('/:campusId', async (req, res) => {
@@ -194,65 +220,6 @@ router.get('/:campusId', async (req, res) => {
     res.status(500).json("Internal Server Error");
   }
 });
-
-// router.get('/edit', async (req, res) => {
-//   try {
-//     const id = req.query.campusId;
-
-//     if (!id) {
-//       return res.status(404).json("Requires Campus Origin");
-//     }
-
-//     const campus = await Campus.findById(id)
-//       .populate([
-//         { path: 'universityOrigin', select: 'name location' },
-//         {
-//           path: 'departments',
-//           populate: { path: 'subjects', select: 'name' },
-//         },
-//         { path: 'users', select: 'name email role' },
-//       ]);
-
-//     if (!campus) {
-//       return res.status(404).json("Not Found Campus Origin");
-//     }
-
-//     res.status(200).json(campus);
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json("Internal Server Error");
-//   }
-// });
-
-// router.get('/edit', async (req, res) => {
-
-//   try {
-//     const id = req.query.campusId;
-//     // console.log(req.params, req.query)
-//     if (!id) return res.status(404).json("Requires Campus Origin")
-
-//     const campus = await Campus.findById({ _id: id })
-//       .populate('universityOrigin  departments.subjects users')
-
-//     if (!campus) return res.status(404).json("Not Found Campus Origin")
-
-//     // console.log(campus)
-
-//     res.status(200).json(campus)
-
-
-
-
-
-
-//   } catch (error) {
-//     console.error(error)
-//     res.status(500).json("Internal Server Error")
-//   }
-
-// })
-
-
 
 
 

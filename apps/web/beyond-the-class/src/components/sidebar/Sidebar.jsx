@@ -200,6 +200,7 @@ function Sidebar() {
       icon: <SettingsIcon className="w-5" />,
       submenu: [
         { name: "Create", path: "/super/teacher/create" },
+        { name: "Bulk Store", path: "/super/teacher/bulk-store" },
       ]
     },
     {

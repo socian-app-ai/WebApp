@@ -57,6 +57,9 @@ import PrivacyPage from './pages/privacy/Privacy.jsx';
 import DeleteAccountPage from './pages/auth/delete/DeleteAccountPage.jsx';
 import Societies from './pages/admin/sidebar_pages/campuses/societies/Societies.jsx';
 import TeachersView from './pages/admin/pages/teachers/TeachersView.jsx';
+import TeachersBulkStore from './pages/admin/sidebar_pages/teachers/TeachersBulkStore.jsx';
+import CreatePost from './pages/admin/sidebar_pages/post/CreatePost.jsx';
+import PostManage from './pages/admin/sidebar_pages/post/PostManage.jsx';
 
 const router = createBrowserRouter([
   {
@@ -150,10 +153,14 @@ const router = createBrowserRouter([
 
           { path: "teacher/create", element: <Layout> <AddTeacher /></Layout> },
           { path: 'teachers/view', element: <Layout> <TeachersView /></Layout> },
+          { path: 'teacher/bulk-store', element: <Layout> <TeachersBulkStore /></Layout> },
 
           { path: "pastpapers/upload", element: <Layout> <UploadForm /></Layout> },
 
           { path: "societies", element: <Layout> <Societies /></Layout> },
+
+          { path: "post/create", element: <Layout> <CreatePost /></Layout> },
+          { path: "post/manage", element: <Layout> <PostManage /></Layout> },
 
         ],
       },
