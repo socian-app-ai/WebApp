@@ -9,12 +9,17 @@ export default function CreatePost() {
         body: '',
         universityOrigin: '',
         campusOrigin: '',
+        forCampus: false,
+        forUniversity: false,
+        forAllUniversites: false,
         files: []
     });
 
+    const [targetType, setTargetType] = useState('university'); // 'university', 'campus', 'all'
     const [errors, setErrors] = useState({});
     const [showErrors, setShowErrors] = useState(false);
     const [saving, setSaving] = useState(false);
+    const [apiError, setApiError] = useState('');
 
     const {
         UniversitySelector,
@@ -36,12 +41,13 @@ export default function CreatePost() {
             newErrors.body = 'Post content is required';
         }
         
-        if (!post.universityOrigin) {
-            newErrors.universityOrigin = 'University is required';
-        }
-        
-        if (!post.campusOrigin) {
-            newErrors.campusOrigin = 'Campus is required';
+        // Validate target selection based on targetType
+        if (targetType === 'university' && !post.universityOrigin) {
+            newErrors.target = 'University is required';
+        } else if (targetType === 'campus' && !post.campusOrigin) {
+            newErrors.target = 'Campus is required';
+        } else if (targetType === 'all') {
+            // No validation needed for "all universities"
         }
         
         setErrors(newErrors);
@@ -58,9 +64,39 @@ export default function CreatePost() {
         }
     };
 
+    const clearApiError = () => {
+        setApiError('');
+    };
+
     const handleInputChange = (field, value) => {
         setPost(prev => ({ ...prev, [field]: value }));
         clearError(field);
+        clearApiError();
+    };
+
+    const handleTargetTypeChange = (type) => {
+        setTargetType(type);
+        clearError('target');
+        clearApiError();
+        
+        // Reset all target flags and set the appropriate one
+        setPost(prev => ({ 
+            ...prev, 
+            universityOrigin: '',
+            campusOrigin: '',
+            forCampus: false,
+            forUniversity: false,
+            forAllUniversites: false
+        }));
+        
+        // Set the appropriate flag based on target type
+        if (type === 'university') {
+            setPost(prev => ({ ...prev, forUniversity: true }));
+        } else if (type === 'campus') {
+            setPost(prev => ({ ...prev, forCampus: true }));
+        } else if (type === 'all') {
+            setPost(prev => ({ ...prev, forAllUniversites: true }));
+        }
     };
 
     const handleUniversityChange = (event, value) => {
@@ -74,8 +110,8 @@ export default function CreatePost() {
             universityOrigin: value ? value._id : '',
             campusOrigin: '' // Reset campus when university changes
         }));
-        clearError('universityOrigin');
-        clearError('campusOrigin');
+        clearError('target');
+        clearApiError();
     };
 
     const handleCampusChange = (event, value) => {
@@ -88,17 +124,20 @@ export default function CreatePost() {
             ...prev, 
             campusOrigin: value ? value._id : ''
         }));
-        clearError('campusOrigin');
+        clearError('target');
+        clearApiError();
     };
 
     const handleFileChange = (e) => {
         const files = Array.from(e.target.files);
         setPost(prev => ({ ...prev, files }));
         clearError('files');
+        clearApiError();
     };
 
     const handleSave = async () => {
         setShowErrors(true);
+        setApiError('');
         
         if (!validateForm()) {
             return;
@@ -109,8 +148,23 @@ export default function CreatePost() {
             const formData = new FormData();
             formData.append('title', post.title);
             formData.append('body', post.body);
-            formData.append('universityOrigin', post.universityOrigin);
-            formData.append('campusOrigin', post.campusOrigin);
+            
+            // Add target-specific fields based on targetType
+            if (targetType === 'university' && post.universityOrigin) {
+                formData.append('universityOrigin', post.universityOrigin);
+                formData.append('forUniversity', 'true');
+                formData.append('forCampus', 'false');
+                formData.append('forAllUniversites', 'false');
+            } else if (targetType === 'campus' && post.campusOrigin) {
+                formData.append('campusOrigin', post.campusOrigin);
+                formData.append('forCampus', 'true');
+                formData.append('forUniversity', 'false');
+                formData.append('forAllUniversites', 'false');
+            } else if (targetType === 'all') {
+                formData.append('forAllUniversites', 'true');
+                formData.append('forCampus', 'false');
+                formData.append('forUniversity', 'false');
+            }
             
             // Append files if any
             if (post.files && post.files.length > 0) {
@@ -133,13 +187,35 @@ export default function CreatePost() {
                 body: '',
                 universityOrigin: '',
                 campusOrigin: '',
+                forCampus: false,
+                forUniversity: false,
+                forAllUniversites: false,
                 files: []
             });
+            setTargetType('university');
             setShowErrors(false);
             setErrors({});
+            setApiError('');
 
         } catch (error) {
             console.error('Error creating post:', error);
+            
+            // Handle different types of errors
+            if (error.response) {
+                const errorMessage = error.response.data;
+                if (typeof errorMessage === 'string') {
+                    setApiError(errorMessage);
+                } else if (errorMessage.message) {
+                    setApiError(errorMessage.message);
+                } else {
+                    setApiError('Failed to create post. Please try again.');
+                }
+            } else if (error.request) {
+                setApiError('Network error. Please check your connection and try again.');
+            } else {
+                setApiError('An unexpected error occurred. Please try again.');
+            }
+            
             toast.error('Failed to create post');
         } finally {
             setSaving(false);
@@ -182,6 +258,29 @@ export default function CreatePost() {
                     </div>
                 </div>
 
+                {/* API Error Display */}
+                {apiError && (
+                    <div className="mb-6 rounded-lg border border-destructive/50 bg-destructive/10 p-4">
+                        <div className="flex items-start space-x-3">
+                            <svg className="w-5 h-5 text-destructive mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <div className="flex-1">
+                                <h3 className="text-sm font-medium text-destructive">Error Creating Post</h3>
+                                <p className="mt-1 text-sm text-destructive/90">{apiError}</p>
+                            </div>
+                            <button
+                                onClick={clearApiError}
+                                className="text-destructive/70 hover:text-destructive transition-colors"
+                            >
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                )}
+
                 {/* Form */}
                 <div className="max-w-4xl mx-auto space-y-8">
                     {/* Post Information Card */}
@@ -195,7 +294,7 @@ export default function CreatePost() {
                             <div className="space-y-6">
                                 <div className="space-y-2">
                                     <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-foreground">
-                                        Post Title
+                                        Post Title <span className="text-destructive">*</span>
                                     </label>
                                     <input
                                         type="text"
@@ -210,13 +309,18 @@ export default function CreatePost() {
                                         onChange={(e) => handleInputChange('title', e.target.value)}
                                     />
                                     {showErrors && errors.title && (
-                                        <p className="text-sm text-destructive">{errors.title}</p>
+                                        <div className="flex items-center space-x-2 text-sm text-destructive">
+                                            <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                            </svg>
+                                            <span>{errors.title}</span>
+                                        </div>
                                     )}
                                 </div>
 
                                 <div className="space-y-2">
                                     <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-foreground">
-                                        Post Content
+                                        Post Content <span className="text-destructive">*</span>
                                     </label>
                                     <textarea
                                         className={`flex min-h-[120px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 resize-none ${
@@ -229,60 +333,144 @@ export default function CreatePost() {
                                         onChange={(e) => handleInputChange('body', e.target.value)}
                                     />
                                     {showErrors && errors.body && (
-                                        <p className="text-sm text-destructive">{errors.body}</p>
+                                        <div className="flex items-center space-x-2 text-sm text-destructive">
+                                            <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                            </svg>
+                                            <span>{errors.body}</span>
+                                        </div>
                                     )}
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    {/* Institution Information Card */}
+                    {/* Target Selection Card */}
                     <div className="rounded-lg border bg-card text-card-foreground shadow-sm">
                         <div className="p-6">
                             <div className="flex items-center space-x-2 mb-6">
                                 <div className="w-2 h-2 bg-primary rounded-full"></div>
-                                <h2 className="text-lg font-semibold text-foreground">Target Institution</h2>
+                                <h2 className="text-lg font-semibold text-foreground">Target Selection</h2>
                             </div>
                             
-                            <div className="grid gap-6 md:grid-cols-2">
-                                <div className="space-y-2">
+                            <div className="space-y-4">
+                                <div className="space-y-3">
                                     <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-foreground">
-                                        University
+                                        Choose Target <span className="text-destructive">*</span>
                                     </label>
-                                    <div className={`${
-                                        showErrors && errors.universityOrigin 
-                                            ? 'border-destructive' 
-                                            : ''
-                                    }`}>
-                                        {React.cloneElement(UniversitySelector, {
-                                            onChange: handleUniversityChange,
-                                            value: currentUniversity
-                                        })}
+                                    
+                                    <div className="space-y-3">
+                                        <label className="flex items-center space-x-3 cursor-pointer">
+                                            <input
+                                                type="radio"
+                                                name="targetType"
+                                                value="university"
+                                                checked={targetType === 'university'}
+                                                onChange={() => handleTargetTypeChange('university')}
+                                                className="h-4 w-4 text-primary border-input focus:ring-primary"
+                                            />
+                                            <div className="flex flex-col">
+                                                <span className="text-sm font-medium text-foreground">Specific University</span>
+                                                <span className="text-xs text-muted-foreground">Post will be visible to all campuses of the selected university</span>
+                                            </div>
+                                        </label>
+
+                                        <label className="flex items-center space-x-3 cursor-pointer">
+                                            <input
+                                                type="radio"
+                                                name="targetType"
+                                                value="campus"
+                                                checked={targetType === 'campus'}
+                                                onChange={() => handleTargetTypeChange('campus')}
+                                                className="h-4 w-4 text-primary border-input focus:ring-primary"
+                                            />
+                                            <div className="flex flex-col">
+                                                <span className="text-sm font-medium text-foreground">Specific Campus</span>
+                                                <span className="text-xs text-muted-foreground">Post will be visible only to the selected campus</span>
+                                            </div>
+                                        </label>
+
+                                        <label className="flex items-center space-x-3 cursor-pointer">
+                                            <input
+                                                type="radio"
+                                                name="targetType"
+                                                value="all"
+                                                checked={targetType === 'all'}
+                                                onChange={() => handleTargetTypeChange('all')}
+                                                className="h-4 w-4 text-primary border-input focus:ring-primary"
+                                            />
+                                            <div className="flex flex-col">
+                                                <span className="text-sm font-medium text-foreground">All Universities</span>
+                                                <span className="text-xs text-muted-foreground">Post will be visible to all universities and campuses</span>
+                                            </div>
+                                        </label>
                                     </div>
-                                    {showErrors && errors.universityOrigin && (
-                                        <p className="text-sm text-destructive">{errors.universityOrigin}</p>
+                                    
+                                    {showErrors && errors.target && (
+                                        <div className="flex items-center space-x-2 text-sm text-destructive">
+                                            <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                            </svg>
+                                            <span>{errors.target}</span>
+                                        </div>
                                     )}
                                 </div>
 
-                                <div className="space-y-2">
-                                    <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-foreground">
-                                        Campus
-                                    </label>
-                                    <div className={`${
-                                        showErrors && errors.campusOrigin 
-                                            ? 'border-destructive' 
-                                            : ''
-                                    }`}>
-                                        {React.cloneElement(CampusSelector, {
-                                            onChange: handleCampusChange,
-                                            disabled: !currentUniversity || !currentUniversity._id,
-                                            value: currentCampus
-                                        })}
+                                {/* Conditional Target Selection Fields */}
+                                {targetType === 'university' && (
+                                    <div className="space-y-2 pt-4 border-t border-border">
+                                        <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-foreground">
+                                            Select University <span className="text-destructive">*</span>
+                                        </label>
+                                        <div>
+                                            {React.cloneElement(UniversitySelector, {
+                                                onChange: handleUniversityChange,
+                                                value: currentUniversity
+                                            })}
+                                        </div>
                                     </div>
-                                    {showErrors && errors.campusOrigin && (
-                                        <p className="text-sm text-destructive">{errors.campusOrigin}</p>
-                                    )}
-                                </div>
+                                )}
+
+                                {targetType === 'campus' && (
+                                    <div className="space-y-4 pt-4 border-t border-border">
+                                        <div className="space-y-2">
+                                            <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-foreground">
+                                                Select University (Optional)
+                                            </label>
+                                            <div>
+                                                {React.cloneElement(UniversitySelector, {
+                                                    onChange: handleUniversityChange,
+                                                    value: currentUniversity
+                                                })}
+                                            </div>
+                                        </div>
+                                        
+                                        <div className="space-y-2">
+                                            <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-foreground">
+                                                Select Campus <span className="text-destructive">*</span>
+                                            </label>
+                                            <div>
+                                                {React.cloneElement(CampusSelector, {
+                                                    onChange: handleCampusChange,
+                                                    value: currentCampus
+                                                })}
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {targetType === 'all' && (
+                                    <div className="pt-4 border-t border-border">
+                                        <div className="flex items-center space-x-2 p-3 rounded-md bg-muted/50">
+                                            <svg className="w-5 h-5 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                            </svg>
+                                            <span className="text-sm text-muted-foreground">
+                                                This post will be visible to all universities and campuses in the system.
+                                            </span>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>

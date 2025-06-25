@@ -207,22 +207,29 @@ function Sidebar() {
       name: "Users",
       path: "/super/users",
       icon: <FaBuilding className="w-5" />,
+      submenu: [
+        { name: "Manage", path: "/super/user/manage" },
+        
+      ]
     },
     {
       name: "Societies",
       path: `/super/societies`,
       icon: <FaMedapps className="w-5" />,
+      submenu: [
+        { name: "Society Types", path: "/super/societies/types" },
+      ]
     },
     {
       name: "Reports",
-      path: `/super/reports`,
+      path: `/super/reported`,
       icon: <FaMedapps className="w-5" />,
       submenu: [
-        { name: "Teacher Reviews", path: "/super/reports/teacher-reviews" },
-        { name: "Posts", path: "/super/reports/posts" },
-        { name: "Comments", path: "/super/reports/comments" },
-        { name: "Profiles", path: "/super/reports/profiles" },
-        { name: "Societies", path: "/super/reports/societies" },
+        { name: "Teacher Reviews", path: "/super/reported/teacher-reviews" },
+        { name: "Posts", path: "/super/reported/posts" },
+        { name: "Comments", path: "/super/reported/comments" },
+        { name: "Profiles", path: "/super/reported/profiles" },
+        { name: "Societies", path: "/super/reported/societies" },
       ]
     },
     {
@@ -235,9 +242,17 @@ function Sidebar() {
       ]
     },
     {
-      name: "Teachers",
-      path: `/super/teachers`,
+      name: "Verifications",
+      path: `/super/verifications`,
       icon: <FaMedapps className="w-5" />,
+      submenu: [
+        
+        { name: "Alumni", path: "/super/verifications/alumni" },
+        { name: "Societies", path: "/super/verifications/societies" },
+        { name: "Mod Requests", path: "/super/verifications/mod-requests"  },
+        { name: "Mod User & Collection", path: "/super/verifications/mod-user-and-collection"  },
+        {name: "Mod Actions", path: "/super/verifications/mod-actions"  },
+      ]
     },
 
     {

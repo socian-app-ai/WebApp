@@ -60,6 +60,10 @@ import TeachersView from './pages/admin/pages/teachers/TeachersView.jsx';
 import TeachersBulkStore from './pages/admin/sidebar_pages/teachers/TeachersBulkStore.jsx';
 import CreatePost from './pages/admin/sidebar_pages/post/CreatePost.jsx';
 import PostManage from './pages/admin/sidebar_pages/post/PostManage.jsx';
+import ModRequests from './pages/admin/sidebar_pages/verifications/ModRequests.jsx';
+import ModUserAndCollection from './pages/admin/sidebar_pages/verifications/ModUserAndCollection.jsx';
+import ModActions from './pages/admin/sidebar_pages/verifications/ModActions.jsx';
+import SocietyTypes from './pages/admin/sidebar_pages/campuses/societies/SocietyTypes.jsx';
 
 const router = createBrowserRouter([
   {
@@ -158,10 +162,15 @@ const router = createBrowserRouter([
           { path: "pastpapers/upload", element: <Layout> <UploadForm /></Layout> },
 
           { path: "societies", element: <Layout> <Societies /></Layout> },
-
+          { path: "societies/types", element: <Layout> <SocietyTypes /></Layout> },
           { path: "post/create", element: <Layout> <CreatePost /></Layout> },
           { path: "post/manage", element: <Layout> <PostManage /></Layout> },
 
+          // { path: "verifications/alumni", element: <Layout> <AlumniVerifications /></Layout> },
+          // { path: "verifications/societies", element: <Layout> <SocietiesVerifications /></Layout> },
+          { path: "verifications/mod-requests", element: <Layout> <ModRequests /></Layout> },
+          { path: "verifications/mod-user-and-collection", element: <Layout> <ModUserAndCollection /></Layout> },
+          { path: "verifications/mod-actions", element: <Layout> <ModActions /></Layout> },
         ],
       },
 
@@ -193,7 +202,6 @@ const router = createBrowserRouter([
 
         ],
       },
-
 
 
       // !STUDENT
@@ -241,14 +249,12 @@ const router = createBrowserRouter([
           // { path: "discussion/:toBeDisccusedId", element: <Layout> <OneDiscussion /></Layout> },
 
 
-
           // { path: "gps", element: <Layout> <CreateEvent /></Layout> },
           { path: "societies", element: <Layout> <AllSocieties /></Layout> },
           { path: "society/:id", element: <Layout> <Society /></Layout> },
 
         ],
       },
-
 
 
 
@@ -260,12 +266,9 @@ const router = createBrowserRouter([
   },
 ]);
 
-
 const options = {
   api_host: import.meta.env.VITE_PUBLIC_POSTHOG_HOST,
 }
-
-
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -284,5 +287,3 @@ createRoot(document.getElementById('root')).render(
     </PostHogProvider>
   </StrictMode>,
 )
-
-

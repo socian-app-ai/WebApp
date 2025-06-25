@@ -105,7 +105,7 @@ export default function PostManage() {
         );
     }
 
-    return (
+  return (
         <div className="min-h-screen bg-background">
             <div className="container mx-auto py-8 px-4 sm:px-6 lg:px-8">
                 {/* Header */}

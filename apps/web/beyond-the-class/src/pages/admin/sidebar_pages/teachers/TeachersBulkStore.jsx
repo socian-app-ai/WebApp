@@ -200,7 +200,7 @@ export default function TeachersBulkStore() {
         window.URL.revokeObjectURL(url);
     };
 
-    return (
+  return (
         <div className="space-y-6 p-6 bg-white dark:bg-black text-black dark:text-white">
             {/* Header */}
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
