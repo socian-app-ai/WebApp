@@ -252,6 +252,7 @@ function Sidebar() {
         { name: "Mod Requests", path: "/super/verifications/mod-requests"  },
         { name: "Mod User & Collection", path: "/super/verifications/mod-user-and-collection"  },
         {name: "Mod Actions", path: "/super/verifications/mod-actions"  },
+        {name: "Society Verifications", path: "/super/verifications/society-verifications"  },
       ]
     },
 
