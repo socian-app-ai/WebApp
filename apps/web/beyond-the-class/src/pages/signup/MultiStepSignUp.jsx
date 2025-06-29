@@ -124,8 +124,7 @@ function Step1({ formData, setFormData, onNext }) {
                 <div className="text-center my-3 max-w-[24rem]">
                     <p className="text-[#c4c3c3]">
                         By clicking continue, you agree to our{" "}
-                        <a className="dark:text-[#f7f7f7] text-black">Terms of Service</a> and{" "}
-                        <a className="dark:text-[#f3f3f3] text-black">Privacy Policy</a>
+                        <a href="/privacy" target="_blank" className="dark:text-[#f7f7f7] text-black underline">Terms of Service & Privacy Policy</a>
                     </p>
                 </div>
             </form>
