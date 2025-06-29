@@ -17,6 +17,7 @@ export default function AddUniversityPage() {
     // const [isNewUniversity, setIsNewUniversity] = useState(false);
     const [loading, setLoading] = useState(false);
     const [saving, setSaving] = useState(false);
+    const [logoFile, setLogoFile] = useState(null);
 
     const { universityId } = useParams();
     const navigate = useNavigate();
@@ -47,16 +48,67 @@ export default function AddUniversityPage() {
     const handleSave = async () => {
         try {
             setSaving(true);
-            if (universityId) {
-                await axiosInstance.put(`/api/super/university/${universityId}`, currentUniversity);
+            
+            if (logoFile) {
+                // Create FormData for multipart upload
+                const formData = new FormData();
+                formData.append('file', logoFile);
+                console.log("logoFile",logoFile);
+                // Append other university data
+                Object.keys(currentUniversity).forEach(key => {
+                    if (currentUniversity[key] !== null && currentUniversity[key] !== undefined) {
+                        formData.append(key, currentUniversity[key]);
+                    }
+                });
+
+                // Debug FormData contents
+                console.log("logoFile", logoFile);
+                console.log("currentUniversity", currentUniversity);
+                
+                // Verify FormData contents
+                console.log("FormData contents:");
+                for (let [key, value] of formData.entries()) {
+                    console.log(key, value);
+                }
+                
+                // Alternative way to check specific entries
+                console.log("File in FormData:", formData.has('file'));
+                console.log("File value:", formData.get('file'));
+                
+                if (universityId) {
+                    await axiosInstance.put(`/api/super/university/${universityId}`, formData, {
+                        headers: {
+                            'Content-Type': 'multipart/form-data',
+                        },
+                    });
+                } else {
+                    await axiosInstance.post('/api/super/university/register', formData, {
+                        headers: {
+                            'Content-Type': 'multipart/form-data',
+                        },
+                    });
+                }
             } else {
-                await axiosInstance.post('/api/super/university/register', currentUniversity);
+                // No file upload, send JSON data
+                if (universityId) {
+                    await axiosInstance.put(`/api/super/university/${universityId}`, currentUniversity);
+                } else {
+                    await axiosInstance.post('/api/super/university/register', currentUniversity);
+                }
             }
+            
             navigate('/super/universities');
         } catch (error) {
             console.error("Error saving university:", error);
         } finally {
             setSaving(false);
+        }
+    };
+
+    const handleLogoChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setLogoFile(file);
         }
     };
 
@@ -175,6 +227,7 @@ export default function AddUniversityPage() {
                                 University Logo
                             </label>
                             <LabelFileInputCustomizable
+                                onChange={handleLogoChange}
                                 divClassName="flex space-x-2 flex-row align-baseline items-start"
                                 label=""
                                 labelClassName="sr-only"
