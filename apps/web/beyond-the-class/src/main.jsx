@@ -152,7 +152,8 @@ const router = createBrowserRouter([
 
           { path: 'campuses', element: <Layout><CampusView /></Layout> },
           { path: "campus/create", element: <Layout> <AddCampusPage /></Layout> },
-          { path: "campus/edit/:campusId", element: <Layout> <AddDepartmentAndSubjects /></Layout> },
+          { path: "campus/edit/:campusId", element: <Layout> <AddCampusPage /></Layout> },
+          { path: "campus/departments/:campusId", element: <Layout> <AddDepartmentAndSubjects /></Layout> },
           { path: "campus/pastpapers/:campusId", element: <Layout> <AddPastPapers /></Layout> },
 
 

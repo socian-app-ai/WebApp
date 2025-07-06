@@ -31,7 +31,17 @@ export default function AddCampusPage() {
                 try {
                     setLoading(true);
                     const res = await axiosInstance.get(`/api/super/campus/${campusId}`);
-                    setCurrentCampus(res.data);
+                    let data = res.data;
+                    console.log(data);
+                    let campus = {
+                        name: data.name,
+                        telephone: data.telephone,
+                        location: data.location,
+                        regex: data.emailPatterns.regex,
+                        domain: data.emailPatterns.domain,
+                        universityOrigin: data.universityOrigin._id,
+                    }
+                    setCurrentCampus(campus);
                 } catch (error) {
                     console.error("Error fetching campus data:", error);
                 } finally {

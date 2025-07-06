@@ -30,7 +30,16 @@ export default function AddUniversityPage() {
                 try {
                     setLoading(true);
                     const res = await axiosInstance.get(`/api/super/university/${universityId}`);
-                    setCurrentUniversity(res.data);
+                    let data = res.data?.university;
+                    console.log(data);
+                    let university = {
+                        name: data.name,
+                        telephone: data.telephone,
+                        mainLocationAddress: data.mainLocationAddress,
+                        adminEmails: data.adminEmails[0],
+                        picture: data.picture,  
+                    }
+                    setCurrentUniversity(university);
                     // setIsNewUniversity(false);
                 } catch (error) {
                     console.error("Error fetching university data:", error);
@@ -220,6 +229,7 @@ export default function AddUniversityPage() {
                     </div>
 
                     {/* Media */}
+                   
                     <div className="space-y-4">
                         <h2 className="text-lg font-semibold">Media</h2>
                         <div className="space-y-2">
@@ -235,6 +245,12 @@ export default function AddUniversityPage() {
                             />
                         </div>
                     </div>
+                    {currentUniversity?.picture && (
+                        <div className="space-y-4 ">
+                            
+                            <img src={currentUniversity?.picture} alt="University Logo" className="w-20 h-20" />
+                        </div>
+                    )}
                 </div>
             </div>
 
