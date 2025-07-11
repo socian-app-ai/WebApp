@@ -114,6 +114,9 @@ export default function AddPastPapers() {
 
             validateForm();
 
+            if(!currentCampus?._id || !currentUniversity?._id){
+                return
+            }
             const formDataConst = new FormData();
             formDataConst.append('file', file);
             formDataConst.append('departmentId', formData.departmentId);
@@ -122,6 +125,9 @@ export default function AddPastPapers() {
             formDataConst.append('type', formData.type);
             formDataConst.append('term', formData.term);
             formDataConst.append('termMode', formData.termMode);
+            formDataConst.append('universityOrigin', currentUniversity._id);
+            formDataConst.append('campusOrigin', currentCampus._id);
+            
             if (formData.type === 'SESSIONAL') {
                 formDataConst.append('sessionType', formData.sessionType);
             }
