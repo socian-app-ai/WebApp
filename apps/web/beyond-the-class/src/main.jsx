@@ -65,6 +65,7 @@ import ModUserAndCollection from './pages/admin/sidebar_pages/verifications/ModU
 import ModActions from './pages/admin/sidebar_pages/verifications/ModActions.jsx';
 import SocietyTypes from './pages/admin/sidebar_pages/campuses/societies/SocietyTypes.jsx';
 import SocietyVerifications from './pages/admin/sidebar_pages/verifications/SocietyVerifications.jsx';
+import Reports from './pages/admin/pages/reports/Reports.jsx';
 
 const router = createBrowserRouter([
   {
@@ -167,6 +168,8 @@ const router = createBrowserRouter([
           { path: "societies/types", element: <Layout> <SocietyTypes /></Layout> },
           { path: "post/create", element: <Layout> <CreatePost /></Layout> },
           { path: "post/manage", element: <Layout> <PostManage /></Layout> },
+
+          { path: "reports", element: <Layout> <Reports /></Layout> },
 
           // { path: "verifications/alumni", element: <Layout> <AlumniVerifications /></Layout> },
           // { path: "verifications/societies", element: <Layout> <SocietiesVerifications /></Layout> },

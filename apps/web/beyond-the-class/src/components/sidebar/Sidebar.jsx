@@ -190,7 +190,7 @@ function Sidebar() {
       icon: <FaBuilding className="w-5" />,
       submenu: [
         { name: "Create", path: "/super/campus/create" },
-        { name: "Subject & Departments", path: "/super/campus/edit/0" },
+        { name: "Subject & Departments", path: "/super/campus/departments/0" },
         { name: "Papers", path: `campus/pastpapers/${authUser?.university?.campusId?._id}` },
       ],
     },
@@ -222,14 +222,14 @@ function Sidebar() {
     },
     {
       name: "Reports",
-      path: `/super/reported`,
+      path: `/super/reports`,
       icon: <FaMedapps className="w-5" />,
       submenu: [
-        { name: "Teacher Reviews", path: "/super/reported/teacher-reviews" },
-        { name: "Posts", path: "/super/reported/posts" },
-        { name: "Comments", path: "/super/reported/comments" },
-        { name: "Profiles", path: "/super/reported/profiles" },
-        { name: "Societies", path: "/super/reported/societies" },
+        // { name: "Teacher Reviews", path: "/super/reported/teacher-reviews" },
+        // { name: "Posts", path: "/super/reported/posts" },
+        // { name: "Comments", path: "/super/reported/comments" },
+        // { name: "Profiles", path: "/super/reported/profiles" },
+        // { name: "Societies", path: "/super/reported/societies" },
       ]
     },
     {
