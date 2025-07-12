@@ -54,7 +54,7 @@ const router = express.Router();
 router.get("/universities/all", async (req, res) => {
     try {
         const { role, universityOrigin, campusOrigin } = getUserDetails(req);
-        console.log("/universites/all",role, universityOrigin, campusOrigin )
+        console.log("/universites/all", role, universityOrigin, campusOrigin)
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 10;
         const skip = (page - 1) * limit;
@@ -109,7 +109,7 @@ router.get("/universities/all", async (req, res) => {
 router.get("/campuses/all", async (req, res) => {
     try {
         const { role, universityOrigin, campusOrigin } = getUserDetails(req);
-        console.log("/campus-es/all",role, universityOrigin, campusOrigin )
+        console.log("/campus-es/all", role, universityOrigin, campusOrigin)
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 10;
         const skip = (page - 1) * limit;
@@ -164,7 +164,7 @@ router.get("/campuses/all", async (req, res) => {
 router.get("/campus/all", async (req, res) => {
     try {
         const { role, universityOrigin, campusOrigin } = getUserDetails(req);
-        console.log("/campus/all",role, universityOrigin, campusOrigin )
+        console.log("/campus/all", role, universityOrigin, campusOrigin)
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 10;
         const skip = (page - 1) * limit;
@@ -416,32 +416,52 @@ router.post("/create", upload.array('file'), async (req, res) => {
 
 router.get('/admin/post', async (req, res) => {
     try {
-        const { requestCampus, requestUniversity, allUniversities } = req.query;
+        let { requestCampus = false, requestUniversity = false, allUniversities = false } = req.query;
+        console.log(
+            "requestCampus", requestCampus, "requestUniversity", requestUniversity, "allUniversities", allUniversities
+        )
+        requestCampus = Boolean(requestCampus);
+        requestUniversity = Boolean(requestUniversity);
+        allUniversities = Boolean(allUniversities)
+        console.log(
+            "requestCampus", requestCampus, "requestUniversity", requestUniversity, "allUniversities", allUniversities
+        )
         const { campusOrigin, universityOrigin } = getUserDetails(req)
 
-        const query = {
-            postByAdmin: true,
-            "adminSetStatus.isArchived": { $ne: true }, // exclude archived posts
+        const query = {};
+        
+            query["postByAdmin"]= true
+            query["adminSetStatus.isArchived"]= { $ne: true }// exclude archived posts
+        if (requestCampus === true) {
+            query["references.campusOrigin"] = new mongoose.Types.ObjectId(campusOrigin);
+            query["forCampus"] = true
         };
-        // for campus
-        // for univeristy
-        // for universities
+        if (requestUniversity === true) {
+            query["references.universityOrigin"] = new mongoose.Types.ObjectId(universityOrigin);
+            query["forUniversity"] = true
+        };
 
-        // Optional filters
-        if (requestCampus == true) {
-            query["references.campusOrigin"] = campusOrigin;
-            query["forCampus"] = forCampus
-        };
-        if (requestUniversity == true) {
-            query["references.universityOrigin"] = universityOrigin;
-            query["forUniversity"] = forUniversity
-        };
-        if (allUniversities == true) query['forAllUniversites'] = true;
-
+        if (allUniversities === true) query['forAllUniversites'] = true;
+        console.log("query", query)
         const latestPost = await Post.findOne(query)
             .sort({ createdAt: -1 })
-            .populate("author", "name username")
-            .lean();
+            .populate([
+                {
+                    path: "author",
+                    select: 'name username role super_role university profile.picture',
+                    populate: {
+                        path: 'university',
+                        populate: {
+                            path: 'universityId departmentId campusId',
+                            select: 'name'
+                        }
+                    }
+                },
+                // "society",
+                // "subSociety",
+                "voteId"
+            ])
+        console.log("ADMIN POST", JSON.stringify(latestPost, null, 2))
 
         if (!latestPost) {
             return res.status(404).json({ message: "No active admin post found" });
