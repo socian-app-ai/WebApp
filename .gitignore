@@ -1,8 +1,12 @@
 .env 
 /node_modules/
 
+nsfw-detection/.env
 apps/backend/.env
 apps/backend/node_modules
+nsfw-detection-js
+waste
+nsfw-detection
 
 # Logs
 apps/web/beyond-the-class/logs

@@ -14,6 +14,7 @@ const Society = require("../../../models/society/society.model");
 const DeletedDataCollection = require("../../../models/deleted/deletedmodels");
 const Notification = require("../../../models/notification/notification.model");
 const { sendNotification } = require("../../../socket/socket");
+const AwsQueueService = require("../../../utils/aws/sqs");
 const router = express.Router();
 
 /**
@@ -53,6 +54,7 @@ const router = express.Router();
 router.get("/universities/all", async (req, res) => {
     try {
         const { role, universityOrigin, campusOrigin } = getUserDetails(req);
+        console.log("/universites/all",role, universityOrigin, campusOrigin )
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 10;
         const skip = (page - 1) * limit;
@@ -60,7 +62,7 @@ router.get("/universities/all", async (req, res) => {
         const [posts, totalCount] = await Promise.all([
             Post.find({
                 'references.role': role,
-                'references.campusOrigin': campusOrigin,
+                // 'references.campusOrigin': campusOrigin,
                 'status.isDeleted': false,
             })
                 .sort({ createdAt: -1 })
@@ -107,6 +109,7 @@ router.get("/universities/all", async (req, res) => {
 router.get("/campuses/all", async (req, res) => {
     try {
         const { role, universityOrigin, campusOrigin } = getUserDetails(req);
+        console.log("/campus-es/all",role, universityOrigin, campusOrigin )
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 10;
         const skip = (page - 1) * limit;
@@ -114,7 +117,7 @@ router.get("/campuses/all", async (req, res) => {
         const [posts, totalCount] = await Promise.all([
             Post.find({
                 'references.role': role,
-                'references.campusOrigin': campusOrigin,
+                'references.universityOrigin': universityOrigin,
                 'status.isDeleted': false,
             })
                 .sort({ createdAt: -1 })
@@ -161,6 +164,7 @@ router.get("/campuses/all", async (req, res) => {
 router.get("/campus/all", async (req, res) => {
     try {
         const { role, universityOrigin, campusOrigin } = getUserDetails(req);
+        console.log("/campus/all",role, universityOrigin, campusOrigin )
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 10;
         const skip = (page - 1) * limit;
@@ -352,6 +356,28 @@ router.post("/create", upload.array('file'), async (req, res) => {
         await post.save({ session });
 
 
+
+        if (postContent.media && postContent.media.length > 0) {
+            try {
+                const awsQueueService = new AwsQueueService();
+
+                for (const media of postContent.media) {
+                    await awsQueueService.sendNSFWScanMessage(
+                        post._id.toString(),
+                        media.url,
+                        media.type
+
+                    );
+                    console.log("[SQS] NSFW scan message sent for media:", media.url);
+                }
+            } catch (error) {
+                console.warn("[SQS] Failed to send one or more NSFW scan messages:", error.message);
+            }
+        }
+
+
+
+
         const societyPostCollection = await PostsCollection.findOneAndUpdate(
             { societyId: societyId },
             {
@@ -373,6 +399,8 @@ router.post("/create", upload.array('file'), async (req, res) => {
         )
         if (!user) return res.status(409).json({ error: "User not found" })
         // console.log("here", societyPostCollection);
+
+
 
 
         await session.commitTransaction();
