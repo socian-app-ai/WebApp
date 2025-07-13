@@ -42,6 +42,8 @@ apps/web/beyond-the-class/.env.production
 
 
 
+
+
 # Miscellaneous
 apps/mobile/*.class
 apps/mobile/*.log
@@ -53,6 +55,8 @@ apps/mobile/.buildlog/
 apps/mobile/.history
 apps/mobile/.svn/
 apps/mobile/migrate_working_dir/
+
+apps/mobile/cafeuser
 
 # IntelliJ related
 apps/mobile/*.iml

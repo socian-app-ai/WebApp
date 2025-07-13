@@ -44,6 +44,16 @@ router.get('/profile', async (req, res) => {
                     select: 'name _id'
                 },
                 {
+                    path: "university",
+                    populate: [{
+                        path: "universityId",
+                        select: "name _id"
+                    }, {
+                        path: "campusId",
+                        select: "name _id"
+                    }]
+                },
+                {
                     path: 'profile.posts',
                     model: 'Post',
                     populate: [
@@ -400,7 +410,7 @@ router.post('/accept-friend-request', async (req, res) => {
         }
 
         // Add FriendRequest ID to both users' profile.connections.friends
-         await User.updateOne(
+        await User.updateOne(
             { _id: userId },
             { $addToSet: { 'profile.connections.friends': friendRequestExists._id } }
         );
@@ -582,13 +592,13 @@ router.get('/teacher/attachUser', async (req, res) => {
         const user = await User.findById(userId);
         const response = await setTeacherModal(req, user, platform);
         console.log("DOG", response);
-        if(response?.forwarded){
+        if (response?.forwarded) {
             await user.populate([
-                    { path: "university.universityId", select: "-users _id" },
-                    { path: "university.campusId", select: "-users _id" },
-                    { path: "university.departmentId", select: "name _id" },
-                 ]);
-              return  handlePlatformResponse(user,res,req)
+                { path: "university.universityId", select: "-users _id" },
+                { path: "university.campusId", select: "-users _id" },
+                { path: "university.departmentId", select: "name _id" },
+            ]);
+            return handlePlatformResponse(user, res, req)
 
 
         }
@@ -643,16 +653,16 @@ const setTeacherModal = async function (req, user, platform) {
                     teacherModalExists.userAttachedBy.by = user._id;
                     await teacherModalExists.save();
                     if (!user.teacherConnectivities) {
-    user.teacherConnectivities = {};
-}
+                        user.teacherConnectivities = {};
+                    }
                     user.teacherConnectivities.teacherModal = teacherModalExists._id;
                     user.teacherConnectivities.attached = true;
                     await user.save();
-                    if(platform === 'web'){
+                    if (platform === 'web') {
                         req.session.user.teacherConnectivities = {
-                        attached: user?.teacherConnectivities?.attached,
-                        teacherModal: user?.teacherConnectivities?.teacherModal
-                    };
+                            attached: user?.teacherConnectivities?.attached,
+                            teacherModal: user?.teacherConnectivities?.teacherModal
+                        };
                     }
                     const teacherConnectivities = {
                         attached: user.teacherConnectivities.attached,
@@ -660,19 +670,19 @@ const setTeacherModal = async function (req, user, platform) {
                     };
                     const resolvedData = { status: 201, message: 'User with role teacher attached with Modal successfully' };
                     if (platform === "app") { resolvedData.teacherConnectivities = teacherConnectivities; }
-                    else{
-                    return new Promise((resolve, reject) => {
-                        req.session.save((err) => {
-                            if (err) {
-                                console.error("Session save error:", err);
-                                reject({ status: 500, message: "Internal Server Error" });
-                            } else {
-                                resolve(resolvedData);
-                            }
+                    else {
+                        return new Promise((resolve, reject) => {
+                            req.session.save((err) => {
+                                if (err) {
+                                    console.error("Session save error:", err);
+                                    reject({ status: 500, message: "Internal Server Error" });
+                                } else {
+                                    resolve(resolvedData);
+                                }
+                            });
                         });
-                    });
-                }
-                 return { status: 201, message: "Forwarded", forwarded: true}
+                    }
+                    return { status: 201, message: "Forwarded", forwarded: true }
                 } else {
                     // console.log("teacherModalExists",teacherModalExists.userAttached)
                     // console.log(" user._id ", user._id )
@@ -681,14 +691,14 @@ const setTeacherModal = async function (req, user, platform) {
 
                     // console.log("teacherModalExists.userAttached === user._id ",teacherModalExists.userAttached === user._id )
                     // console.log("teacherModalExists._id === user.teacherConnectivities.teacherModal",teacherModalExists._id === user.teacherConnectivities.teacherModal)
-                   
-                   
+
+
                     //  console.log("teacherModalExists.userAttached.equals(user._id)",teacherModalExists.userAttached.equals(user._id) )
                     // console.log("teacherModalExists._id.equals(user.teacherConnectivities.teacherModal)",teacherModalExists._id.equals(user.teacherConnectivities.teacherModal))
-                   
 
-                    if(teacherModalExists.userAttached.equals(user._id) && teacherModalExists._id.equals(user.teacherConnectivities.teacherModal )){
-                        return { status: 201, message: "Forwarded", forwarded: true}
+
+                    if (teacherModalExists.userAttached.equals(user._id) && teacherModalExists._id.equals(user.teacherConnectivities.teacherModal)) {
+                        return { status: 201, message: "Forwarded", forwarded: true }
                     }
                     return { status: 200, message: 'User already attached with another modal, Please verify before Modifyng', attached: false };
                 }
@@ -1065,38 +1075,38 @@ router.put('/graduation-year/change', async (req, res) => {
 });
 
 
-router.get('/moderated-societies',  async (req, res) => {
-  try {
-    // Get user ID from auth middleware (adjust based on your setup)
-    // const userId = req.sessoin.user._id; // Or req.session.user._id if using sessions
-    //USe this, why are you making things complicated
-    const {userId} = getUserDetails(req);
+router.get('/moderated-societies', async (req, res) => {
+    try {
+        // Get user ID from auth middleware (adjust based on your setup)
+        // const userId = req.sessoin.user._id; // Or req.session.user._id if using sessions
+        //USe this, why are you making things complicated
+        const { userId } = getUserDetails(req);
 
-    // Find user and populate moderated societies
-    const user = await User.findById(userId)
-      .populate('profile.moderatorTo.society', '_id name').select('profile.moderatorTo.society');
+        // Find user and populate moderated societies
+        const user = await User.findById(userId)
+            .populate('profile.moderatorTo.society', '_id name').select('profile.moderatorTo.society');
 
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Extract societies (handle case where moderatorTo.society is undefined)
+        const societies = user.profile.moderatorTo?.society || [];
+        console.log(" Societies", societies)
+
+        // Format response
+        const formattedSocieties = societies.map(society => ({
+            _id: society._id.toString(),
+            name: society.name
+        }));
+
+        console.log("MODERATED Societies", formattedSocieties)
+
+        res.status(200).json(formattedSocieties);
+    } catch (error) {
+        console.error('Error fetching moderated societies:', error);
+        res.status(500).json({ message: 'Server error', error: error.message });
     }
-
-    // Extract societies (handle case where moderatorTo.society is undefined)
-    const societies = user.profile.moderatorTo?.society || [];
-    console.log(" Societies", societies)
-
-    // Format response
-    const formattedSocieties = societies.map(society => ({
-      _id: society._id.toString(),
-      name: society.name
-    }));
-
-    console.log("MODERATED Societies", formattedSocieties)
-
-    res.status(200).json(formattedSocieties);
-  } catch (error) {
-    console.error('Error fetching moderated societies:', error);
-    res.status(500).json({ message: 'Server error', error: error.message });
-  }
 });
 
 
@@ -1117,191 +1127,191 @@ router.get('/moderated-societies',  async (req, res) => {
 
 
 router.get('/campus-users', async (req, res) => {
-  try {
-    const { search = '', role = '', page = 1, limit = 20 } = req.query;
-    const { campusOrigin, userId } = getUserDetails(req);
+    try {
+        const { search = '', role = '', page = 1, limit = 20 } = req.query;
+        const { campusOrigin, userId } = getUserDetails(req);
 
-    const skip = (page - 1) * limit;
+        const skip = (page - 1) * limit;
 
-    // Build query conditions
-    let query = {
-      _id: { $ne: userId }, // Exclude current user
-      'university.campusId': campusOrigin, // Match campus
-      'restrictions.blocking.isBlocked': { $ne: true }, // Exclude blocked users
-    };
+        // Build query conditions
+        let query = {
+            _id: { $ne: userId }, // Exclude current user
+            'university.campusId': campusOrigin, // Match campus
+            'restrictions.blocking.isBlocked': { $ne: true }, // Exclude blocked users
+        };
 
-    // Add role filter
-    if (role && role !== 'all') {
-      query.role = role;
-    }
-
-    // Add search filter
-    if (search.trim()) {
-      query.$or = [
-        { name: { $regex: search.trim(), $options: 'i' } },
-        { username: { $regex: search.trim(), $options: 'i' } },
-      ];
-    }
-
-    // Get total count for pagination
-    const totalUsers = await User.countDocuments(query);
-
-    // Fetch users with populated data
-    const users = await User.find(query)
-      .select('name username role profile.picture profile.bio profile.graduationYear university')
-      .populate([
-        { path: 'university.departmentId', select: 'name' },
-        { path: 'university.universityId', select: 'name' },
-        { path: 'university.campusId', select: 'name' },
-      ])
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(parseInt(limit))
-      .lean();
-
-    // Check friend status for each user
-    const usersWithFriendStatus = await Promise.all(
-      users.map(async (user) => {
-        let friendStatus = 'connect';
-        
-        const friendRequest = await FriendRequest.findOne({
-          $or: [
-            { user: user._id, requestedBy: userId },
-            { user: userId, requestedBy: user._id }
-          ]
-        });
-
-        if (friendRequest) {
-          if (friendRequest.status === 'accepted') {
-            friendStatus = 'friends';
-          } else if (friendRequest.status === 'requested') {
-            if (friendRequest.requestedBy.toString() === userId) {
-              friendStatus = 'canCancel';
-            } else {
-              friendStatus = 'accept/reject';
-            }
-          }
+        // Add role filter
+        if (role && role !== 'all') {
+            query.role = role;
         }
 
-        return {
-          ...user,
-          friendStatus,
-          graduationYear: user.profile?.graduationYear ? new Date(user.profile.graduationYear).getFullYear() : null,
-        };
-      })
-    );
+        // Add search filter
+        if (search.trim()) {
+            query.$or = [
+                { name: { $regex: search.trim(), $options: 'i' } },
+                { username: { $regex: search.trim(), $options: 'i' } },
+            ];
+        }
 
-    res.status(200).json({
-      users: usersWithFriendStatus,
-      pagination: {
-        total: totalUsers,
-        page: parseInt(page),
-        limit: parseInt(limit),
-        totalPages: Math.ceil(totalUsers / limit),
-        hasNextPage: page * limit < totalUsers,
-        hasPrevPage: page > 1,
-      },
-    });
-  } catch (error) {
-    console.error('Error in campus-users route:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
+        // Get total count for pagination
+        const totalUsers = await User.countDocuments(query);
+
+        // Fetch users with populated data
+        const users = await User.find(query)
+            .select('name username role profile.picture profile.bio profile.graduationYear university')
+            .populate([
+                { path: 'university.departmentId', select: 'name' },
+                { path: 'university.universityId', select: 'name' },
+                { path: 'university.campusId', select: 'name' },
+            ])
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(parseInt(limit))
+            .lean();
+
+        // Check friend status for each user
+        const usersWithFriendStatus = await Promise.all(
+            users.map(async (user) => {
+                let friendStatus = 'connect';
+
+                const friendRequest = await FriendRequest.findOne({
+                    $or: [
+                        { user: user._id, requestedBy: userId },
+                        { user: userId, requestedBy: user._id }
+                    ]
+                });
+
+                if (friendRequest) {
+                    if (friendRequest.status === 'accepted') {
+                        friendStatus = 'friends';
+                    } else if (friendRequest.status === 'requested') {
+                        if (friendRequest.requestedBy.toString() === userId) {
+                            friendStatus = 'canCancel';
+                        } else {
+                            friendStatus = 'accept/reject';
+                        }
+                    }
+                }
+
+                return {
+                    ...user,
+                    friendStatus,
+                    graduationYear: user.profile?.graduationYear ? new Date(user.profile.graduationYear).getFullYear() : null,
+                };
+            })
+        );
+
+        res.status(200).json({
+            users: usersWithFriendStatus,
+            pagination: {
+                total: totalUsers,
+                page: parseInt(page),
+                limit: parseInt(limit),
+                totalPages: Math.ceil(totalUsers / limit),
+                hasNextPage: page * limit < totalUsers,
+                hasPrevPage: page > 1,
+            },
+        });
+    } catch (error) {
+        console.error('Error in campus-users route:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
 });
 
 router.get('/search-campus-users', async (req, res) => {
-  try {
-    const { query } = req.query;
-    const { campusOrigin, userId } = getUserDetails(req);
+    try {
+        const { query } = req.query;
+        const { campusOrigin, userId } = getUserDetails(req);
 
-    if (!query) {
-      return res.status(400).json({ error: 'Query parameter is required' });
+        if (!query) {
+            return res.status(400).json({ error: 'Query parameter is required' });
+        }
+
+        const users = await User.find({
+            _id: { $ne: userId }, // Exclude the current user
+            'university.campusId': campusOrigin, // Match campus
+            $or: [
+                { name: { $regex: query, $options: 'i' } }, // Case-insensitive name search
+                { username: { $regex: query, $options: 'i' } }, // Case-insensitive username search
+            ],
+        }).select('name username profilePicture _id');
+
+        res.status(200).json({ users });
+    } catch (error) {
+        console.error('Error in search-campus-users route: ', error);
+        res.status(500).json({ error: 'Internal Server Error' });
     }
-
-    const users = await User.find({
-      _id: { $ne: userId }, // Exclude the current user
-      'university.campusId': campusOrigin, // Match campus
-      $or: [
-        { name: { $regex: query, $options: 'i' } }, // Case-insensitive name search
-        { username: { $regex: query, $options: 'i' } }, // Case-insensitive username search
-      ],
-    }).select('name username profilePicture _id');
-
-    res.status(200).json({ users });
-  } catch (error) {
-    console.error('Error in search-campus-users route: ', error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
 });
 
 
 router.get('/campus-moderators', async (req, res) => {
-  try {
-    const { campusOrigin } = getUserDetails(req);
+    try {
+        const { campusOrigin } = getUserDetails(req);
 
-    
 
-    const mods = await User.find({
-      
-      'university.campusId': campusOrigin, // Match campus
-      super_role: 'mod'
-    }).select('name username profilePicture _id');
 
-    res.status(200).json({moderators: mods });
-  } catch (error) {
-    console.error('Error in search-campus-mods route: ', error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
+        const mods = await User.find({
+
+            'university.campusId': campusOrigin, // Match campus
+            super_role: 'mod'
+        }).select('name username profilePicture _id');
+
+        res.status(200).json({ moderators: mods });
+    } catch (error) {
+        console.error('Error in search-campus-mods route: ', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
 });
 
 
 router.post("/mod-request/status", async (req, res) => {
-  try {
-    const { userId } = getUserDetails(req);
+    try {
+        const { userId } = getUserDetails(req);
 
-    const existingUser = await User.findById(userId);
-    if (!existingUser) return res.status(404).json({ error: "User not found" });
+        const existingUser = await User.findById(userId);
+        if (!existingUser) return res.status(404).json({ error: "User not found" });
 
-    const alreadyRequested = await ModRequest.findOne({ userId });
-    if (!alreadyRequested) {
-      return res.status(300).json({ message: "Mod request Not submitted" });
+        const alreadyRequested = await ModRequest.findOne({ userId });
+        if (!alreadyRequested) {
+            return res.status(300).json({ message: "Mod request Not submitted" });
+        }
+        if (alreadyRequested.status = "approved") {
+            return handlePlatformResponse(alreadyRequested.userId, res, req)
+        }
+
+        res.status(201).json({ message: "Mod request Status", data: newRequest });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Failed to get mod request" });
     }
-    if(alreadyRequested.status = "approved"){
-        return handlePlatformResponse(alreadyRequested.userId,res,req)
-    }
-
-    res.status(201).json({ message: "Mod request Status", data: newRequest });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Failed to get mod request" });
-  }
 });
 
 router.post("/mod/request", async (req, res) => {
-  try {
-    const { reason } = req.body;
+    try {
+        const { reason } = req.body;
         const { userId, universityId, campusId } = getUserDetails(req);
 
 
-    const existingUser = await User.findById(userId);
-    if (!existingUser) return res.status(404).json({ error: "User not found" });
+        const existingUser = await User.findById(userId);
+        if (!existingUser) return res.status(404).json({ error: "User not found" });
 
-    const alreadyRequested = await ModRequest.findOne({ userId });
-    if (alreadyRequested) {
-      return res.status(400).json({ error: "Mod request already submitted" });
+        const alreadyRequested = await ModRequest.findOne({ userId });
+        if (alreadyRequested) {
+            return res.status(400).json({ error: "Mod request already submitted" });
+        }
+
+        const newRequest = await ModRequest.create({
+            userId,
+            universityId,
+            campusId,
+            reason,
+        });
+
+        res.status(201).json({ message: "Mod request submitted", data: newRequest });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Failed to submit request" });
     }
-
-    const newRequest = await ModRequest.create({
-      userId,
-      universityId,
-      campusId,
-      reason,
-    });
-
-    res.status(201).json({ message: "Mod request submitted", data: newRequest });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Failed to submit request" });
-  }
 });
 
 
