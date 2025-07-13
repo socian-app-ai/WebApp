@@ -118,7 +118,7 @@ function ModRequestsTable() {
   return (
     <div className="max-w-6xl mx-auto p-4 bg-background text-foreground rounded-lg shadow">
       <h1 className="text-2xl font-bold mb-4">Moderator Requests</h1>
-      {error && <div className="mb-4 bg-destructive/10 text-destructive p-2 rounded border border-destructive/30">{error}</div>}
+      {error && <div className="mb-4 bg-red-500/10 text-red-500 p-2 rounded border border-red-500/30">{error}</div>}
       {successMsg && <div className="mb-4 bg-green-100 text-green-700 p-2 rounded border border-green-200 dark:bg-green-900 dark:text-green-300">{successMsg}</div>}
       {loading ? (
         <div className="text-muted-foreground">Loading...</div>
@@ -152,7 +152,7 @@ function ModRequestsTable() {
                   <td className="px-3 py-2 border">
                     {req.status === 'pending' && <span className="text-yellow-600 dark:text-yellow-400">Pending</span>}
                     {req.status === 'approved' && <span className="text-green-600 dark:text-green-400">Approved</span>}
-                    {req.status === 'rejected' && <span className="text-destructive">Rejected</span>}
+                    {req.status === 'rejected' && <span className="text-red-500">Rejected</span>}
                   </td>
                   <td className="px-3 py-2 border">
                     {req.status === 'pending' ? (
@@ -164,14 +164,14 @@ function ModRequestsTable() {
                           Approve
                         </button>
                         <button
-                          className="px-2 py-1 bg-destructive text-white rounded hover:bg-destructive/80 transition-colors"
+                          className="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-500/80 transition-colors"
                           onClick={() => handleReject(req)}
                         >
                           Reject
                         </button>
                       </div>
                     ) : req.status === 'rejected' ? (
-                      <span title={req.rejectionReason || ''} className="text-xs text-destructive">{req.rejectionReason ? 'Reason: ' + req.rejectionReason : ''}</span>
+                      <span title={req.rejectionReason || ''} className="text-xs text-red-500">{req.rejectionReason ? 'Reason: ' + req.rejectionReason : ''}</span>
                     ) : (
                       <span className="text-xs text-muted-foreground">-</span>
                     )}
@@ -186,10 +186,10 @@ function ModRequestsTable() {
       {/* Approve Dialog */}
       {showApproveDialog && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30">
-          <div className="bg-background text-foreground border border-border rounded-lg shadow-lg p-6 w-full max-w-md">
+          <div className="bg-green-500 dark:bg-green-500 text-foreground border border-border rounded-lg shadow-lg p-6 w-full max-w-md">
             <h2 className="text-lg font-semibold mb-4">Approve Moderator Request</h2>
             <div className="mb-4">
-              <label className="block mb-2 text-sm font-medium">Promotion Reason <span className="text-destructive">*</span></label>
+              <label className="block mb-2 text-sm font-medium">Promotion Reason <span className="text-red-500">*</span></label>
               <textarea
                 className="w-full bg-background border border-input text-foreground rounded px-2 py-1 min-h-[60px] focus-visible:ring-2 focus-visible:ring-ring"
                 value={approveReason}
@@ -209,7 +209,7 @@ function ModRequestsTable() {
                 ))}
               </select>
             </div>
-            {actionError && <div className="mb-2 bg-destructive/10 text-destructive text-sm p-2 rounded border border-destructive/30">{actionError}</div>}
+            {actionError && <div className="mb-2 bg-red-500/10 text-red-500 text-sm p-2 rounded border border-red-500/30">{actionError}</div>}
             <div className="flex justify-end gap-2 mt-4">
               <button
                 className="px-3 py-1 rounded bg-muted text-foreground hover:bg-accent border border-border"
@@ -229,7 +229,7 @@ function ModRequestsTable() {
       {/* Reject Dialog */}
       {showRejectDialog && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30">
-          <div className="bg-background text-foreground border border-border rounded-lg shadow-lg p-6 w-full max-w-md">
+          <div className="bg-red-300 dark:bg-red-300 text-foreground border border-border rounded-lg shadow-lg p-6 w-full max-w-md">
             <h2 className="text-lg font-semibold mb-4">Reject Moderator Request</h2>
             <div className="mb-4">
               <label className="block mb-2 text-sm font-medium">Rejection Reason</label>
@@ -240,7 +240,7 @@ function ModRequestsTable() {
                 disabled={actionLoading}
               />
             </div>
-            {actionError && <div className="mb-2 bg-destructive/10 text-destructive text-sm p-2 rounded border border-destructive/30">{actionError}</div>}
+            {actionError && <div className="mb-2 bg-red-500/10 text-red-500 text-sm p-2 rounded border border-red-500/30">{actionError}</div>}
             <div className="flex justify-end gap-2 mt-4">
               <button
                 className="px-3 py-1 rounded bg-muted text-foreground hover:bg-accent border border-border"
@@ -248,7 +248,7 @@ function ModRequestsTable() {
                 disabled={actionLoading}
               >Cancel</button>
               <button
-                className="px-3 py-1 rounded bg-destructive text-white hover:bg-destructive/80"
+                className="px-3 py-1 rounded bg-red-500 text-white hover:bg-red-500/80"
                 onClick={submitReject}
                 disabled={actionLoading}
               >{actionLoading ? 'Rejecting...' : 'Reject'}</button>
@@ -308,7 +308,7 @@ function UserSearchBar({ onMakeMod, campusId }) {
         onFocus={() => { if (results.length) setShowDropdown(true); }}
       />
       {loading && <div className="absolute right-2 top-2 text-xs text-muted-foreground">Loading...</div>}
-      {error && <div className="text-destructive text-xs mt-1">{error}</div>}
+      {error && <div className="text-red-500 text-xs mt-1">{error}</div>}
       {showDropdown && results.length > 0 && (
         <div className="absolute z-10 bg-white dark:bg-gray-800 border rounded w-full mt-1 max-h-60 overflow-y-auto shadow-lg">
           {results.map(user => (
@@ -393,7 +393,7 @@ export default function ModRequests() {
             <div className="mb-4">
               <div className="mb-2">User: <span className="font-medium">{selectedUser?.name}</span></div>
               <div className="mb-2 text-xs text-muted-foreground">{selectedUser?.universityEmail}</div>
-              <label className="block mb-2 text-sm font-medium">Promotion Reason <span className="text-destructive">*</span></label>
+              <label className="block mb-2 text-sm font-medium">Promotion Reason <span className="text-red-500">*</span></label>
               <textarea
                 className="w-full bg-background border border-input text-foreground rounded px-2 py-1 min-h-[60px] focus-visible:ring-2 focus-visible:ring-ring"
                 value={promotionReason}
@@ -413,7 +413,7 @@ export default function ModRequests() {
                 ))}
               </select>
             </div>
-            {makeModError && <div className="mb-2 text-destructive text-sm">{makeModError}</div>}
+            {makeModError && <div className="mb-2 text-red-500 text-sm">{makeModError}</div>}
             {makeModSuccess && <div className="mb-2 text-green-600 text-sm">{makeModSuccess}</div>}
             <div className="flex justify-end gap-2 mt-4">
               <button

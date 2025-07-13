@@ -16,6 +16,7 @@ const bcryptjs = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const Department = require('../../models/university/department/department.university.model');
 const ModRequest = require('../../models/mod/mod.request.model');
+const ModModel = require('../../models/mod/mod.model');
 
 exports.getUserProfile = async (req, res) => {
     try {
@@ -1263,8 +1264,25 @@ router.get('/campus-moderators', async (req, res) => {
     }
 });
 
+router.get("/mod-information", async (req, res) => {
+    try {
+        const { userId } = getUserDetails(req);
 
-router.post("/mod-request/status", async (req, res) => {
+        const modUser = await ModModel.findById(userId);
+        const user = await User.findById(userId).select("name username profile.picture _id");
+        modUser._id = user;
+        console.log("Mod User", modUser);
+        if (!modUser) {
+            return res.status(200).json({ message: "Mod request Not submitted", notSubmittedRequest: false });
+        }
+        return res.status(200).json({ message: "Mod request submitted", data: modUser });
+    } catch (error) {
+        console.error('Error in mod-information route: ', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+router.get("/mod-request/status", async (req, res) => {
     try {
         const { userId } = getUserDetails(req);
 
@@ -1273,13 +1291,22 @@ router.post("/mod-request/status", async (req, res) => {
 
         const alreadyRequested = await ModRequest.findOne({ userId });
         if (!alreadyRequested) {
-            return res.status(300).json({ message: "Mod request Not submitted" });
+            return res.status(200).json({ message: "Mod request Not submitted", notSubmittedRequest: false });
         }
-        if (alreadyRequested.status = "approved") {
-            return handlePlatformResponse(alreadyRequested.userId, res, req)
+        if (alreadyRequested.status == "approved") {
+            const user = await User.findById(alreadyRequested.userId)
+             await user.populate([
+        { path: "university.universityId", select: "-users _id" },
+        { path: "university.campusId", select: "-users _id" },
+        { path: "university.departmentId", select: "name _id" },
+             ]);
+            return handlePlatformResponse(user, res, req)
+        }
+        if (alreadyRequested.status == "rejected") {
+            return res.status(200).json({ message: "Mod request rejected", status: "rejected" });
         }
 
-        res.status(201).json({ message: "Mod request Status", data: newRequest });
+        res.status(201).json({ message: "Mod request Status", status: "pending" });
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: "Failed to get mod request" });
@@ -1290,14 +1317,21 @@ router.post("/mod/request", async (req, res) => {
     try {
         const { reason } = req.body;
         const { userId, universityId, campusId } = getUserDetails(req);
+        if (!reason) return res.status(400).json({ error: "Reason is required" });
 
 
         const existingUser = await User.findById(userId);
         if (!existingUser) return res.status(404).json({ error: "User not found" });
 
         const alreadyRequested = await ModRequest.findOne({ userId });
-        if (alreadyRequested) {
-            return res.status(400).json({ error: "Mod request already submitted" });
+        if (alreadyRequested && alreadyRequested.status == "pending") {
+            return res.status(200).json({ message: "Mod request already submitted", status: "pending" });
+        }
+        if (alreadyRequested && alreadyRequested.status == "approved") {
+            return res.status(200).json({ message: "Mod request already approved",status: "approved" });
+        }
+        if (alreadyRequested && alreadyRequested.status == "rejected") {
+            return res.status(200).json({ message: "Mod request already rejected", reason: alreadyRequested.rejectionReason ,status: "rejected" });
         }
 
         const newRequest = await ModRequest.create({
@@ -1307,7 +1341,7 @@ router.post("/mod/request", async (req, res) => {
             reason,
         });
 
-        res.status(201).json({ message: "Mod request submitted", data: newRequest });
+        res.status(201).json({ message: "Mod request submitted", data: newRequest, status: "Submitted" });
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: "Failed to submit request" });
