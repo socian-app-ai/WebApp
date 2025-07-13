@@ -413,7 +413,7 @@ router.post("/create", upload.array('file'), async (req, res) => {
     }
 });
 
-router.get('/admin/post/profile', async (req, res) => {
+router.get('/admin/profile/posts', async (req, res) => {
     try {
   
         const query = {};
