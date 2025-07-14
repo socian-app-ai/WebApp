@@ -56,7 +56,7 @@ apps/mobile/.history
 apps/mobile/.svn/
 apps/mobile/migrate_working_dir/
 
-apps/mobile/cafeuser
+# apps/mobile/cafeuser
 
 # IntelliJ related
 apps/mobile/*.iml
