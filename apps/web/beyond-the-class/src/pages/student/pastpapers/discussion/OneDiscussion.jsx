@@ -15,6 +15,7 @@ export default function OneDiscussion() {
     const { subject, paper } = location.state || {};
     const [relatedPapers, setRelatedPapers] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [selectedFileIndexes, setSelectedFileIndexes] = useState({});
     const sliderRef = useRef(null);
     const navigate = useNavigate();
     const { toBeDisccusedId } = useParams();
@@ -27,7 +28,7 @@ export default function OneDiscussion() {
                     `/api/pastpaper/${paper.type.toLowerCase()}/${paper.subjectId}`
                 );
 
-                console.log("APst ", res.data.papers)
+                console.log("Papers Data: ", res.data.papers);
                 // Flatten the papers array and filter for the same type
                 const allPapers = res.data.papers.reduce((acc, yearGroup) => {
                     const papersOfType = yearGroup.papers.filter(p =>
@@ -42,6 +43,15 @@ export default function OneDiscussion() {
                     if (b._id === paper._id) return 1;
                     return b.academicYear - a.academicYear;
                 });
+
+                // Initialize selected file indexes (default to first file for each paper)
+                const initialFileIndexes = {};
+                sortedPapers.forEach(paper => {
+                    if (paper.files && paper.files.length > 0) {
+                        initialFileIndexes[paper._id] = 0;
+                    }
+                });
+                setSelectedFileIndexes(initialFileIndexes);
 
                 setRelatedPapers(sortedPapers);
             } catch (error) {
@@ -71,24 +81,83 @@ export default function OneDiscussion() {
         ]
     };
 
-    const renderPdfSlide = (paper) => (
-        <div key={paper._id} className="flex flex-col p-4 sm:p-6">
-            <div className="m-2 w-full h-[60vh] overflow-auto border border-gray-200 dark:border-gray-600 rounded-lg">
-                <PdfReact pdf={`${import.meta.env.VITE_BACKEND_API_URL}/api/uploads/${paper.file.url}`} />
-            </div>
-            <div className="p-2 text-center">
-                <p className="text-sm sm:text-base font-medium dark:text-white">
-                    {paper.name} - {paper.type} ({paper.academicYear})
-                    {paper._id === toBeDisccusedId && " (Selected)"}
-                </p>
-                {paper.term && (
-                    <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
-                        Term: {paper.term}
-                    </p>
+    const getFileUrl = (paper) => {
+        if (!paper.files || paper.files.length === 0) return null;
+        const selectedIndex = selectedFileIndexes[paper._id] || 0;
+        const file = paper.files[selectedIndex];
+        return file ? file.url : null;
+    };
+
+    const handleFileChange = (paperId, fileIndex) => {
+        setSelectedFileIndexes(prev => ({
+            ...prev,
+            [paperId]: fileIndex
+        }));
+    };
+
+    const renderPdfSlide = (paper) => {
+        const fileUrl = getFileUrl(paper);
+        const selectedFileIndex = selectedFileIndexes[paper._id] || 0;
+        
+        if (!fileUrl) {
+            return (
+                <div key={paper._id} className="flex flex-col p-4 sm:p-6">
+                    <div className="m-2 w-full h-[60vh] flex items-center justify-center border border-gray-200 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800">
+                        <p className="text-gray-500 dark:text-gray-400">No files available for this paper</p>
+                    </div>
+                    <div className="p-2 text-center">
+                        <p className="text-sm sm:text-base font-medium dark:text-white">
+                            {paper.name} - {paper.type} ({paper.academicYear})
+                            {paper._id === toBeDisccusedId && " (Selected)"}
+                        </p>
+                    </div>
+                </div>
+            );
+        }
+
+        return (
+            <div key={paper._id} className="flex flex-col p-4 sm:p-6">
+                {/* File selector for papers with multiple files */}
+                {paper.files && paper.files.length > 1 && (
+                    <div className="mb-2 flex items-center justify-center">
+                        <select
+                            value={selectedFileIndex}
+                            onChange={(e) => handleFileChange(paper._id, parseInt(e.target.value))}
+                            className="px-3 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                        >
+                            {paper.files.map((file, index) => (
+                                <option key={index} value={index}>
+                                    File {index + 1} of {paper.files.length}
+                                    {file.uploadedBy && ` (by ${file.uploadedBy.name || file.uploadedBy.username || 'Anonymous'})`}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
                 )}
+
+                <div className="m-2 w-full h-[60vh] overflow-auto border border-gray-200 dark:border-gray-600 rounded-lg">
+                    <PdfReact pdf={`${import.meta.env.VITE_BACKEND_API_URL}/api/uploads/${fileUrl}`} />
+                </div>
+                
+                <div className="p-2 text-center">
+                    <p className="text-sm sm:text-base font-medium dark:text-white">
+                        {paper.name} - {paper.type} ({paper.academicYear})
+                        {paper._id === toBeDisccusedId && " (Selected)"}
+                    </p>
+                    {paper.term && (
+                        <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
+                            Term: {paper.term}
+                        </p>
+                    )}
+                    {paper.files && paper.files.length > 1 && (
+                        <p className="text-xs text-blue-600 dark:text-blue-400">
+                            Showing file {selectedFileIndex + 1} of {paper.files.length}
+                        </p>
+                    )}
+                </div>
             </div>
-        </div>
-    );
+        );
+    };
 
     if (loading) {
         return (
