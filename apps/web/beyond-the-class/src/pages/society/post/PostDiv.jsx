@@ -23,7 +23,7 @@ import { useRef } from 'react';
 import MediaSwiper from '../../../components/postBox/MediaSwiper';
 
 
-export default function PostDiv({ society, postInfo, linkActivate = true }) {
+export default function PostDiv({ society, postInfo, linkActivate = true, onVoteUpdate }) {
     const { authUser } = useAuthContext()
     const [showHoverCard, setShowHoverCard] = useState(false);
 
@@ -128,7 +128,7 @@ export default function PostDiv({ society, postInfo, linkActivate = true }) {
 
                     {/* Footer */}
                     <div className="flex items-center  pt-3 border-t border-gray-200 dark:border-gray-700">
-                        <ReVote postInfo={postInfo} />
+                        <ReVote postInfo={postInfo} onVoteUpdate={onVoteUpdate} />
 
                         <div className="flex items-center space-x-4">
                             <button className="flex items-center space-x-1.5 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
@@ -178,45 +178,148 @@ const VoteButton = ({ active, direction, count, onClick, loading }) => (
 
 
 
-export function ReVote({ postInfo }) {
+export function ReVote({ postInfo, onVoteUpdate }) {
     const { authUser } = useAuthContext();
     const [upvote, setUpvote] = useState(postInfo.voteId.upVotesCount);
     const [downvote, setDownvote] = useState(postInfo.voteId.downVotesCount);
     const [hasUpvoted, setHasUpvoted] = useState(false);
     const [hasDownvoted, setHasDownvoted] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [optimisticVote, setOptimisticVote] = useState(null);
 
     useEffect(() => {
         setHasUpvoted(postInfo.voteId.userVotes[authUser._id] === 'upvote');
         setHasDownvoted(postInfo.voteId.userVotes[authUser._id] === 'downvote');
-    }, [postInfo.voteId.userVotes, authUser._id]);
+        setUpvote(postInfo.voteId.upVotesCount);
+        setDownvote(postInfo.voteId.downVotesCount);
+    }, [postInfo.voteId.userVotes, postInfo.voteId.upVotesCount, postInfo.voteId.downVotesCount, authUser._id]);
 
     const handleVote = async (e, voteTypeVal) => {
         e.preventDefault();
+        e.stopPropagation();
+        
+        if (loading) return;
+        
         setLoading(true);
+        setOptimisticVote(voteTypeVal);
+        
+        // Optimistic update
+        const currentVote = postInfo.voteId.userVotes[authUser._id];
+        let newUpvoteCount = upvote;
+        let newDownvoteCount = downvote;
+        let newHasUpvoted = hasUpvoted;
+        let newHasDownvoted = hasDownvoted;
+        let newUserVote = voteTypeVal;
+        
+        // Calculate optimistic changes
+        if (currentVote === voteTypeVal) {
+            // User is undoing their vote
+            if (voteTypeVal === 'upvote') {
+                newUpvoteCount--;
+                newHasUpvoted = false;
+            } else {
+                newDownvoteCount--;
+                newHasDownvoted = false;
+            }
+            newUserVote = null;
+        } else if (currentVote && currentVote !== voteTypeVal) {
+            // User is switching votes
+            if (currentVote === 'upvote') {
+                newUpvoteCount--;
+                newHasUpvoted = false;
+            } else {
+                newDownvoteCount--;
+                newHasDownvoted = false;
+            }
+            
+            if (voteTypeVal === 'upvote') {
+                newUpvoteCount++;
+                newHasUpvoted = true;
+            } else {
+                newDownvoteCount++;
+                newHasDownvoted = true;
+            }
+        } else {
+            // User is voting for the first time
+            if (voteTypeVal === 'upvote') {
+                newUpvoteCount++;
+                newHasUpvoted = true;
+            } else {
+                newDownvoteCount++;
+                newHasDownvoted = true;
+            }
+        }
+        
+        // Update local state immediately
+        setUpvote(newUpvoteCount);
+        setDownvote(newDownvoteCount);
+        setHasUpvoted(newHasUpvoted);
+        setHasDownvoted(newHasDownvoted);
+        
+        // Update parent component if callback provided
+        if (onVoteUpdate) {
+            onVoteUpdate(postInfo._id, {
+                upVotesCount: newUpvoteCount,
+                downVotesCount: newDownvoteCount,
+                userVote: newUserVote
+            });
+        }
+        
         try {
-            // `/api/posts/vote-post` 
             const response = await axiosInstance.post(routesForApi.posts.votePost, {
                 postId: postInfo._id,
                 voteType: voteTypeVal
             });
+            
             const { upVotesCount, downVotesCount, noneSelected } = response.data;
-            if (noneSelected) {
-                // console.log("here", noneSelected)
-                setHasUpvoted(false);
-                setHasDownvoted(false);
-            } else {
-
-                setHasUpvoted(voteTypeVal === 'upvote');
-                setHasDownvoted(voteTypeVal === 'downvote');
-            }
+            
+            // Update with server response
             setUpvote(upVotesCount);
             setDownvote(downVotesCount);
-            // console.log("HH", upVotesCount, downVotesCount)
+            
+            if (noneSelected) {
+                setHasUpvoted(false);
+                setHasDownvoted(false);
+                // Update parent component with server response
+                if (onVoteUpdate) {
+                    onVoteUpdate(postInfo._id, {
+                        upVotesCount,
+                        downVotesCount,
+                        userVote: null
+                    });
+                }
+            } else {
+                setHasUpvoted(voteTypeVal === 'upvote');
+                setHasDownvoted(voteTypeVal === 'downvote');
+                // Update parent component with server response
+                if (onVoteUpdate) {
+                    onVoteUpdate(postInfo._id, {
+                        upVotesCount,
+                        downVotesCount,
+                        userVote: voteTypeVal
+                    });
+                }
+            }
         } catch (error) {
             console.error("Error voting:", error.message);
+            
+            // Revert optimistic update on error
+            setUpvote(postInfo.voteId.upVotesCount);
+            setDownvote(postInfo.voteId.downVotesCount);
+            setHasUpvoted(postInfo.voteId.userVotes[authUser._id] === 'upvote');
+            setHasDownvoted(postInfo.voteId.userVotes[authUser._id] === 'downvote');
+            
+            // Revert parent component state
+            if (onVoteUpdate) {
+                onVoteUpdate(postInfo._id, {
+                    upVotesCount: postInfo.voteId.upVotesCount,
+                    downVotesCount: postInfo.voteId.downVotesCount,
+                    userVote: postInfo.voteId.userVotes[authUser._id] || null
+                });
+            }
         } finally {
             setLoading(false);
+            setOptimisticVote(null);
         }
     };
 
@@ -227,14 +330,14 @@ export function ReVote({ postInfo }) {
                 active={hasUpvoted}
                 count={upvote}
                 onClick={(e) => handleVote(e, 'upvote')}
-                loading={loading}
+                loading={loading && optimisticVote === 'upvote'}
             />
             <VoteButton
                 direction="down"
                 active={hasDownvoted}
                 count={downvote}
                 onClick={(e) => handleVote(e, 'downvote')}
-                loading={loading}
+                loading={loading && optimisticVote === 'downvote'}
             />
         </div>
     );

@@ -59,6 +59,21 @@ export default function Discussions({ toBeDisccusedId }) {
                 _id: authUser._id,
             };
         }
+        
+        // Ensure the new comment has the proper voteId structure
+        if (!newComment.voteId) {
+            newComment.voteId = {
+                upVotesCount: 0,
+                downVotesCount: 0,
+                userVotes: {}
+            };
+        }
+        
+        // Ensure replies array exists
+        if (!newComment.replies) {
+            newComment.replies = [];
+        }
+        
         setComments((prevComments) => [newComment, ...prevComments]);
     };
 
@@ -98,19 +113,23 @@ export default function Discussions({ toBeDisccusedId }) {
 
 
     const sortComments = (comments, method) => {
+        // Filter out any null or undefined comments
+        const validComments = comments.filter(comment => comment != null);
+        
         if (method === 'votes') {
-            return [...comments].sort((a, b) => {
-                const aVotes = a.voteId.upVotesCount - a.voteId.downVotesCount;
-                const bVotes = b.voteId.upVotesCount - b.voteId.downVotesCount;
+            return [...validComments].sort((a, b) => {
+                // Add null checks to prevent errors
+                const aVotes = (a?.voteId?.upVotesCount || 0) - (a?.voteId?.downVotesCount || 0);
+                const bVotes = (b?.voteId?.upVotesCount || 0) - (b?.voteId?.downVotesCount || 0);
                 if (a.questionTag?.isAnswer !== b.questionTag?.isAnswer) {
                     return b.questionTag?.isAnswer ? 1 : -1;
                 }
                 return bVotes - aVotes;
             });
         } else if (method === 'newest') {
-            return [...comments].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            return [...validComments].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
         }
-        return comments;
+        return validComments;
     };
 
     if (isLoading) {

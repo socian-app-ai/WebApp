@@ -434,16 +434,17 @@ export default Comment;
 
 export function ReVote({ comment }) {
     const { authUser } = useAuthContext();
-    const [upvote, setUpvote] = useState(comment.voteId.upVotesCount);
-    const [downvote, setDownvote] = useState(comment.voteId.downVotesCount);
+    const [upvote, setUpvote] = useState(comment.voteId?.upVotesCount || 0);
+    const [downvote, setDownvote] = useState(comment.voteId?.downVotesCount || 0);
     const [hasUpvoted, setHasUpvoted] = useState(false);
     const [hasDownvoted, setHasDownvoted] = useState(false);
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        setHasUpvoted(comment.voteId.userVotes[authUser._id] === 'upvote');
-        setHasDownvoted(comment.voteId.userVotes[authUser._id] === 'downvote');
-    }, [comment.voteId.userVotes, authUser._id]);
+        const userVote = comment.voteId?.userVotes?.[authUser._id];
+        setHasUpvoted(userVote === 'upvote');
+        setHasDownvoted(userVote === 'downvote');
+    }, [comment.voteId?.userVotes, authUser._id]);
 
     const handleVote = async (e, voteTypeVal) => {
         e.preventDefault();
