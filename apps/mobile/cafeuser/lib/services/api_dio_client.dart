@@ -291,12 +291,62 @@ class ApiDioClient {
   }
 
   // Cafe Operations
-  Future<Map<String, dynamic>> getCafe() async {
-    return await getMap(ApiConstants.getCafe);
+  Future<Map<String, dynamic>> getCafe(String cafeId) async {
+    final endpoint = ApiConstants.getCafe.replaceAll(':cafeId', cafeId);
+    return await getMap(endpoint);
   }
 
-  Future<Map<String, dynamic>> updateCafe(Map<String, dynamic> cafeData) async {
-    return await put(ApiConstants.updateCafe, cafeData);
+  Future<List<dynamic>> getAllCafes() async {
+    return await getList(ApiConstants.getAllCafes);
+  }
+
+  Future<Map<String, dynamic>> updateCafe(
+    String cafeId,
+    Map<String, dynamic> cafeData,
+  ) async {
+    final endpoint = ApiConstants.updateCafe.replaceAll(':cafeId', cafeId);
+    return await put(endpoint, cafeData);
+  }
+
+  Future<Map<String, dynamic>> updateCafeName(
+    String cafeId,
+    String name,
+  ) async {
+    final endpoint = ApiConstants.updateCafeName.replaceAll(':cafeId', cafeId);
+    return await patch(endpoint, {'name': name});
+  }
+
+  Future<Map<String, dynamic>> updateCafeStatus(
+    String cafeId,
+    String status,
+  ) async {
+    final endpoint = ApiConstants.updateCafeStatus.replaceAll(
+      ':cafeId',
+      cafeId,
+    );
+    return await patch(endpoint, {'status': status});
+  }
+
+  Future<Map<String, dynamic>> updateCafeCoordinates(
+    String cafeId,
+    double latitude,
+    double longitude,
+    String? locationInText,
+  ) async {
+    final endpoint = ApiConstants.updateCafeCoordinates.replaceAll(
+      ':cafeId',
+      cafeId,
+    );
+    return await patch(endpoint, {
+      'latitude': latitude,
+      'longitude': longitude,
+      if (locationInText != null) 'locationInText': locationInText,
+    });
+  }
+
+  Future<Map<String, dynamic>> deleteCafe(String cafeId) async {
+    final endpoint = ApiConstants.deleteCafe.replaceAll(':cafeId', cafeId);
+    return await delete(endpoint);
   }
 
   // Category Operations
@@ -313,6 +363,9 @@ class ApiDioClient {
     Map<String, dynamic> categoryData,
   ) async {
     final endpoint = ApiConstants.createCategory.replaceAll(':cafeId', cafeId);
+    print('DEBUG: Creating category with endpoint: $endpoint');
+    print('DEBUG: Category data: $categoryData');
+    print('DEBUG: cafeId parameter: $cafeId');
     return await post(endpoint, categoryData);
   }
 
@@ -327,11 +380,22 @@ class ApiDioClient {
     return await put(endpoint, categoryData);
   }
 
+  Future<Map<String, dynamic>> updateCategoryStatus(
+    String cafeId,
+    String categoryId,
+    String status,
+  ) async {
+    final endpoint = ApiConstants.updateCategoryStatus
+        .replaceAll(':cafeId', cafeId)
+        .replaceAll(':categoryId', categoryId);
+    return await put(endpoint, {'status': status});
+  }
+
   Future<Map<String, dynamic>> deleteCategory(
     String cafeId,
     String categoryId,
   ) async {
-    final endpoint = ApiConstants.deleteCategory
+    final endpoint = ApiConstants.deleteCategoryById
         .replaceAll(':cafeId', cafeId)
         .replaceAll(':categoryId', categoryId);
     return await delete(endpoint);
@@ -348,10 +412,10 @@ class ApiDioClient {
     String categoryId,
     Map<String, dynamic> itemData,
   ) async {
-    final endpoint = ApiConstants.createFoodItem
-        .replaceAll(':cafeId', cafeId)
-        .replaceAll(':categoryId', categoryId);
-    return await post(endpoint, itemData);
+    final endpoint = ApiConstants.createFoodItem.replaceAll(':cafeId', cafeId);
+    // Add categoryId to the item data since backend expects it in the body
+    final dataWithCategory = {...itemData, 'category': categoryId};
+    return await post(endpoint, dataWithCategory);
   }
 
   Future<Map<String, dynamic>> updateFoodItem(

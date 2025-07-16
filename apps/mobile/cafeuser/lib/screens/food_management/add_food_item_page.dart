@@ -27,6 +27,14 @@ class _AddFoodItemPageState extends State<AddFoodItemPage> {
   bool _takeAwayStatus = false;
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadCategories();
+    });
+  }
+
+  @override
   void dispose() {
     _nameController.dispose();
     _descriptionController.dispose();
@@ -37,6 +45,22 @@ class _AddFoodItemPageState extends State<AddFoodItemPage> {
     _takeAwayPriceController.dispose();
     _flavoursController.dispose();
     super.dispose();
+  }
+
+  Future<void> _loadCategories() async {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final cafeProvider = Provider.of<CafeProvider>(context, listen: false);
+    final cafeId = authProvider.cafeId;
+
+    if (cafeId != null) {
+      final success = await cafeProvider.loadCategories(cafeId);
+      if (!success && cafeProvider.errorMessage != null) {
+        _showSnackBar(
+          cafeProvider.errorMessage ?? 'Failed to load categories',
+          isError: true,
+        );
+      }
+    }
   }
 
   void _showSnackBar(String message, {bool isError = false}) {

@@ -131,20 +131,20 @@ lib/
 - `GET /api/auth/cafe/me` - Get current user
 
 ### Cafe Management
-- `GET /api/mod/cafe/:cafeId` - Get cafe details
-- `PUT /api/mod/cafe/update/:cafeId/all` - Update cafe info
+- `GET /api/cafe/user/:cafeId` - Get cafe details
+- `PUT /api/cafe/user/update/:cafeId/all` - Update cafe info
 
 ### Food Categories
-- `GET /api/mod/cafe/:cafeId/categories` - Get categories
-- `POST /api/mod/cafe/:cafeId/category` - Create category
-- `PUT /api/mod/cafe/update/:cafeId/categories/:categoryId` - Update category
-- `DELETE /api/mod/cafe/:cafeId/categories/:categoryId/delete` - Delete category
+- `GET /api/cafe/user/:cafeId/categories` - Get categories
+- `POST /api/cafe/user/:cafeId/category` - Create category
+- `PUT /api/cafe/user/update/:cafeId/categories/:categoryId` - Update category
+- `DELETE /api/cafe/user/:cafeId/categories/:categoryId/delete` - Delete category
 
 ### Food Items
-- `GET /api/mod/cafe/:cafeId/items` - Get food items
-- `POST /api/mod/cafe/:cafeId/category/:categoryId/item/create` - Create food item
-- `PUT /api/mod/cafe/:cafeId/items/:itemId/all` - Update food item
-- `DELETE /api/mod/cafe/:cafeId/item/:itemId` - Delete food item
+- `GET /api/cafe/user/:cafeId/items` - Get food items
+- `POST /api/cafe/user/:cafeId/category/:categoryId/item/create` - Create food item
+- `PUT /api/cafe/user/:cafeId/items/:itemId/all` - Update food item
+- `DELETE /api/cafe/user/:cafeId/item/:itemId` - Delete food item
 
 ## User Roles
 
@@ -205,8 +205,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ## Support
 
 For support or questions, please contact:
-- Email: support@cafeadmin.com
-- GitHub Issues: [Create an issue](https://github.com/your-repo/issues)
+- Email: support@socian.app
 
 ---
 

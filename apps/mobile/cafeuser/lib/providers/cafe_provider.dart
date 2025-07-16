@@ -27,21 +27,22 @@ class CafeProvider with ChangeNotifier {
   }
 
   // Load cafe data
-  Future<bool> loadCafeData() async {
+  Future<bool> loadCafeData(String cafeId) async {
     _isLoading = true;
     _errorMessage = null;
     notifyListeners();
 
     try {
-      final response = await _apiClient.getCafe();
+      final response = await _apiClient.getCafe(cafeId);
 
-      if (response['cafe'] != null) {
-        _currentCafe = Cafe.fromJson(response['cafe']);
+      // Backend returns the cafe object directly
+      if (response is Map<String, dynamic>) {
+        _currentCafe = Cafe.fromJson(response);
         _isLoading = false;
         notifyListeners();
         return true;
       } else {
-        _errorMessage = 'Failed to load cafe data';
+        _errorMessage = 'Invalid response format';
         _isLoading = false;
         notifyListeners();
         return false;
@@ -55,15 +56,16 @@ class CafeProvider with ChangeNotifier {
   }
 
   // Update cafe information
-  Future<bool> updateCafe(Map<String, dynamic> cafeData) async {
+  Future<bool> updateCafe(String cafeId, Map<String, dynamic> cafeData) async {
     _isLoading = true;
     _errorMessage = null;
     notifyListeners();
 
     try {
-      final response = await _apiClient.updateCafe(cafeData);
+      final response = await _apiClient.updateCafe(cafeId, cafeData);
 
-      if (response['success'] == true && response['cafe'] != null) {
+      // Backend returns { message: 'Cafe updated successfully', cafe: updatedCafe }
+      if (response['cafe'] != null) {
         _currentCafe = Cafe.fromJson(response['cafe']);
         _isLoading = false;
         notifyListeners();
@@ -90,8 +92,13 @@ class CafeProvider with ChangeNotifier {
 
     try {
       final response = await _apiClient.getCafeCategories(cafeId);
-      _categories =
-          response.map((json) => FoodCategory.fromJson(json)).toList();
+
+      // Backend returns an array directly, API client now returns List<dynamic>
+      final List<FoodCategory> categories = [];
+      for (var json in response) {
+        categories.add(FoodCategory.fromJson(json as Map<String, dynamic>));
+      }
+      _categories = categories;
       _isLoading = false;
       notifyListeners();
       return true;
@@ -108,6 +115,9 @@ class CafeProvider with ChangeNotifier {
     String cafeId,
     Map<String, dynamic> categoryData,
   ) async {
+    print('DEBUG: CafeProvider.createCategory called with cafeId: $cafeId');
+    print('DEBUG: CafeProvider.createCategory called with data: $categoryData');
+
     _isLoading = true;
     _errorMessage = null;
     notifyListeners();
@@ -115,19 +125,21 @@ class CafeProvider with ChangeNotifier {
     try {
       final response = await _apiClient.createCategory(cafeId, categoryData);
 
-      if (response['success'] == true && response['category'] != null) {
-        final newCategory = FoodCategory.fromJson(response['category']);
+      // Backend returns the category object directly
+      if (response is Map<String, dynamic>) {
+        final newCategory = FoodCategory.fromJson(response);
         _categories.add(newCategory);
         _isLoading = false;
         notifyListeners();
         return true;
       } else {
-        _errorMessage = response['message'] ?? 'Failed to create category';
+        _errorMessage = 'Failed to create category';
         _isLoading = false;
         notifyListeners();
         return false;
       }
     } catch (e) {
+      print('DEBUG: Error in createCategory: $e');
       _errorMessage = e.toString();
       _isLoading = false;
       notifyListeners();
@@ -152,7 +164,8 @@ class CafeProvider with ChangeNotifier {
         categoryData,
       );
 
-      if (response['success'] == true && response['category'] != null) {
+      // Backend returns { message: 'Category updated successfully', category: updatedCategory }
+      if (response['category'] != null) {
         final updatedCategory = FoodCategory.fromJson(response['category']);
         final index = _categories.indexWhere((cat) => cat.id == categoryId);
         if (index != -1) {
@@ -162,7 +175,7 @@ class CafeProvider with ChangeNotifier {
         notifyListeners();
         return true;
       } else {
-        _errorMessage = response['message'] ?? 'Failed to update category';
+        _errorMessage = response['error'] ?? 'Failed to update category';
         _isLoading = false;
         notifyListeners();
         return false;
@@ -184,7 +197,8 @@ class CafeProvider with ChangeNotifier {
     try {
       final response = await _apiClient.deleteCategory(cafeId, categoryId);
 
-      if (response['success'] == true) {
+      // Backend returns { message: 'Category deleted successfully' }
+      if (response['message'] != null) {
         _categories.removeWhere((cat) => cat.id == categoryId);
         // Also remove all food items in this category
         _foodItems.removeWhere((item) => item.category == categoryId);
@@ -192,7 +206,7 @@ class CafeProvider with ChangeNotifier {
         notifyListeners();
         return true;
       } else {
-        _errorMessage = response['message'] ?? 'Failed to delete category';
+        _errorMessage = response['error'] ?? 'Failed to delete category';
         _isLoading = false;
         notifyListeners();
         return false;
@@ -213,7 +227,13 @@ class CafeProvider with ChangeNotifier {
 
     try {
       final response = await _apiClient.getFoodItems(cafeId);
-      _foodItems = response.map((json) => FoodItem.fromJson(json)).toList();
+
+      // Backend returns an array directly, API client now returns List<dynamic>
+      final List<FoodItem> items = [];
+      for (var json in response) {
+        items.add(FoodItem.fromJson(json as Map<String, dynamic>));
+      }
+      _foodItems = items;
       _isLoading = false;
       notifyListeners();
       return true;
@@ -242,14 +262,15 @@ class CafeProvider with ChangeNotifier {
         itemData,
       );
 
-      if (response['success'] == true && response['item'] != null) {
-        final newItem = FoodItem.fromJson(response['item']);
+      // Backend returns the item object directly
+      if (response is Map<String, dynamic>) {
+        final newItem = FoodItem.fromJson(response);
         _foodItems.add(newItem);
         _isLoading = false;
         notifyListeners();
         return true;
       } else {
-        _errorMessage = response['message'] ?? 'Failed to create food item';
+        _errorMessage = 'Failed to create food item';
         _isLoading = false;
         notifyListeners();
         return false;
@@ -279,8 +300,9 @@ class CafeProvider with ChangeNotifier {
         itemData,
       );
 
-      if (response['success'] == true && response['item'] != null) {
-        final updatedItem = FoodItem.fromJson(response['item']);
+      // Backend returns the item object directly
+      if (response is Map<String, dynamic>) {
+        final updatedItem = FoodItem.fromJson(response);
         final index = _foodItems.indexWhere((item) => item.id == itemId);
         if (index != -1) {
           _foodItems[index] = updatedItem;
@@ -289,7 +311,7 @@ class CafeProvider with ChangeNotifier {
         notifyListeners();
         return true;
       } else {
-        _errorMessage = response['message'] ?? 'Failed to update food item';
+        _errorMessage = 'Failed to update food item';
         _isLoading = false;
         notifyListeners();
         return false;
@@ -311,13 +333,14 @@ class CafeProvider with ChangeNotifier {
     try {
       final response = await _apiClient.deleteFoodItem(cafeId, itemId);
 
-      if (response['success'] == true) {
+      // Backend returns { message: 'Food item deleted successfully' }
+      if (response['message'] != null) {
         _foodItems.removeWhere((item) => item.id == itemId);
         _isLoading = false;
         notifyListeners();
         return true;
       } else {
-        _errorMessage = response['message'] ?? 'Failed to delete food item';
+        _errorMessage = response['error'] ?? 'Failed to delete food item';
         _isLoading = false;
         notifyListeners();
         return false;

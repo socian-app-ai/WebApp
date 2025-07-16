@@ -33,6 +33,9 @@ class _EditFoodItemPageState extends State<EditFoodItemPage> {
   void initState() {
     super.initState();
     _populateFields();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadCategories();
+    });
   }
 
   void _populateFields() {
@@ -46,6 +49,22 @@ class _EditFoodItemPageState extends State<EditFoodItemPage> {
     _flavoursController.text = widget.item.flavours.join(', ');
     _selectedCategoryId = widget.item.category;
     _takeAwayStatus = widget.item.takeAwayStatus;
+  }
+
+  Future<void> _loadCategories() async {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final cafeProvider = Provider.of<CafeProvider>(context, listen: false);
+    final cafeId = authProvider.cafeId;
+
+    if (cafeId != null) {
+      final success = await cafeProvider.loadCategories(cafeId);
+      if (!success && cafeProvider.errorMessage != null) {
+        _showSnackBar(
+          cafeProvider.errorMessage ?? 'Failed to load categories',
+          isError: true,
+        );
+      }
+    }
   }
 
   @override

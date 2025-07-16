@@ -21,9 +21,38 @@ class _FoodItemsPageState extends State<FoodItemsPage> {
   final TextEditingController _searchController = TextEditingController();
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadData();
+    });
+  }
+
+  @override
   void dispose() {
     _searchController.dispose();
     super.dispose();
+  }
+
+  Future<void> _loadData() async {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final cafeProvider = Provider.of<CafeProvider>(context, listen: false);
+    final cafeId = authProvider.cafeId;
+
+    if (cafeId != null) {
+      // Load categories and food items in parallel
+      await Future.wait([
+        cafeProvider.loadCategories(cafeId),
+        cafeProvider.loadFoodItems(cafeId),
+      ]);
+
+      if (cafeProvider.errorMessage != null) {
+        _showSnackBar(
+          cafeProvider.errorMessage ?? 'Failed to load data',
+          isError: true,
+        );
+      }
+    }
   }
 
   void _showSnackBar(String message, {bool isError = false}) {
@@ -209,60 +238,63 @@ class _FoodItemsPageState extends State<FoodItemsPage> {
 
               // Items List
               Expanded(
-                child:
-                    cafeProvider.isLoading
-                        ? const Center(child: CircularProgressIndicator())
-                        : items.isEmpty
-                        ? Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.restaurant_menu,
-                                size: 64,
-                                color: Theme.of(context).hintColor,
-                              ),
-                              const SizedBox(height: 16),
-                              Text(
-                                _searchQuery.isNotEmpty ||
-                                        _selectedCategory != 'All'
-                                    ? 'No food items found'
-                                    : 'No food items yet',
-                                style: Theme.of(
-                                  context,
-                                ).textTheme.titleMedium?.copyWith(
+                child: RefreshIndicator(
+                  onRefresh: _loadData,
+                  child:
+                      cafeProvider.isLoading
+                          ? const Center(child: CircularProgressIndicator())
+                          : items.isEmpty
+                          ? Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.restaurant_menu,
+                                  size: 64,
                                   color: Theme.of(context).hintColor,
                                 ),
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                _searchQuery.isNotEmpty ||
-                                        _selectedCategory != 'All'
-                                    ? 'Try adjusting your search or filter'
-                                    : 'Add your first food item',
-                                style: Theme.of(
-                                  context,
-                                ).textTheme.bodyMedium?.copyWith(
-                                  color: Theme.of(context).hintColor,
+                                const SizedBox(height: 16),
+                                Text(
+                                  _searchQuery.isNotEmpty ||
+                                          _selectedCategory != 'All'
+                                      ? 'No food items found'
+                                      : 'No food items yet',
+                                  style: Theme.of(
+                                    context,
+                                  ).textTheme.titleMedium?.copyWith(
+                                    color: Theme.of(context).hintColor,
+                                  ),
                                 ),
-                              ),
-                            ],
+                                const SizedBox(height: 8),
+                                Text(
+                                  _searchQuery.isNotEmpty ||
+                                          _selectedCategory != 'All'
+                                      ? 'Try adjusting your search or filter'
+                                      : 'Add your first food item',
+                                  style: Theme.of(
+                                    context,
+                                  ).textTheme.bodyMedium?.copyWith(
+                                    color: Theme.of(context).hintColor,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
+                          : ListView.builder(
+                            padding: const EdgeInsets.all(
+                              AppConstants.defaultPadding,
+                            ),
+                            itemCount: items.length,
+                            itemBuilder: (context, index) {
+                              final item = items[index];
+                              final category = categories.firstWhere(
+                                (cat) => cat.id == item.category,
+                                orElse: () => categories.first,
+                              );
+                              return _buildFoodItemCard(item, category);
+                            },
                           ),
-                        )
-                        : ListView.builder(
-                          padding: const EdgeInsets.all(
-                            AppConstants.defaultPadding,
-                          ),
-                          itemCount: items.length,
-                          itemBuilder: (context, index) {
-                            final item = items[index];
-                            final category = categories.firstWhere(
-                              (cat) => cat.id == item.category,
-                              orElse: () => categories.first,
-                            );
-                            return _buildFoodItemCard(item, category);
-                          },
-                        ),
+                ),
               ),
             ],
           );

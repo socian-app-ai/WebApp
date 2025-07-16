@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:cafeuser/providers/auth_provider.dart';
 import 'package:cafeuser/providers/cafe_provider.dart';
+import 'package:cafeuser/models/food_category.dart';
 import 'package:cafeuser/shared/constants.dart';
 import 'package:cafeuser/screens/auth/signin_page.dart';
 import 'package:cafeuser/screens/food_management/food_items_page.dart';
@@ -20,7 +21,9 @@ class _DashboardPageState extends State<DashboardPage> {
   @override
   void initState() {
     super.initState();
-    _loadInitialData();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadInitialData();
+    });
   }
 
   void _loadInitialData() async {
@@ -29,9 +32,12 @@ class _DashboardPageState extends State<DashboardPage> {
 
     final cafeId = authProvider.cafeId;
     if (cafeId != null) {
-      await cafeProvider.loadCafeData();
-      await cafeProvider.loadCategories(cafeId);
-      await cafeProvider.loadFoodItems(cafeId);
+      // Load all data in parallel for better performance
+      await Future.wait([
+        cafeProvider.loadCafeData(cafeId),
+        cafeProvider.loadCategories(cafeId),
+        cafeProvider.loadFoodItems(cafeId),
+      ]);
     }
   }
 
@@ -291,12 +297,412 @@ class _DashboardPageState extends State<DashboardPage> {
   }
 
   Widget _buildCategoriesTab() {
-    return const Center(
-      child: Text(
-        'Categories Management\n(Coming Soon)',
-        textAlign: TextAlign.center,
-        style: TextStyle(fontSize: 18),
+    return Consumer2<AuthProvider, CafeProvider>(
+      builder: (context, authProvider, cafeProvider, child) {
+        final categories = cafeProvider.categories;
+
+        return Scaffold(
+          body:
+              cafeProvider.isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : categories.isEmpty
+                  ? const Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.category, size: 64, color: Colors.grey),
+                        SizedBox(height: 16),
+                        Text(
+                          'No categories yet',
+                          style: TextStyle(fontSize: 18, color: Colors.grey),
+                        ),
+                        SizedBox(height: 8),
+                        Text(
+                          'Add your first category',
+                          style: TextStyle(color: Colors.grey),
+                        ),
+                      ],
+                    ),
+                  )
+                  : RefreshIndicator(
+                    onRefresh: () async {
+                      final cafeId = authProvider.cafeId;
+                      if (cafeId != null) {
+                        await cafeProvider.loadCategories(cafeId);
+                      }
+                    },
+                    child: ListView.builder(
+                      padding: const EdgeInsets.all(
+                        AppConstants.defaultPadding,
+                      ),
+                      itemCount: categories.length,
+                      itemBuilder: (context, index) {
+                        final category = categories[index];
+                        return _buildCategoryCard(
+                          category,
+                          authProvider,
+                          cafeProvider,
+                        );
+                      },
+                    ),
+                  ),
+          floatingActionButton: FloatingActionButton(
+            onPressed: () => _showAddCategoryDialog(authProvider, cafeProvider),
+            child: const Icon(Icons.add),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildCategoryCard(
+    FoodCategory category,
+    AuthProvider authProvider,
+    CafeProvider cafeProvider,
+  ) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 12),
+      child: ListTile(
+        leading: Container(
+          width: 56,
+          height: 56,
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.secondary.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(AppConstants.smallBorderRadius),
+          ),
+          child:
+              category.imageUrl.isNotEmpty
+                  ? ClipRRect(
+                    borderRadius: BorderRadius.circular(
+                      AppConstants.smallBorderRadius,
+                    ),
+                    child: Image.network(
+                      category.imageUrl,
+                      fit: BoxFit.cover,
+                      errorBuilder:
+                          (context, error, stackTrace) => Icon(
+                            Icons.category,
+                            color: Theme.of(context).colorScheme.secondary,
+                          ),
+                    ),
+                  )
+                  : Icon(
+                    Icons.category,
+                    color: Theme.of(context).colorScheme.secondary,
+                  ),
+        ),
+        title: Text(
+          category.name,
+          style: const TextStyle(fontWeight: FontWeight.w600),
+        ),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              category.description,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+            const SizedBox(height: 4),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              decoration: BoxDecoration(
+                color:
+                    category.status == 'active'
+                        ? Colors.green.withOpacity(0.1)
+                        : Colors.grey.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Text(
+                category.status.toUpperCase(),
+                style: TextStyle(
+                  fontSize: 12,
+                  color:
+                      category.status == 'active' ? Colors.green : Colors.grey,
+                ),
+              ),
+            ),
+          ],
+        ),
+        trailing: PopupMenuButton<String>(
+          onSelected: (value) {
+            if (value == 'edit') {
+              _showEditCategoryDialog(category, authProvider, cafeProvider);
+            } else if (value == 'delete') {
+              _showDeleteCategoryDialog(category, authProvider, cafeProvider);
+            }
+          },
+          itemBuilder:
+              (context) => [
+                const PopupMenuItem(
+                  value: 'edit',
+                  child: Row(
+                    children: [
+                      Icon(Icons.edit),
+                      SizedBox(width: 8),
+                      Text('Edit'),
+                    ],
+                  ),
+                ),
+                const PopupMenuItem(
+                  value: 'delete',
+                  child: Row(
+                    children: [
+                      Icon(Icons.delete),
+                      SizedBox(width: 8),
+                      Text('Delete'),
+                    ],
+                  ),
+                ),
+              ],
+        ),
       ),
+    );
+  }
+
+  void _showAddCategoryDialog(
+    AuthProvider authProvider,
+    CafeProvider cafeProvider,
+  ) {
+    final nameController = TextEditingController();
+    final descriptionController = TextEditingController();
+    final imageUrlController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder:
+          (context) => AlertDialog(
+            title: const Text('Add Category'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: nameController,
+                  decoration: const InputDecoration(labelText: 'Category Name'),
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: descriptionController,
+                  decoration: const InputDecoration(labelText: 'Description'),
+                  maxLines: 3,
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: imageUrlController,
+                  decoration: const InputDecoration(
+                    labelText: 'Image URL (optional)',
+                  ),
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('Cancel'),
+              ),
+              ElevatedButton(
+                onPressed: () async {
+                  if (nameController.text.trim().isNotEmpty) {
+                    final cafeId = authProvider.cafeId;
+                    print('DEBUG: Creating category with cafeId: $cafeId');
+                    print(
+                      'DEBUG: Current user: ${authProvider.currentUser?.toJson()}',
+                    );
+
+                    if (cafeId != null) {
+                      final categoryData = {
+                        'name': nameController.text.trim(),
+                        'description': descriptionController.text.trim(),
+                        'imageUrl': imageUrlController.text.trim(),
+                      };
+
+                      print('DEBUG: Category data: $categoryData');
+
+                      final success = await cafeProvider.createCategory(
+                        cafeId,
+                        categoryData,
+                      );
+
+                      Navigator.of(context).pop();
+
+                      if (success) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Category added successfully'),
+                          ),
+                        );
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              cafeProvider.errorMessage ??
+                                  'Failed to add category',
+                            ),
+                            backgroundColor:
+                                Theme.of(context).colorScheme.error,
+                          ),
+                        );
+                      }
+                    } else {
+                      Navigator.of(context).pop();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            'cafeId is null - user not authenticated properly',
+                          ),
+                          backgroundColor: Theme.of(context).colorScheme.error,
+                        ),
+                      );
+                    }
+                  }
+                },
+                child: const Text('Add'),
+              ),
+            ],
+          ),
+    );
+  }
+
+  void _showEditCategoryDialog(
+    FoodCategory category,
+    AuthProvider authProvider,
+    CafeProvider cafeProvider,
+  ) {
+    final nameController = TextEditingController(text: category.name);
+    final descriptionController = TextEditingController(
+      text: category.description,
+    );
+    final imageUrlController = TextEditingController(text: category.imageUrl);
+
+    showDialog(
+      context: context,
+      builder:
+          (context) => AlertDialog(
+            title: const Text('Edit Category'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: nameController,
+                  decoration: const InputDecoration(labelText: 'Category Name'),
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: descriptionController,
+                  decoration: const InputDecoration(labelText: 'Description'),
+                  maxLines: 3,
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: imageUrlController,
+                  decoration: const InputDecoration(
+                    labelText: 'Image URL (optional)',
+                  ),
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('Cancel'),
+              ),
+              ElevatedButton(
+                onPressed: () async {
+                  if (nameController.text.trim().isNotEmpty) {
+                    final cafeId = authProvider.cafeId;
+                    if (cafeId != null) {
+                      final success = await cafeProvider
+                          .updateCategory(cafeId, category.id, {
+                            'name': nameController.text.trim(),
+                            'description': descriptionController.text.trim(),
+                            'imageUrl': imageUrlController.text.trim(),
+                          });
+
+                      Navigator.of(context).pop();
+
+                      if (success) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Category updated successfully'),
+                          ),
+                        );
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              cafeProvider.errorMessage ??
+                                  'Failed to update category',
+                            ),
+                            backgroundColor:
+                                Theme.of(context).colorScheme.error,
+                          ),
+                        );
+                      }
+                    }
+                  }
+                },
+                child: const Text('Update'),
+              ),
+            ],
+          ),
+    );
+  }
+
+  void _showDeleteCategoryDialog(
+    FoodCategory category,
+    AuthProvider authProvider,
+    CafeProvider cafeProvider,
+  ) {
+    showDialog(
+      context: context,
+      builder:
+          (context) => AlertDialog(
+            title: const Text('Delete Category'),
+            content: Text(
+              'Are you sure you want to delete "${category.name}"?',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('Cancel'),
+              ),
+              ElevatedButton(
+                onPressed: () async {
+                  final cafeId = authProvider.cafeId;
+                  if (cafeId != null) {
+                    final success = await cafeProvider.deleteCategory(
+                      cafeId,
+                      category.id,
+                    );
+
+                    Navigator.of(context).pop();
+
+                    if (success) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Category deleted successfully'),
+                        ),
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            cafeProvider.errorMessage ??
+                                'Failed to delete category',
+                          ),
+                          backgroundColor: Theme.of(context).colorScheme.error,
+                        ),
+                      );
+                    }
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Theme.of(context).colorScheme.error,
+                ),
+                child: const Text('Delete'),
+              ),
+            ],
+          ),
     );
   }
 }

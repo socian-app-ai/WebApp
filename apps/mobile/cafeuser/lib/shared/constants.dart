@@ -3,8 +3,9 @@ class AppConstants {
   static const String appVersion = '1.0.0';
 
   // API Constants
-  static const String baseUrl =
-      'https://192.bilalellahi.com'; // Replace with your backend URL
+  // static const String baseUrl =
+  //     'https://192.bilalellahi.com'; 
+  static const String baseUrl = "http://10.107.248.4:8080";
   static const int connectionTimeout = 30000;
   static const int receiveTimeout = 30000;
 
@@ -123,25 +124,34 @@ class ApiConstants {
   static const String verifyToken = '/api/cafe/user/verify-token';
 
   // Cafe endpoints
-  static const String getCafe = '/api/mod/cafe';
-  static const String updateCafe = '/api/mod/cafe/update';
-  static const String getCafeCategories = '/api/mod/cafe/:cafeId/categories';
-  static const String createCategory = '/api/mod/cafe/:cafeId/category';
+  static const String getCafe = '/api/cafe/user/:cafeId';
+  static const String getAllCafes = '/api/cafe/user/all';
+  static const String updateCafe = '/api/cafe/user/update/:cafeId/all';
+  static const String updateCafeName = '/api/cafe/user/update/:cafeId/name';
+  static const String updateCafeStatus = '/api/cafe/user/update/:cafeId/status';
+  static const String updateCafeCoordinates =
+      '/api/cafe/user/update/:cafeId/coordinates';
+  static const String deleteCafe = '/api/cafe/user/:cafeId/delete';
+
+  // Category endpoints
+  static const String getCafeCategories = '/api/cafe/user/:cafeId/categories';
+  static const String createCategory = '/api/cafe/user/:cafeId/category';
   static const String updateCategory =
-      '/api/mod/cafe/update/:cafeId/categories/:categoryId';
-  static const String deleteCategory =
-      '/api/mod/cafe/:cafeId/categories/:categoryId/delete';
+      '/api/cafe/user/:cafeId/categories/:categoryId';
+  static const String updateCategoryStatus =
+      '/api/cafe/user/:cafeId/categories/:categoryId/status';
+  static const String deleteCategoryById =
+      '/api/cafe/user/:cafeId/categories/:categoryId';
 
   // Food item endpoints
-  static const String getFoodItems = '/api/mod/cafe/:cafeId/items';
-  static const String createFoodItem =
-      '/api/mod/cafe/:cafeId/category/:categoryId/item/create';
+  static const String getFoodItems = '/api/cafe/user/:cafeId/items';
+  static const String createFoodItem = '/api/cafe/user/:cafeId/items';
   static const String updateFoodItem =
-      '/api/mod/cafe/:cafeId/items/:itemId/all';
-  static const String deleteFoodItem = '/api/mod/cafe/:cafeId/item/:itemId';
+      '/api/cafe/user/:cafeId/items/:itemId/all';
+  static const String deleteFoodItem = '/api/cafe/user/:cafeId/items/:itemId';
 
   // Reviews endpoints
-  static const String getReviews = '/api/cafe/:cafeId/reviews';
+  static const String getReviews = '/api/cafe/user/:cafeId/reviews';
   static const String getItemReviews =
-      '/api/cafe/:cafeId/items/:itemId/reviews';
+      '/api/cafe/user/:cafeId/items/:itemId/reviews';
 }
