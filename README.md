@@ -1,32 +1,129 @@
+# 🎓 Socian – Beyond The Class
 
-The main purpose of the project is to centralize students academic content. The project includes :
-- Separate console for each campus of a university.
-- Separate console for Normal Users as Student, Teacher, Alumni.
-- Separate console for super users as Mod, Super with RBAC.
-- Past papers, Teacher Reviews, Societies, Cafe Information specific to campus.
+> Empowering campuses across the nation – One student, one society, one connection at a time.
 
-  
-Past papers: Students can view, download, discuss, question, give answers, live chat with students and teachers while Viewing past papers in elegant, minimalistic, and excellent user experience. Students can see which teacher's exam paper is this and can connect and message with them. Students can view the amount of views and downloads an exam paper has. They can also redirect to view paper on chrome as pdf.  
-  
-Teacher Reviews: Students can give Review to teachers and rating up to 5 stars. Teachers can see feedback and respond as well but all reviews will be anonymous to teacher. Students have feature to post feedback anonymous but teachers will always see everyone's feedback without identification. Mod's (2 students from every campus) can hide teachers, feedbacks given to teachers, comment on that feedback, or their replies or unhide them.  
-  
-Social Event Maps:  
-Society Moderators have feature to organize events at their campus. The Whole Pakistan is able to view events happening in different universities and campus to broaden their vision. This is not only helpful to note attendance of participating users and also, to help pupil broaden their vision. 
-Society Mods create gathering from Event section, where they select a radius within their university where the event will be held in any future. All universities can see what event is being held in such and such campus
+---
 
-Digitizing Societies:  
-We have seen students abandoning societies as soon as they graduate. Not only we created campus space for you. We digitized societies for students. Now, alumni can manage or transfer their societies to new students. Its Just That Societies Will Prosper now. Growth Rukni ni chahye!!
-Here you can set your role as President, Finance Officer, Finance Pokie Officer and as you please. Let them know who You are! You will always be in display list even if you are no longer on that position. Teachers, Students, Alumni, Students from other universities. You allow it we get them to your society. Let other campus know What you are capable of.
+## 🚀 Purpose
 
-Multi Campus and Universities Posting:  
-Students, Teachers and Alumni have option to post about what they are doing for the students, their life, their university. We created feature for all universities to know what each campus is doing so that this grows their vision. X campus of a city will see what Y is doing and can implement that on their own campus, increasing knowledge, broaden their vision.
+**Socian** is built to **centralize academic and social content** for university students in Pakistan. It gives each university campus its own **space**, while enabling **cross-campus connection and collaboration.**
 
-Cafe Information:  
-We developed this feature for cafe managers to know what is special in their menu, if some food is at hype or if students don't like some food at all. They know it, they can improve it. Campus Mods register campus cafe(s) manger(s). Cafe users have their separate console created in Flutter. They can create categories, food items, check review, respond to reviews, check ratings or flag them incase.
+---
 
-Chatting System:
-A social media without chats? Its a must, All Users can chat with each other, No hindrance other than user it self blocks or uncheck allow all users to message. 
+## 🏛️ Key Features
 
-Mod Creators: A specific portion to showcase moderators till start of time and current moderators. Users can apply for moderator role. Admin can approve or Disapprove in the web console. They can assign time period for their moderation tenure (6 month or 1 year). They can be dismissed from their status incase of Recorded Bad Activity with proper rejection.
+### 🖥️ Multi-Console System
+- **Campus Console**: Each campus has its own unique space.
+- **User Consoles**:
+  - **Students**
+  - **Teachers**
+  - **Alumni**
+- **Admin Consoles**:
+  - **Moderators**
+  - **Super Admins**
+  - Role-based Access Control (RBAC) applied.
 
-And there is many more...
+---
+
+### 📚 Past Papers
+- View, **download**, and **discuss** past exam papers.
+- Live **chat** feature while browsing a paper.
+- See **paper author (teacher)** and connect with them.
+- Analytics: **View count**, **download count**, and redirect to **open as PDF in browser**.
+
+---
+
+### 🧑‍🏫 Teacher Reviews
+- **Rate teachers** up to 5 stars.
+- Write **anonymous feedback** (visible to teachers but without identification).
+- Teachers can **respond to reviews**.
+- **Moderators** (2 students per campus) can:
+  - Hide/show teachers
+  - Moderate reviews and responses
+
+---
+
+### 🗺️ Social Event Maps
+- **Society Moderators** can create events on an interactive map.
+- **All universities** can view events campus-wise.
+- Promotes **inter-campus collaboration** and **vision building**.
+- Attendance can be marked through the app.
+
+---
+
+### 🫂 Digitized Societies
+- Societies stay alive **even after graduation**.
+- Alumni can **transfer roles** to juniors (President, Finance Officer, etc.).
+- Roles & society members are **permanently displayed** for transparency and recognition.
+- Allows cross-campus access and collaboration if permitted by society leaders.
+
+---
+
+### 🏛️ Multi-Campus & University-Wide Posts
+- Users can post updates, thoughts, and academic content.
+- Enables campuses to **learn from each other**, share initiatives, and **broaden vision**.
+
+---
+
+### 🍔 Cafe Information System
+- **Cafe Managers** get their own Flutter-powered console.
+- Manage:
+  - **Menu categories**
+  - **Food items**
+  - **Ratings & Reviews**
+- Understand **what’s trending**, what’s **not liked**, and **improve quality**.
+- Campus moderators onboard and manage cafe staff.
+
+---
+
+### 💬 Chatting System
+- Fully integrated **chat system** across all user types.
+- Chat access can be toggled by each user.
+- Block/unblock and privacy settings included.
+
+---
+
+### 🧑‍⚖️ Moderator System
+- Public showcase of **all moderators** – past and present.
+- Users can **apply** for moderation roles.
+- Admins can:
+  - Approve/Reject moderators
+  - Assign **tenure (6 months / 1 year)**
+  - Remove moderators for **violations or inactivity**
+
+---
+
+## 🌍 Vision
+
+We’re not just building another university tool.
+We’re **digitizing student life**:
+- **Societies won’t die** when seniors graduate.
+- **Students won’t feel isolated** to one campus.
+- **Teachers can grow** with feedback.
+- **Admins get control**, students get **freedom**, and **everyone** gets a voice.
+
+> **Growth Rukni Ni Chahiye!**
+
+---
+
+## 🛠️ Tech Stack (TBA)
+- Frontend: `React.js`, `Flutter`
+- Backend: `Node.js`, `Express`, `MongoDB`
+- Cloud: `AWS`, `Vercel`
+- Chat & Realtime: `Socket.IO`, (maybe Kafka soon 😉)
+
+---
+
+## 🧪 Still to come...
+- AI-assisted study suggestions
+- Study room finder
+- Internship portals
+- Custom student dashboards
+- Verified alumni badge system
+- and so much more...
+
+---
+
+## 👑 Built by Students, for Students
+
+> Let’s go beyond the class – **together**.
