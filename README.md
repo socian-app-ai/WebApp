@@ -116,6 +116,25 @@ We’re **digitizing student life**:
 - Transcoder: `FFMPEG`, `TypeScript`
 - Others: `Cloudlfare CDN`, `Google Maps`, `Gemini Ai`
 
+
+---
+
+## 🌐 Links
+
+- 🌍 Website: [https://www.socian.app](https://www.socian.app)
+- 📱 Play Store: [community.socian.app](https://community.socian.app)
+- 📧 Support: [support@socian.app](mailto:support@socian.app)
+- 🔐 Privacy: [privacy@socian.app](mailto:privacy@socian.app)
+
+---
+
+## 👥 Contributors
+
+| Name               | Role              |
+|--------------------|-------------------|
+| **Muhammad Bilal Ellahi** | Lead Developer |
+| **Muhammad Rayyan**       | Core Contributor |
+
 ---
 
 ## 🧪 Still to come...
