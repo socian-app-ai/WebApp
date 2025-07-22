@@ -114,6 +114,8 @@ We’re **digitizing student life**:
 - Email: `Zoho Mail`, `Resend`
 - Aws: `SQS`,`S3`
 - Transcoder: `FFMPEG`, `TypeScript`
+- OTA: `Shorebird`
+- CI/CD: `Github Actions`
 - Others: `Cloudlfare CDN`, `Google Maps`, `Gemini Ai`
 
 
