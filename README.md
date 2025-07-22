@@ -109,8 +109,12 @@ We’re **digitizing student life**:
 ## 🛠️ Tech Stack (TBA)
 - Frontend: `React.js`, `Flutter`
 - Backend: `Node.js`, `Express`, `MongoDB`
-- Cloud: `AWS`, `Vercel`
-- Chat & Realtime: `Socket.IO`, (maybe Kafka soon 😉)
+- Cloud: `AWS`, `Vercel`, `Azure`, `gCloud`
+- Chat & Realtime: `Socket.IO`, `Kafka`, `Pub/Sub`
+- Email: `Zoho Mail`, `Resend`
+- Aws: `SQS`,`S3`
+- Transcoder: `FFMPEG`, `TypeScript`
+- Others: `Cloudlfare CDN`, `Google Maps`, `Gemini Ai`
 
 ---
 
@@ -119,8 +123,10 @@ We’re **digitizing student life**:
 - Study room finder
 - Internship portals
 - Custom student dashboards
-- Verified alumni badge system
+- Verified alumni Job Posting
 - and so much more...
+- External Organizations Job Posting
+- HR Console
 
 ---
 
