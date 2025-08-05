@@ -1,6 +1,12 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
+  content: [
+    "./index.html", 
+    "./src/**/*.{js,ts,jsx,tsx}",
+    "./src/**/*.html",
+    "./src/**/*.vue",
+    "./src/**/*.svelte"
+  ],
   darkMode: "class",
 
   theme: {
@@ -43,4 +49,9 @@ export default {
     },
   },
   plugins: [],
+  safelist: [
+    'html',
+    'body',
+    'dark'
+  ]
 };

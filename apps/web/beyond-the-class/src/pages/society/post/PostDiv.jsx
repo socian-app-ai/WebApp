@@ -26,7 +26,7 @@ import MediaSwiper from '../../../components/postBox/MediaSwiper';
 export default function PostDiv({ society, postInfo, linkActivate = true, onVoteUpdate }) {
     const { authUser } = useAuthContext()
     const [showHoverCard, setShowHoverCard] = useState(false);
-
+    const [isViewingHoverCard, setIsViewingHoverCard] = useState(false);
     // console.log("INFO", postInfo)
 
 
@@ -42,7 +42,7 @@ export default function PostDiv({ society, postInfo, linkActivate = true, onVote
                             <div
 
                                 onMouseEnter={() => setShowHoverCard(true)}
-                                onMouseLeave={() => setShowHoverCard(false)}
+                                onMouseLeave={() => setTimeout(() => !isViewingHoverCard && setShowHoverCard(false), 500)}
                                 onClick={(e) => {
 
                                     e.preventDefault();
@@ -50,11 +50,11 @@ export default function PostDiv({ society, postInfo, linkActivate = true, onVote
                                     navigate(`/user/${postInfo.author?._id}`)
                                 }}
 
-                                className="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
+                                className="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center overflow-hidden">
                                 {
                                     postInfo?.author?.profile?.picture
                                         ?
-                                        <img className='rounded-full' src={postInfo.author.profile.picture} />
+                                        <img loading='lazy' decoding='async' className='w-full h-full object-cover rounded-full' src={postInfo.author.profile.picture} />
                                         :
                                         <span className="text-white text-sm font-medium">
                                             {postInfo?.author ? postInfo.author.name.charAt(0).toUpperCase() : 'D'}
@@ -96,7 +96,7 @@ export default function PostDiv({ society, postInfo, linkActivate = true, onVote
                     </div>
 
                     {showHoverCard && (
-                        <ProfileHoverCard author={postInfo.author} />
+                        <ProfileHoverCard onMouseEnter={() =>{ setShowHoverCard(true); setIsViewingHoverCard(true)}} onMouseLeave={() => setTimeout(() => setShowHoverCard(false), 500)} author={postInfo.author} />
                     )}
 
                     <Link
@@ -349,36 +349,82 @@ export function ReVote({ postInfo, onVoteUpdate }) {
 
 
 
-const ProfileHoverCard = ({ author }) => {
+const ProfileHoverCard = ({ author, onMouseEnter, onMouseLeave }) => {
     if (!author) return null;
 
+    // Helper to get nested university/campus/department names
+    const getUniInfo = (author) => {
+        const uni = author.university?.universityId?.name;
+        const campus = author.university?.campusId?.name;
+        const dept = author.university?.departmentId?.name;
+        return [
+            uni ? { label: "University", value: uni } : null,
+            campus ? { label: "Campus", value: campus } : null,
+            dept ? { label: "Department", value: dept } : null,
+        ].filter(Boolean);
+    };
+
+    // Role badge color
+    const getRoleBadge = (role) => {
+        if (role === "mod" || role === "admin" || author.super_role === "mod" || author.super_role === "admin") {
+            return (
+                <span className="ml-2 px-2 py-0.5 rounded bg-purple-100 text-purple-700 text-xs font-semibold">
+                    {author.super_role === "mod" || author.role === "mod" ? "Mod" : "Admin"}
+                </span>
+            );
+        }
+        return null;
+    };
+
     return (
-        <div className="absolute bg-white dark:bg-gray-800 shadow-lg rounded-md p-4 w-64 z-50">
+        <div
+            onMouseEnter={onMouseEnter}
+            onMouseLeave={onMouseLeave}
+            className="absolute bg-white dark:bg-gray-800 shadow-lg rounded-md p-4 w-72 z-50 border border-gray-200 dark:border-gray-700"
+        >
             <div className="flex items-center space-x-3 mb-3">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
-                    {author.profile?.picture ? (
-                        <img
-                            className="rounded-full"
-                            src={author.profile.picture}
-                            alt={`${author.name}'s profile`}
-                        />
-                    ) : (
-                        <span className="text-white font-bold text-lg">
-                            {author.name.charAt(0).toUpperCase()}
-                        </span>
-                    )}
+                <div className="w-14 h-14 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center overflow-hidden">
+                    <img
+                        className="rounded-full w-full h-full object-cover"
+                        src={
+                            author.profile?.picture ||
+                            "https://ui-avatars.com/api/?name=" +
+                                encodeURIComponent(author.name || "U") +
+                                "&background=8b5cf6&color=fff"
+                        }
+                        alt={`${author.name}'s profile`}
+                    />
                 </div>
                 <div>
-                    <p className="text-sm font-semibold text-gray-900 dark:text-white">
-                        {author.name}
-                    </p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">
-                        {author.bio || 'No bio available'}
+                    <div className="flex items-center">
+                        <p className="text-base font-semibold text-gray-900 dark:text-white">
+                            {author.name}
+                        </p>
+                        {getRoleBadge(author.role)}
+                    </div>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 break-all">
+                        @{author.username}
                     </p>
                 </div>
             </div>
-            <p className="text-xs text-gray-600 dark:text-gray-300">
-                Joined: {new Date(author.createdAt).toLocaleDateString()}
+            <div className="mb-2">
+                <p className="text-xs text-gray-600 dark:text-gray-300">
+                    {author.bio || <span className="italic text-gray-400">No bio available</span>}
+                </p>
+            </div>
+            <div className="mb-2">
+                {getUniInfo(author).map((item) => (
+                    <div key={item.label} className="flex items-center text-xs text-gray-700 dark:text-gray-300">
+                        <span className="font-medium">{item.label}:</span>
+                        <span className="ml-1">{item.value}</span>
+                    </div>
+                ))}
+            </div>
+            <p className="text-xs text-gray-500 dark:text-gray-400">
+                Joined:{" "}
+                {author.createdAt
+                    ? new Date(author.createdAt).toLocaleDateString()
+                    : "Unknown"}
             </p>
         </div>
     );
