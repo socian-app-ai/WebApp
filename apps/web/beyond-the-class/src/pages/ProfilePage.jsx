@@ -15,6 +15,7 @@ import { routesForApi } from '../utils/routes/routesForLinks';
 import logWithFileLocation from '../utils/consoleLog';
 import { CheckCircle2 } from 'lucide-react';
 import { X } from 'lucide-react';
+import SEO from '../components/seo/SEO';
 
 const ProfilePage = () => {
     const { id } = useParams()
@@ -61,7 +62,17 @@ const ProfilePage = () => {
         return <div>User not found</div>;
     }
 
-    return <ProfileComponent user={user} />;
+    return (
+        <>
+            <SEO 
+                title="User Profile" 
+                description="View user profile and connect with students on Socian - Student Community Platform"
+                keywords="user profile, student profile, connect, social network, student community"
+                pageType="default"
+            />
+            <ProfileComponent user={user} />
+        </>
+    );
 
 };
 

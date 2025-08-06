@@ -9,6 +9,7 @@ import routesForLinks, { routesForApi } from "../../utils/routes/routesForLinks"
 import { ShinyButtonParam } from "../../components/Shinny/ShinnyButton";
 import { useLocation } from "react-router-dom";
 import { useEffect } from "react";
+import SEO from "../../components/seo/SEO";
 
 
 export default function Login() {
@@ -63,11 +64,79 @@ useEffect(() => {
   };
 
 
+  const loginStructuredData = {
+        
+            
+                    
+    "@context": "https://schema.org",
+"@type": "WebSite",
+        "author": {
+          "@type": "Person",
+          "name": "Muhammad Bilal Ellahi"
+        },        "name": "Socian",
+    "alternateName": [
+        "Socian",
+        "socian.app",
+        "socian",
+        "socian.app",
+        "socian.app",
+        "MuhammadBilalEllahi",
+        "bilal_illahi",
+        "Muhammad Ellahi",
+        "Bilal Ellahi Portfolio",
+        "Bilal Full Stack Dev",
+        "Bilal from Pakistan",
+        "Bilal Ellahi", "M Bilal", "M Bilal Ellahi", "bilalellahi", "bilalellahi.com", "bilal_illahi", "bilal", "illahi", "github bilal", "github bilal ellahi",  "Bilal Elahi",
+        "bilalelahi",
+        "M Bilal",
+        "M Bilal Elahi",
+        "Muhammad B Elahi",
+        "Bilal Elahi Dev",
+        "bilalelahi.com",
+        "Bilal MERN Developer",
+        "Bilal Flutter Developer",
+        "MuhammadBilalElahi",
+        "bilal_elahi",
+        "Muhammad Elahi",
+        "Bilal Elahi Portfolio",
+        "Bilal Full Stack Dev",
+        "Bilal from Pakistan",
+        "bilal", 
+        "elahi",
+        "github bilal", 
+        "github bilal elahi"],
+    "url": "https://socian.app",
+    "jobTitle": "Student Community Platform",
+    "worksFor": {
+        "@type": "Organization",
+        "name": "Self-employed"
+    },
+    "description": "Socian is a comprehensive student community platform connecting students, teachers, and alumni. Share resources, discuss courses, and build meaningful connections within your academic community.",
+    "image": "https://socian.app/Socian.png",
+    "sameAs": [
+        "https://github.com/MuhammadBilalEllahi",
+        "https://linkedin.com/in/bilal-ellahi",
+        "https://twitter.com/bilal_illahi"
+    ],
+    "knowsAbout": ["Student Community Platform", "Academic Networking", "Student Resources", "Campus Social Network", "Educational Platform", "Student Collaboration"],
+    "email": "support@socian.app",
+    "address": {
+        "@type": "PostalAddress",
+        "addressCountry": "Pakistan"
+    }
+};
+
 
 
 
   return (
     <div className="select-none flex flex-col justify-center items-center min-h-svh  w-full auth_page_style auth_page_style-gradient" >
+      <SEO
+                title="Login"
+                description="Socian is a comprehensive student community platform connecting students, teachers, and alumni. Share resources, discuss courses, and build meaningful connections within your academic community."
+                keywords="Socian, student community, university platform, academic networking, student resources, campus social network, educational platform, student collaboration"
+                structuredData={loginStructuredData}
+            />
       <div className=" flex flex-col justify-center items-center">
         <h1 className="dark:text-white text-lg md:text-xl lg:text-2xl font-bold my-4 select-none">Login to your account</h1>
         <p className="dark:text-white text-sm px-2">Open gate to Opportunities</p>

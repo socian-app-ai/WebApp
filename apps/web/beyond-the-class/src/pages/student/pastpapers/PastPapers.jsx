@@ -3,6 +3,7 @@ import CustomAccordianPastPaper from "../../components/MaterialUI/CustomAccordia
 import { useNavigate } from "react-router-dom"
 import { ArrowBack } from "@mui/icons-material"
 import axiosInstance from "../../config/axios.instance"
+import SEO from "../../components/seo/SEO"
 
 
 
@@ -48,7 +49,14 @@ export default function PastPapers() {
 
 
     return (
-        <div className="p-4 pt-20 bg-gray-50 dark:bg-gray-900 min-h-svh">
+        <>
+            <SEO 
+                title={`${subjectName} - Past Papers`}
+                description={`Access past papers, exams, and study materials for ${subjectName}. Download previous year papers for Fall and Spring semesters.`}
+                keywords={`${subjectName}, past papers, exam papers, previous year papers, study materials, university exams, socian`}
+                pageType="student"
+            />
+            <div className="p-4 pt-20 bg-gray-50 dark:bg-gray-900 min-h-svh">
 
             <div className="flex items-center">
                 <ArrowBack onClick={() => { navigate(-1) }} />
@@ -80,7 +88,7 @@ export default function PastPapers() {
                     </div>
                 ))}
             </div>
-        </div>
+        </>
     );
 }
 

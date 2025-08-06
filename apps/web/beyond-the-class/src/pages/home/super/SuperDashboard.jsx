@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import useUniversityData from "../../admin/hooks/useUniversityData";
+import SEO from "../../../components/seo/SEO";
 
 import axiosInstance from "../../../config/users/axios.instance";
 import { 
@@ -235,6 +236,12 @@ export default function SuperDashboard() {
 
   return (
     <div className='min-h-screen w-full px-2 pt-8'>
+      <SEO
+        title="Admin Dashboard"
+        description="Administrative dashboard for Socian platform management. Monitor analytics, manage users, and oversee platform operations."
+        keywords="admin dashboard, platform management, analytics, user management, system administration"
+        pageType="admin"
+      />
       {/* Header with selectors */}
       <div className='flex flex-wrap gap-4 mb-6'>
         {UniversitySelector}

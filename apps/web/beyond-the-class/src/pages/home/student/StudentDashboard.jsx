@@ -9,6 +9,7 @@ import { useState } from "react";
 import PostDiv from "../../society/post/PostDiv";
 import { routesForApi } from "../../../utils/routes/routesForLinks";
 import useInfiniteScroll from "../../../hooks/useInfiniteScroll";
+import SEO from "../../../components/seo/SEO";
 
 import { FaCamera, FaImage, FaEdit, FaMapMarkerAlt, FaSmile } from "react-icons/fa";
 import { ChevronDown } from "lucide-react";
@@ -117,6 +118,12 @@ export default function StudentDashboard() {
 
   return (
     <div className="min-h-screen pt-[0.1rem] sm:pt-1 md:pt-4 ">
+      <SEO
+        title="Student Dashboard"
+        description="Student dashboard for Socian platform. Access course materials, connect with peers, and participate in academic discussions."
+        keywords="student dashboard, academic platform, course materials, peer networking, student community"
+        pageType="student"
+      />
       <div className="fixed bg-[var(--var-bg-primary-color)] dark:bg-[#171718] w-full p-2 z-10">
         <div className="flex overflow-x-auto space-x-4 flex-row ">
           {filters.map((filter, idx) => (
@@ -131,9 +138,9 @@ export default function StudentDashboard() {
       </div>
 
       <div className="mt-12 flex flex-col justify-center items-center w-full lg:w-[90%]">
-        <div className="px-2 w-full md:w-4/5 lg:w-2/3">
+        {/* <div className="px-2 w-full md:w-4/5 lg:w-2/3">
           <PostBar authUser={authUser} />
-        </div>
+        </div> */}
 
         {posts.length > 0 && (
           <div className="w-full md:w-4/5 lg:w-2/3">

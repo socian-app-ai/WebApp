@@ -1,8 +1,16 @@
 import React from 'react';
+import SEO from '../../components/seo/SEO';
 
 const DataSafety = () => {
   return (
-    <div className="bg-black text-white min-h-screen px-6 py-12 md:px-16">
+    <>
+      <SEO 
+        title="Data Safety Policy" 
+        description="Learn about how Socian collects, uses, and protects your data. Our comprehensive data safety policy ensures your privacy and security."
+        keywords="data safety, privacy policy, data protection, user privacy, student community, socian"
+        pageType="default"
+      />
+      <div className="bg-black text-white min-h-screen px-6 py-12 md:px-16">
       <div className="max-w-5xl mx-auto space-y-8">
         <h1 className="text-4xl font-bold">Data Safety Declaration</h1>
         <p className="text-sm text-gray-400">For Google Play Store Compliance</p>
@@ -363,7 +371,7 @@ const DataSafety = () => {
           For the most current version, visit our app or website.
         </p>
       </div>
-    </div>
+    </>
   );
 };
 

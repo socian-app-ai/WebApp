@@ -1,8 +1,16 @@
 import React from 'react';
+import SEO from '../../components/seo/SEO';
 
 const CommunityGuidelines = () => {
   return (
-    <div className="bg-black text-white min-h-screen px-6 py-12 md:px-16">
+    <>
+      <SEO 
+        title="Community Guidelines" 
+        description="Learn about Socian's community guidelines and standards. Create a safe, respectful, and productive environment for Pakistani university students."
+        keywords="community guidelines, student community, academic integrity, respectful environment, socian"
+        pageType="default"
+      />
+      <div className="bg-black text-white min-h-screen px-6 py-12 md:px-16">
       <div className="max-w-5xl mx-auto space-y-8">
         <h1 className="text-4xl font-bold">Community Guidelines</h1>
         <p className="text-sm text-gray-400">Effective Date: January 15, 2025</p>
@@ -307,7 +315,8 @@ const CommunityGuidelines = () => {
           Last updated: January 15, 2025
         </p>
       </div>
-    </div>
+      </div>
+    </>
   );
 };
 

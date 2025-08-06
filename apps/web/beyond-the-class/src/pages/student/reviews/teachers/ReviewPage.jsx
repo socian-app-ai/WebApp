@@ -6,6 +6,7 @@ import axiosInstance from "../../../../config/users/axios.instance";
 import { useSetInfoBarState } from "../../../../state_management/zustand/useInfoBar";
 import { routesForApi } from "../../../../utils/routes/routesForLinks";
 import useSearchStore from "../../../../state_management/zustand/searchBar";
+import SEO from "../../../../components/seo/SEO";
 
 export default function ReviewPage() {
   const [teachers, setTeachers] = useState([]);
@@ -89,6 +90,12 @@ export default function ReviewPage() {
 
   return (
     <div className="min-h-screen pt-1 px-4 md:px-6 relative text-black dark:text-white">
+      <SEO
+        title="Teacher Reviews"
+        description="Read and write teacher reviews on Socian. Share your academic experiences and help other students make informed decisions."
+        keywords="teacher reviews, academic feedback, professor ratings, student experiences, course evaluations"
+        pageType="reviews"
+      />
       <div className="container">
         {/* Search Bar */}
         <div

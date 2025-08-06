@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
+import SEO from "../../components/seo/SEO";
 
 export default function OAuthRedirectHandler() {
     const location = useLocation();
@@ -15,8 +16,16 @@ export default function OAuthRedirectHandler() {
     }, [location]);
 
     return (
-        <div className="w-full min-h-screen flex justify-center items-center bg-none">
-            <h2>Redirecting...</h2>
-        </div>
+        <>
+            <SEO 
+                title="OAuth Redirect" 
+                description="Processing OAuth authentication. Please wait while we redirect you to complete your login."
+                keywords="oauth, authentication, login redirect, socian login"
+                pageType="default"
+            />
+            <div className="w-full min-h-screen flex justify-center items-center bg-none">
+                <h2>Redirecting...</h2>
+            </div>
+        </>
     );
 }

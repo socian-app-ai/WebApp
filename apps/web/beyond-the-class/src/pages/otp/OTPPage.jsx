@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 import axiosInstance from "../../config/users/axios.instance";
 import { routesForApi } from "../../utils/routes/routesForLinks";
 import toast from "react-hot-toast";
+import SEO from "../../components/seo/SEO";
 
 const EmailVerification = () => {
     const [code, setCode] = useState("");
@@ -109,7 +110,14 @@ const EmailVerification = () => {
     }, [resendTimer, canResend]);
 
     return (
-        <div className="auth_page_style-gradient flex items-center justify-center min-h-screen bg-gray-100">
+        <>
+            <SEO 
+                title="Email Verification" 
+                description="Verify your email address with the OTP code sent to your email. Complete your Socian account registration."
+                keywords="email verification, OTP, account verification, student registration, socian"
+                pageType="default"
+            />
+            <div className="auth_page_style-gradient flex items-center justify-center min-h-screen bg-gray-100">
             <div className=" dark:bg-[#181818] dark:border-[#ffffff33] border-[0.01rem]  border-[#cccccc] bg-[#f9f9f9]  p-8 rounded-2xl shadow-md w-full max-w-md">
                 <h2 className="dark:text-white text-2xl font-semibold mb-4">Verify your email</h2>
                 <p className="dark:text-white text-gray-700 mb-6">
@@ -156,7 +164,8 @@ const EmailVerification = () => {
                     )}
                 </p>
             </div>
-        </div>
+            </div>
+        </>
     );
 };
 

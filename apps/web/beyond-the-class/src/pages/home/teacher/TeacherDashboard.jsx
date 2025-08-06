@@ -6,6 +6,7 @@ import { useSetInfoBarState } from "../../../state_management/zustand/useInfoBar
 import useWindowDimensions from "../../../hooks/useWindowDimensions";
 import { routesForApi } from "../../../utils/routes/routesForLinks";
 import { FaCamera, FaEdit, FaImage, FaMapMarkerAlt, FaSmile } from "react-icons/fa";
+import SEO from "../../../components/seo/SEO";
 
 
 export default function TeacherDashboard() {
@@ -46,6 +47,12 @@ export default function TeacherDashboard() {
 
     return (
         <div className="min-h-screen pt-4 px-2 ">
+            <SEO
+                title="Teacher Dashboard"
+                description="Teacher dashboard for Socian platform. Manage courses, interact with students, and share educational resources."
+                keywords="teacher dashboard, course management, educational resources, student interaction, academic platform"
+                pageType="teacher"
+            />
             {/* <p className="p-10 m-10 font-extrabold text-4xl">CREATE UI FIRST</p> */}
             {/* <div className="fixed bg-[#dcdada] dark:bg-[#171718] w-full p-2">
         <div className="flex overflow-x-auto space-x-4 flex-row ">
@@ -64,10 +71,10 @@ export default function TeacherDashboard() {
 
             <div className="mt-10 flex flex-col justify-center items-center w-full lg:w-[90%]  ">
 
-                <div className=" w-full md:w-4/5 lg:w-2/3">
+                {/* <div className=" w-full md:w-4/5 lg:w-2/3">
                     <Navbar />
 
-                </div>
+                </div> */}
 
                 {posts.length > 0 && (
                     <div className="space-y-4 w-full md:w-4/5 lg:w-2/3">

@@ -1,9 +1,16 @@
 import React from 'react';
 import AppDownloadQR from '../../components/QRCode/AppDownloadQR';
+import SEO from '../../components/seo/SEO';
 
 const PrivacyPolicy = () => {
   return (
     <div className="bg-black text-white min-h-screen px-6 py-12 md:px-16">
+      <SEO
+        title="Privacy Policy"
+        description="Privacy policy for Socian - Student Community Platform. Learn how we protect your data and maintain your privacy in compliance with international standards."
+        keywords="Socian privacy policy, data protection, student privacy, university data security, academic privacy, GDPR compliance"
+        pageType="privacy"
+      />
       <div className="max-w-5xl mx-auto space-y-8">
         <h1 className="text-4xl font-bold">Comprehensive Privacy Policy & Terms</h1>
         <p className="text-sm text-gray-400">Effective Date: January 15, 2025</p>

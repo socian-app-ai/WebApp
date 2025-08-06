@@ -1,8 +1,16 @@
 import React from 'react';
+import SEO from '../../components/seo/SEO';
 
 const TermsOfService = () => {
   return (
-    <div className="bg-black text-white min-h-screen px-6 py-12 md:px-16">
+    <>
+      <SEO 
+        title="Terms of Service" 
+        description="Read the terms of service for Socian - Student Community Platform. Learn about user rights, responsibilities, and platform policies."
+        keywords="terms of service, user agreement, platform policies, student community, socian"
+        pageType="default"
+      />
+      <div className="bg-black text-white min-h-screen px-6 py-12 md:px-16">
       <div className="max-w-5xl mx-auto space-y-8">
         <h1 className="text-4xl font-bold">Terms of Service</h1>
         <p className="text-sm text-gray-400">Effective Date: January 15, 2025</p>
@@ -275,7 +283,7 @@ const TermsOfService = () => {
           By using Socian, you acknowledge that you have read, understood, and agree to be bound by these Terms of Service.
         </p>
       </div>
-    </div>
+    </>
   );
 };
 

@@ -10,6 +10,7 @@ import axiosInstance from '../../config/users/axios.instance';
 import { routesForApi } from '../../utils/routes/routesForLinks';
 import { useToast } from "../../components/toaster/ToastCustom";
 import { redirect } from 'react-router-dom';
+import SEO from '../../components/seo/SEO';
 
 
 export default function CompleteYourInfo() {
@@ -157,7 +158,14 @@ export default function CompleteYourInfo() {
 
 
     return (
-        <div className="min-h-screen w-full flex justify-center items-center ">
+        <>
+            <SEO 
+                title="Complete Your Profile" 
+                description="Complete your Socian profile by providing your department, name, username, and other required information."
+                keywords="complete profile, user registration, student profile, socian account setup"
+                pageType="default"
+            />
+            <div className="min-h-screen w-full flex justify-center items-center ">
             <div className="flex flex-col justify-center items-center">
                 <h3>You can Complete your Profile Here</h3>
                 <p>Select your accurate details. Contact for more information</p>
@@ -264,6 +272,7 @@ export default function CompleteYourInfo() {
                 </form>
 
             </div>
-        </div>
+            </div>
+        </>
     )
 }

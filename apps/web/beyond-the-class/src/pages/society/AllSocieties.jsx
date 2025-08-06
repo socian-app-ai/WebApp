@@ -1,5 +1,6 @@
 /* eslint-disable react/prop-types */
 
+import SEO from '../../components/seo/SEO';
 
 // import React, { useState, useEffect } from 'react';
 // import axiosInstance from '../../config/users/axios.instance';
@@ -251,6 +252,12 @@ export default function AllSocieties() {
 
     return (
         <div className="">
+            <SEO
+                title="Student Societies"
+                description="Explore student societies and organizations on Socian. Join clubs, participate in events, and build your campus community."
+                keywords="student societies, campus clubs, university organizations, academic groups, student activities"
+                pageType="societies"
+            />
             <div className=" p-6 mb-8">
                 <div className="mb-6">
                     <h1 className="text-2xl font-bold mb-2">Student Societies</h1>

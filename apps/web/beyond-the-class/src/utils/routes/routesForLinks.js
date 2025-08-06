@@ -173,6 +173,13 @@ export const bypassRoutes = [
     /^\/forgot-password$/,
     /^\/privacy$/,
     /^\/delete-account$/,
+    /^\/sitemap\.xml$/,
+    /^\/robots\.txt$/,
+    /^\/community-guidelines$/,
+    /^\/privacy-policy$/,
+    /^\/terms-of-service$/,
+    /^\/contact-us$/,
+    /^\/about-us$/,
 ]
 
 

@@ -5,6 +5,7 @@
 // import { useToast } from '../../../components/toaster/ToastCustom';
 // import axiosInstance from '../../../config/users/axios.instance';
 // import { routesForApi } from '../../../utils/routes/routesForLinks';
+import SEO from '../../../components/seo/SEO';
 
 // export default function ForgotPassword() {
 //     const [inputType, setInputType] = useState('email');
@@ -325,6 +326,12 @@ export default function ForgotPassword() {
 
     return (
         <div className="auth_page_style-gradient  min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+            <SEO
+                title="Forgot Password"
+                description="Reset your Socian account password. Secure password recovery for the student community platform."
+                keywords="password reset, account recovery, secure login, student platform, Socian security"
+                pageType="default"
+            />
             <div className="sm:mx-auto sm:w-full sm:max-w-md">
                 <h2 className="mt-6 text-center text-3xl font-extrabold dark:text-white text-gray-900">
                     Reset your password

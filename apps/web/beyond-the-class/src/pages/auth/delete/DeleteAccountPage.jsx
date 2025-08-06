@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useAuthContext } from "../../../context/AuthContext";
 import axiosInstance from "../../../config/users/axios.instance";
 import { useNavigate } from "react-router-dom";
+import SEO from "../../../components/seo/SEO";
 
 export default function DeleteAccountPage() {
   const { authUser, setAuthUser } = useAuthContext();
@@ -36,7 +37,14 @@ export default function DeleteAccountPage() {
   if (!authUser) return null;
 
   return (
-    <div className="max-w-md mx-auto mt-20 px-6 py-8 border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-black text-black dark:text-white rounded-2xl shadow-sm">
+    <>
+      <SEO 
+        title="Delete Account" 
+        description="Permanently delete your Socian account. This action is irreversible and will remove all your data from the platform."
+        keywords="delete account, account deletion, permanent removal, socian account"
+        pageType="default"
+      />
+      <div className="max-w-md mx-auto mt-20 px-6 py-8 border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-black text-black dark:text-white rounded-2xl shadow-sm">
       <img src="/Socian.png" alt="Socian" className="mx-auto w-24 h-24 mb-3 rounded-full border border-neutral-300 dark:border-neutral-700" />
       <h1 className="text-2xl font-semibold text-center mb-4">Socian</h1>
 
@@ -83,8 +91,8 @@ export default function DeleteAccountPage() {
         <li>❌ <strong>Session Cleared:</strong> Your session will be deleted.</li>
         <li>🧠 <strong>Still Logged In?</strong> Even if a session remains, your account is fully disabled and inactive.</li>
       </ul>
+      </div>
 
-
-    </div>
+    </>
   );
 }

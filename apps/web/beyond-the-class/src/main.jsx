@@ -66,6 +66,7 @@ import ModActions from './pages/admin/sidebar_pages/verifications/ModActions.jsx
 import SocietyTypes from './pages/admin/sidebar_pages/campuses/societies/SocietyTypes.jsx';
 import SocietyVerifications from './pages/admin/sidebar_pages/verifications/SocietyVerifications.jsx';
 import Reports from './pages/admin/pages/reports/Reports.jsx';
+import { HelmetProvider } from 'react-helmet-async';
 
 const router = createBrowserRouter([
   {
@@ -277,8 +278,9 @@ const options = {
 }
 
 createRoot(document.getElementById('root')).render(
-  <StrictMode>
-    <PostHogProvider
+  <StrictMode >
+    <HelmetProvider >
+      <PostHogProvider
       apiKey={import.meta.env.VITE_PUBLIC_POSTHOG_KEY}
       options={options}
     >
@@ -291,5 +293,6 @@ createRoot(document.getElementById('root')).render(
         </ToastProviders>
       </ThemeProvider>
     </PostHogProvider>
+    </HelmetProvider>
   </StrictMode>,
 )

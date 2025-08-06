@@ -5,6 +5,7 @@ import ExternalOrgDashboard from "./externalOrgranization/ExternalOrgDashboard";
 import StudentDashboard from "./student/StudentDashboard";
 import AddUniversityPage from "../admin/sidebar_pages/universities/AddUniversityPage";
 import CompleteYourInfo from "../noAccess/CompleteYourInfo";
+import SEO from "../../components/seo/SEO";
 
 export default function AllHome() {
   const { authUser, isLoading } = useAuthContext();
@@ -34,5 +35,15 @@ export default function AllHome() {
     }
   };
 
-  return <div>{renderContent()}</div>;
+  return (
+    <div>
+      <SEO
+        title="Home"
+        description="Welcome to Socian - Student Community Platform. Connect with students, teachers, and alumni for academic collaboration and resource sharing."
+        keywords="Socian home, student community, academic platform, university networking, student resources"
+        pageType="default"
+      />
+      {renderContent()}
+    </div>
+  );
 }

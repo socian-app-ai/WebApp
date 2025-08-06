@@ -6,6 +6,7 @@ import { useEffect } from "react";
 import { useToast } from '../../../components/toaster/ToastCustom';
 import { ArrowUp } from "lucide-react";
 import { ArrowDown } from "lucide-react";
+import SEO from "../../../components/seo/SEO";
 
 // Loading Component
 const Loading = () => (
@@ -280,7 +281,14 @@ const TeacherFeedback = () => {
     if (loading) return <Loading />;
 
     return (
-        <div className="mt-10 px-4 mx-auto">
+        <>
+            <SEO 
+                title="Teacher Feedback" 
+                description="View and manage teacher feedback on Socian. Access student reviews, ratings, and feedback for teachers."
+                keywords="teacher feedback, teacher reviews, student ratings, teacher evaluation, socian"
+                pageType="teacher"
+            />
+            <div className="mt-10 px-4 mx-auto">
             <h2 className="text-2xl font-bold mb-6">Teacher Feedbacks</h2>
 
          
@@ -316,6 +324,8 @@ const TeacherFeedback = () => {
                     <CreateTeacherButton onCreate={handleCreateTeacherProfile} />
                 </div>)}
         </div>
+        </>
+
     );
 };
 

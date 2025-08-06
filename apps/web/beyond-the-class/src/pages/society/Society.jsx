@@ -8,6 +8,7 @@ import { useAuthContext } from "../../context/AuthContext";
 import { routesForApi } from "../../utils/routes/routesForLinks";
 import { useToast } from "../../components/toaster/ToastCustom";
 import logWithFileLocation from "../../utils/consoleLog";
+import SEO from "../../components/seo/SEO";
 
 
 
@@ -120,7 +121,14 @@ export default function Society() {
     }
 
     return (
-        <div className="min-h-screen">
+        <>
+            <SEO 
+                title={`${society?.name || 'Society'} - Socian`}
+                description={`${society?.description || 'Join this student society on Socian'} - ${society?.totalMembers || 0} members`}
+                keywords={`${society?.name}, student society, ${society?.societyType?.societyType}, university club, socian`}
+                pageType="societies"
+            />
+            <div className="min-h-screen">
             <div className=" mx-auto p-6 space-y-6">
                 {/* Society Header */}
                 <div className="rounded-lg w-full shadow-lg p-6">
@@ -182,6 +190,7 @@ export default function Society() {
                     <div className="text-center text-gray-500">Be the First One to Post!</div>
                 )}
             </div>
-        </div>
+            </div>
+        </>
     );
 }

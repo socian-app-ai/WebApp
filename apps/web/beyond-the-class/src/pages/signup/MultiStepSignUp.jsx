@@ -11,6 +11,7 @@ import { useDebouncedCallback } from 'use-debounce';
 import { useToast } from "../../components/toaster/ToastCustom";
 import { ShinyButtonParam } from "../../components/Shinny/ShinnyButton";
 import { IoArrowBack } from "react-icons/io5";
+import SEO from "../../components/seo/SEO";
 
 // Step 1: Role and Institution Selection
 function Step1({ formData, setFormData, onNext }) {
@@ -321,6 +322,12 @@ export default function MultiStepSignUp() {
 
     return (
         <div className="auth_page_style-gradient dark:text-white min-h-screen w-full flex justify-center items-center">
+            <SEO
+                title="Sign Up"
+                description="Join Socian - Student Community Platform. Create your account to connect with students, teachers, and alumni for academic collaboration and resource sharing."
+                keywords="Socian signup, student registration, teacher registration, alumni registration, academic community, university platform"
+                pageType="signup"
+            />
             <div className="flex flex-col justify-center items-center w-full max-w-md p-6 relative">
                 {currentStep > 1 && (
                     <button

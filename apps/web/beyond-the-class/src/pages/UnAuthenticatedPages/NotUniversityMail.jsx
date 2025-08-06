@@ -12,9 +12,18 @@
 //     )
 // }
 
+import SEO from '../../components/seo/SEO';
+
 export default function NotUniversityMail() {
     return (
-        <div className='min-h-screen w-full flex flex-col justify-center items-center bg-gray-50 p-4'>
+        <>
+            <SEO 
+                title="University Email Required" 
+                description="Socian requires a university email address for registration. Learn about our university email policy and contact us for support."
+                keywords="university email, student registration, email policy, socian login"
+                pageType="default"
+            />
+            <div className='min-h-screen w-full flex flex-col justify-center items-center bg-gray-50 p-4'>
             <div className='bg-white p-8 rounded-lg shadow-lg text-center max-w-md'>
                 <h3 className='text-2xl font-bold text-gray-800 mb-4'>
                     Sorry, You Need a University Email to Login
@@ -45,6 +54,7 @@ export default function NotUniversityMail() {
                     Mistake? Back to Login
                 </a>
             </div>
-        </div>
+            </div>
+        </>
     );
 }
